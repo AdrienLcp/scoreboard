@@ -8,6 +8,7 @@ import { tableNumberSchema } from '@scoreboard/protocol/identifiers'
  */
 export const admissionSchema = z.discriminatedUnion('role', [
   z.object({ role: z.literal('display') }),
+  z.object({ role: z.literal('spectator') }),
   z.object({ role: z.literal('umpire'), table: tableNumberSchema }),
   z.object({ role: z.literal('organiser') })
 ])

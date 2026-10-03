@@ -6,17 +6,31 @@ import type { EventId } from '@scoreboard/protocol/identifiers'
 
 import { useEventSocket } from '@/infrastructure/messaging/use-event-socket'
 
-const DISPLAY_CREDENTIALS: Credentials = { role: 'display' }
+type ReadOnlyRole = 'display' | 'spectator'
 
-/** The event as the room sees it, kept live. */
-export const useDisplayFeed = (eventId: EventId) => {
+const CREDENTIALS_FOR = {
+  display: { role: 'display' },
+  spectator: { role: 'spectator' }
+} as const satisfies Record<ReadOnlyRole, Credentials>
+
+/** The event as the room sees it, kept live, for a screen that only watches. */
+export const usePublicFeed = ({
+  eventId,
+  role
+}: {
+  eventId: EventId
+  role: ReadOnlyRole
+}) => {
   const [snapshot, setSnapshot] = useState<PublicSnapshot | null>(null)
 
   const socket = useEventSocket({
-    credentials: DISPLAY_CREDENTIALS,
+    credentials: CREDENTIALS_FOR[role],
     eventId,
     onMessage: (message) => {
-      if (message.type === 'snapshot.display') {
+      if (
+        message.type === 'snapshot.display' ||
+        message.type === 'snapshot.spectator'
+      ) {
         setSnapshot(message.snapshot)
       }
     }

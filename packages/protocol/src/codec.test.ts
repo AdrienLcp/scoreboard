@@ -69,6 +69,7 @@ describe('encodeChecked', () => {
             pointsPerGame: 11,
             sport: 'table-tennis'
           },
+          displays: [],
           encounters: [],
           encounterViews: [],
           matches: [],

@@ -17,6 +17,11 @@ export const displaySnapshotMessageSchema = z.object({
   type: z.literal('snapshot.display')
 })
 
+export const spectatorSnapshotMessageSchema = z.object({
+  snapshot: publicSnapshotSchema,
+  type: z.literal('snapshot.spectator')
+})
+
 export const umpireSnapshotMessageSchema = z.object({
   snapshot: umpireSnapshotSchema,
   type: z.literal('snapshot.umpire')
@@ -56,6 +61,7 @@ export type ProtocolErrorMessage = z.infer<typeof protocolErrorMessageSchema>
 
 export const serverMessageSchema = z.discriminatedUnion('type', [
   displaySnapshotMessageSchema,
+  spectatorSnapshotMessageSchema,
   umpireSnapshotMessageSchema,
   organiserSnapshotMessageSchema,
   recordAcceptedMessageSchema,

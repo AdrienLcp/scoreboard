@@ -3,6 +3,7 @@ import { z } from 'zod'
 import { clubIdentitySchema } from './club'
 import { encounterFormatIdSchema } from './encounter-format-id'
 import {
+  displayIdSchema,
   encounterIdSchema,
   MAX_TABLES,
   matchIdSchema,
@@ -60,12 +61,25 @@ export const encounterSchema = z.object({
 export type Encounter = z.infer<typeof encounterSchema>
 
 /**
+ * One of the event's screens and the tables it shows, when the hall has more
+ * tables than one screen can hold. An event without any shows every table on
+ * every screen.
+ */
+export const displaySchema = z.object({
+  id: displayIdSchema,
+  name: nameSchema,
+  tables: z.array(tableNumberSchema).min(1).max(MAX_TABLES)
+})
+export type Display = z.infer<typeof displaySchema>
+
+/**
  * Everything the organiser prepares. `matches` is in playing order: a table
  * plays its matches in the order they appear here.
  */
 export const eventSetupSchema = z.object({
   club: clubIdentitySchema.nullable(),
   defaultFormat: matchFormatSchema,
+  displays: z.array(displaySchema).max(16).default([]),
   encounters: z.array(encounterSchema).max(100),
   matches: z.array(matchSetupSchema).max(MAX_MATCHES),
   name: nameSchema,

@@ -40,6 +40,7 @@ export const openEvent = ({
   store.writeSetup({
     club: null,
     defaultFormat: input.format,
+    displays: [],
     encounters: [],
     matches: [],
     name: input.name,
@@ -74,6 +75,8 @@ export const admit = (
   switch (credentials.role) {
     case 'display':
       return Result.success({ role: 'display' })
+    case 'spectator':
+      return Result.success({ role: 'spectator' })
     case 'organiser':
       return credentials.code === store.readOrganiserCode()
         ? Result.success({ role: 'organiser' })
@@ -106,7 +109,7 @@ export const recordEvent = ({
   matchId: MatchId
   store: EventStore
 }): Result<'recorded' | 'duplicate', RecordRefusal | 'not_allowed'> => {
-  if (admission.role === 'display') {
+  if (admission.role === 'display' || admission.role === 'spectator') {
     return Result.failure('not_allowed')
   }
 

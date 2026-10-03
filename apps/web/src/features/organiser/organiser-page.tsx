@@ -21,6 +21,7 @@ import {
   socketStatusKey
 } from '@/presentation/i18n/translation'
 
+import { DisplaysEditor } from './displays-editor'
 import { EncounterForm } from './encounter-form'
 import { EventSettingsForm } from './event-settings-form'
 import { MatchesEditor } from './matches-editor'
@@ -66,6 +67,14 @@ const OrganiserConsole: React.FC<{ code: OrganiserCode; eventId: EventId }> = ({
             <TableAccesses
               accesses={snapshot.tableAccesses}
               eventId={eventId}
+            />
+          </section>
+          <section>
+            <h2>{translate('organiser.displays.title')}</h2>
+            <DisplaysEditor
+              eventId={eventId}
+              onSave={organiser.saveSetup}
+              setup={snapshot.setup}
             />
           </section>
           <section>

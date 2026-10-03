@@ -53,6 +53,7 @@ export const publicSnapshotFor = (
   return {
     club: setup.club,
     defaultFormat: setup.defaultFormat,
+    displays: setup.displays,
     encounters: setup.encounters,
     encounterViews,
     matches,

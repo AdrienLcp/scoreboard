@@ -27,6 +27,7 @@ const matchOn = (table: number | null): MatchSetup => ({
 const setupWith = (matches: MatchSetup[]): EventSetup => ({
   club: null,
   defaultFormat: FORMAT,
+  displays: [],
   encounters: [],
   matches,
   name: 'Club day',
@@ -79,6 +80,15 @@ describe('checkEventSetup', () => {
 
     expect(checkEventSetup(setupWith([match]))).toEqual({
       error: 'player_twice_in_match',
+      status: 'failure'
+    })
+  })
+
+  it('[setup] refuses a display showing a table the event lacks', () => {
+    const display = { id: randomUUID(), name: 'Hall B', tables: [2, 3] }
+
+    expect(checkEventSetup({ ...setupWith([]), displays: [display] })).toEqual({
+      error: 'unknown_display_table',
       status: 'failure'
     })
   })

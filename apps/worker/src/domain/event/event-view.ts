@@ -22,6 +22,8 @@ export const snapshotMessageFor = (
   switch (admission.role) {
     case 'display':
       return { snapshot: event, type: 'snapshot.display' }
+    case 'spectator':
+      return { snapshot: event, type: 'snapshot.spectator' }
     case 'organiser':
       return {
         snapshot: {

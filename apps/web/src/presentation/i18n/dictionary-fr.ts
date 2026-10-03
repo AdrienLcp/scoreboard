@@ -9,7 +9,17 @@ export const FR_DICTIONARY = defineDictionary({
     refused: 'Déconnecté'
   },
   display: {
-    title: 'Tableau des scores'
+    follow: 'Suivez tous les matchs sur votre téléphone : {url}',
+    live: 'En cours',
+    phase: {
+      finished: 'Terminé',
+      idle: 'Libre',
+      live: 'En cours',
+      upcoming: 'À suivre'
+    },
+    quiet: 'Autres tables',
+    title: 'Tableau des scores',
+    unknown: 'Cet écran n’existe pas pour cette rencontre.'
   },
   encounter: {
     format: {
@@ -76,6 +86,15 @@ export const FR_DICTIONARY = defineDictionary({
         home: 'Forfait du domicile'
       }
     },
+    displays: {
+      add: 'Ajouter l’écran',
+      first: 'Première table',
+      last: 'Dernière table',
+      name: 'Nom de l’écran',
+      remove: 'Retirer {name}',
+      tables: 'tables {tables:list}',
+      title: 'Écrans'
+    },
     encounter: {
       add: 'Créer la rencontre par équipes',
       away: 'Équipe extérieure',
@@ -129,10 +148,24 @@ export const FR_DICTIONARY = defineDictionary({
       duplicate_id: 'Un élément apparaît deux fois.',
       player_twice_in_match: 'Un joueur est des deux côtés d’un match.',
       table_out_of_range: 'Un match est sur une table qui n’existe pas.',
+      unknown_display_table: 'Un écran affiche une table qui n’existe pas.',
       unknown_encounter: 'Un match renvoie à une rencontre inconnue.',
       unknown_player: 'Un match renvoie à un joueur inconnu.',
       unknown_team: 'Un joueur renvoie à une équipe inconnue.'
     }
+  },
+  spectator: {
+    empty: {
+      finished: 'Aucun match terminé.',
+      live: 'Aucun match en cours.',
+      upcoming: 'Aucun match à venir.'
+    },
+    section: {
+      finished: 'Terminés',
+      live: 'En cours',
+      upcoming: 'À venir'
+    },
+    title: 'Programme'
   },
   table: {
     free: 'Aucun match',

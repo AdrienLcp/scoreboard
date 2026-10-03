@@ -38,6 +38,9 @@ export type MatchId = z.infer<typeof matchIdSchema>
 export const encounterIdSchema = z.uuid()
 export type EncounterId = z.infer<typeof encounterIdSchema>
 
+export const displayIdSchema = z.uuid()
+export type DisplayId = z.infer<typeof displayIdSchema>
+
 /** Minted by the device that scored, so a resent event is recognised. */
 export const scoringEventIdSchema = z.uuid()
 export type ScoringEventId = z.infer<typeof scoringEventIdSchema>

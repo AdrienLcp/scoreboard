@@ -17,7 +17,8 @@ export const checkEventSetup = (
     ...setup.players.map((player) => player.id),
     ...setup.teams.map((team) => team.id),
     ...setup.matches.map((match) => match.id),
-    ...setup.encounters.map((encounter) => encounter.id)
+    ...setup.encounters.map((encounter) => encounter.id),
+    ...setup.displays.map((display) => display.id)
   ]
 
   if (hasDuplicates(ids)) {
@@ -41,6 +42,14 @@ export const checkEventSetup = (
 
   if (!isEveryTeamKnown) {
     return Result.failure('unknown_team')
+  }
+
+  const isEveryDisplayTableKnown = setup.displays.every((display) =>
+    display.tables.every((table) => table <= setup.tableCount)
+  )
+
+  if (!isEveryDisplayTableKnown) {
+    return Result.failure('unknown_display_table')
   }
 
   for (const match of setup.matches) {

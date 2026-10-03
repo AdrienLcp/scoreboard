@@ -1,4 +1,5 @@
 import type {
+  Display,
   Encounter,
   EventSetup,
   MatchSetup,
@@ -6,6 +7,7 @@ import type {
   Team
 } from '@scoreboard/protocol/event-setup'
 import type {
+  DisplayId,
   MatchId,
   PlayerId,
   TableNumber
@@ -75,12 +77,21 @@ export const moveMatchToTable = ({
   )
 })
 
-/** Fewer tables takes the matches off the tables that are gone. */
+/**
+ * Fewer tables takes the matches off the tables that are gone, and the
+ * tables off the displays; a display left with no table goes too.
+ */
 export const changeTableCount = (
   setup: EventSetup,
   tableCount: number
 ): EventSetup => ({
   ...setup,
+  displays: setup.displays
+    .map((display) => ({
+      ...display,
+      tables: display.tables.filter((table) => table <= tableCount)
+    }))
+    .filter((display) => display.tables.length > 0),
   matches: setup.matches.map((match) =>
     match.table !== null && match.table > tableCount
       ? { ...match, table: null }
@@ -88,6 +99,35 @@ export const changeTableCount = (
   ),
   tableCount
 })
+
+export const addDisplay = (
+  setup: EventSetup,
+  display: Display
+): EventSetup => ({
+  ...setup,
+  displays: [...setup.displays, display]
+})
+
+export const removeDisplay = (
+  setup: EventSetup,
+  displayId: DisplayId
+): EventSetup => ({
+  ...setup,
+  displays: setup.displays.filter((display) => display.id !== displayId)
+})
+
+/** Every table from `first` to `last`, both included. */
+export const tableRange = ({
+  first,
+  last
+}: {
+  first: TableNumber
+  last: TableNumber
+}): TableNumber[] =>
+  Array.from(
+    { length: Math.max(0, last - first + 1) },
+    (_, index) => first + index
+  )
 
 /** Adds a team encounter and every match of its sheet, in playing order. */
 export const addEncounter = ({

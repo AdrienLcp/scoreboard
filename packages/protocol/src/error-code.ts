@@ -34,7 +34,8 @@ export const setupRefusals = [
   'unknown_team',
   'unknown_encounter',
   'table_out_of_range',
-  'player_twice_in_match'
+  'player_twice_in_match',
+  'unknown_display_table'
 ] as const
 export const setupRefusalSchema = z.enum(setupRefusals)
 export type SetupRefusal = z.infer<typeof setupRefusalSchema>

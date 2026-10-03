@@ -12,12 +12,19 @@ const pageFor = {
   [paths.display]: async () => ({
     Component: (await import('@/features/display/display-page')).DisplayPage
   }),
+  [paths.displayOf]: async () => ({
+    Component: (await import('@/features/display/display-page')).DisplayPage
+  }),
   [paths.home]: async () => ({
     Component: (await import('@/features/home/home-page')).HomePage
   }),
   [paths.organiser]: async () => ({
     Component: (await import('@/features/organiser/organiser-page'))
       .OrganiserPage
+  }),
+  [paths.spectator]: async () => ({
+    Component: (await import('@/features/spectator/spectator-page'))
+      .SpectatorPage
   }),
   [paths.umpire]: async () => ({
     Component: (await import('@/features/umpire/umpire-page')).UmpirePage

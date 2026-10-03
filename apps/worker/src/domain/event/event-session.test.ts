@@ -74,6 +74,7 @@ const matchOnTable = (table: number): MatchSetup => ({
 const programme = (matches: MatchSetup[]): EventSetup => ({
   club: null,
   defaultFormat: FORMAT,
+  displays: [],
   encounters: [],
   matches,
   name: 'Club day',
@@ -91,6 +92,23 @@ describe('handleFrame', () => {
 
     expect(outcome.admission).toEqual({ role: 'display' })
     expect(types(outcome.replies)).toEqual(['snapshot.display'])
+  })
+
+  it('[session] welcomes a spectator, read-only', () => {
+    const store = openedStore()
+    const outcome = send(store, null, hello({ role: 'spectator' }))
+
+    expect(types(outcome.replies)).toEqual(['snapshot.spectator'])
+    expect(
+      send(
+        store,
+        { role: 'spectator' },
+        {
+          setup: programme([]),
+          type: 'setup.save'
+        }
+      ).replies
+    ).toMatchObject([{ code: 'not_allowed' }])
   })
 
   it('[session] seats an umpire at the table their code opens', () => {

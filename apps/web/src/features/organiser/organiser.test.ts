@@ -5,7 +5,7 @@ import { describe, expect, it } from 'vitest'
 import type { EventSetup, MatchSetup } from '@scoreboard/protocol/event-setup'
 
 import { parsePeriodsText, periodsText } from './periods-text'
-import { changeTableCount, removePlayer } from './setup-edits'
+import { changeTableCount, removePlayer, tableRange } from './setup-edits'
 
 const FORMAT = { bestOf: 5, pointsPerGame: 11, sport: 'table-tennis' } as const
 const camille = { id: randomUUID(), name: 'Camille', teamId: null }
@@ -24,6 +24,7 @@ const match: MatchSetup = {
 const setup: EventSetup = {
   club: null,
   defaultFormat: FORMAT,
+  displays: [],
   encounters: [],
   matches: [match],
   name: 'Club day',
@@ -56,6 +57,18 @@ describe('parsePeriodsText', () => {
 describe('setup edits', () => {
   it('[organiser] frees the seat of a removed player', () => {
     expect(removePlayer(setup, louis.id).matches[0]?.away.playerIds).toEqual([])
+  })
+
+  it('[organiser] drops a display whose tables are all gone', () => {
+    const display = { id: randomUUID(), name: 'Hall B', tables: [3] }
+
+    expect(
+      changeTableCount({ ...setup, displays: [display] }, 2).displays
+    ).toEqual([])
+  })
+
+  it('[organiser] lists a range of tables, both ends included', () => {
+    expect(tableRange({ first: 9, last: 12 })).toEqual([9, 10, 11, 12])
   })
 
   it('[organiser] takes matches off the tables that are gone', () => {
