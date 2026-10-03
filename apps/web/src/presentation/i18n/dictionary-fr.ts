@@ -218,17 +218,40 @@ export const FR_DICTIONARY = defineDictionary({
     }
   },
   spectator: {
+    bestOf: 'au meilleur des {count:number} manches',
     empty: {
-      finished: 'Aucun match terminé.',
-      live: 'Aucun match en cours.',
-      upcoming: 'Aucun match à venir.'
+      finished: 'Aucun match terminé pour l’instant.',
+      live: 'Aucun match en cours. Les prochains sont dans « À venir ».',
+      upcoming: 'Rien d’annoncé pour l’instant.'
     },
+    finishedAt: defineTranslation('fini à {at:date}', {
+      date: { at: { timeStyle: 'short' } }
+    }),
+    follow: 'Suivre {name}',
+    following: 'Suivi : {name}',
+    followPlayer: 'Suivre un joueur',
+    game: 'Manche',
+    gameByGame: 'Score manche par manche',
+    noPlayerMatches: 'Aucun joueur ne correspond à « {typed} »',
+    noTable: 'table à définir',
+    noTime: 'heure à venir',
+    others: 'Les autres',
+    playedFromTo: defineTranslation('De {from:date} à {to:date}', {
+      date: { from: { timeStyle: 'short' }, to: { timeStyle: 'short' } }
+    }),
     section: {
-      finished: 'Terminés',
+      finished: 'Résultats',
       live: 'En cours',
       upcoming: 'À venir'
     },
-    title: 'Programme'
+    tablesInPlay: 'Tables en jeu',
+    title: 'Matchs',
+    unfollow: 'Ne plus suivre {name}',
+    walkoverAt: defineTranslation('forfait, {at:date}', {
+      date: { at: { timeStyle: 'short' } }
+    }),
+    whereLive: 'Table {table:number} · en cours',
+    yourPlayers: 'Vos joueurs'
   },
   table: {
     free: 'Aucun match',

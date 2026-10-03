@@ -1,0 +1,22 @@
+@layer components
+  .toggle-button.follow-button
+    align-items: center
+    background: none
+    border-radius: var(--radius-full)
+    box-shadow: var(--edge)
+    display: inline-flex
+    font-size: var(--text-s)
+    gap: var(--space-2xs)
+    min-height: var(--control-s)
+    padding: var(--space-xs) var(--space-s)
+
+    .icon
+      font-size: var(--icon-s)
+
+    &[data-hovered]:not([data-selected])
+      background: var(--surface-raised)
+
+    &[data-selected]
+      background: var(--live)
+      box-shadow: none
+      color: var(--on-live)

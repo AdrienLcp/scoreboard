@@ -1,0 +1,84 @@
+@use '../../presentation/styles/focus'
+
+@layer components
+  .follow-field-box
+    align-items: center
+    background: var(--surface)
+    border-radius: var(--radius-m)
+    box-shadow: var(--edge)
+    color: var(--ink-muted)
+    display: flex
+    gap: var(--space-xs)
+    height: var(--control-m)
+    padding-inline: var(--space-s)
+
+    &:focus-within
+      box-shadow: var(--edge-live)
+
+    .icon
+      font-size: var(--icon-m)
+
+  .field-input.follow-field-input
+    background: none
+    border: 0
+    height: 100%
+    min-height: 0
+    padding: 0
+
+    &[data-focused]
+      outline: none
+
+  .popover.follow-field-popover
+    width: var(--trigger-width)
+
+    .list-box-item
+      align-items: baseline
+      justify-content: space-between
+
+    small
+      color: var(--ink-muted)
+      font-size: var(--text-xs)
+      font-weight: 500
+      white-space: nowrap
+
+  .follow-field-empty
+    color: var(--ink-muted)
+    padding: var(--space-s)
+
+  .follow-chips
+    display: flex
+    flex-wrap: wrap
+    gap: var(--space-xs)
+    margin-top: var(--space-s)
+
+    li
+      align-items: center
+      background: var(--surface-raised)
+      border-radius: var(--radius-full)
+      display: inline-flex
+      font-size: var(--text-s)
+      font-weight: 600
+      gap: var(--space-xs)
+      padding: var(--space-3xs) var(--space-3xs) var(--space-3xs) var(--space-s)
+
+      > .icon
+        color: var(--live)
+        font-size: var(--icon-s)
+
+  .follow-chip-remove
+    @include focus.ring
+
+    border-radius: 50%
+    color: var(--ink-muted)
+    cursor: pointer
+    display: grid
+    height: var(--control-s)
+    place-items: center
+    width: var(--control-s)
+
+    &[data-hovered]
+      background: var(--surface-high)
+      color: var(--ink)
+
+    .icon
+      font-size: var(--icon-s)
