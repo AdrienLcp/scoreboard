@@ -22,7 +22,7 @@ type Standing<TProgress> = {
 type Folded<TProgress> = {
   seenIds: ReadonlySet<string>
   standing: Standing<TProgress> | null
-  undoStack: readonly Standing<TProgress>[]
+  undoStack: readonly (Standing<TProgress> | null)[]
 }
 
 type ProgressingEvent = Exclude<
@@ -107,6 +107,20 @@ const step = <TFormat extends MatchFormat, TProgress>(
     })
   }
 
+  // A walkover is conceded before the match ever starts. Who would have served
+  // is moot: the match is over the moment it is recorded.
+  if (standing === null && event.type === 'match.conceded') {
+    return Result.success({
+      seenIds,
+      standing: {
+        concession: { by: event.by, reason: event.reason },
+        isEnded: false,
+        progress: ruleset.begin({ firstServer: event.by, format })
+      },
+      undoStack: [null]
+    })
+  }
+
   if (standing === null) {
     return Result.failure('not_started')
   }
@@ -188,6 +202,7 @@ const stateOf = <TFormat extends MatchFormat, TProgress>(
       ...view,
       canUndo,
       concession: standing.concession,
+      current: standing.concession.reason === 'walkover' ? null : view.current,
       serving: null,
       stake: null,
       status: 'finished',

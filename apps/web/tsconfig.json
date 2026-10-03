@@ -1,0 +1,13 @@
+{
+  "compilerOptions": {
+    "jsx": "react-jsx",
+    "lib": ["esnext", "DOM", "DOM.Iterable"],
+    "paths": {
+      "@/*": ["./src/*"],
+      "@scoreboard/core/*": ["../../packages/core/src/*"],
+      "@scoreboard/protocol/*": ["../../packages/protocol/src/*"]
+    }
+  },
+  "extends": "../../tsconfig.json",
+  "include": ["src", "vite.config.ts", "vitest.config.ts"]
+}

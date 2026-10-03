@@ -179,6 +179,32 @@ describe('describeMatch', () => {
     })
   })
 
+  it('[match-log] records a walkover on a match that never started', () => {
+    const walkover: ScoringEvent = {
+      by: 'away',
+      id: randomUUID(),
+      reason: 'walkover',
+      type: 'match.conceded'
+    }
+
+    expect(stateOf([walkover])).toMatchObject({
+      current: null,
+      status: 'finished',
+      winner: 'home'
+    })
+  })
+
+  it('[match-log] undoes a walkover back to a scheduled match', () => {
+    const walkover: ScoringEvent = {
+      by: 'away',
+      id: randomUUID(),
+      reason: 'walkover',
+      type: 'match.conceded'
+    }
+
+    expect(stateOf([walkover, undo()]).status).toBe('scheduled')
+  })
+
   it('[match-log] lets the organiser rewrite the score mid-match', () => {
     const corrected: ScoringEvent = {
       id: randomUUID(),

@@ -1,0 +1,20 @@
+<!doctype html>
+<html lang="fr">
+  <head>
+    <meta charset="UTF-8" />
+    <meta content="width=device-width, initial-scale=1.0" name="viewport" />
+    <title>Scoreboard</title>
+    <!--
+      A layer's position is fixed where its name first appears, and Vite injects
+      stylesheets in module-graph order: declared here, the order cannot depend
+      on which component happened to be imported first.
+    -->
+    <style>
+      @layer reset, tokens, base, components;
+    </style>
+  </head>
+  <body>
+    <div id="root"></div>
+    <script src="/src/main.tsx" type="module"></script>
+  </body>
+</html>

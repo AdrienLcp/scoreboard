@@ -1,0 +1,20 @@
+{
+  "$schema": "node_modules/wrangler/config-schema.json",
+  "assets": {
+    "directory": "../web/dist",
+    "not_found_handling": "single-page-application",
+    "run_worker_first": ["/api/*", "/ws/*"]
+  },
+  "compatibility_date": "2026-09-01",
+  "dev": {
+    "port": 8788
+  },
+  "durable_objects": {
+    "bindings": [{ "class_name": "EventRoom", "name": "EVENT_ROOMS" }]
+  },
+  "main": "src/index.ts",
+  // The free plan only offers Durable Objects backed by SQLite.
+  "migrations": [{ "new_sqlite_classes": ["EventRoom"], "tag": "v1" }],
+  "name": "scoreboard",
+  "observability": { "enabled": true }
+}

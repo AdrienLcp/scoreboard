@@ -28,10 +28,12 @@
     "biomejs",
     "CDTT",
     "esbuild",
-    "fftt",
     "FFTT",
+    "fftt",
+    "GHJKLM",
     "ITTF",
     "Lacourpaille",
+    "PQRSTUVWXYZ",
     "rhysd",
     "workerd"
   ]
