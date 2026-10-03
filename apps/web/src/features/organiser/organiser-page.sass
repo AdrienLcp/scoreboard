@@ -294,7 +294,7 @@
   .encounter-list
     display: grid
     gap: var(--space-s)
-    grid-template-columns: repeat(auto-fill, minmax(16rem, 1fr))
+    grid-template-columns: repeat(auto-fit, minmax(16rem, 1fr))
 
     li
       background: var(--surface)
@@ -307,7 +307,8 @@
     grid-template-columns: repeat(auto-fill, minmax(14rem, 1fr))
 
     > .button
-      align-self: end
+      grid-column: 1 / -1
+      justify-self: start
 
   .encounter-letters
     display: grid

@@ -45,11 +45,14 @@ export const useTileReflow = (
       const dx = first.left - last.left
       const dy = first.top - last.top
 
+      // The tile travelling furthest crosses the most neighbours: it rides on top.
+      const travelLayer = Math.round(Math.hypot(dx, dy))
+
       if (Math.abs(dx) > MOVED_PX || Math.abs(dy) > MOVED_PX) {
         tile.animate(
           [
-            { transform: `translate(${dx}px, ${dy}px)`, zIndex: 1 },
-            { transform: 'none', zIndex: 1 }
+            { transform: `translate(${dx}px, ${dy}px)`, zIndex: travelLayer },
+            { transform: 'none', zIndex: travelLayer }
           ],
           { duration: REFLOW_MS, easing: REFLOW_EASING }
         )
