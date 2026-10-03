@@ -93,13 +93,11 @@ export const useUmpireConsole = ({ code, eventId }: Seat) => {
   const match =
     snapshot?.event.matches.find((candidate) => candidate.id === matchId) ??
     null
-  const state =
+  const events =
     match === null || snapshot === null
-      ? null
-      : describeMatch(match.format, [
-          ...snapshot.log,
-          ...pendingEventsFor(outbox, match.id)
-        ])
+      ? []
+      : [...snapshot.log, ...pendingEventsFor(outbox, match.id)]
+  const state = match === null ? null : describeMatch(match.format, events)
 
   const record = (event: ScoringEvent): void => {
     if (match === null) {
@@ -116,6 +114,7 @@ export const useUmpireConsole = ({ code, eventId }: Seat) => {
       record({ by, id: newId(), reason, type: 'match.conceded' })
     },
     error: socket.error,
+    events,
     match,
     pendingCount: outbox.length,
     refusal,

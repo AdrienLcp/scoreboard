@@ -1,0 +1,43 @@
+@use '../../presentation/styles/typography'
+
+@layer components
+  .umpire-entry
+    align-items: center
+    justify-content: center
+    padding: var(--space-xl) var(--gutter) var(--space-4xl)
+
+  .umpire-entry-form
+    display: flex
+    flex-direction: column
+    gap: var(--space-m)
+    width: min(100%, var(--measure-form))
+
+    .brand-mark
+      margin-bottom: var(--space-xl)
+
+  .field-label.umpire-code-label
+    @include typography.page-title
+
+    color: var(--ink)
+
+  .umpire-code-field .field-description
+    font-size: var(--text-m)
+
+  .field-input.umpire-code-input
+    @include typography.figure
+
+    border-radius: var(--radius-l)
+    font-size: 3.375rem
+    height: 5.5rem
+    letter-spacing: 0.22em
+    margin-top: var(--space-2xs)
+    padding-left: 0.22em
+    text-align: center
+    text-transform: uppercase
+
+    &::placeholder
+      color: var(--surface-high)
+      font-weight: 700
+
+  .umpire-entry-note
+    @include typography.hint

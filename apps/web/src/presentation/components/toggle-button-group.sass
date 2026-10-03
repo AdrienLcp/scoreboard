@@ -1,0 +1,26 @@
+@use '../styles/focus'
+
+@layer components
+  .toggle-button-group
+    display: flex
+    flex-wrap: wrap
+    gap: var(--space-xs)
+
+  .toggle-button
+    @include focus.ring
+
+    background: var(--surface-raised)
+    border-radius: var(--radius-s)
+    cursor: pointer
+    font-size: var(--text-m)
+    font-weight: 600
+    min-height: var(--control-touch)
+    padding: var(--space-s) var(--space-m)
+    transition: background-color var(--transition-fast), color var(--transition-fast)
+
+    &[data-hovered]:not([data-selected])
+      background: var(--surface-high)
+
+    &[data-selected]
+      background: var(--ink)
+      color: var(--on-ink)

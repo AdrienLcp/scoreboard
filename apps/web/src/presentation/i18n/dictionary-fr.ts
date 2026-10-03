@@ -256,25 +256,89 @@ export const FR_DICTIONARY = defineDictionary({
     })
   },
   umpire: {
+    connection: {
+      offline: defineTranslation('{count:plural}', {
+        plural: {
+          count: {
+            one: 'Hors ligne — {?} point en attente',
+            other: 'Hors ligne — {?} points en attente'
+          }
+        }
+      }),
+      online: 'Connecté',
+      sending: defineTranslation('{count:plural}', {
+        plural: {
+          count: {
+            one: 'Envoi de {?} point…',
+            other: 'Envoi de {?} points…'
+          }
+        }
+      })
+    },
+    deuce: 'Égalité — deux points d’écart',
+    encounter: 'Rencontre',
+    end: {
+      cancel: 'Revenir au match',
+      confirm: 'Confirmer : {name} gagne',
+      explain:
+        'Le match s’arrête ici et l’adversaire est déclaré vainqueur. L’organisateur pourra corriger.',
+      open: 'Fin du match / abandon…',
+      pick: 'Choisir le joueur',
+      reason: {
+        retirement: 'Abandon en cours de match',
+        walkover: 'Forfait'
+      },
+      section: 'Fin de match',
+      title: 'Fin du match / abandon',
+      who: 'Qui s’arrête ?',
+      why: 'Motif'
+    },
     entry: {
       code: 'Code de la table',
-      invalid: 'Six caractères, sans 0, 1, I ni O.',
-      submit: 'Arbitrer',
+      hint: 'Il est affiché sur la table, sous le QR code : six lettres ou chiffres.',
+      invalid: 'Ce code fait six caractères, sans 0, 1, I ni O.',
+      missing: 'Saisissez le code inscrit sur la table.',
+      placeholder: 'A7K2PQ',
+      submit: 'Ouvrir le match',
       title: 'Arbitrer une table'
     },
-    firstServer: 'Qui sert en premier ?',
-    games: 'Manches : {home:number} – {away:number}',
-    pending: defineTranslation('{count:plural}', {
+    finished: 'Match terminé — {name} gagne {games}',
+    gameOn: 'Manche {number:number} en cours',
+    gameShort: 'M{number:number}',
+    gamesToWin: defineTranslation('{count:plural}', {
       plural: {
         count: {
-          one: '{?} point en attente d’envoi',
-          other: '{?} points en attente d’envoi'
+          one: '{?} manche gagnante',
+          other: '{?} manches gagnantes'
         }
       }
     }),
-    point: 'Point pour {name}',
-    retire: 'Abandon de {name}',
-    serving: 'Service : {name}',
+    gamesWon: 'Manches',
+    idle: {
+      explain:
+        'Le prochain match apparaîtra ici dès que l’organisateur l’aura placé sur cette table.',
+      title: 'Aucun match sur cette table pour l’instant'
+    },
+    keys: {
+      backspace: 'Retour',
+      points: 'point à gauche ou à droite',
+      title: 'Clavier',
+      undo: 'annuler'
+    },
+    matchOver: 'fin',
+    noPoints: 'Aucun point marqué depuis l’ouverture.',
+    point: 'Point pour {name}, {score:number} actuellement',
+    pointFor: 'Point {name}',
+    recent: 'Derniers points',
+    serve: 'Service',
+    start: {
+      last: 'Match précédent : {winner} bat {loser} {games}',
+      title: 'Qui sert en premier ?'
+    },
+    startedAt: defineTranslation('Commencé à {at:date} · {elapsed} de jeu', {
+      date: { at: { timeStyle: 'short' } }
+    }),
+    swap: 'Changer de côté',
     title: 'Arbitrage',
     undo: 'Annuler le dernier point'
   }

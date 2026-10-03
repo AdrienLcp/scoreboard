@@ -1,0 +1,37 @@
+@layer components
+  .connection-badge
+    align-items: center
+    background: var(--surface)
+    border-radius: var(--radius-full)
+    display: inline-flex
+    flex: none
+    font-size: var(--text-m)
+    font-weight: 600
+    gap: var(--space-xs)
+    line-height: 1.15
+    min-height: var(--control-touch)
+    padding: var(--space-xs) var(--space-m)
+
+    .icon
+      font-size: var(--icon-m)
+
+    &[data-kind='offline'], &[data-kind='refused']
+      background: var(--ink)
+      color: var(--on-ink)
+
+  .connection-dot
+    background: var(--live)
+    border-radius: 50%
+    flex: none
+    height: 0.5625rem
+    width: 0.5625rem
+
+  .connection-spin
+    animation: connection-spin 1s linear infinite
+
+    @media (prefers-reduced-motion: reduce)
+      animation: none
+
+  @keyframes connection-spin
+    to
+      rotate: 360deg
