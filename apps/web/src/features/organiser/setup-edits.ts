@@ -12,6 +12,7 @@ import type {
   PlayerId,
   TableNumber
 } from '@scoreboard/protocol/identifiers'
+import type { InstantMs } from '@scoreboard/protocol/scoring-event'
 
 import { encounterFormatFor } from '@scoreboard/core/encounter/encounter-formats'
 import {
@@ -74,6 +75,21 @@ export const moveMatchToTable = ({
   ...setup,
   matches: setup.matches.map((match) =>
     match.id === matchId ? { ...match, table } : match
+  )
+})
+
+export const planMatch = ({
+  matchId,
+  plannedAtMs,
+  setup
+}: {
+  matchId: MatchId
+  plannedAtMs: InstantMs | null
+  setup: EventSetup
+}): EventSetup => ({
+  ...setup,
+  matches: setup.matches.map((match) =>
+    match.id === matchId ? { ...match, plannedAtMs } : match
   )
 })
 

@@ -59,3 +59,14 @@ export const scoringEventSchema = z.discriminatedUnion('type', [
 ])
 export type ScoringEvent = z.infer<typeof scoringEventSchema>
 export type ScoringEventType = ScoringEvent['type']
+
+/** Epoch milliseconds, as the server's clock read them. */
+export const instantMsSchema = z.number().int().nonnegative()
+export type InstantMs = z.infer<typeof instantMsSchema>
+
+/** A scoring event as the server holds it: stamped on arrival, never by the device that sent it. */
+export const stampedEventSchema = z.object({
+  event: scoringEventSchema,
+  recordedAtMs: instantMsSchema
+})
+export type StampedEvent = z.infer<typeof stampedEventSchema>

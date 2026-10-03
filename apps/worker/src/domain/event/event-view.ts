@@ -1,3 +1,4 @@
+import type { InstantMs } from '@scoreboard/protocol/scoring-event'
 import type { ServerMessage } from '@scoreboard/protocol/server-message'
 
 import { publicSnapshotFor } from '@scoreboard/core/event/public-snapshot'
@@ -6,10 +7,15 @@ import type { Admission } from './admission'
 import type { EventStore } from './event-store'
 
 /** The snapshot a socket's role may see, or `null` for an event that was never opened. */
-export const snapshotMessageFor = (
-  store: EventStore,
+export const snapshotMessageFor = ({
+  admission,
+  nowMs,
+  store
+}: {
   admission: Admission
-): ServerMessage | null => {
+  nowMs: InstantMs
+  store: EventStore
+}): ServerMessage | null => {
   const setup = store.readSetup()
 
   if (setup === null) {
@@ -17,7 +23,7 @@ export const snapshotMessageFor = (
   }
 
   const logs = store.readLogs()
-  const event = publicSnapshotFor(setup, logs)
+  const event = publicSnapshotFor({ logs, nowMs, setup })
 
   switch (admission.role) {
     case 'display':
@@ -41,7 +47,9 @@ export const snapshotMessageFor = (
       return {
         snapshot: {
           event,
-          log: matchId === null ? [] : [...(logs.get(matchId) ?? [])],
+          log: (matchId === null ? [] : (logs.get(matchId) ?? [])).map(
+            (stamped) => stamped.event
+          ),
           table: admission.table
         },
         type: 'snapshot.umpire'

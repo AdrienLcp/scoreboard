@@ -3,7 +3,7 @@ import { randomUUID } from 'node:crypto'
 import { describe, expect, it } from 'vitest'
 
 import type { EventSetup, MatchSetup } from '@scoreboard/protocol/event-setup'
-import type { ScoringEvent } from '@scoreboard/protocol/scoring-event'
+import type { StampedEvent } from '@scoreboard/protocol/scoring-event'
 
 import { checkEventSetup } from './event-setup-check'
 import { publicSnapshotFor } from './public-snapshot'
@@ -21,6 +21,7 @@ const matchOn = (table: number | null): MatchSetup => ({
   home: { playerIds: [playerOne.id] },
   id: randomUUID(),
   label: null,
+  plannedAtMs: null,
   table
 })
 
@@ -32,6 +33,7 @@ const setupWith = (matches: MatchSetup[]): EventSetup => ({
   matches,
   name: 'Club day',
   players: [playerOne, playerTwo],
+  startsAtMs: null,
   tableCount: 2,
   teams: []
 })
@@ -107,14 +109,18 @@ describe('publicSnapshotFor', () => {
   it('[snapshot] puts each table on its live match', () => {
     const waiting = matchOn(1)
     const playing = matchOn(1)
-    const log: ScoringEvent[] = [
-      { firstServer: 'home', id: randomUUID(), type: 'match.started' }
+    const log = [
+      {
+        event: { firstServer: 'home', id: randomUUID(), type: 'match.started' },
+        recordedAtMs: 0
+      } satisfies StampedEvent
     ]
 
-    const snapshot = publicSnapshotFor(
-      setupWith([waiting, playing]),
-      new Map([[playing.id, log]])
-    )
+    const snapshot = publicSnapshotFor({
+      logs: new Map([[playing.id, log]]),
+      nowMs: 0,
+      setup: setupWith([waiting, playing])
+    })
 
     expect(snapshot.tables).toEqual([
       { matchId: playing.id, number: 1 },

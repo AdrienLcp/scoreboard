@@ -18,6 +18,7 @@ const match: MatchSetup = {
   home: { playerIds: [camille.id] },
   id: randomUUID(),
   label: null,
+  plannedAtMs: null,
   table: 3
 }
 
@@ -29,6 +30,7 @@ const setup: EventSetup = {
   matches: [match],
   name: 'Club day',
   players: [camille, louis],
+  startsAtMs: null,
   tableCount: 3,
   teams: []
 }

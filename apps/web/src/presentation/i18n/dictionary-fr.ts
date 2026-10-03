@@ -107,6 +107,8 @@ export const FR_DICTIONARY = defineDictionary({
       away: 'Joueur extérieur',
       home: 'Joueur à domicile',
       noTable: 'Sans table',
+      plannedAt: 'Heure prévue',
+      plannedAtSave: 'Fixer l’heure',
       remove: 'Retirer le match',
       table: 'Table',
       title: 'Matchs'
@@ -122,6 +124,7 @@ export const FR_DICTIONARY = defineDictionary({
     settings: {
       club: 'Nom du club',
       name: 'Nom de la rencontre',
+      startsAt: 'Début de la rencontre',
       tableCount: 'Nombre de tables',
       title: 'Rencontre'
     },
@@ -170,6 +173,21 @@ export const FR_DICTIONARY = defineDictionary({
   table: {
     free: 'Aucun match',
     name: 'Table {number:number}'
+  },
+  timing: {
+    duration: 'Durée : {minutes:number} min',
+    estimated: defineTranslation('Début estimé vers {at:date}', {
+      date: { at: { timeStyle: 'short' } }
+    }),
+    finished: defineTranslation('Terminé à {at:date}', {
+      date: { at: { timeStyle: 'short' } }
+    }),
+    planned: defineTranslation('Prévu à {at:date}', {
+      date: { at: { timeStyle: 'short' } }
+    }),
+    started: defineTranslation('Commencé à {at:date}', {
+      date: { at: { timeStyle: 'short' } }
+    })
   },
   umpire: {
     entry: {

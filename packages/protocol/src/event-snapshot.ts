@@ -8,11 +8,25 @@ import {
   umpireCodeSchema
 } from './identifiers'
 import { matchStateSchema } from './match-state'
-import { scoringEventSchema } from './scoring-event'
+import { instantMsSchema, scoringEventSchema } from './scoring-event'
 import { scoreSchema, sideSchema } from './side'
 
+/**
+ * When a match was played, or should be. `startedAtMs` and `finishedAtMs` are
+ * the server's stamps on the events that started and closed it;
+ * `estimatedStartMs` is set for a match still to come on a table.
+ */
+export const matchTimingSchema = z.object({
+  durationMs: z.number().int().nonnegative().nullable(),
+  estimatedStartMs: instantMsSchema.nullable(),
+  finishedAtMs: instantMsSchema.nullable(),
+  startedAtMs: instantMsSchema.nullable()
+})
+export type MatchTiming = z.infer<typeof matchTimingSchema>
+
 export const matchViewSchema = matchSetupSchema.extend({
-  state: matchStateSchema
+  state: matchStateSchema,
+  timing: matchTimingSchema
 })
 export type MatchView = z.infer<typeof matchViewSchema>
 
@@ -40,6 +54,8 @@ export const publicSnapshotSchema = eventSetupSchema
   .omit({ matches: true })
   .extend({
     encounterViews: z.array(encounterViewSchema),
+    /** The server's clock when this snapshot was built: what the estimates count from. */
+    generatedAtMs: instantMsSchema,
     matches: z.array(matchViewSchema),
     tables: z.array(tableViewSchema)
   })

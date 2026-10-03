@@ -35,5 +35,7 @@ export type Ruleset<TFormat extends MatchFormat, TProgress> = {
   ) => Ruling<TProgress, 'invalid_score'>
   /** Closing a match by hand: a sport whose score decides on its own refuses. */
   end: (progress: TProgress) => Ruling<TProgress, 'cannot_end'>
+  /** How long a match of this format usually lasts, before the event has finished any. */
+  typicalDurationMs: (format: TFormat) => number
   view: (progress: TProgress) => RulesetView
 }

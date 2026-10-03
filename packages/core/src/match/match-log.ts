@@ -223,6 +223,7 @@ const stateOf = <TFormat extends MatchFormat, TProgress>(
 }
 
 type MatchRules = {
+  typicalDurationMs: () => number
   describe: (log: readonly ScoringEvent[]) => MatchState
   record: (
     log: readonly ScoringEvent[],
@@ -247,7 +248,8 @@ const rulesWith = <TFormat extends MatchFormat, TProgress>(
     return stepped.status === 'failure'
       ? stepped
       : Result.success([...log, event])
-  }
+  },
+  typicalDurationMs: () => ruleset.typicalDurationMs(format)
 })
 
 /** The one place a format meets its sport's ruleset. */
@@ -278,3 +280,7 @@ export const recordScoringEvent = ({
   log: readonly ScoringEvent[]
 }): Result<ScoringEvent[], RecordRefusal | 'duplicate'> =>
   rulesFor(format).record(log, event)
+
+/** How long a match of `format` usually lasts, by its sport's ruleset. */
+export const typicalMatchDurationMs = (format: MatchFormat): number =>
+  rulesFor(format).typicalDurationMs()

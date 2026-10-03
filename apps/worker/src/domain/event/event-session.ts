@@ -1,6 +1,7 @@
 import { clientMessageSchema } from '@scoreboard/protocol/client-message'
 import { decodeMessage } from '@scoreboard/protocol/codec'
 import type { ProtocolErrorCode } from '@scoreboard/protocol/error-code'
+import type { InstantMs } from '@scoreboard/protocol/scoring-event'
 import type { ServerMessage } from '@scoreboard/protocol/server-message'
 import { PROTOCOL_VERSION } from '@scoreboard/protocol/version'
 
@@ -54,11 +55,14 @@ const answered = (
 /** Handles one inbound frame from a socket, given who that socket already is. */
 export const handleFrame = ({
   admission,
+  nowMs,
   randomIndex,
   raw,
   store
 }: {
   admission: Admission | null
+  /** The server's clock as the frame arrived. */
+  nowMs: InstantMs
   randomIndex: RandomIndex
   raw: string
   store: EventStore
@@ -86,7 +90,11 @@ export const handleFrame = ({
       return refused(null, admitted.error, { isFatal: true })
     }
 
-    const snapshot = snapshotMessageFor(store, admitted.data)
+    const snapshot = snapshotMessageFor({
+      admission: admitted.data,
+      nowMs,
+      store
+    })
 
     return answered(admitted.data, snapshot === null ? [] : [snapshot])
   }
@@ -99,6 +107,7 @@ export const handleFrame = ({
         admission,
         event: message.event,
         matchId: message.matchId,
+        nowMs,
         store
       })
 

@@ -44,10 +44,12 @@ const openedStore = (): EventStore => {
 const send = (
   store: EventStore,
   admission: Admission | null,
-  message: ClientMessage
+  message: ClientMessage,
+  nowMs = 0
 ) =>
   handleFrame({
     admission,
+    nowMs,
     randomIndex: countingIndex(),
     raw: JSON.stringify(message),
     store
@@ -68,6 +70,7 @@ const matchOnTable = (table: number): MatchSetup => ({
   home: { playerIds: [camille.id] },
   id: randomUUID(),
   label: null,
+  plannedAtMs: null,
   table
 })
 
@@ -79,6 +82,7 @@ const programme = (matches: MatchSetup[]): EventSetup => ({
   matches,
   name: 'Club day',
   players: [camille, louis],
+  startsAtMs: null,
   tableCount: 2,
   teams: []
 })
@@ -254,6 +258,30 @@ describe('handleFrame', () => {
           type: 'record.refused'
         }
       ])
+    })
+
+    it('[session] stamps a recorded event with the server’s clock', () => {
+      const store = programmedStore()
+      const SERVER_NOW = 1_791_000_000_000
+
+      send(
+        store,
+        umpireAtTableOne,
+        {
+          event: {
+            firstServer: 'home',
+            id: randomUUID(),
+            type: 'match.started'
+          },
+          matchId: tableOneMatch.id,
+          type: 'match.record'
+        },
+        SERVER_NOW
+      )
+
+      expect(store.readLogs().get(tableOneMatch.id)?.[0]?.recordedAtMs).toBe(
+        SERVER_NOW
+      )
     })
 
     it('[session] lets the organiser score any match', () => {

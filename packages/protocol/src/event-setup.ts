@@ -12,6 +12,7 @@ import {
   teamIdSchema
 } from './identifiers'
 import { matchFormatSchema } from './match-format'
+import { instantMsSchema } from './scoring-event'
 
 export const MAX_PLAYERS = 500
 export const MAX_MATCHES = 1000
@@ -48,6 +49,8 @@ export const matchSetupSchema = z.object({
   id: matchIdSchema,
   /** The line on a team sheet, like `AW` or `Double 1`. */
   label: z.string().trim().max(40).nullable(),
+  /** When the organiser wants it played: it never starts earlier in the estimates. */
+  plannedAtMs: instantMsSchema.nullable().default(null),
   table: tableNumberSchema.nullable()
 })
 export type MatchSetup = z.infer<typeof matchSetupSchema>
@@ -84,6 +87,8 @@ export const eventSetupSchema = z.object({
   matches: z.array(matchSetupSchema).max(MAX_MATCHES),
   name: nameSchema,
   players: z.array(playerSchema).max(MAX_PLAYERS),
+  /** When play begins: no table is estimated to start before it. */
+  startsAtMs: instantMsSchema.nullable().default(null),
   tableCount: z.number().int().min(1).max(MAX_TABLES),
   teams: z.array(teamSchema).max(100)
 })

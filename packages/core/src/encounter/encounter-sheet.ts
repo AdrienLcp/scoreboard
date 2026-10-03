@@ -51,5 +51,6 @@ export const sheetMatchesFor = ({
         : { playerIds: [] },
     id: newMatchId(),
     label: labelFor(line),
+    plannedAtMs: null,
     table: null
   }))

@@ -3,7 +3,10 @@ import { randomUUID } from 'node:crypto'
 import { describe, expect, it } from 'vitest'
 
 import type { EventSetup, MatchSetup } from '@scoreboard/protocol/event-setup'
-import type { ScoringEvent } from '@scoreboard/protocol/scoring-event'
+import type {
+  ScoringEvent,
+  StampedEvent
+} from '@scoreboard/protocol/scoring-event'
 
 import { displayBoardFor, tablesShownOn } from './display-board'
 import { publicSnapshotFor } from './public-snapshot'
@@ -20,21 +23,27 @@ const matchOn = (table: number | null): MatchSetup => ({
   home: { playerIds: [camille.id] },
   id: randomUUID(),
   label: null,
+  plannedAtMs: null,
   table
 })
 
-const started: ScoringEvent = {
+const stamped = (event: ScoringEvent): StampedEvent => ({
+  event,
+  recordedAtMs: 0
+})
+
+const started = stamped({
   firstServer: 'home',
   id: randomUUID(),
   type: 'match.started'
-}
+})
 
-const walkover: ScoringEvent = {
+const walkover = stamped({
   by: 'away',
   id: randomUUID(),
   reason: 'walkover',
   type: 'match.conceded'
-}
+})
 
 const setupWith = (matches: MatchSetup[]): EventSetup => ({
   club: null,
@@ -44,6 +53,7 @@ const setupWith = (matches: MatchSetup[]): EventSetup => ({
   matches,
   name: 'Club day',
   players: [camille, louis],
+  startsAtMs: null,
   tableCount: 4,
   teams: []
 })
@@ -79,13 +89,14 @@ describe('displayBoardFor', () => {
   const upcoming = matchOn(1)
   const done = matchOn(3)
 
-  const snapshot = publicSnapshotFor(
-    setupWith([upcoming, live, done]),
-    new Map([
+  const snapshot = publicSnapshotFor({
+    logs: new Map([
       [live.id, [started]],
       [done.id, [walkover]]
-    ])
-  )
+    ]),
+    nowMs: 0,
+    setup: setupWith([upcoming, live, done])
+  })
 
   const board = displayBoardFor(snapshot, [1, 2, 3, 4])
 
@@ -115,13 +126,14 @@ describe('spectatorProgrammeFor', () => {
     const done = matchOn(1)
 
     const programme = spectatorProgrammeFor(
-      publicSnapshotFor(
-        setupWith([done, live, upcoming]),
-        new Map([
+      publicSnapshotFor({
+        logs: new Map([
           [live.id, [started]],
           [done.id, [walkover]]
-        ])
-      )
+        ]),
+        nowMs: 0,
+        setup: setupWith([done, live, upcoming])
+      })
     )
 
     expect({

@@ -15,8 +15,14 @@ import { Form } from '@/presentation/components/form'
 import { useTranslate } from '@/presentation/i18n/i18n-provider'
 
 import { ChoiceField } from './choice-field'
+import { PlannedTimeForm } from './planned-time-form'
 import { ScoreCorrection } from './score-correction'
-import { addMatch, moveMatchToTable, removeMatch } from './setup-edits'
+import {
+  addMatch,
+  moveMatchToTable,
+  planMatch,
+  removeMatch
+} from './setup-edits'
 
 type MatchesEditorProps = {
   matches: readonly MatchView[]
@@ -73,6 +79,13 @@ export const MatchesEditor: React.FC<MatchesEditorProps> = ({
             <Button onPress={() => onSave(removeMatch(setup, match.id))}>
               {translate('organiser.matches.remove')}
             </Button>
+            <PlannedTimeForm
+              key={match.plannedAtMs}
+              match={match}
+              onPlan={(plannedAtMs) =>
+                onSave(planMatch({ matchId: match.id, plannedAtMs, setup }))
+              }
+            />
             <ScoreCorrection match={match} onRecord={onRecord} />
           </li>
         ))}
@@ -93,6 +106,7 @@ export const MatchesEditor: React.FC<MatchesEditorProps> = ({
               home: { playerIds: [homeId] },
               id: newId(),
               label: null,
+              plannedAtMs: null,
               table: null
             })
           )

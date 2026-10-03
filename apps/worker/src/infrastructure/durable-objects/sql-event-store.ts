@@ -8,7 +8,8 @@ import {
   organiserCodeSchema
 } from '@scoreboard/protocol/identifiers'
 import {
-  type ScoringEvent,
+  instantMsSchema,
+  type StampedEvent,
   scoringEventSchema
 } from '@scoreboard/protocol/scoring-event'
 
@@ -16,7 +17,7 @@ import type { EventStore } from '@/domain/event/event-store'
 
 const SCHEMA_STATEMENTS = [
   'CREATE TABLE IF NOT EXISTS event_meta (key TEXT PRIMARY KEY, value TEXT NOT NULL)',
-  'CREATE TABLE IF NOT EXISTS scoring_events (sequence INTEGER PRIMARY KEY AUTOINCREMENT, match_id TEXT NOT NULL, body TEXT NOT NULL)'
+  'CREATE TABLE IF NOT EXISTS scoring_events (sequence INTEGER PRIMARY KEY AUTOINCREMENT, match_id TEXT NOT NULL, recorded_at_ms INTEGER NOT NULL, body TEXT NOT NULL)'
 ]
 
 const META_KEYS = {
@@ -26,7 +27,11 @@ const META_KEYS = {
 } as const
 
 const metaRowSchema = z.object({ value: z.string() })
-const eventRowSchema = z.object({ body: z.string(), match_id: matchIdSchema })
+const eventRowSchema = z.object({
+  body: z.string(),
+  match_id: matchIdSchema,
+  recorded_at_ms: instantMsSchema
+})
 
 /**
  * Parses what this store wrote itself. A row that no longer matches its schema
@@ -64,23 +69,29 @@ export const createSqlEventStore = (sql: SqlStorage): EventStore => {
   }
 
   return {
-    appendScoringEvent: (matchId, event) => {
+    appendScoringEvent: (matchId, { event, recordedAtMs }) => {
       sql.exec(
-        'INSERT INTO scoring_events (match_id, body) VALUES (?, ?)',
+        'INSERT INTO scoring_events (match_id, recorded_at_ms, body) VALUES (?, ?, ?)',
         matchId,
+        recordedAtMs,
         JSON.stringify(event)
       )
     },
     readLogs: () => {
-      const logs = new Map<MatchId, ScoringEvent[]>()
+      const logs = new Map<MatchId, StampedEvent[]>()
 
       for (const row of sql
-        .exec('SELECT match_id, body FROM scoring_events ORDER BY sequence')
+        .exec(
+          'SELECT match_id, recorded_at_ms, body FROM scoring_events ORDER BY sequence'
+        )
         .toArray()) {
         const stored = eventRowSchema.parse(row)
         const log = logs.get(stored.match_id) ?? []
 
-        log.push(parseStored(scoringEventSchema, stored.body))
+        log.push({
+          event: parseStored(scoringEventSchema, stored.body),
+          recordedAtMs: stored.recorded_at_ms
+        })
         logs.set(stored.match_id, log)
       }
 

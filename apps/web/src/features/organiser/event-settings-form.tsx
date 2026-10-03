@@ -4,6 +4,7 @@ import { useState } from 'react'
 import type { EventSetup } from '@scoreboard/protocol/event-setup'
 import { MAX_TABLES } from '@scoreboard/protocol/identifiers'
 
+import { toLocalDateTime } from '@/infrastructure/dates'
 import { Button } from '@/presentation/components/button'
 import { Form } from '@/presentation/components/form'
 import { Group, NumberField } from '@/presentation/components/number-field'
@@ -11,6 +12,7 @@ import { Input, Label, TextField } from '@/presentation/components/text-field'
 import { useTranslate } from '@/presentation/i18n/i18n-provider'
 
 import { changeTableCount } from './setup-edits'
+import { readTypedInstant } from './typed-instant'
 
 type EventSettingsFormProps = {
   onSave: (setup: EventSetup) => void
@@ -26,11 +28,20 @@ export const EventSettingsForm: React.FC<EventSettingsFormProps> = ({
   const [name, setName] = useState(setup.name)
   const [clubName, setClubName] = useState(setup.club?.name ?? '')
   const [tableCount, setTableCount] = useState(setup.tableCount)
+  const [startsAt, setStartsAt] = useState(
+    setup.startsAtMs === null ? '' : toLocalDateTime(setup.startsAtMs)
+  )
+  const startsAtMs = readTypedInstant(startsAt)
 
   return (
     <Form
       onSubmit={(event) => {
         event.preventDefault()
+
+        if (startsAtMs === 'invalid') {
+          return
+        }
+
         const trimmedClubName = clubName.trim()
 
         onSave({
@@ -43,7 +54,8 @@ export const EventSettingsForm: React.FC<EventSettingsFormProps> = ({
                   logoUrl: setup.club?.logoUrl ?? null,
                   name: trimmedClubName
                 },
-          name
+          name,
+          startsAtMs
         })
       }}
     >
@@ -54,6 +66,14 @@ export const EventSettingsForm: React.FC<EventSettingsFormProps> = ({
       <TextField onChange={setClubName} value={clubName}>
         <Label>{translate('organiser.settings.club')}</Label>
         <Input />
+      </TextField>
+      <TextField
+        isInvalid={startsAtMs === 'invalid'}
+        onChange={setStartsAt}
+        value={startsAt}
+      >
+        <Label>{translate('organiser.settings.startsAt')}</Label>
+        <Input type='datetime-local' />
       </TextField>
       <NumberField
         maxValue={MAX_TABLES}

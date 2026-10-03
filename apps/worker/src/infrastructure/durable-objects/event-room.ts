@@ -15,6 +15,7 @@ import { handleFrame } from '@/domain/event/event-session'
 import type { EventStore } from '@/domain/event/event-store'
 import { snapshotMessageFor } from '@/domain/event/event-view'
 import type { Env } from '@/env'
+import { nowMs } from '@/infrastructure/clock'
 import { cryptoRandomIndex } from '@/infrastructure/random'
 
 import { createSqlEventStore } from './sql-event-store'
@@ -77,6 +78,7 @@ export class EventRoom extends DurableObject<Env> {
 
     const outcome = handleFrame({
       admission: admissionOf(socket),
+      nowMs: nowMs(),
       randomIndex: cryptoRandomIndex,
       raw: message,
       store: this.store
@@ -101,6 +103,7 @@ export class EventRoom extends DurableObject<Env> {
 
   private broadcastSnapshots(): void {
     const snapshotsByAdmission = new Map<string, ServerMessage | null>()
+    const broadcastAtMs = nowMs()
 
     for (const socket of this.ctx.getWebSockets()) {
       const admission = admissionOf(socket)
@@ -112,7 +115,11 @@ export class EventRoom extends DurableObject<Env> {
       const key = JSON.stringify(admission)
       const snapshot = snapshotsByAdmission.has(key)
         ? (snapshotsByAdmission.get(key) ?? null)
-        : snapshotMessageFor(this.store, admission)
+        : snapshotMessageFor({
+            admission,
+            nowMs: broadcastAtMs,
+            store: this.store
+          })
 
       snapshotsByAdmission.set(key, snapshot)
 

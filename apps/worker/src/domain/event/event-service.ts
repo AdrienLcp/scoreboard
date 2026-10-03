@@ -9,7 +9,10 @@ import type {
 import type { EventSetup } from '@scoreboard/protocol/event-setup'
 import type { MatchId, OrganiserCode } from '@scoreboard/protocol/identifiers'
 import type { CreateEventInput } from '@scoreboard/protocol/routes'
-import type { ScoringEvent } from '@scoreboard/protocol/scoring-event'
+import type {
+  InstantMs,
+  ScoringEvent
+} from '@scoreboard/protocol/scoring-event'
 
 import {
   type RandomIndex,
@@ -45,6 +48,7 @@ export const openEvent = ({
     matches: [],
     name: input.name,
     players: [],
+    startsAtMs: null,
     tableCount: input.tableCount,
     teams: []
   })
@@ -102,11 +106,14 @@ export const recordEvent = ({
   admission,
   event,
   matchId,
+  nowMs,
   store
 }: {
   admission: Admission
   event: ScoringEvent
   matchId: MatchId
+  /** Stamped on the event: the server's clock, never the device's. */
+  nowMs: InstantMs
   store: EventStore
 }): Result<'recorded' | 'duplicate', RecordRefusal | 'not_allowed'> => {
   if (admission.role === 'display' || admission.role === 'spectator') {
@@ -128,7 +135,7 @@ export const recordEvent = ({
   const recorded = recordScoringEvent({
     event,
     format: match.format,
-    log: store.readLogs().get(matchId) ?? []
+    log: (store.readLogs().get(matchId) ?? []).map((stamped) => stamped.event)
   })
 
   if (recorded.status === 'failure') {
@@ -139,7 +146,7 @@ export const recordEvent = ({
       : Result.failure(refusal)
   }
 
-  store.appendScoringEvent(matchId, event)
+  store.appendScoringEvent(matchId, { event, recordedAtMs: nowMs })
 
   return Result.success('recorded')
 }

@@ -72,9 +72,11 @@ describe('encodeChecked', () => {
           displays: [],
           encounters: [],
           encounterViews: [],
+          generatedAtMs: 0,
           matches: [],
           name: 'Club day',
           players: [],
+          startsAtMs: null,
           tableCount: 1,
           tables: [{ matchId: null, number: 1 }],
           teams: []

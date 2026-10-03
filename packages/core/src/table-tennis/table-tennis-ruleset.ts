@@ -23,6 +23,15 @@ export type TableTennisProgress = {
 
 const LOVE_ALL: Score = { away: 0, home: 0 }
 
+/** A club game to 11 lasts about this long, rests and towels included. */
+const TYPICAL_GAME_MS = 6 * 60 * 1000
+
+/** A match usually goes one game past the minimum: 4 games in a best of 5. */
+const typicalDurationMs = (format: TableTennisFormat): number =>
+  Math.min(format.bestOf, gamesToWinMatch(format.bestOf) + 1) *
+  TYPICAL_GAME_MS *
+  (format.pointsPerGame / 11)
+
 const gamesWonIn = (games: readonly Score[], pointsPerGame: number): Score => {
   const winsFor = (side: Side): number =>
     games.filter((game) => gameWinner(game, pointsPerGame) === side).length
@@ -194,5 +203,6 @@ export const tableTennisRuleset: Ruleset<
   }),
   correct,
   end: () => Result.failure('cannot_end'),
+  typicalDurationMs,
   view
 }
