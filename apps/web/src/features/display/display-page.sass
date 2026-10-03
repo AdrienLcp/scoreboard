@@ -9,9 +9,11 @@
     --display-radius: calc(var(--cu) * 1.2)
 
     display: grid
+    flex: none
     gap: var(--display-gap)
     grid-template-rows: auto minmax(0, 1fr)
     height: 100dvh
+    min-height: 0
     padding: calc(var(--cu) * 1.6) calc(var(--cu) * 1.8)
 
   @media (width <= 720px)

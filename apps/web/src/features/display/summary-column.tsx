@@ -122,7 +122,7 @@ export const SummaryColumn: React.FC<SummaryColumnProps> = ({
         )}
       </section>
       {summary.next.length === 0 ? null : (
-        <section className='summary-block grows'>
+        <section className='summary-block grows yields'>
           <h2>{translate('display.next')}</h2>
           <ol className='summary-list'>
             {summary.next.map((match) => {

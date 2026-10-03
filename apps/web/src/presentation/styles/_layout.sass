@@ -8,13 +8,14 @@
   width: min(100%, var(--measure-page))
 
 /// Wraps whole items into a column hidden past the edge, so a list cut by its
-/// box never shows half a row.
+/// box never shows half a row; the gap pushes that column out of sight.
 @mixin clip-whole-rows
   display: flex
   flex-direction: column
   flex-wrap: wrap
   min-height: 0
   overflow: hidden
+  column-gap: 100vw
 
   > *
     width: 100%

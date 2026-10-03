@@ -3,6 +3,7 @@
     display: grid
     gap: var(--display-gap)
     grid-template-columns: minmax(0, 1fr) calc(var(--cu) * 40)
+    grid-template-rows: minmax(0, 1fr)
     min-height: 0
 
   .live-grid
@@ -24,10 +25,11 @@
   @media (width <= 720px)
     .live-board
       grid-template-columns: minmax(0, 1fr)
+      grid-template-rows: auto
 
     .live-grid
       align-content: start
-      grid-auto-rows: 10.625rem
+      grid-auto-rows: 12.5rem
       grid-template-columns: minmax(0, 1fr)
       grid-template-rows: none
 

@@ -1,5 +1,6 @@
+/// Zero specificity: every page's own class lays its main out over these.
 @layer components
-  #main
+  :where(#main)
     display: flex
     flex: 1
     flex-direction: column

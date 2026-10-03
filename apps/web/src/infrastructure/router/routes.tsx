@@ -35,6 +35,9 @@ const pageFor = {
   })
 } satisfies Record<RoutedPath, RouteObject['lazy']>
 
+/** Nothing while the first page's code loads: the served document already shows the field colour. */
+const RouteFallback = () => null
+
 export const routes: RouteObject[] = [
   {
     Component: RootRoute,
@@ -42,6 +45,7 @@ export const routes: RouteObject[] = [
       ...Object.values(paths).map((path) => ({ lazy: pageFor[path], path })),
       { Component: NotFoundPage, path: '*' }
     ],
-    ErrorBoundary: ErrorScreen
+    ErrorBoundary: ErrorScreen,
+    HydrateFallback: RouteFallback
   }
 ]
