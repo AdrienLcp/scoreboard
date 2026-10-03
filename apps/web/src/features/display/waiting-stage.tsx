@@ -31,7 +31,6 @@ export const WaitingStage: React.FC<WaitingStageProps> = ({
   return (
     <div className='waiting-stage'>
       <div className='waiting-main'>
-        <p className='waiting-lead'>{translate('display.waiting.lead')}</p>
         <h2 className='waiting-time'>
           {firstStartMs === null ? (
             translate('display.waiting.soon')

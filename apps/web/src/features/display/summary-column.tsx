@@ -2,6 +2,7 @@ import type React from 'react'
 
 import type { Player } from '@scoreboard/protocol/event-setup'
 import type { MatchView } from '@scoreboard/protocol/event-snapshot'
+import type { InstantMs } from '@scoreboard/protocol/scoring-event'
 import type { Side } from '@scoreboard/protocol/side'
 
 import { opponentOf } from '@scoreboard/core/match/opponent'
@@ -9,6 +10,7 @@ import { opponentOf } from '@scoreboard/core/match/opponent'
 import type { EncounterLine } from '@/features/event/encounter-lines'
 import { EncounterScore } from '@/features/event/encounter-score'
 import { sideName } from '@/features/event/participant-names'
+import { startLabel } from '@/features/event/start-label'
 import { toDate } from '@/infrastructure/dates'
 import { QrCode } from '@/presentation/components/qr-code'
 import { TableNumber } from '@/presentation/components/table-number'
@@ -21,6 +23,7 @@ import './summary-column.sass'
 type SummaryColumnProps = {
   encounters: readonly EncounterLine[]
   encounterTitleFor: (match: MatchView) => string | null
+  nowMs: InstantMs
   players: readonly Player[]
   spectatorUrl: string
   summary: DisplaySummary
@@ -66,6 +69,7 @@ const ResultItem: React.FC<{
 export const SummaryColumn: React.FC<SummaryColumnProps> = ({
   encounters,
   encounterTitleFor,
+  nowMs,
   players,
   spectatorUrl,
   summary
@@ -114,7 +118,7 @@ export const SummaryColumn: React.FC<SummaryColumnProps> = ({
                 <span>
                   {nextAtMs === null
                     ? translate('display.nothingNext')
-                    : translate('display.around', { at: toDate(nextAtMs) })}
+                    : startLabel({ nowMs, startMs: nextAtMs, translate })}
                 </span>
               </li>
             ))}
@@ -132,7 +136,7 @@ export const SummaryColumn: React.FC<SummaryColumnProps> = ({
               return (
                 <li className='next-item' key={match.id}>
                   <span className='next-time'>
-                    {translate('display.around', { at: toDate(start) })}
+                    {startLabel({ nowMs, startMs: start, translate })}
                   </span>
                   <span className='next-names'>{namesOf(match)}</span>
                   <span className='next-detail'>

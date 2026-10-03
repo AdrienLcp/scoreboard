@@ -292,6 +292,16 @@
     .umpire-log, .umpire-keys
       display: block
 
+    .umpire-aside
+      max-height: calc(100dvh - var(--space-xl))
+      overflow-y: auto
+      position: sticky
+      top: var(--space-m)
+
+    .umpire-aside:has(.end-match-panel)
+      .umpire-log, .umpire-keys
+        display: none
+
     .umpire-console .point-target-key
       display: inline-grid
 

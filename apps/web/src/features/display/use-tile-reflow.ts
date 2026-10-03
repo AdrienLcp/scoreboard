@@ -47,7 +47,10 @@ export const useTileReflow = (
 
       if (Math.abs(dx) > MOVED_PX || Math.abs(dy) > MOVED_PX) {
         tile.animate(
-          [{ transform: `translate(${dx}px, ${dy}px)` }, { transform: 'none' }],
+          [
+            { transform: `translate(${dx}px, ${dy}px)`, zIndex: 1 },
+            { transform: 'none', zIndex: 1 }
+          ],
           { duration: REFLOW_MS, easing: REFLOW_EASING }
         )
       }

@@ -12,6 +12,7 @@ import {
 import { EncounterScore } from '@/features/event/encounter-score'
 import { FeedMessage } from '@/features/event/feed-message'
 import { sideName } from '@/features/event/participant-names'
+import { startLabel } from '@/features/event/start-label'
 import { usePublicFeed } from '@/features/event/use-public-feed'
 import { useServerNow } from '@/features/event/use-server-now'
 import { toDate } from '@/infrastructure/dates'
@@ -120,7 +121,7 @@ const SpectatorProgramme: React.FC<{ eventId: EventId }> = ({ eventId }) => {
         <span className='upcoming-time'>
           {start === null
             ? translate('spectator.noTime')
-            : translate('display.around', { at: toDate(start) })}
+            : startLabel({ nowMs, startMs: start, translate })}
         </span>
         <div>
           <p className='upcoming-names'>

@@ -129,6 +129,13 @@ export const MatchesEditor: React.FC<MatchesEditorProps> = ({
                 match={match}
                 onRecord={onRecord}
                 players={setup.players}
+                removal={
+                  <ConfirmButton
+                    confirmLabel={translate('organiser.matches.removeConfirm')}
+                    label={translate('organiser.matches.remove')}
+                    onConfirm={() => onSave(removeMatch(setup, match.id))}
+                  />
+                }
               >
                 <ChoiceField
                   choices={tableChoices}
@@ -152,11 +159,6 @@ export const MatchesEditor: React.FC<MatchesEditorProps> = ({
                   onPlan={(plannedAtMs) =>
                     onSave(planMatch({ matchId: match.id, plannedAtMs, setup }))
                   }
-                />
-                <ConfirmButton
-                  confirmLabel={translate('organiser.matches.removeConfirm')}
-                  label={translate('organiser.matches.remove')}
-                  onConfirm={() => onSave(removeMatch(setup, match.id))}
                 />
               </MatchRow>
             </li>

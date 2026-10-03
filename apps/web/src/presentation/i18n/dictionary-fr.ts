@@ -56,7 +56,6 @@ export const FR_DICTIONARY = defineDictionary({
       firstAt: defineTranslation('Premiers matchs à <lit>{at:date}</lit>', {
         date: { at: { timeStyle: 'short' } }
       }),
-      lead: 'La journée commence bientôt',
       soon: 'Premiers matchs dans un instant',
       tables: defineTranslation('{count:plural}', {
         plural: { count: { one: '{?} table', other: '{?} tables' } }
@@ -153,6 +152,7 @@ export const FR_DICTIONARY = defineDictionary({
       title: 'Codes des tables'
     },
     choosePlayer: 'Choisir un joueur',
+    chooseTeam: 'Choisir une équipe',
     code: {
       explain:
         'Il vous a été donné à la création de la rencontre. Il ouvre la préparation et les corrections.',
@@ -326,6 +326,7 @@ export const FR_DICTIONARY = defineDictionary({
   time: {
     hoursMinutes: '{hours:number} h {minutes}',
     minutes: '{minutes:number} min',
+    now: 'maintenant',
     underAMinute: '< 1 min'
   },
   timing: {

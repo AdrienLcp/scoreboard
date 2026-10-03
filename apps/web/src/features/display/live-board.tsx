@@ -116,6 +116,7 @@ export const LiveBoard: React.FC<LiveBoardProps> = ({
         <SummaryColumn
           encounters={encounters}
           encounterTitleFor={encounterTitleFor}
+          nowMs={nowMs}
           players={snapshot.players}
           spectatorUrl={spectatorUrl}
           summary={displaySummaryFor({

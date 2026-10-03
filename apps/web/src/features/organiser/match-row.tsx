@@ -23,6 +23,8 @@ type MatchRowProps = {
   match: MatchView
   onRecord: (matchId: MatchId, event: ScoringEvent) => void
   players: readonly Player[]
+  /** Removing the match, kept inside the folded correction, apart from everyday controls. */
+  removal?: React.ReactNode
 }
 
 /** One match as the organiser runs it: who, where it stands, and a correction kept folded. */
@@ -30,7 +32,8 @@ export const MatchRow: React.FC<MatchRowProps> = ({
   children,
   match,
   onRecord,
-  players
+  players,
+  removal
 }) => {
   const translate = useTranslate()
   const { state, timing } = match
@@ -88,6 +91,9 @@ export const MatchRow: React.FC<MatchRowProps> = ({
       <DisclosurePanel>
         <div className='match-row-correction'>
           <ScoreCorrection match={match} onRecord={onRecord} />
+          {removal === undefined ? null : (
+            <div className='match-row-removal'>{removal}</div>
+          )}
         </div>
       </DisclosurePanel>
     </Disclosure>

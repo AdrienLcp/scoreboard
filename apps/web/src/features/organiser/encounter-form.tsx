@@ -67,6 +67,7 @@ export const EncounterForm: React.FC<EncounterFormProps> = ({
               [side]: { ...current[side], [letter]: playerId ?? undefined }
             }))
           }
+          placeholder={translate('organiser.choosePlayer')}
           selectedId={lineups[side][letter] ?? null}
         />
       )
@@ -114,6 +115,7 @@ export const EncounterForm: React.FC<EncounterFormProps> = ({
         choices={teamChoices}
         label={translate('organiser.encounter.home')}
         onChange={setHomeTeamId}
+        placeholder={translate('organiser.chooseTeam')}
         selectedId={homeTeamId}
       />
       <div className='encounter-letters'>
@@ -123,6 +125,7 @@ export const EncounterForm: React.FC<EncounterFormProps> = ({
         choices={teamChoices}
         label={translate('organiser.encounter.away')}
         onChange={setAwayTeamId}
+        placeholder={translate('organiser.chooseTeam')}
         selectedId={awayTeamId}
       />
       <div className='encounter-letters'>
