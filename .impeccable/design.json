@@ -1,0 +1,408 @@
+{
+  "schemaVersion": 2,
+  "generatedAt": "2026-10-03T21:26:42.015Z",
+  "title": "Design System: Scoreboard",
+  "extensions": {
+    "colorMeta": {
+      "live": {
+        "role": "primary",
+        "displayName": "Scoreboard Lime",
+        "canonical": "oklch(89.6% 0.199 122)",
+        "tonalRamp": [
+          "oklch(15% 0.199 122)",
+          "oklch(26% 0.199 122)",
+          "oklch(37% 0.199 122)",
+          "oklch(48% 0.199 122)",
+          "oklch(60% 0.199 122)",
+          "oklch(71% 0.199 122)",
+          "oklch(83% 0.199 122)",
+          "oklch(95% 0.199 122)"
+        ]
+      },
+      "field": {
+        "role": "neutral",
+        "displayName": "Hall Night",
+        "canonical": "oklch(15.1% 0.025 267)",
+        "tonalRamp": [
+          "oklch(15.1% 0.025 267)",
+          "oklch(20% 0.04 267.5)",
+          "oklch(24.9% 0.049 268)",
+          "oklch(29.9% 0.057 268)",
+          "oklch(32.1% 0.055 266)",
+          "oklch(62.1% 0.048 268)",
+          "oklch(75.1% 0.039 267)",
+          "oklch(97.2% 0.007 261)"
+        ]
+      },
+      "surface": {
+        "role": "neutral",
+        "displayName": "Tile Navy",
+        "canonical": "oklch(20% 0.04 267.5)",
+        "tonalRamp": [
+          "oklch(15.1% 0.025 267)",
+          "oklch(20% 0.04 267.5)",
+          "oklch(24.9% 0.049 268)",
+          "oklch(29.9% 0.057 268)",
+          "oklch(32.1% 0.055 266)",
+          "oklch(62.1% 0.048 268)",
+          "oklch(75.1% 0.039 267)",
+          "oklch(97.2% 0.007 261)"
+        ]
+      },
+      "surface-raised": {
+        "role": "neutral",
+        "displayName": "Raised Navy",
+        "canonical": "oklch(24.9% 0.049 268)",
+        "tonalRamp": [
+          "oklch(15.1% 0.025 267)",
+          "oklch(20% 0.04 267.5)",
+          "oklch(24.9% 0.049 268)",
+          "oklch(29.9% 0.057 268)",
+          "oklch(32.1% 0.055 266)",
+          "oklch(62.1% 0.048 268)",
+          "oklch(75.1% 0.039 267)",
+          "oklch(97.2% 0.007 261)"
+        ]
+      },
+      "surface-high": {
+        "role": "neutral",
+        "displayName": "High Navy",
+        "canonical": "oklch(29.9% 0.057 268)",
+        "tonalRamp": [
+          "oklch(15.1% 0.025 267)",
+          "oklch(20% 0.04 267.5)",
+          "oklch(24.9% 0.049 268)",
+          "oklch(29.9% 0.057 268)",
+          "oklch(32.1% 0.055 266)",
+          "oklch(62.1% 0.048 268)",
+          "oklch(75.1% 0.039 267)",
+          "oklch(97.2% 0.007 261)"
+        ]
+      },
+      "rule": {
+        "role": "neutral",
+        "displayName": "Rule Navy",
+        "canonical": "oklch(32.1% 0.055 266)",
+        "tonalRamp": [
+          "oklch(15.1% 0.025 267)",
+          "oklch(20% 0.04 267.5)",
+          "oklch(24.9% 0.049 268)",
+          "oklch(29.9% 0.057 268)",
+          "oklch(32.1% 0.055 266)",
+          "oklch(62.1% 0.048 268)",
+          "oklch(75.1% 0.039 267)",
+          "oklch(97.2% 0.007 261)"
+        ]
+      },
+      "ink": {
+        "role": "neutral",
+        "displayName": "Chalk White",
+        "canonical": "oklch(97.2% 0.007 261)",
+        "tonalRamp": [
+          "oklch(15.1% 0.025 267)",
+          "oklch(20% 0.04 267.5)",
+          "oklch(24.9% 0.049 268)",
+          "oklch(29.9% 0.057 268)",
+          "oklch(32.1% 0.055 266)",
+          "oklch(62.1% 0.048 268)",
+          "oklch(75.1% 0.039 267)",
+          "oklch(97.2% 0.007 261)"
+        ]
+      },
+      "ink-muted": {
+        "role": "neutral",
+        "displayName": "Mist",
+        "canonical": "oklch(75.1% 0.039 267)",
+        "tonalRamp": [
+          "oklch(15.1% 0.025 267)",
+          "oklch(20% 0.04 267.5)",
+          "oklch(24.9% 0.049 268)",
+          "oklch(29.9% 0.057 268)",
+          "oklch(32.1% 0.055 266)",
+          "oklch(62.1% 0.048 268)",
+          "oklch(75.1% 0.039 267)",
+          "oklch(97.2% 0.007 261)"
+        ]
+      },
+      "ink-dim": {
+        "role": "neutral",
+        "displayName": "Dusk",
+        "canonical": "oklch(62.1% 0.048 268)",
+        "tonalRamp": [
+          "oklch(15.1% 0.025 267)",
+          "oklch(20% 0.04 267.5)",
+          "oklch(24.9% 0.049 268)",
+          "oklch(29.9% 0.057 268)",
+          "oklch(32.1% 0.055 266)",
+          "oklch(62.1% 0.048 268)",
+          "oklch(75.1% 0.039 267)",
+          "oklch(97.2% 0.007 261)"
+        ]
+      },
+      "on-live": {
+        "role": "neutral",
+        "displayName": "Deep Ink Navy",
+        "canonical": "oklch(18% 0.032 267)",
+        "tonalRamp": [
+          "oklch(15.1% 0.025 267)",
+          "oklch(20% 0.04 267.5)",
+          "oklch(24.9% 0.049 268)",
+          "oklch(29.9% 0.057 268)",
+          "oklch(32.1% 0.055 266)",
+          "oklch(62.1% 0.048 268)",
+          "oklch(75.1% 0.039 267)",
+          "oklch(97.2% 0.007 261)"
+        ]
+      },
+      "qr-paper": {
+        "role": "neutral",
+        "displayName": "QR Paper",
+        "canonical": "oklch(100% 0 0)",
+        "tonalRamp": [
+          "oklch(15% 0 0)",
+          "oklch(26% 0 0)",
+          "oklch(37% 0 0)",
+          "oklch(48% 0 0)",
+          "oklch(60% 0 0)",
+          "oklch(71% 0 0)",
+          "oklch(83% 0 0)",
+          "oklch(95% 0 0)"
+        ]
+      }
+    },
+    "typographyMeta": {
+      "display": {
+        "displayName": "Score",
+        "purpose": "Point score in live tiles and umpire point targets; the largest element on any scoring surface."
+      },
+      "headline": {
+        "displayName": "Page title",
+        "purpose": "Tool page titles and the club name on the display."
+      },
+      "title": {
+        "displayName": "Name",
+        "purpose": "Player and team names."
+      },
+      "body": {
+        "displayName": "Body",
+        "purpose": "Running text, hints, form values."
+      },
+      "label": {
+        "displayName": "Quiet heading",
+        "purpose": "Sentence-case muted section headings and field labels."
+      },
+      "figure": {
+        "displayName": "Figure",
+        "purpose": "Every number the room reads: tables, games, times, clock, counts."
+      }
+    },
+    "shadows": [
+      {
+        "name": "overlay",
+        "value": "0 0.875rem 2.125rem oklch(0% 0 0 / 55%)",
+        "purpose": "Popovers and list-box menus only."
+      },
+      {
+        "name": "edge",
+        "value": "inset 0 0 0 1px var(--rule)",
+        "purpose": "Hairline ring on secondary buttons and point targets."
+      },
+      {
+        "name": "edge-live",
+        "value": "inset 0 0 0 2px var(--live)",
+        "purpose": "Game-point pill outline."
+      },
+      {
+        "name": "edge-muted",
+        "value": "inset 0 0 0 2px var(--ink-muted)",
+        "purpose": "Deuce pill outline."
+      },
+      {
+        "name": "key-cap",
+        "value": "inset 0 -2px 0 var(--field)",
+        "purpose": "Keyboard shortcut hints on the umpire console."
+      }
+    ],
+    "motion": [
+      {
+        "name": "transition-fast",
+        "value": "150ms",
+        "purpose": "Hover, press and color changes."
+      },
+      {
+        "name": "transition-base",
+        "value": "340ms",
+        "purpose": "Pill entrance, disclosure, chevron rotation."
+      },
+      {
+        "name": "transition-slow",
+        "value": "640ms",
+        "purpose": "Live tile entrance and exit."
+      },
+      {
+        "name": "ease-out",
+        "value": "cubic-bezier(0.16, 1, 0.3, 1)",
+        "purpose": "Default entrance easing."
+      },
+      {
+        "name": "ease-move",
+        "value": "cubic-bezier(0.22, 0.8, 0.18, 1)",
+        "purpose": "Elements that move (tile reflow, rolling numbers)."
+      },
+      {
+        "name": "ease-leave",
+        "value": "cubic-bezier(0.4, 0, 1, 1)",
+        "purpose": "Exits."
+      }
+    ],
+    "breakpoints": [
+      {
+        "name": "display-reflow",
+        "value": "720px"
+      },
+      {
+        "name": "tool-s",
+        "value": "700px"
+      },
+      {
+        "name": "tool-m",
+        "value": "860px"
+      },
+      {
+        "name": "tool-l",
+        "value": "960px"
+      },
+      {
+        "name": "tool-xl",
+        "value": "1100px"
+      }
+    ]
+  },
+  "components": [
+    {
+      "name": "Primary Button",
+      "kind": "button",
+      "refersTo": "button-primary",
+      "description": "The one primary action of a screen. Its lime fill is an open tension, see DESIGN.md.",
+      "html": "<button class=\"ds-btn-primary\">Commencer le match</button>",
+      "css": ".ds-btn-primary{background:oklch(89.6% 0.199 122);color:oklch(18% 0.032 267);font:700 1.0625rem Barlow,system-ui,sans-serif;min-height:3.875rem;padding:0.75rem 1rem;border:none;border-radius:0.875rem;cursor:pointer;transition:filter 150ms,scale 150ms cubic-bezier(0.16,1,0.3,1)}.ds-btn-primary:hover{filter:brightness(1.06)}.ds-btn-primary:active{scale:0.985}.ds-btn-primary:focus-visible{outline:3px solid oklch(89.6% 0.199 122);outline-offset:3px}"
+    },
+    {
+      "name": "Secondary Button",
+      "kind": "button",
+      "refersTo": "button-secondary",
+      "description": "Default button: transparent with a hairline ring.",
+      "html": "<button class=\"ds-btn\">Annuler le point</button>",
+      "css": ".ds-btn{background:transparent;color:oklch(97.2% 0.007 261);font:600 0.9375rem Barlow,system-ui,sans-serif;min-height:3rem;padding:0.75rem 1rem;border:none;border-radius:0.875rem;box-shadow:inset 0 0 0 1px oklch(32.1% 0.055 266);cursor:pointer;transition:background-color 150ms,scale 150ms}.ds-btn:hover{background:oklch(20% 0.04 267.5)}.ds-btn:active{scale:0.985}.ds-btn:focus-visible{outline:3px solid oklch(89.6% 0.199 122);outline-offset:3px}"
+    },
+    {
+      "name": "Stop Button",
+      "kind": "button",
+      "refersTo": "button-stop",
+      "description": "White fill for ending or irreversible actions.",
+      "html": "<button class=\"ds-btn-stop\">Terminer le match</button>",
+      "css": ".ds-btn-stop{background:oklch(97.2% 0.007 261);color:oklch(18% 0.032 267);font:700 0.9375rem Barlow,system-ui,sans-serif;min-height:3rem;padding:0.75rem 1rem;border:none;border-radius:0.875rem;cursor:pointer;transition:filter 150ms}.ds-btn-stop:hover{filter:brightness(0.92)}.ds-btn-stop:focus-visible{outline:3px solid oklch(89.6% 0.199 122);outline-offset:3px}"
+    },
+    {
+      "name": "Field",
+      "kind": "input",
+      "refersTo": "field-input",
+      "description": "Text field with a muted label; focus turns the border lime.",
+      "html": "<label class=\"ds-field\"><span class=\"ds-field-label\">Nom du joueur</span><input class=\"ds-input\" placeholder=\"T. Rivière\"></label>",
+      "css": ".ds-field{display:flex;flex-direction:column;gap:0.5rem;font-family:Barlow,system-ui,sans-serif}.ds-field-label{color:oklch(75.1% 0.039 267);font-size:0.875rem;font-weight:600}.ds-input{background:oklch(20% 0.04 267.5);border:2px solid oklch(32.1% 0.055 266);border-radius:0.875rem;color:oklch(97.2% 0.007 261);font:600 1rem Barlow,system-ui,sans-serif;min-height:3rem;padding:0.5rem 0.75rem;transition:border-color 150ms}.ds-input::placeholder{color:oklch(62.1% 0.048 268);font-weight:500}.ds-input:hover{border-color:oklch(29.9% 0.057 268)}.ds-input:focus{border-color:oklch(89.6% 0.199 122);outline:none}"
+    },
+    {
+      "name": "Tabs",
+      "kind": "nav",
+      "refersTo": "tab",
+      "description": "Segmented tabs on a surface track; the selected tab fills high navy.",
+      "html": "<div class=\"ds-tabs\"><button class=\"ds-tab ds-tab-on\">En cours <b>11</b></button><button class=\"ds-tab\">À venir <b>6</b></button><button class=\"ds-tab\">Résultats <b>4</b></button></div>",
+      "css": ".ds-tabs{display:grid;grid-auto-flow:column;grid-auto-columns:minmax(0,1fr);gap:0.25rem;padding:0.25rem;background:oklch(20% 0.04 267.5);border-radius:0.875rem;font-family:Barlow,system-ui,sans-serif}.ds-tab{background:transparent;border:none;border-radius:0.625rem;color:oklch(75.1% 0.039 267);font:600 0.9375rem Barlow,system-ui,sans-serif;min-height:2.75rem;cursor:pointer;display:flex;gap:0.5rem;align-items:center;justify-content:center;transition:background-color 150ms,color 150ms}.ds-tab b{font-family:\"Barlow Condensed\",Barlow,sans-serif;font-variant-numeric:tabular-nums;font-weight:700;font-size:1rem}.ds-tab:hover{color:oklch(97.2% 0.007 261)}.ds-tab-on{background:oklch(29.9% 0.057 268);color:oklch(97.2% 0.007 261)}.ds-tab:focus-visible{outline:3px solid oklch(89.6% 0.199 122);outline-offset:-3px}"
+    },
+    {
+      "name": "State Pills",
+      "kind": "chip",
+      "refersTo": "state-pill-match-point",
+      "description": "At most one per tile: match point, game point, deuce, over.",
+      "html": "<span class=\"ds-pill ds-pill-mp\">Balle de match</span> <span class=\"ds-pill ds-pill-gp\">Balle de manche</span> <span class=\"ds-pill ds-pill-deuce\">Égalité</span> <span class=\"ds-pill ds-pill-over\">Terminé</span>",
+      "css": ".ds-pill{display:inline-flex;align-items:center;border-radius:999px;font:700 0.8125rem/1.05 Barlow,system-ui,sans-serif;padding:0.34em 0.82em;white-space:nowrap}.ds-pill-mp{background:oklch(89.6% 0.199 122);color:oklch(18% 0.032 267)}.ds-pill-gp{box-shadow:inset 0 0 0 2px oklch(89.6% 0.199 122);color:oklch(89.6% 0.199 122)}.ds-pill-deuce{box-shadow:inset 0 0 0 2px oklch(75.1% 0.039 267);color:oklch(97.2% 0.007 261)}.ds-pill-over{background:oklch(29.9% 0.057 268);color:oklch(97.2% 0.007 261)}"
+    },
+    {
+      "name": "Live Tile",
+      "kind": "custom",
+      "refersTo": "live-tile",
+      "description": "Signature display tile: table number, one pill, two rows of serve triangle, name, games well and giant score.",
+      "html": "<div class=\"ds-tile\"><div class=\"ds-tile-head\"><span class=\"ds-tn\">9</span><span class=\"ds-tile-label\">Tableau B – 1/4 de finale</span><span class=\"ds-tile-pill\">Balle de match</span></div><div class=\"ds-row ds-hot\"><span class=\"ds-serve\"><svg viewBox=\"0 0 10 10\" width=\"10\" height=\"10\"><path d=\"M2 1l7 4-7 4z\" fill=\"currentColor\"/></svg></span><span class=\"ds-name\">R. Gasnier</span><span class=\"ds-games\">1</span><span class=\"ds-score\">10</span></div><div class=\"ds-row\"><span class=\"ds-serve\"></span><span class=\"ds-name\">A. Lambert</span><span class=\"ds-games\">1</span><span class=\"ds-score\">0</span></div><div class=\"ds-foot\"><span><b>14</b>-12 8-<b>11</b></span><span class=\"ds-time\">35 min</span></div></div>",
+      "css": ".ds-tile{background:oklch(20% 0.04 267.5);border-radius:12px;width:340px;padding:10px 18px 10px 14px;color:oklch(97.2% 0.007 261);font-family:Barlow,system-ui,sans-serif}.ds-tile-head{display:flex;align-items:center;gap:8px;height:40px}.ds-tn{font:700 20px/1 \"Barlow Condensed\",Barlow,sans-serif;background:oklch(24.9% 0.049 268);border-radius:0.2em;min-width:1.5em;height:1.3em;display:inline-grid;place-items:center}.ds-tile-label{flex:1;min-width:0;color:oklch(75.1% 0.039 267);font-size:13px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}.ds-tile-pill{background:oklch(89.6% 0.199 122);color:oklch(18% 0.032 267);border-radius:999px;font-weight:700;font-size:12px;padding:0.34em 0.82em;white-space:nowrap}.ds-row{display:grid;grid-template-columns:16px minmax(0,1fr) 36px 92px;align-items:center;height:100px}.ds-serve{color:oklch(89.6% 0.199 122);display:grid}.ds-name{font-size:24px;font-weight:600;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}.ds-games{font:600 32px/1 \"Barlow Condensed\",Barlow,sans-serif;background:oklch(24.9% 0.049 268);border-radius:5px;height:46px;display:grid;place-items:center}.ds-score{font:700 86px/0.86 \"Barlow Condensed\",Barlow,sans-serif;font-variant-numeric:tabular-nums;text-align:right;letter-spacing:-0.01em}.ds-hot .ds-score{color:oklch(89.6% 0.199 122)}.ds-foot{display:flex;justify-content:space-between;padding-left:16px;color:oklch(62.1% 0.048 268);font:600 14px \"Barlow Condensed\",Barlow,sans-serif}.ds-foot b{color:oklch(75.1% 0.039 267)}.ds-time{color:oklch(75.1% 0.039 267);font:500 12px Barlow,system-ui,sans-serif}"
+    },
+    {
+      "name": "Point Target",
+      "kind": "custom",
+      "refersTo": "point-target",
+      "description": "Umpire tap target for one side: name, serve marker, giant score, lime ring flash on tap.",
+      "html": "<button class=\"ds-target\"><span class=\"ds-target-head\"><span>M. Gautier</span><span class=\"ds-target-serve\">Service</span></span><span class=\"ds-target-score\">8</span><span class=\"ds-target-foot\">Manches <b>2</b></span></button>",
+      "css": ".ds-target{display:grid;grid-template-rows:auto 1fr auto;gap:0.375rem;width:300px;height:320px;padding:1rem 1.25rem 0.75rem;background:oklch(20% 0.04 267.5);border:none;border-radius:1.375rem;box-shadow:inset 0 0 0 1px oklch(32.1% 0.055 266);color:oklch(97.2% 0.007 261);font-family:Barlow,system-ui,sans-serif;text-align:start;cursor:pointer;transition:background-color 150ms,scale 150ms cubic-bezier(0.16,1,0.3,1)}.ds-target:hover{background:oklch(24.9% 0.049 268)}.ds-target:active{scale:0.988;box-shadow:inset 0 0 0 3px oklch(89.6% 0.199 122)}.ds-target:focus-visible{outline:3px solid oklch(89.6% 0.199 122);outline-offset:3px}.ds-target-head{display:flex;justify-content:space-between;align-items:center;font-size:1.5rem;font-weight:700}.ds-target-serve{color:oklch(89.6% 0.199 122);font-size:0.9375rem}.ds-target-score{font:700 9rem/0.86 \"Barlow Condensed\",Barlow,sans-serif;font-variant-numeric:tabular-nums;display:grid;place-items:center}.ds-target-foot{color:oklch(75.1% 0.039 267);font-size:0.9375rem}.ds-target-foot b{color:oklch(97.2% 0.007 261);font:700 1.5rem \"Barlow Condensed\",Barlow,sans-serif;margin-left:0.5rem}"
+    }
+  ],
+  "narrative": {
+    "northStar": "The Hall Scoreboard",
+    "overview": "A live-score product for the room. Every match in play owns the screen; everything else is folded into one calm summary column. The world is a deep navy field with white figures and a single lime accent that only ever means \"live\" or \"hot\". It is built to be read from 10 to 20 metres across a bright, noisy sports hall, so the score digits are the largest thing on any surface and nothing competes with them.\n\nThe system deliberately refuses the busy broadcast package: no badge clusters, no logo bugs, no gradients, no tickers. A tile carries a table number, a quiet label, two names, games won, the point score, and at most one state pill. Density comes from the grid, not from decoration. The same tokens drive four surfaces (display, umpire console, organiser console, spectator phone view); the display alone is sized by the viewport, the others by their containers.\n\nTone is factual and sentence-case. Headings are quiet and muted; the figures do the shouting. Benchmarked against Apple Sports, FlashScore/SofaScore and the WTT broadcast graphics, then pared back further for the room.",
+    "keyCharacteristics": [
+      "Dark tonal field, four navy steps, no shadows on resting surfaces.",
+      "One accent, lime, reserved for live and hot states (serve, match point, game point, hot score, focus).",
+      "Barlow Condensed tabular figures for every number the room reads; Barlow for names and text.",
+      "Score digits are the largest element on every surface that shows a score.",
+      "At most one state pill per tile; serving shown as a small lime triangle on the serving row."
+    ],
+    "rules": [
+      {
+        "name": "The Lime Means Live Rule",
+        "body": "Lime marks live and hot states only. If removing it would not lose information about what is happening in a match right now (or where keyboard focus is), it should not be lime.",
+        "section": "colors"
+      },
+      {
+        "name": "The White Alarm Rule",
+        "body": "Errors, offline and refusal states are drawn in white (ink fill or ink border), never in red and never in lime. The palette has no warning hue; urgency comes from inverting to the brightest neutral.",
+        "section": "colors"
+      },
+      {
+        "name": "The Losing Side Dims Rule",
+        "body": "A finished match dims the loser (ink-dim) rather than highlighting the winner.",
+        "section": "colors"
+      },
+      {
+        "name": "The Every Number Is A Figure Rule",
+        "body": "Any number the room reads (score, games, table, time, clock, count) uses the figure style: Barlow Condensed with tabular lining numerals, so digits never shift width as they change.",
+        "section": "typography"
+      },
+      {
+        "name": "The Quiet Heading Rule",
+        "body": "Section headings are sentence case, muted, 600 weight and small. No uppercase tracking, no kickers or eyebrows above titles. Uppercase with wide tracking is reserved for literal join codes typed or read by umpires and organisers.",
+        "section": "typography"
+      },
+      {
+        "name": "The Tonal Step Rule",
+        "body": "Resting surfaces never cast shadows. To lift something, move it one step up the navy ramp; reserve the overlay shadow for content that actually floats.",
+        "section": "elevation"
+      }
+    ],
+    "dos": [
+      "**Do** make the point score the largest element of any surface that shows a live score.",
+      "**Do** set every number in Barlow Condensed with tabular lining numerals.",
+      "**Do** keep lime for live and hot states: serve, hot score, match/game point, focus, page progress.",
+      "**Do** order display tiles by table number and keep them still; reflow only when a match starts or ends.",
+      "**Do** build depth from the four navy steps; use the overlay shadow only for floating menus.",
+      "**Do** draw errors and offline states in white, inverted onto the dark field.",
+      "**Do** truncate names with an ellipsis on one line rather than wrapping inside a tile.",
+      "**Do** keep one primary action per screen."
+    ],
+    "donts": [
+      "**Don't** put more than one state pill on a tile, or add badges, logos or tickers to tiles.",
+      "**Don't** introduce a second accent hue, or red/orange/green for status.",
+      "**Don't** add shadows, gradients or glows to resting surfaces.",
+      "**Don't** set section headings in uppercase with letter-spacing, or add eyebrow labels above titles.",
+      "**Don't** size display text in rem; the display draws on `--cu` and tiles on `--unit`.",
+      "**Don't** show half a list item in the summary column; clip to whole rows."
+    ]
+  }
+}
