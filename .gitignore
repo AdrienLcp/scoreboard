@@ -1,0 +1,11 @@
+**/coverage
+**/dist
+**/node_modules
+
+*.tsbuildinfo
+
+# Wrangler's local state: the Durable Object's SQLite files and build cache.
+**/.wrangler
+*.dev.vars
+
+.claude/settings.local.json

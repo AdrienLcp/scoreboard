@@ -1,0 +1,83 @@
+import { describe, expect, it } from 'vitest'
+
+import {
+  newOrganiserCode,
+  parseUmpireCode,
+  tableAccessesFor
+} from './access-codes'
+
+/** Walks the alphabet in order, so every code it draws is predictable. */
+const countingIndex = () => {
+  let next = 0
+
+  return (size: number): number => {
+    const index = next % size
+    next += 1
+
+    return index
+  }
+}
+
+describe('parseUmpireCode', () => {
+  it('[access] forgives case, spaces and hyphens', () => {
+    expect(parseUmpireCode(' abc-def ')).toBe('ABCDEF')
+  })
+
+  it('[access] refuses letters a code never holds', () => {
+    expect(parseUmpireCode('ABCDE0')).toBeNull()
+  })
+})
+
+describe('newOrganiserCode', () => {
+  it('[access] draws twelve characters from the code alphabet', () => {
+    expect(newOrganiserCode(countingIndex())).toBe('ABCDEFGHJKLM')
+  })
+})
+
+describe('tableAccessesFor', () => {
+  it('[access] keeps the code of a table that stays', () => {
+    const existing = [{ code: 'ZZZZZZ', table: 1 }]
+
+    expect(
+      tableAccessesFor({
+        existing,
+        randomIndex: countingIndex(),
+        tableCount: 2
+      })
+    ).toEqual([
+      { code: 'ZZZZZZ', table: 1 },
+      { code: 'ABCDEF', table: 2 }
+    ])
+  })
+
+  it('[access] drops the codes of tables removed', () => {
+    const existing = [
+      { code: 'ZZZZZZ', table: 1 },
+      { code: 'YYYYYY', table: 2 }
+    ]
+
+    expect(
+      tableAccessesFor({
+        existing,
+        randomIndex: countingIndex(),
+        tableCount: 1
+      })
+    ).toEqual([{ code: 'ZZZZZZ', table: 1 }])
+  })
+
+  it('[access] never hands two tables the same code', () => {
+    const draws = [0, 0, 0, 0, 0, 0, 1, 1, 1, 1, 1, 1]
+    const scripted = () => draws.shift() ?? 0
+
+    expect(
+      tableAccessesFor({
+        existing: [{ code: 'AAAAAA', table: 1 }],
+        randomIndex: scripted,
+        tableCount: 2
+      })
+    ).toEqual([
+      { code: 'AAAAAA', table: 1 },
+      { code: 'BBBBBB', table: 2 }
+    ])
+  })
+})

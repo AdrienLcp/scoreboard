@@ -1,0 +1,20 @@
+{
+  "dependencies": {
+    "zod": "^4.6.5"
+  },
+  "devDependencies": {
+    "vitest": "^5.0.2"
+  },
+  "exports": {
+    "./*": "./src/*"
+  },
+  "name": "@scoreboard/protocol",
+  "private": true,
+  "scripts": {
+    "build": "tsc --noEmit",
+    "test": "vitest run",
+    "test:watch": "vitest"
+  },
+  "type": "module",
+  "version": "0.1.0"
+}

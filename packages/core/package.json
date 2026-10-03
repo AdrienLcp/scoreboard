@@ -1,0 +1,21 @@
+{
+  "dependencies": {
+    "@adrienlcp/result": "^0.1.0",
+    "@scoreboard/protocol": "workspace:*"
+  },
+  "devDependencies": {
+    "vitest": "^5.0.2"
+  },
+  "exports": {
+    "./*": "./src/*"
+  },
+  "name": "@scoreboard/core",
+  "private": true,
+  "scripts": {
+    "build": "tsc --noEmit",
+    "test": "vitest run",
+    "test:watch": "vitest"
+  },
+  "type": "module",
+  "version": "0.1.0"
+}

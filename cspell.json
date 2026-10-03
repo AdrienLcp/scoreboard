@@ -1,0 +1,38 @@
+{
+  "$schema": "https://raw.githubusercontent.com/streetsidesoftware/cspell/main/cspell.schema.json",
+  "ignorePaths": [
+    "dist",
+    "node_modules",
+    "pnpm-lock.yaml",
+    ".wrangler",
+    ".impeccable"
+  ],
+  "import": ["@cspell/dict-fr-fr/cspell-ext.json"],
+  "language": "en,en-GB",
+  "overrides": [
+    {
+      "filename": [
+        "**/i18n/dictionary-fr.ts",
+        "PRODUCT.md",
+        "**/encounter/encounter-formats.ts"
+      ],
+      "language": "en,en-GB,fr"
+    }
+  ],
+  "version": "0.2",
+  "words": [
+    "ABCDEFGHJKLM",
+    "ABCDEFGHJKLMNPQRSTUVWXYZ",
+    "abcdefghjkmnpqrstuvwxyz",
+    "adrienlcp",
+    "biomejs",
+    "CDTT",
+    "esbuild",
+    "fftt",
+    "FFTT",
+    "ITTF",
+    "Lacourpaille",
+    "rhysd",
+    "workerd"
+  ]
+}
