@@ -35,6 +35,7 @@ export const EventSettingsForm: React.FC<EventSettingsFormProps> = ({
 
   return (
     <Form
+      className='organiser-panel settings-form'
       onSubmit={(event) => {
         event.preventDefault()
 
@@ -86,7 +87,9 @@ export const EventSettingsForm: React.FC<EventSettingsFormProps> = ({
           <Input />
         </Group>
       </NumberField>
-      <Button type='submit'>{translate('organiser.save')}</Button>
+      <Button className='settings-save' type='submit' variant='primary'>
+        {translate('organiser.save')}
+      </Button>
     </Form>
   )
 }

@@ -1,0 +1,384 @@
+@use '../../presentation/styles/layout'
+@use '../../presentation/styles/typography'
+
+/// The organiser's console as one style system: ruled lists, quiet panels for
+/// adding, a correction folded under each match. Calm on purpose: the live
+/// accent marks only the connection, a live score and focus.
+@layer components
+  .organiser-page
+    @include layout.page-column
+
+    gap: var(--space-l)
+    padding-bottom: var(--space-4xl)
+
+  .organiser-bar
+    align-items: center
+    display: flex
+    height: 3.5rem
+    justify-content: space-between
+
+  .organiser-status
+    align-items: center
+    color: var(--ink-muted)
+    display: inline-flex
+    font-size: var(--text-s)
+    font-weight: 600
+    gap: var(--space-xs)
+
+    .icon
+      font-size: var(--icon-m)
+
+  .organiser-dot
+    background: var(--live)
+    border-radius: 50%
+    height: 0.5rem
+    width: 0.5rem
+
+  .organiser-head
+    align-items: flex-end
+    display: flex
+    flex-wrap: wrap
+    gap: var(--space-m) var(--space-xl)
+    justify-content: space-between
+
+    h1
+      @include typography.page-title
+
+    p
+      @include typography.hint
+
+      margin-top: var(--space-3xs)
+
+  .organiser-links
+    display: flex
+    flex-wrap: wrap
+    gap: var(--space-xs)
+
+  .organiser-alert
+    align-items: center
+    background: var(--ink)
+    border-radius: var(--radius-m)
+    color: var(--on-ink)
+    display: flex
+    font-weight: 700
+    gap: var(--space-xs)
+    padding: var(--space-s) var(--space-m)
+
+  .organiser-tab-bar
+    background: var(--field)
+    margin-inline: calc(-1 * var(--gutter))
+    overflow-x: auto
+    padding: var(--space-xs) var(--gutter)
+    position: sticky
+    top: 0
+    z-index: 2
+
+    .tab-list
+      min-width: 40rem
+
+  .organiser-tabs .tab-panel
+    padding-top: var(--space-m)
+
+  .organiser-stack
+    display: flex
+    flex-direction: column
+    gap: var(--space-m)
+    min-width: 0
+
+  .organiser-columns
+    display: grid
+    gap: var(--space-2xl)
+
+    @media (width >= 960px)
+      grid-template-columns: minmax(0, 3fr) minmax(0, 2fr)
+
+  .organiser-subheading
+    font-size: var(--text-l)
+    font-weight: 700
+
+  .organiser-panel
+    background: var(--surface)
+    border-radius: var(--radius-l)
+    padding: var(--space-m) var(--space-l)
+
+    h3
+      @include typography.section-heading
+
+      flex-basis: 100%
+
+  .organiser-inline-form
+    align-items: end
+    display: flex
+    flex-wrap: wrap
+    gap: var(--space-s)
+
+    > .field
+      flex: 1 1 12rem
+
+  .organiser-empty, .organiser-note
+    @include typography.hint
+
+    max-width: var(--measure)
+
+  .organiser-code-note
+    margin-bottom: var(--space-m)
+
+    b
+      @include typography.figure
+
+      color: var(--ink)
+      font-size: var(--text-xl)
+      letter-spacing: 0.08em
+      margin-left: var(--space-xs)
+
+  .organiser-list
+    border-top: var(--hairline)
+
+    > li
+      border-bottom: var(--hairline)
+
+  .organiser-row
+    align-items: center
+    display: flex
+    flex-wrap: wrap
+    gap: var(--space-xs) var(--space-m)
+    min-height: var(--control-m)
+    padding-block: var(--space-xs)
+
+  .organiser-row-text
+    display: flex
+    flex: 1 1 12rem
+    flex-direction: column
+    min-width: 0
+
+    b
+      font-weight: 600
+
+    small
+      color: var(--ink-muted)
+      font-size: var(--text-s)
+
+  .confirm-pair
+    display: inline-flex
+    flex-wrap: wrap
+    gap: var(--space-xs)
+
+  .match-row-main
+    align-items: center
+    display: flex
+    flex-wrap: wrap
+    gap: var(--space-xs) var(--space-m)
+    padding-block: var(--space-s)
+
+  .match-row-who
+    flex: 1 1 16rem
+    min-width: 0
+
+  .match-row-names
+    font-weight: 600
+
+  .match-row-meta
+    color: var(--ink-muted)
+    font-size: var(--text-s)
+
+  .match-row-score
+    @include typography.figure
+
+    font-size: var(--text-2xl)
+
+  .match-row[data-status='live'] .match-row-score
+    color: var(--live)
+
+  .match-row-controls
+    align-items: end
+    display: flex
+    flex-wrap: wrap
+    gap: var(--space-xs)
+
+    .field
+      width: 10rem
+
+    .field-label
+      font-size: var(--text-xs)
+
+  .match-row-toggle
+    align-items: center
+    border-radius: var(--radius-m)
+    color: var(--ink-muted)
+    cursor: pointer
+    display: inline-flex
+    font-size: var(--text-m)
+    font-weight: 600
+    gap: var(--space-2xs)
+    min-height: var(--control-m)
+    padding-inline: var(--space-s)
+
+    &[data-hovered]
+      background: var(--surface-raised)
+      color: var(--ink)
+
+    &[data-focus-visible]
+      outline: var(--outline-thick) solid var(--focus)
+
+    .icon
+      transition: rotate var(--transition-base) var(--ease-out)
+
+  .match-row[data-expanded] .match-row-toggle .icon
+    rotate: 180deg
+
+  .match-row-correction
+    background: var(--surface)
+    border-radius: var(--radius-l)
+    margin-bottom: var(--space-s)
+    padding: var(--space-m) var(--space-l)
+
+  .correction-form
+    align-items: start
+    display: flex
+    flex-wrap: wrap
+    gap: var(--space-s) var(--space-m)
+
+    > .field
+      flex: 1 1 16rem
+
+  .field-input.correction-input
+    font-family: var(--font-figure)
+    font-size: var(--text-xl)
+    letter-spacing: 0.04em
+
+  .correction-actions
+    align-items: center
+    display: flex
+    flex-wrap: wrap
+    gap: var(--space-xs)
+
+    @media (width >= 700px)
+      padding-top: var(--space-xl)
+
+  .correction-walkover
+    p
+      @include typography.hint
+
+    .correction-actions
+      padding-top: var(--space-s)
+
+  .planned-time-form
+    align-items: end
+    display: flex
+    gap: var(--space-3xs)
+
+    .field
+      width: 13rem
+
+  .live-table
+    align-items: start
+    display: grid
+    gap: var(--space-m)
+    grid-template-columns: auto minmax(0, 1fr)
+
+    > .table-number
+      font-size: var(--text-2xl)
+      margin-top: var(--space-s)
+
+  .live-table-free
+    color: var(--ink-muted)
+    padding-block: var(--space-m)
+
+  .encounter-list
+    display: grid
+    gap: var(--space-s)
+    grid-template-columns: repeat(auto-fill, minmax(16rem, 1fr))
+
+    li
+      background: var(--surface)
+      border-radius: var(--radius-l)
+      padding: var(--space-m) var(--space-l)
+
+  .encounter-form
+    display: grid
+    gap: var(--space-s)
+    grid-template-columns: repeat(auto-fill, minmax(14rem, 1fr))
+
+    > .button
+      align-self: end
+
+  .encounter-letters
+    display: grid
+    gap: var(--space-xs)
+    grid-column: 1 / -1
+    grid-template-columns: repeat(auto-fill, minmax(9rem, 1fr))
+
+    &:empty
+      display: none
+
+  .access-grid
+    display: grid
+    gap: var(--space-s)
+    grid-template-columns: repeat(auto-fill, minmax(min(100%, 19rem), 1fr))
+
+  .access-row
+    align-items: center
+    background: var(--surface)
+    border-radius: var(--radius-l)
+    display: grid
+    gap: var(--space-s)
+    grid-template-columns: auto 4.5rem minmax(0, 1fr)
+    padding: var(--space-s) var(--space-m)
+
+    .table-number
+      font-size: var(--text-2xl)
+
+  .access-text
+    min-width: 0
+
+  .access-actions
+    align-items: center
+    display: flex
+    flex-wrap: wrap
+    gap: 0 var(--space-s)
+
+    .button
+      min-height: var(--control-s)
+      padding-inline: var(--space-2xs)
+
+  .access-code
+    @include typography.figure
+
+    font-size: var(--text-3xl)
+    letter-spacing: 0.08em
+
+  .settings-form
+    display: grid
+    gap: var(--space-m)
+    grid-template-columns: repeat(auto-fill, minmax(16rem, 1fr))
+    max-width: 60rem
+
+    .settings-save
+      grid-column: 1 / -1
+      justify-self: start
+
+  .organiser-gate
+    align-items: center
+    justify-content: center
+    padding: var(--space-xl) var(--gutter) var(--space-4xl)
+
+  .organiser-gate-form
+    display: flex
+    flex-direction: column
+    gap: var(--space-m)
+    width: min(100%, var(--measure-form))
+
+    .brand-mark
+      margin-bottom: var(--space-xl)
+
+    h1
+      @include typography.page-title
+
+    p
+      @include typography.hint
+
+  .field-input.organiser-code-input
+    font-family: var(--font-figure)
+    font-size: var(--text-2xl)
+    letter-spacing: 0.12em
+    text-transform: uppercase

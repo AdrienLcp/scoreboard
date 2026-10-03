@@ -96,7 +96,21 @@ export const FR_DICTIONARY = defineDictionary({
     bestOf: 'Format des matchs',
     bestOfOption: 'Au meilleur des {count:number} manches',
     create: 'Créer la rencontre',
+    createNote:
+      'Vous recevrez un code organisateur : il ouvre la préparation et les corrections.',
+    creating: 'Création…',
+    headline: 'Chaque match en direct, sur grand écran et dans la poche.',
+    join: {
+      code: 'Code de la rencontre',
+      follow: 'Suivre les matchs',
+      hint: 'Les dix caractères après /e/ dans le lien, ou le lien entier.',
+      invalid: 'Ce code ne correspond à aucune rencontre : vérifiez le lien.',
+      title: 'Rejoindre une rencontre',
+      umpire: 'Arbitrer une table'
+    },
+    lead: 'Les arbitres comptent les points depuis leur téléphone, la salle lit les scores de loin, et l’organisateur garde la main sur toute la journée.',
     name: 'Nom de la rencontre',
+    namePlaceholder: 'Tournoi interne d’automne',
     tableCount: 'Nombre de tables',
     title: 'Nouvelle rencontre'
   },
@@ -128,68 +142,119 @@ export const FR_DICTIONARY = defineDictionary({
   },
   organiser: {
     access: {
-      display: 'Ouvrir le grand écran',
-      title: 'Accès des tables',
-      umpireEntry: 'Entrée des arbitres'
+      copied: 'Lien copié',
+      copy: 'Copier le lien',
+      display: 'Grand écran',
+      explain:
+        'Chaque arbitre scanne le QR code de sa table, ou tape son code sur',
+      openConsole: 'Ouvrir la console',
+      qrLabel: 'QR code de la console d’arbitrage de la table {table:number}',
+      spectator: 'Page des spectateurs',
+      title: 'Codes des tables'
     },
+    choosePlayer: 'Choisir un joueur',
     code: {
+      explain:
+        'Il vous a été donné à la création de la rencontre. Il ouvre la préparation et les corrections.',
       label: 'Code organisateur',
-      submit: 'Ouvrir'
+      submit: 'Ouvrir l’organisation',
+      title: 'Organiser cette rencontre',
+      yours:
+        'Votre code organisateur, à garder pour ouvrir cette page ailleurs :'
     },
     correction: {
+      hint: 'Les manches dans l’ordre, la dernière peut être en cours.',
       invalid: 'Écrivez les manches ainsi : 11-7 6-4',
       label: 'Score, manche par manche',
-      submit: 'Corriger',
+      open: 'Corriger',
+      submit: 'Enregistrer le score',
       undo: 'Annuler la dernière action',
       walkover: {
         away: 'Forfait de l’extérieur',
         home: 'Forfait du domicile'
-      }
+      },
+      walkoverConfirm: {
+        away: 'Confirmer le forfait de l’extérieur',
+        home: 'Confirmer le forfait du domicile'
+      },
+      walkoverExplain:
+        'Ce match n’a pas commencé. Un joueur absent ou blessé peut être déclaré forfait.'
     },
     displays: {
       add: 'Ajouter l’écran',
+      addTitle: 'Nouvel écran',
+      all: 'Écran principal',
+      allTables: 'toutes les tables',
       first: 'Première table',
       last: 'Dernière table',
       name: 'Nom de l’écran',
+      namePlaceholder: 'Salle B',
+      open: 'Ouvrir',
       remove: 'Retirer {name}',
-      tables: 'tables {tables:list}',
       title: 'Écrans'
     },
     encounter: {
       add: 'Créer la rencontre par équipes',
       away: 'Équipe extérieure',
+      empty:
+        'Aucune rencontre par équipes. Créez d’abord les équipes et leurs joueurs.',
       format: 'Feuille de rencontre',
-      home: 'Équipe à domicile',
-      title: 'Rencontre par équipes'
+      home: 'Équipe à domicile'
+    },
+    keep: 'Garder',
+    live: {
+      free: 'Libre, rien de prévu'
     },
     matches: {
       add: 'Ajouter le match',
+      addTitle: 'Nouveau match',
       away: 'Joueur extérieur',
+      empty: 'Aucun match. Ajoutez des joueurs, puis leurs matchs.',
       home: 'Joueur à domicile',
       noTable: 'Sans table',
       plannedAt: 'Heure prévue',
-      plannedAtSave: 'Fixer l’heure',
-      remove: 'Retirer le match',
-      table: 'Table',
-      title: 'Matchs'
+      plannedAtSave: 'Fixer',
+      remove: 'Retirer',
+      removeConfirm: 'Retirer ce match',
+      table: 'Table'
     },
     players: {
       add: 'Ajouter le joueur',
+      count: defineTranslation('{count:plural}', {
+        plural: { count: { one: '{?} joueur', other: '{?} joueurs' } }
+      }),
+      empty: 'Aucun joueur pour l’instant.',
       name: 'Nom du joueur',
+      noTeam: 'Sans équipe',
       remove: 'Retirer {name}',
-      team: 'Équipe',
-      title: 'Joueurs et équipes'
+      team: 'Équipe'
     },
+    remove: 'Retirer',
     save: 'Enregistrer',
     settings: {
       club: 'Nom du club',
       name: 'Nom de la rencontre',
       startsAt: 'Début de la rencontre',
-      tableCount: 'Nombre de tables',
-      title: 'Rencontre'
+      tableCount: 'Nombre de tables'
+    },
+    summary: '{tables:number} tables · {matches:number} matchs',
+    tabs: {
+      encounters: 'Équipes',
+      live: 'En direct',
+      matches: 'Programme',
+      players: 'Joueurs',
+      settings: 'Réglages',
+      tables: 'Tables et écrans'
     },
     teams: {
       add: 'Ajouter l’équipe',
+      count: defineTranslation('{count:plural}', {
+        plural: { count: { one: '{?} équipe', other: '{?} équipes' } }
+      }),
+      empty: 'Aucune équipe : utile seulement pour les rencontres par équipes.',
+      members: defineTranslation('{count:plural}', {
+        plural: { count: { one: '{?} joueur', other: '{?} joueurs' } }
+      }),
       name: 'Nom de l’équipe'
     },
     title: 'Organisation'

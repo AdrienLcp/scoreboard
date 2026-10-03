@@ -18,6 +18,8 @@ type ChoiceFieldProps = {
   choices: readonly Choice[]
   label: string
   onChange: (id: string | null) => void
+  /** Shown while nothing is picked. */
+  placeholder?: string
   selectedId: string | null
 }
 
@@ -26,12 +28,14 @@ export const ChoiceField: React.FC<ChoiceFieldProps> = ({
   choices,
   label,
   onChange,
+  placeholder,
   selectedId
 }) => (
   <Select
     onSelectionChange={(key) => {
       onChange(typeof key === 'string' ? key : null)
     }}
+    placeholder={placeholder}
     selectedKey={selectedId}
   >
     <Label>{label}</Label>

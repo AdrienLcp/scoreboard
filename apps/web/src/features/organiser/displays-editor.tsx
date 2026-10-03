@@ -5,14 +5,19 @@ import type { EventSetup } from '@scoreboard/protocol/event-setup'
 import type { EventId } from '@scoreboard/protocol/identifiers'
 
 import { newId } from '@/infrastructure/ids'
-import { displayOfPathFor } from '@/infrastructure/router/navigation'
+import {
+  displayOfPathFor,
+  displayPathFor
+} from '@/infrastructure/router/navigation'
 import { Button } from '@/presentation/components/button'
 import { Form } from '@/presentation/components/form'
-import { Link } from '@/presentation/components/link'
+import { Icon } from '@/presentation/components/icon'
+import { TextLink } from '@/presentation/components/link'
 import { Group, NumberField } from '@/presentation/components/number-field'
 import { Input, Label, TextField } from '@/presentation/components/text-field'
 import { useTranslate } from '@/presentation/i18n/i18n-provider'
 
+import { ConfirmButton } from './confirm-button'
 import { addDisplay, removeDisplay, tableRange } from './setup-edits'
 
 type DisplaysEditorProps = {
@@ -33,23 +38,46 @@ export const DisplaysEditor: React.FC<DisplaysEditorProps> = ({
   const [lastTable, setLastTable] = useState(setup.tableCount)
 
   return (
-    <>
-      <ul>
+    <div className='organiser-stack'>
+      <ul className='organiser-list'>
+        <li className='organiser-row'>
+          <span className='organiser-row-text'>
+            <b>{translate('organiser.displays.all')}</b>
+            <small>{translate('organiser.displays.allTables')}</small>
+          </span>
+          <TextLink href={displayPathFor(eventId)} target='_blank'>
+            {translate('organiser.displays.open')}
+          </TextLink>
+        </li>
         {setup.displays.map((display) => (
-          <li key={display.id}>
-            <Link href={displayOfPathFor({ displayId: display.id, eventId })}>
-              {display.name}
-            </Link>{' '}
-            {translate('organiser.displays.tables', {
-              tables: display.tables.map(String)
-            })}{' '}
-            <Button onPress={() => onSave(removeDisplay(setup, display.id))}>
-              {translate('organiser.displays.remove', { name: display.name })}
-            </Button>
+          <li className='organiser-row' key={display.id}>
+            <span className='organiser-row-text'>
+              <b>{display.name}</b>
+              <small>
+                {translate('encounter.tables', {
+                  count: display.tables.length,
+                  tables: display.tables.map(String)
+                })}
+              </small>
+            </span>
+            <TextLink
+              href={displayOfPathFor({ displayId: display.id, eventId })}
+              target='_blank'
+            >
+              {translate('organiser.displays.open')}
+            </TextLink>
+            <ConfirmButton
+              confirmLabel={translate('organiser.displays.remove', {
+                name: display.name
+              })}
+              label={translate('organiser.remove')}
+              onConfirm={() => onSave(removeDisplay(setup, display.id))}
+            />
           </li>
         ))}
       </ul>
       <Form
+        className='organiser-panel organiser-inline-form'
         onSubmit={(event) => {
           event.preventDefault()
           onSave(
@@ -62,9 +90,12 @@ export const DisplaysEditor: React.FC<DisplaysEditorProps> = ({
           setName('')
         }}
       >
+        <h3>{translate('organiser.displays.addTitle')}</h3>
         <TextField isRequired onChange={setName} value={name}>
           <Label>{translate('organiser.displays.name')}</Label>
-          <Input />
+          <Input
+            placeholder={translate('organiser.displays.namePlaceholder')}
+          />
         </TextField>
         <NumberField
           maxValue={setup.tableCount}
@@ -88,8 +119,11 @@ export const DisplaysEditor: React.FC<DisplaysEditorProps> = ({
             <Input />
           </Group>
         </NumberField>
-        <Button type='submit'>{translate('organiser.displays.add')}</Button>
+        <Button type='submit'>
+          <Icon name='plus' />
+          {translate('organiser.displays.add')}
+        </Button>
       </Form>
-    </>
+    </div>
   )
 }

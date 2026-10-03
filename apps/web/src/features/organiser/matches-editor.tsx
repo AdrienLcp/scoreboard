@@ -8,15 +8,16 @@ import type { ScoringEvent } from '@scoreboard/protocol/scoring-event'
 
 import { tableNumbers } from '@scoreboard/core/event/table-queue'
 
-import { MatchLine } from '@/features/event/match-line'
 import { newId } from '@/infrastructure/ids'
 import { Button } from '@/presentation/components/button'
 import { Form } from '@/presentation/components/form'
+import { Icon } from '@/presentation/components/icon'
 import { useTranslate } from '@/presentation/i18n/i18n-provider'
 
 import { ChoiceField } from './choice-field'
+import { ConfirmButton } from './confirm-button'
+import { MatchRow } from './match-row'
 import { PlannedTimeForm } from './planned-time-form'
-import { ScoreCorrection } from './score-correction'
 import {
   addMatch,
   moveMatchToTable,
@@ -33,7 +34,7 @@ type MatchesEditorProps = {
 
 const NO_TABLE = 'none'
 
-/** The programme: matches in playing order, their tables, and corrections. */
+/** The programme: matches in playing order, their tables and times, and corrections. */
 export const MatchesEditor: React.FC<MatchesEditorProps> = ({
   matches,
   onRecord,
@@ -43,6 +44,7 @@ export const MatchesEditor: React.FC<MatchesEditorProps> = ({
   const translate = useTranslate()
   const [homeId, setHomeId] = useState<string | null>(null)
   const [awayId, setAwayId] = useState<string | null>(null)
+  const [table, setTable] = useState<string>(NO_TABLE)
 
   const playerChoices = setup.players.map((player) => ({
     id: player.id,
@@ -55,42 +57,13 @@ export const MatchesEditor: React.FC<MatchesEditorProps> = ({
       label: translate('table.name', { number })
     }))
   ]
+  const tableOf = (id: string | null) =>
+    id === null || id === NO_TABLE ? null : Number(id)
 
   return (
-    <>
-      <ol>
-        {matches.map((match) => (
-          <li key={match.id}>
-            <MatchLine match={match} players={setup.players} />
-            <ChoiceField
-              choices={tableChoices}
-              label={translate('organiser.matches.table')}
-              onChange={(id) =>
-                onSave(
-                  moveMatchToTable({
-                    matchId: match.id,
-                    setup,
-                    table: id === null || id === NO_TABLE ? null : Number(id)
-                  })
-                )
-              }
-              selectedId={match.table === null ? NO_TABLE : String(match.table)}
-            />
-            <Button onPress={() => onSave(removeMatch(setup, match.id))}>
-              {translate('organiser.matches.remove')}
-            </Button>
-            <PlannedTimeForm
-              key={match.plannedAtMs}
-              match={match}
-              onPlan={(plannedAtMs) =>
-                onSave(planMatch({ matchId: match.id, plannedAtMs, setup }))
-              }
-            />
-            <ScoreCorrection match={match} onRecord={onRecord} />
-          </li>
-        ))}
-      </ol>
+    <div className='organiser-stack'>
       <Form
+        className='organiser-panel organiser-inline-form'
         onSubmit={(event) => {
           event.preventDefault()
 
@@ -107,27 +80,89 @@ export const MatchesEditor: React.FC<MatchesEditorProps> = ({
               id: newId(),
               label: null,
               plannedAtMs: null,
-              table: null
+              table: tableOf(table)
             })
           )
+          setHomeId(null)
+          setAwayId(null)
         }}
       >
+        <h3>{translate('organiser.matches.addTitle')}</h3>
         <ChoiceField
           choices={playerChoices}
           label={translate('organiser.matches.home')}
           onChange={setHomeId}
+          placeholder={translate('organiser.choosePlayer')}
           selectedId={homeId}
         />
         <ChoiceField
           choices={playerChoices}
           label={translate('organiser.matches.away')}
           onChange={setAwayId}
+          placeholder={translate('organiser.choosePlayer')}
           selectedId={awayId}
         />
-        <Button isDisabled={homeId === null || awayId === null} type='submit'>
+        <ChoiceField
+          choices={tableChoices}
+          label={translate('organiser.matches.table')}
+          onChange={(id) => setTable(id ?? NO_TABLE)}
+          selectedId={table}
+        />
+        <Button
+          isDisabled={homeId === null || awayId === null || homeId === awayId}
+          type='submit'
+        >
+          <Icon name='plus' />
           {translate('organiser.matches.add')}
         </Button>
       </Form>
-    </>
+
+      {matches.length === 0 ? (
+        <p className='organiser-empty'>
+          {translate('organiser.matches.empty')}
+        </p>
+      ) : (
+        <ol className='organiser-list'>
+          {matches.map((match) => (
+            <li key={match.id}>
+              <MatchRow
+                match={match}
+                onRecord={onRecord}
+                players={setup.players}
+              >
+                <ChoiceField
+                  choices={tableChoices}
+                  label={translate('organiser.matches.table')}
+                  onChange={(id) =>
+                    onSave(
+                      moveMatchToTable({
+                        matchId: match.id,
+                        setup,
+                        table: tableOf(id)
+                      })
+                    )
+                  }
+                  selectedId={
+                    match.table === null ? NO_TABLE : String(match.table)
+                  }
+                />
+                <PlannedTimeForm
+                  key={match.plannedAtMs}
+                  match={match}
+                  onPlan={(plannedAtMs) =>
+                    onSave(planMatch({ matchId: match.id, plannedAtMs, setup }))
+                  }
+                />
+                <ConfirmButton
+                  confirmLabel={translate('organiser.matches.removeConfirm')}
+                  label={translate('organiser.matches.remove')}
+                  onConfirm={() => onSave(removeMatch(setup, match.id))}
+                />
+              </MatchRow>
+            </li>
+          ))}
+        </ol>
+      )}
+    </div>
   )
 }

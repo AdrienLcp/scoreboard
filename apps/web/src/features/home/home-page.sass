@@ -1,0 +1,77 @@
+@use '../../presentation/styles/layout'
+@use '../../presentation/styles/typography'
+
+@layer components
+  .home-page
+    @include layout.page-column
+
+    gap: var(--space-2xl)
+    max-width: 62rem
+    padding-bottom: var(--space-4xl)
+
+  .home-bar
+    align-items: center
+    display: flex
+    height: 3.5rem
+
+  .home-intro
+    padding-top: var(--space-2xl)
+
+    h1
+      font-size: clamp(2rem, 5vw, 3.25rem)
+      font-weight: 700
+      letter-spacing: -0.01em
+      line-height: 1.05
+      max-width: 18ch
+
+    p
+      @include typography.hint
+
+      font-size: var(--text-l)
+      margin-top: var(--space-s)
+      max-width: 52ch
+
+  .home-forms
+    align-items: start
+    display: grid
+    gap: var(--space-m)
+
+    @media (width >= 860px)
+      grid-template-columns: minmax(0, 3fr) minmax(0, 2fr)
+
+  .home-card
+    background: var(--surface)
+    border-radius: var(--radius-xl)
+    display: flex
+    flex-direction: column
+    gap: var(--space-m)
+    padding: var(--space-xl)
+
+    h2
+      font-size: var(--text-2xl)
+      font-weight: 700
+
+  .home-pair
+    display: grid
+    gap: var(--space-m)
+    grid-template-columns: repeat(auto-fit, minmax(11rem, 1fr))
+
+  .home-note
+    @include typography.hint
+
+    font-size: var(--text-s)
+
+  .home-error
+    align-items: center
+    display: flex
+    font-weight: 600
+    gap: var(--space-xs)
+
+  .field-input.home-join-input
+    font-family: var(--font-figure)
+    font-size: var(--text-2xl)
+    letter-spacing: 0.06em
+
+  .home-join-actions
+    display: grid
+    gap: var(--space-xs)

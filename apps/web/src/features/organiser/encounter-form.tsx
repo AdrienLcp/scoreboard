@@ -13,6 +13,7 @@ import type { Lineup } from '@scoreboard/core/encounter/encounter-sheet'
 import { newId } from '@/infrastructure/ids'
 import { Button } from '@/presentation/components/button'
 import { Form } from '@/presentation/components/form'
+import { Icon } from '@/presentation/components/icon'
 import { useTranslate } from '@/presentation/i18n/i18n-provider'
 import { encounterFormatKey } from '@/presentation/i18n/translation'
 
@@ -73,6 +74,7 @@ export const EncounterForm: React.FC<EncounterFormProps> = ({
 
   return (
     <Form
+      className='organiser-panel encounter-form'
       onSubmit={(event) => {
         event.preventDefault()
 
@@ -114,14 +116,18 @@ export const EncounterForm: React.FC<EncounterFormProps> = ({
         onChange={setHomeTeamId}
         selectedId={homeTeamId}
       />
-      {letterFields('home', homeTeamId)}
+      <div className='encounter-letters'>
+        {letterFields('home', homeTeamId)}
+      </div>
       <ChoiceField
         choices={teamChoices}
         label={translate('organiser.encounter.away')}
         onChange={setAwayTeamId}
         selectedId={awayTeamId}
       />
-      {letterFields('away', awayTeamId)}
+      <div className='encounter-letters'>
+        {letterFields('away', awayTeamId)}
+      </div>
       <Button
         isDisabled={
           homeTeamId === null ||
@@ -130,6 +136,7 @@ export const EncounterForm: React.FC<EncounterFormProps> = ({
         }
         type='submit'
       >
+        <Icon name='plus' />
         {translate('organiser.encounter.add')}
       </Button>
     </Form>

@@ -30,6 +30,7 @@ export const PlannedTimeForm: React.FC<PlannedTimeFormProps> = ({
 
   return (
     <Form
+      className='planned-time-form'
       onSubmit={(event) => {
         event.preventDefault()
 
@@ -46,7 +47,11 @@ export const PlannedTimeForm: React.FC<PlannedTimeFormProps> = ({
         <Label>{translate('organiser.matches.plannedAt')}</Label>
         <Input type='datetime-local' />
       </TextField>
-      <Button isDisabled={plannedAtMs === 'invalid'} type='submit'>
+      <Button
+        isDisabled={plannedAtMs === 'invalid'}
+        type='submit'
+        variant='quiet'
+      >
         {translate('organiser.matches.plannedAtSave')}
       </Button>
     </Form>

@@ -9,7 +9,9 @@ import { sides } from '@scoreboard/protocol/side'
 import { newId } from '@/infrastructure/ids'
 import { Button } from '@/presentation/components/button'
 import { Form } from '@/presentation/components/form'
+import { Icon } from '@/presentation/components/icon'
 import {
+  Description,
   FieldError,
   Input,
   Label,
@@ -17,6 +19,7 @@ import {
 } from '@/presentation/components/text-field'
 import { useTranslate } from '@/presentation/i18n/i18n-provider'
 
+import { ConfirmButton } from './confirm-button'
 import { parsePeriodsText, periodsText } from './periods-text'
 
 type ScoreCorrectionProps = {
@@ -38,28 +41,34 @@ export const ScoreCorrection: React.FC<ScoreCorrectionProps> = ({
 
   if (state.status === 'scheduled') {
     return (
-      <p>
-        {sides.map((side) => (
-          <Button
-            key={side}
-            onPress={() =>
-              onRecord(match.id, {
-                by: side,
-                id: newId(),
-                reason: 'walkover',
-                type: 'match.conceded'
-              })
-            }
-          >
-            {translate(`organiser.correction.walkover.${side}`)}
-          </Button>
-        ))}
-      </p>
+      <div className='correction-walkover'>
+        <p>{translate('organiser.correction.walkoverExplain')}</p>
+        <div className='correction-actions'>
+          {sides.map((side) => (
+            <ConfirmButton
+              confirmLabel={translate(
+                `organiser.correction.walkoverConfirm.${side}`
+              )}
+              key={side}
+              label={translate(`organiser.correction.walkover.${side}`)}
+              onConfirm={() =>
+                onRecord(match.id, {
+                  by: side,
+                  id: newId(),
+                  reason: 'walkover',
+                  type: 'match.conceded'
+                })
+              }
+            />
+          ))}
+        </div>
+      </div>
     )
   }
 
   return (
     <Form
+      className='correction-form'
       onSubmit={(event) => {
         event.preventDefault()
 
@@ -70,20 +79,28 @@ export const ScoreCorrection: React.FC<ScoreCorrectionProps> = ({
     >
       <TextField isInvalid={periods === null} onChange={setTyped} value={typed}>
         <Label>{translate('organiser.correction.label')}</Label>
-        <Input />
-        <FieldError>{translate('organiser.correction.invalid')}</FieldError>
+        <Input className='correction-input' />
+        <Description>{translate('organiser.correction.hint')}</Description>
+        <FieldError>
+          <Icon name='alert' />
+          {translate('organiser.correction.invalid')}
+        </FieldError>
       </TextField>
-      <Button isDisabled={periods === null} type='submit'>
-        {translate('organiser.correction.submit')}
-      </Button>
-      <Button
-        isDisabled={!state.canUndo}
-        onPress={() =>
-          onRecord(match.id, { id: newId(), type: 'score.undone' })
-        }
-      >
-        {translate('organiser.correction.undo')}
-      </Button>
+      <div className='correction-actions'>
+        <Button
+          isDisabled={!state.canUndo}
+          onPress={() =>
+            onRecord(match.id, { id: newId(), type: 'score.undone' })
+          }
+          variant='quiet'
+        >
+          <Icon name='undo' />
+          {translate('organiser.correction.undo')}
+        </Button>
+        <Button isDisabled={periods === null} type='submit'>
+          {translate('organiser.correction.submit')}
+        </Button>
+      </div>
     </Form>
   )
 }
