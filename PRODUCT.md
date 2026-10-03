@@ -67,6 +67,9 @@ another sport can adopt it.
 - The server keeps the ordered list of scoring events; scores, games won and
   the serving player are derived from it. Undo and organiser corrections are
   events too.
+- Match times: an optional planned time set by the organiser, actual start
+  and finish stamped by the server, durations, and an estimated start for
+  queued matches derived from what is still being played on that table.
 - Scoring rules are a pluggable ruleset per sport. Table tennis: games to 11,
   two clear points, best of 3 or 5 configurable, serve changes every 2 points
   then every point from 10-10.
