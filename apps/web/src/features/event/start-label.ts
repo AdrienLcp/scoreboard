@@ -6,7 +6,7 @@ import type { Translate } from '@/presentation/i18n/translation'
 /** Under this, an estimate is the present: "≈ 23:08" at 23:08 tells the room nothing. */
 const IMMINENT_MS = 60_000
 
-/** When a match should start, as the room reads it: "maintenant", or "≈ 15:40". */
+/** When a match should start, as the room reads it: now, or "≈ 15:40". */
 export const startLabel = ({
   nowMs,
   startMs,
