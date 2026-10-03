@@ -1,16 +1,16 @@
 import type React from 'react'
 
-import type { PublicSnapshot } from '@scoreboard/protocol/event-snapshot'
 import type { DisplayId, EventId } from '@scoreboard/protocol/identifiers'
 
-import {
-  displayBoardFor,
-  type TableTile,
-  tablesShownOn
-} from '@scoreboard/core/event/display-board'
+import { tablesShownOn } from '@scoreboard/core/event/display-board'
 
-import { MatchLine } from '@/features/event/match-line'
+import {
+  encounterLinesFor,
+  encounterTitleOf
+} from '@/features/event/encounter-lines'
+import { FeedMessage } from '@/features/event/feed-message'
 import { usePublicFeed } from '@/features/event/use-public-feed'
+import { useServerNow } from '@/features/event/use-server-now'
 import { pageOrigin } from '@/infrastructure/browser'
 import {
   spectatorPathFor,
@@ -18,28 +18,16 @@ import {
   useEventIdParam
 } from '@/infrastructure/router/navigation'
 import { Main } from '@/presentation/components/main'
+import { DocumentTitle } from '@/presentation/head/document-title'
 import { useTranslate } from '@/presentation/i18n/i18n-provider'
-import {
-  protocolErrorKey,
-  socketStatusKey
-} from '@/presentation/i18n/translation'
 
-const Tile: React.FC<{ snapshot: PublicSnapshot; tile: TableTile }> = ({
-  snapshot,
-  tile
-}) => {
-  const translate = useTranslate()
+import { DisplayHeader, type PageIndicator } from './display-header'
+import { firstStartOf, hasNotStarted } from './display-summary'
+import { LiveBoard } from './live-board'
+import { tableScopeOf } from './table-scope'
+import { WaitingStage } from './waiting-stage'
 
-  return (
-    <li>
-      <h3>{translate('table.name', { number: tile.table })}</h3>
-      <p>{translate(`display.phase.${tile.phase}`)}</p>
-      {tile.match === null ? null : (
-        <MatchLine match={tile.match} players={snapshot.players} />
-      )}
-    </li>
-  )
-}
+import './display-page.sass'
 
 const DisplayBoard: React.FC<{
   displayId: DisplayId | null
@@ -50,16 +38,15 @@ const DisplayBoard: React.FC<{
     eventId,
     role: 'display'
   })
+  const nowMs = useServerNow(snapshot?.generatedAtMs ?? null)
 
   if (snapshot === null) {
     return (
-      <Main>
-        <title>{translate('display.title')}</title>
-        <p>{translate(socketStatusKey(status))}</p>
-        {error === null ? null : (
-          <p>{translate(protocolErrorKey(error.code))}</p>
-        )}
-      </Main>
+      <FeedMessage
+        error={error}
+        status={status}
+        title={translate('display.title')}
+      />
     )
   }
 
@@ -71,41 +58,71 @@ const DisplayBoard: React.FC<{
 
   if (tables === null) {
     return (
-      <Main>
-        <title>{snapshot.name}</title>
-        <p>{translate('display.unknown')}</p>
-      </Main>
+      <FeedMessage
+        message={translate('display.unknown')}
+        title={snapshot.name}
+      />
     )
   }
 
-  const board = displayBoardFor(snapshot, tables)
+  const display = snapshot.displays.find(
+    (candidate) => candidate.id === displayId
+  )
+  const scope =
+    display === undefined
+      ? null
+      : `${display.name} · ${tableScopeOf(translate, tables)}`
+  const encounterLines = encounterLinesFor(snapshot)
+  const encounters = encounterLines.filter(
+    (encounter) =>
+      encounter.tables.length === 0 ||
+      encounter.tables.some((table) => tables.includes(table))
+  )
+  const encounterTitleFor = (match: { encounterId: string | null }) => {
+    const line = encounterLines.find(
+      (encounter) => encounter.id === match.encounterId
+    )
+
+    return line === undefined ? null : encounterTitleOf(line)
+  }
+  const spectatorUrl = `${pageOrigin()}${spectatorPathFor(eventId)}`
+  const header = (page: PageIndicator | null) => (
+    <DisplayHeader
+      eventName={snapshot.name}
+      nowMs={nowMs}
+      owner={snapshot.club?.name ?? translate('app.name')}
+      page={page}
+      scope={scope}
+      status={status}
+    />
+  )
 
   return (
-    <Main>
-      <title>{snapshot.name}</title>
-      <h1>{snapshot.club?.name ?? snapshot.name}</h1>
-      <p>{translate(socketStatusKey(status))}</p>
-      <section>
-        <h2>{translate('display.live')}</h2>
-        <ol>
-          {board.live.map((tile) => (
-            <Tile key={tile.table} snapshot={snapshot} tile={tile} />
-          ))}
-        </ol>
-      </section>
-      <section>
-        <h2>{translate('display.quiet')}</h2>
-        <ol>
-          {board.quiet.map((tile) => (
-            <Tile key={tile.table} snapshot={snapshot} tile={tile} />
-          ))}
-        </ol>
-      </section>
-      <p>
-        {translate('display.follow', {
-          url: `${pageOrigin()}${spectatorPathFor(eventId)}`
-        })}
-      </p>
+    <Main className='display-page'>
+      <DocumentTitle>
+        {`${display?.name ?? translate('display.title')} — ${snapshot.name}`}
+      </DocumentTitle>
+      {hasNotStarted(snapshot) ? (
+        <>
+          {header(null)}
+          <WaitingStage
+            encounters={encounters}
+            firstStartMs={firstStartOf(snapshot)}
+            spectatorUrl={spectatorUrl}
+            tableCount={tables.length}
+          />
+        </>
+      ) : (
+        <LiveBoard
+          encounters={encounters}
+          encounterTitleFor={encounterTitleFor}
+          nowMs={nowMs}
+          renderHeader={header}
+          snapshot={snapshot}
+          spectatorUrl={spectatorUrl}
+          tables={tables}
+        />
+      )}
     </Main>
   )
 }
@@ -118,14 +135,12 @@ export const DisplayPage: React.FC = () => {
 
   if (eventId === null || displayId === 'unknown') {
     return (
-      <Main>
-        <title>{translate('display.title')}</title>
-        <p>
-          {translate(
-            eventId === null ? 'error.event_not_found' : 'display.unknown'
-          )}
-        </p>
-      </Main>
+      <FeedMessage
+        message={translate(
+          eventId === null ? 'error.event_not_found' : 'display.unknown'
+        )}
+        title={translate('display.title')}
+      />
     )
   }
 

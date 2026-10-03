@@ -1,0 +1,36 @@
+@layer components
+  .state-pill
+    align-items: center
+    animation: pill-in var(--transition-base) var(--ease-out) both
+    border-radius: var(--radius-full)
+    display: inline-flex
+    flex: none
+    font-weight: 700
+    gap: 0.4em
+    line-height: 1.05
+    padding: 0.34em 0.82em
+    white-space: nowrap
+
+    .icon
+      stroke-width: 2.6
+
+    &[data-tone='match-point']
+      background: var(--live)
+      color: var(--on-live)
+
+    &[data-tone='game-point']
+      box-shadow: var(--edge-live)
+      color: var(--live)
+
+    &[data-tone='deuce']
+      box-shadow: var(--edge-muted)
+      color: var(--ink)
+
+    &[data-tone='over']
+      background: var(--surface-high)
+      color: var(--ink)
+
+  @keyframes pill-in
+    from
+      opacity: 0
+      scale: 0.9

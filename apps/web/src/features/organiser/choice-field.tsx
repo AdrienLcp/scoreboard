@@ -1,12 +1,11 @@
 import type React from 'react'
 
-import { Button } from '@/presentation/components/button'
 import {
   ListBox,
   ListBoxItem,
   Popover,
   Select,
-  SelectValue
+  SelectTrigger
 } from '@/presentation/components/select'
 import { Label } from '@/presentation/components/text-field'
 
@@ -36,9 +35,7 @@ export const ChoiceField: React.FC<ChoiceFieldProps> = ({
     selectedKey={selectedId}
   >
     <Label>{label}</Label>
-    <Button>
-      <SelectValue />
-    </Button>
+    <SelectTrigger />
     <Popover>
       <ListBox items={choices}>
         {(choice) => <ListBoxItem id={choice.id}>{choice.label}</ListBoxItem>}

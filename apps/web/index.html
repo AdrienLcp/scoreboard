@@ -2,7 +2,12 @@
 <html lang="fr">
   <head>
     <meta charset="UTF-8" />
-    <meta content="width=device-width, initial-scale=1.0" name="viewport" />
+    <meta content="width=device-width, initial-scale=1.0, viewport-fit=cover" name="viewport" />
+    <!-- One deliberate look: the field colour, which the --field token also holds. -->
+    <meta content="#070B16" name="theme-color" />
+    <meta content="dark" name="color-scheme" />
+    <link as="font" crossorigin href="/fonts/barlow-condensed-latin-700-normal.woff2" rel="preload" type="font/woff2" />
+    <link as="font" crossorigin href="/fonts/barlow-latin-600-normal.woff2" rel="preload" type="font/woff2" />
     <title>Scoreboard</title>
     <!--
       A layer's position is fixed where its name first appears, and Vite injects
@@ -14,6 +19,14 @@
     </style>
   </head>
   <body>
+    <!--
+      THESIS: a live-score product for the room: every live match owns the screen, everything else is one calm summary column; refuses the busy broadcast package with badges everywhere.
+      OWN-WORLD: deep navy field (#070B16, surfaces #0E1528/#172039/#212C4A), white figures, one lime accent (#C8F03C) for live and hot states only, Barlow Condensed tabular digits, Barlow sentence-case names, at most one state pill per tile, serve as a triangle on the serving row.
+      STORY: from 15 m a player finds their table by number, reads the score instantly, sees what's next and when; umpires score with one tap; visitors follow it on their phone via the QR.
+      FIRST VIEWPORT: live tiles grid ordered by table number filling ~78% width, score digits the largest element; right column: team encounters, results with finish times, free tables with ETA, à suivre, QR.
+      FORM: canon executed against Apple Sports, FlashScore/SofaScore, WTT broadcast; seed key 559fddf6.
+      FINISH: unreviewed and undocumented is unfinished; this build ends with the finish review, the verdict, and DESIGN.md
+    -->
     <div id="root"></div>
     <script src="/src/main.tsx" type="module"></script>
   </body>

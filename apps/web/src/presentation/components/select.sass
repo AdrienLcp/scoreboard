@@ -1,0 +1,85 @@
+@use '../styles/focus'
+@use '../styles/typography'
+
+@layer components
+  .select-trigger
+    @include focus.ring
+
+    align-items: center
+    background: var(--surface)
+    border: var(--outline-medium) solid var(--rule)
+    border-radius: var(--radius-m)
+    cursor: pointer
+    display: flex
+    font-size: var(--text-base)
+    font-weight: 600
+    gap: var(--space-xs)
+    justify-content: space-between
+    min-height: var(--control-m)
+    min-width: 0
+    padding: var(--space-xs) var(--space-s)
+    text-align: start
+    transition: border-color var(--transition-fast)
+    width: 100%
+
+    .icon
+      color: var(--ink-muted)
+      font-size: var(--icon-m)
+      transition: rotate var(--transition-base) var(--ease-out)
+
+    &[data-hovered]
+      border-color: var(--surface-high)
+
+    &[data-pressed] .icon
+      rotate: 180deg
+
+  .select-value
+    @include typography.single-line
+
+    &[data-placeholder]
+      color: var(--ink-dim)
+      font-weight: 500
+
+  .popover
+    background: var(--surface-raised)
+    border-radius: var(--radius-m)
+    box-shadow: var(--shadow-overlay)
+    max-height: min(22rem, 60dvh)
+    min-width: var(--trigger-width)
+    overflow: auto
+    padding: var(--space-2xs)
+    transition: opacity var(--transition-fast), translate var(--transition-fast) var(--ease-out)
+
+    &[data-entering], &[data-exiting]
+      opacity: 0
+      translate: 0 calc(-1 * var(--space-2xs))
+
+  .list-box
+    display: flex
+    flex-direction: column
+    outline: none
+
+  .list-box-item
+    @include focus.ring-inset
+
+    align-items: center
+    border-radius: var(--radius-s)
+    cursor: pointer
+    display: flex
+    font-weight: 600
+    gap: var(--space-xs)
+    min-height: var(--control-touch)
+    padding: var(--space-xs) var(--space-s)
+
+    &[data-hovered], &[data-focused]
+      background: var(--surface-high)
+      outline: none
+
+    &[data-focus-visible]
+      outline: var(--outline-thick) solid var(--focus)
+
+    &[data-selected]
+      color: var(--live)
+
+    &[data-disabled]
+      color: var(--ink-dim)

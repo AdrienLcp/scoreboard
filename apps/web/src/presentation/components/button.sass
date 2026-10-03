@@ -1,0 +1,75 @@
+@use '../styles/focus'
+@use '../styles/typography'
+
+@layer components
+  .button
+    @include focus.ring
+
+    align-items: center
+    border-radius: var(--radius-m)
+    box-shadow: var(--edge)
+    cursor: pointer
+    display: inline-flex
+    flex: none
+    font-size: var(--text-m)
+    font-weight: 600
+    gap: var(--space-xs)
+    justify-content: center
+    line-height: 1.15
+    min-height: var(--control-m)
+    padding: var(--space-s) var(--space-m)
+    text-align: center
+    transition: background-color var(--transition-fast), color var(--transition-fast), scale var(--transition-fast) var(--ease-out)
+
+    .icon
+      font-size: var(--icon-m)
+
+    &[data-hovered]:not([data-disabled])
+      background: var(--surface)
+
+    &[data-pressed]:not([data-disabled])
+      scale: 0.985
+
+    &[data-disabled]
+      color: var(--ink-dim)
+      cursor: not-allowed
+
+    &.primary
+      background: var(--live)
+      box-shadow: none
+      color: var(--on-live)
+      font-size: var(--text-l)
+      font-weight: 700
+      min-height: var(--control-l)
+
+      &[data-hovered]:not([data-disabled])
+        background: var(--live)
+        filter: brightness(1.06)
+
+      &[data-disabled]
+        background: var(--surface-raised)
+        color: var(--ink-dim)
+
+    &.quiet
+      box-shadow: none
+      color: var(--ink-muted)
+      min-height: var(--control-touch)
+      padding-inline: var(--space-s)
+
+      &[data-hovered]:not([data-disabled])
+        background: var(--surface-raised)
+        color: var(--ink)
+
+    &.stop
+      background: var(--ink)
+      box-shadow: none
+      color: var(--on-ink)
+      font-weight: 700
+
+      &[data-hovered]:not([data-disabled])
+        background: var(--ink)
+        filter: brightness(0.92)
+
+      &[data-disabled]
+        background: var(--surface-raised)
+        color: var(--ink-muted)

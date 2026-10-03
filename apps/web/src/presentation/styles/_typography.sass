@@ -1,0 +1,40 @@
+/// Trims a one-line label to its capitals and baseline, so equal padding
+/// centres it optically.
+@mixin cap-box
+  text-box: trim-both cap alphabetic
+
+@mixin body
+  font-family: var(--font-text)
+  font-size: var(--text-base)
+  font-weight: 500
+  line-height: 1.45
+
+/// Every figure the room reads: scores, games, table numbers, times.
+@mixin figure
+  font-family: var(--font-figure)
+  font-variant-numeric: tabular-nums lining-nums
+  font-weight: 700
+  line-height: 1
+
+/// A section's quiet heading: sentence case, muted, never shouting.
+@mixin section-heading
+  color: var(--ink-muted)
+  font-size: var(--text-s)
+  font-weight: 600
+  line-height: 1.2
+
+@mixin page-title
+  font-size: var(--text-3xl)
+  font-weight: 700
+  line-height: 1.15
+
+@mixin hint
+  color: var(--ink-muted)
+  font-size: var(--text-m)
+  line-height: 1.45
+
+/// One line that gives up with an ellipsis rather than wrapping.
+@mixin single-line
+  overflow: hidden
+  text-overflow: ellipsis
+  white-space: nowrap

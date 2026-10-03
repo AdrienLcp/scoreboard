@@ -1,0 +1,62 @@
+@use '../styles/focus'
+@use '../styles/typography'
+
+/// The pieces every form control shares: label, box, description, error.
+@layer components
+  .field
+    display: flex
+    flex-direction: column
+    gap: var(--space-xs)
+    min-width: 0
+
+  .field-label
+    color: var(--ink-muted)
+    font-size: var(--text-s)
+    font-weight: 600
+    line-height: 1.2
+
+  .field-input
+    background: var(--surface)
+    border: var(--outline-medium) solid var(--rule)
+    border-radius: var(--radius-m)
+    color: var(--ink)
+    font-size: var(--text-base)
+    font-weight: 600
+    min-height: var(--control-m)
+    min-width: 0
+    padding: var(--space-xs) var(--space-s)
+    transition: border-color var(--transition-fast)
+    width: 100%
+
+    &::placeholder
+      color: var(--ink-dim)
+      font-weight: 500
+
+    &[data-hovered]
+      border-color: var(--surface-high)
+
+    &[data-focused]
+      border-color: var(--live)
+      outline: none
+
+    &[data-invalid]
+      border-color: var(--ink)
+
+    &[data-disabled]
+      color: var(--ink-dim)
+
+    &::-webkit-calendar-picker-indicator
+      filter: invert(0.8)
+
+  .field-description
+    @include typography.hint
+
+    font-size: var(--text-s)
+
+  .field-error
+    align-items: center
+    color: var(--ink)
+    display: flex
+    font-size: var(--text-m)
+    font-weight: 600
+    gap: var(--space-xs)

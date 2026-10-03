@@ -1,0 +1,33 @@
+@use '../../presentation/styles/typography'
+
+@layer components
+  .encounter-score
+    font-size: var(--text-l)
+
+  .encounter-meta
+    @include typography.single-line
+
+    color: var(--ink-muted)
+    font-size: 0.78em
+    line-height: 1.3
+
+  .encounter-team
+    align-items: center
+    display: flex
+    font-weight: 600
+    gap: 1em
+    justify-content: space-between
+    line-height: 1.25
+
+    span
+      @include typography.single-line
+
+      min-width: 0
+
+    b
+      @include typography.figure
+
+      font-size: 1.3em
+
+    &[data-trailing]
+      color: var(--ink-muted)

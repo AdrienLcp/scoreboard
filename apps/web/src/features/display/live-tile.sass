@@ -1,0 +1,129 @@
+@use '../../presentation/styles/typography'
+
+/// A tile draws everything on `--unit`, a hundredth of its height or of three
+/// quarters of its width, whichever is smaller: the score keeps its share of
+/// the tile at any grid size.
+@layer components
+  .live-tile
+    background: var(--surface)
+    border-radius: var(--display-radius)
+    container-type: size
+    min-height: 0
+    min-width: 0
+    overflow: hidden
+    position: relative
+    transition: opacity var(--transition-base) var(--ease-out) 260ms, scale var(--transition-base) var(--ease-out) 260ms
+
+    @starting-style
+      opacity: 0
+      scale: 0.95
+
+  .tile-body
+    --unit: min(1cqh, 0.75cqw)
+
+    display: grid
+    grid-template-rows: calc(var(--unit) * 18) minmax(0, 1fr) minmax(0, 1fr) calc(var(--unit) * 12)
+    inset: 0
+    padding: 0 calc(var(--unit) * 5) 0 calc(var(--unit) * 4)
+    position: absolute
+
+  .tile-head
+    align-items: center
+    display: flex
+    gap: calc(var(--unit) * 3)
+    min-width: 0
+
+    .table-number
+      font-size: calc(var(--unit) * 8.5)
+
+    .state-pill
+      font-size: calc(var(--unit) * 5.4)
+
+  .tile-label
+    @include typography.single-line
+
+    color: var(--ink-muted)
+    flex: 1
+    font-size: calc(var(--unit) * 5.6)
+    min-width: 0
+
+  .tile-row
+    align-items: center
+    display: grid
+    grid-template-columns: calc(var(--unit) * 6.5) minmax(0, 1fr) calc(var(--unit) * 14) calc(var(--unit) * 39)
+    min-height: 0
+
+    &[data-hot] .side-score
+      color: var(--live)
+
+    &[data-result='lost']
+      .side-name, .side-score
+        color: var(--ink-dim)
+
+  .serve-mark
+    color: var(--live)
+    display: grid
+    font-size: calc(var(--unit) * 3.8)
+
+    .icon:not([data-filled])
+      font-size: calc(var(--unit) * 5)
+      stroke-width: 3
+
+  .side-name
+    @include typography.single-line
+
+    font-size: calc(var(--unit) * 10)
+    font-weight: 600
+    line-height: 1.15
+    min-width: 0
+    padding-right: calc(var(--unit) * 3)
+
+    &[data-long]
+      font-size: calc(var(--unit) * 8)
+
+  .games-won
+    @include typography.figure
+
+    background: var(--surface-raised)
+    border-radius: calc(var(--unit) * 2.2)
+    display: grid
+    font-size: calc(var(--unit) * 15)
+    font-weight: 600
+    height: calc(var(--unit) * 21)
+    place-items: center
+
+    &[data-empty]
+      background: none
+
+  .side-score
+    @include typography.figure
+
+    display: grid
+    font-size: calc(var(--unit) * 37)
+    justify-items: end
+    letter-spacing: -0.01em
+    line-height: 0.86
+
+  .tile-foot
+    @include typography.figure
+
+    align-items: center
+    color: var(--ink-dim)
+    display: flex
+    font-size: calc(var(--unit) * 6.2)
+    font-weight: 600
+    gap: calc(var(--unit) * 4)
+    min-width: 0
+    overflow: hidden
+    padding-left: calc(var(--unit) * 6.5)
+    white-space: nowrap
+
+    b
+      color: var(--ink-muted)
+
+  .tile-time
+    color: var(--ink-muted)
+    font-family: var(--font-text)
+    font-size: calc(var(--unit) * 5.2)
+    font-weight: 500
+    margin-left: auto

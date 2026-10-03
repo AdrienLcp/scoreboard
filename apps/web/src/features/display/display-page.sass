@@ -1,0 +1,97 @@
+/// The big screen draws on `--cu`, a hundredth of the screen's height capped
+/// by its width at 16:9, so a TV, a projector and a laptop show the same
+/// composition at their own size. Its own geometry, the one surface sized by
+/// the viewport rather than a container.
+@layer components
+  .display-page
+    --cu: min(1vh, 0.5625vw)
+    --display-gap: calc(var(--cu) * 1.2)
+    --display-radius: calc(var(--cu) * 1.2)
+
+    display: grid
+    gap: var(--display-gap)
+    grid-template-rows: auto minmax(0, 1fr)
+    height: 100dvh
+    padding: calc(var(--cu) * 1.6) calc(var(--cu) * 1.8)
+
+  @media (width <= 720px)
+    .display-page
+      --cu: 7px
+      --display-gap: 0.625rem
+      --display-radius: var(--radius-m)
+
+      grid-template-rows: auto auto
+      height: auto
+      min-height: 100dvh
+      padding: var(--space-s) var(--gutter) var(--space-3xl)
+
+      .display-header
+        align-items: flex-start
+        flex-wrap: wrap
+        row-gap: var(--space-s)
+
+      .display-owner
+        flex-basis: 100%
+        flex-direction: column
+        gap: var(--space-4xs)
+
+        h1
+          font-size: var(--text-2xl)
+
+        p
+          font-size: var(--text-m)
+          white-space: normal
+
+      .display-scope
+        align-items: flex-start
+        flex-basis: 100%
+        font-size: var(--text-m)
+        order: 3
+
+      .display-when
+        flex-basis: 100%
+        justify-content: space-between
+
+      .display-date
+        font-size: var(--text-m)
+
+      .display-clock
+        font-size: 1.875rem
+
+      .summary-column
+        padding: var(--space-l) var(--space-m)
+
+        h2
+          font-size: var(--text-s)
+
+        .encounter-score
+          font-size: var(--text-base)
+
+      .summary-list
+        flex-wrap: nowrap
+
+      .result-winner, .next-names
+        font-size: var(--text-base)
+
+      .result-detail, .next-detail
+        font-size: var(--text-xs)
+
+      .result-score
+        font-size: 1.5rem
+
+      .next-time
+        font-size: var(--text-l)
+        min-width: 5.25rem
+
+      .free-tables li, .free-tables .table-number, .result-item .table-number
+        font-size: var(--text-l)
+
+      .summary-qr
+        .qr-code
+          width: 6.5rem
+
+        p
+          font-size: var(--text-base)
+
+        small
+          font-size: var(--text-xs)

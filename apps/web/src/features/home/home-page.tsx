@@ -12,7 +12,7 @@ import {
   ListBoxItem,
   Popover,
   Select,
-  SelectValue
+  SelectTrigger
 } from '@/presentation/components/select'
 import { Input, Label, TextField } from '@/presentation/components/text-field'
 import { useTranslate } from '@/presentation/i18n/i18n-provider'
@@ -80,9 +80,7 @@ export const HomePage: React.FC = () => {
           selectedKey={bestOf}
         >
           <Label>{translate('home.bestOf')}</Label>
-          <Button>
-            <SelectValue />
-          </Button>
+          <SelectTrigger />
           <Popover>
             <ListBox>
               {tableTennisBestOfs.map((count) => (

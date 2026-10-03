@@ -1,0 +1,44 @@
+@use '../styles/focus'
+@use '../styles/typography'
+
+@layer components
+  .tab-list
+    background: var(--surface)
+    border-radius: var(--radius-m)
+    display: grid
+    gap: var(--space-3xs)
+    grid-auto-columns: minmax(0, 1fr)
+    grid-auto-flow: column
+    padding: var(--space-3xs)
+
+  .tab
+    @include focus.ring-inset
+
+    align-items: center
+    border-radius: var(--radius-s)
+    color: var(--ink-muted)
+    cursor: pointer
+    display: flex
+    font-size: var(--text-m)
+    font-weight: 600
+    gap: var(--space-xs)
+    justify-content: center
+    min-height: var(--control-touch)
+    padding-inline: var(--space-xs)
+    text-align: center
+    transition: background-color var(--transition-fast), color var(--transition-fast)
+
+    &[data-hovered]:not([data-selected])
+      color: var(--ink)
+
+    &[data-selected]
+      background: var(--surface-high)
+      color: var(--ink)
+
+  .tab-count
+    @include typography.figure
+
+    font-size: var(--text-base)
+
+  .tab-panel
+    outline: none

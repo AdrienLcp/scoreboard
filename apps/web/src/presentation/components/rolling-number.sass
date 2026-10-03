@@ -1,0 +1,42 @@
+@layer components
+  .rolling-number
+    display: inline-grid
+    justify-items: inherit
+    overflow: hidden
+    vertical-align: top
+
+    > span
+      grid-area: 1 / 1
+
+    .leaving
+      animation: roll-out var(--transition-base) var(--ease-out) forwards
+
+    .arriving
+      animation: roll-in var(--transition-base) var(--ease-out) both
+
+    &[data-direction='down']
+      .leaving
+        animation-name: roll-out-down
+
+      .arriving
+        animation-name: roll-in-down
+
+  @keyframes roll-in
+    from
+      opacity: 0
+      translate: 0 42%
+
+  @keyframes roll-out
+    to
+      opacity: 0
+      translate: 0 -42%
+
+  @keyframes roll-in-down
+    from
+      opacity: 0
+      translate: 0 -42%
+
+  @keyframes roll-out-down
+    to
+      opacity: 0
+      translate: 0 42%

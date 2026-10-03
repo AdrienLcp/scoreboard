@@ -2,6 +2,9 @@ import { defineDictionary, defineTranslation } from '@adrienlcp/i18n'
 
 /** The reference dictionary: its keys are the type every other locale is checked against. */
 export const FR_DICTIONARY = defineDictionary({
+  app: {
+    name: 'Scoreboard'
+  },
   connection: {
     closed: 'Reconnexion…',
     connecting: 'Connexion…',
@@ -9,23 +12,67 @@ export const FR_DICTIONARY = defineDictionary({
     refused: 'Déconnecté'
   },
   display: {
-    follow: 'Suivez tous les matchs sur votre téléphone : {url}',
-    live: 'En cours',
-    phase: {
-      finished: 'Terminé',
-      idle: 'Libre',
-      live: 'En cours',
-      upcoming: 'À suivre'
-    },
-    quiet: 'Autres tables',
-    title: 'Tableau des scores',
-    unknown: 'Cet écran n’existe pas pour cette rencontre.'
+    around: defineTranslation('≈ {at:date}', {
+      date: { at: { timeStyle: 'short' } }
+    }),
+    clock: defineTranslation('{at:date}', {
+      date: { at: { timeStyle: 'short' } }
+    }),
+    date: defineTranslation('{at:date}', {
+      date: { at: { dateStyle: 'full' } }
+    }),
+    encounters: 'Rencontres par équipes',
+    finishedAt: defineTranslation('Fini à {at:date}', {
+      date: { at: { timeStyle: 'short' } }
+    }),
+    follow: 'Suivez les matchs sur votre téléphone',
+    freeTables: 'Tables libres · prochain match',
+    live: 'Matchs en cours',
+    next: 'À suivre',
+    noFreeTables: 'Aucune',
+    noLive: 'Aucun match en cours pour le moment',
+    noResults: 'Aucun match terminé',
+    nothingNext: 'rien de prévu',
+    page: 'Tables {first:number}–{last:number} · {index:number}/{count:number}',
+    qrLabel: 'QR code vers la page des matchs',
+    resultDetail: defineTranslation('contre {loser} · fini à {at:date}', {
+      date: { at: { timeStyle: 'short' } }
+    }),
+    results: 'Résultats',
+    summary: 'Résumé de la journée',
+    tableRun: 'tables {first:number} à {last:number}',
+    tileLabel: 'Table {table:number}, {home} contre {away}, {score}',
+    title: 'Grand écran',
+    unknown: 'Cet écran n’existe pas pour cette rencontre.',
+    waiting: {
+      encounters: defineTranslation('{count:plural}', {
+        plural: {
+          count: {
+            one: '{?} rencontre par équipes',
+            other: '{?} rencontres par équipes'
+          }
+        }
+      }),
+      firstAt: defineTranslation('Premiers matchs à <lit>{at:date}</lit>', {
+        date: { at: { timeStyle: 'short' } }
+      }),
+      lead: 'La journée commence bientôt',
+      soon: 'Premiers matchs dans un instant',
+      tables: defineTranslation('{count:plural}', {
+        plural: { count: { one: '{?} table', other: '{?} tables' } }
+      })
+    }
   },
   encounter: {
     format: {
       'fftt-3-players-10-games': 'FFTT · 3 joueurs, 10 parties',
       'fftt-4-players-14-games': 'FFTT · 4 joueurs, 14 parties'
-    }
+    },
+    noTable: 'tables à définir',
+    tables: defineTranslation('{count:plural} {tables:list}', {
+      plural: { count: { one: 'table', other: 'tables' } }
+    }),
+    versus: 'contre'
   },
   error: {
     api: {
@@ -54,12 +101,25 @@ export const FR_DICTIONARY = defineDictionary({
     title: 'Nouvelle rencontre'
   },
   match: {
+    call: {
+      deuce: 'Égalité',
+      'game-point': 'Balle de manche',
+      'match-point': 'Balle de match',
+      over: 'Terminé'
+    },
+    concession: {
+      retirement: 'Abandon',
+      walkover: 'Forfait'
+    },
+    gamesWon: 'manches ',
+    serving: 'au service',
     status: {
       finished: 'Terminé',
       live: 'En cours',
       scheduled: 'À venir'
     },
-    unnamedSide: 'À désigner'
+    unnamedSide: 'À désigner',
+    winner: 'vainqueur'
   },
   notFound: {
     address: 'Aucune page à l’adresse {path}.',
@@ -172,7 +232,13 @@ export const FR_DICTIONARY = defineDictionary({
   },
   table: {
     free: 'Aucun match',
-    name: 'Table {number:number}'
+    name: 'Table {number:number}',
+    prefix: 'Table '
+  },
+  time: {
+    hoursMinutes: '{hours:number} h {minutes}',
+    minutes: '{minutes:number} min',
+    underAMinute: '< 1 min'
   },
   timing: {
     duration: 'Durée : {minutes:number} min',

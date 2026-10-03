@@ -1,0 +1,17 @@
+@use '../styles/focus'
+
+@layer components
+  .text-link
+    @include focus.ring
+
+    border-radius: var(--radius-xs)
+    color: var(--ink)
+    cursor: pointer
+    text-decoration: underline
+    text-decoration-color: var(--ink-dim)
+    text-decoration-thickness: var(--outline-thin)
+    text-underline-offset: 0.22em
+    transition: text-decoration-color var(--transition-fast)
+
+    &[data-hovered]
+      text-decoration-color: var(--live)

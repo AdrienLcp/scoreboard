@@ -1,14 +1,10 @@
 import type React from 'react'
 
-export const MAIN_ID = 'main'
+import './main.sass'
 
-type MainProps = {
-  children: React.ReactNode
-}
+const MAIN_ID = 'main'
 
 /** The page's landmark: where a skip link points and focus lands after a navigation. */
-export const Main: React.FC<MainProps> = ({ children }) => (
-  <main id={MAIN_ID} tabIndex={-1}>
-    {children}
-  </main>
-)
+export const Main: React.FC<
+  Omit<React.ComponentProps<'main'>, 'id' | 'tabIndex'>
+> = (props) => <main {...props} id={MAIN_ID} tabIndex={-1} />

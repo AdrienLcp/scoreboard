@@ -1,0 +1,35 @@
+@layer components
+  .live-board
+    display: grid
+    gap: var(--display-gap)
+    grid-template-columns: minmax(0, 1fr) calc(var(--cu) * 40)
+    min-height: 0
+
+  .live-grid
+    align-content: center
+    display: grid
+    gap: var(--display-gap)
+    grid-template-columns: repeat(var(--columns, 1), minmax(0, 1fr))
+    grid-template-rows: repeat(var(--rows, 1), var(--row-height, 1fr))
+    min-height: 0
+
+  .live-none
+    align-self: center
+    color: var(--ink-muted)
+    font-size: calc(var(--cu) * 3)
+    font-weight: 600
+    justify-self: center
+    text-align: center
+
+  @media (width <= 720px)
+    .live-board
+      grid-template-columns: minmax(0, 1fr)
+
+    .live-grid
+      align-content: start
+      grid-auto-rows: 10.625rem
+      grid-template-columns: minmax(0, 1fr)
+      grid-template-rows: none
+
+    .live-board .summary-column
+      overflow: visible

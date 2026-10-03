@@ -5,6 +5,8 @@ import { createBrowserRouter, RouterProvider } from 'react-router'
 import { routes } from '@/infrastructure/router/routes'
 import { AppProviders } from '@/presentation/app-providers'
 
+import '@/presentation/styles/globals.sass'
+
 const container = document.getElementById('root')
 
 if (container === null) {

@@ -1,0 +1,10 @@
+@use '@adrienlcp/styles/fonts'
+
+@layer base
+  @each $weight in 500, 600, 700
+    @include fonts.font-face('Barlow', '/fonts/barlow-latin-#{$weight}-normal.woff2', fonts.$latin, $weight: $weight)
+    @include fonts.font-face('Barlow', '/fonts/barlow-latin-ext-#{$weight}-normal.woff2', fonts.$latin-ext, $weight: $weight)
+
+  @each $weight in 600, 700
+    @include fonts.font-face('Barlow Condensed', '/fonts/barlow-condensed-latin-#{$weight}-normal.woff2', fonts.$latin, $weight: $weight)
+    @include fonts.font-face('Barlow Condensed', '/fonts/barlow-condensed-latin-ext-#{$weight}-normal.woff2', fonts.$latin-ext, $weight: $weight)

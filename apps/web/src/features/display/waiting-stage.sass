@@ -1,0 +1,112 @@
+@use '../../presentation/styles/typography'
+
+@layer components
+  .waiting-stage
+    align-items: center
+    display: grid
+    gap: calc(var(--cu) * 6)
+    grid-template-columns: minmax(0, 1fr) auto
+    min-height: 0
+    padding: 0 calc(var(--cu) * 3) 0 calc(var(--cu) * 4)
+
+  .waiting-lead
+    color: var(--ink-muted)
+    font-size: calc(var(--cu) * 3)
+
+  .waiting-time
+    @include typography.figure
+
+    font-size: min(6rem, calc(var(--cu) * 10))
+    margin-top: calc(var(--cu) * 1)
+    text-wrap: balance
+
+    span
+      color: var(--live)
+      white-space: nowrap
+
+  .waiting-meta
+    font-size: calc(var(--cu) * 2.8)
+    font-weight: 600
+    margin-top: calc(var(--cu) * 1.6)
+
+  .waiting-encounters
+    display: grid
+    gap: var(--display-gap)
+    grid-template-columns: repeat(auto-fit, minmax(calc(var(--cu) * 30), 1fr))
+    margin-top: calc(var(--cu) * 6)
+
+    li
+      background: var(--surface)
+      border-radius: var(--display-radius)
+      padding: calc(var(--cu) * 2) calc(var(--cu) * 2.4)
+
+  .waiting-encounter-meta
+    color: var(--ink-muted)
+    font-size: calc(var(--cu) * 1.8)
+    margin-bottom: calc(var(--cu) * 0.8)
+
+  .waiting-team
+    font-size: calc(var(--cu) * 2.4)
+    font-weight: 600
+    line-height: 1.3
+
+    small
+      color: var(--ink-muted)
+      font-size: 0.75em
+      font-weight: 500
+      margin-right: 0.35em
+
+  .waiting-qr
+    align-items: center
+    background: var(--surface)
+    border-radius: calc(var(--display-radius) * 1.4)
+    display: flex
+    flex-direction: column
+    gap: calc(var(--cu) * 1.4)
+    padding: calc(var(--cu) * 3.2)
+    text-align: center
+    width: calc(var(--cu) * 42)
+
+    .qr-code
+      border-radius: calc(var(--cu) * 1.2)
+      width: calc(var(--cu) * 30)
+
+    p
+      font-size: calc(var(--cu) * 2.6)
+      font-weight: 600
+      line-height: 1.2
+      margin-top: calc(var(--cu) * 1)
+      text-wrap: balance
+
+    small
+      color: var(--ink-muted)
+      font-size: calc(var(--cu) * 1.9)
+      overflow-wrap: anywhere
+
+  @media (width <= 720px)
+    .waiting-stage
+      grid-template-columns: minmax(0, 1fr)
+      padding: var(--space-s) 0 0
+
+    .waiting-lead
+      font-size: var(--text-l)
+
+    .waiting-time
+      font-size: var(--text-4xl)
+
+    .waiting-meta
+      font-size: var(--text-l)
+
+    .waiting-encounters
+      grid-template-columns: minmax(0, 1fr)
+      margin-top: var(--space-xl)
+
+    .waiting-qr
+      padding: var(--space-xl)
+      width: auto
+
+      .qr-code
+        width: 12.5rem
+
+      p
+        font-size: var(--text-xl)

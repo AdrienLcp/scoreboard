@@ -1,0 +1,87 @@
+@use '../../presentation/styles/typography'
+
+@layer components
+  .display-header
+    align-items: center
+    display: flex
+    gap: calc(var(--cu) * 3)
+    min-height: calc(var(--cu) * 6)
+    padding-inline: calc(var(--cu) * 0.4)
+
+  .display-owner
+    align-items: baseline
+    display: flex
+    flex: 1
+    gap: calc(var(--cu) * 1.8)
+    min-width: 0
+
+    h1
+      font-size: calc(var(--cu) * 3)
+      font-weight: 700
+      line-height: 1.1
+      white-space: nowrap
+
+    p
+      @include typography.single-line
+
+      color: var(--ink-muted)
+      font-size: calc(var(--cu) * 2.2)
+      min-width: 0
+
+  .display-scope
+    align-items: flex-end
+    display: flex
+    flex-direction: column
+    font-size: calc(var(--cu) * 2.2)
+    font-weight: 600
+    gap: calc(var(--cu) * 0.7)
+    white-space: nowrap
+
+  .page-bar
+    background: var(--surface-raised)
+    border-radius: var(--outline-medium)
+    display: block
+    height: var(--outline-thick)
+    min-width: calc(var(--cu) * 18)
+    overflow: hidden
+    width: 100%
+
+    span
+      animation: page-fill var(--page-ms) linear forwards
+      background: var(--live)
+      display: block
+      height: 100%
+      transform-origin: 0 50%
+
+      @media (prefers-reduced-motion: reduce)
+        animation: none
+
+  @keyframes page-fill
+    from
+      scale: 0 1
+
+  .display-when
+    align-items: center
+    display: flex
+    gap: calc(var(--cu) * 1.8)
+
+  .display-offline
+    align-items: center
+    background: var(--ink)
+    border-radius: var(--radius-full)
+    color: var(--on-ink)
+    display: inline-flex
+    font-size: calc(var(--cu) * 1.8)
+    font-weight: 700
+    gap: 0.5em
+    padding: 0.35em 0.9em
+
+  .display-date
+    color: var(--ink-muted)
+    font-size: calc(var(--cu) * 2.2)
+    white-space: nowrap
+
+  .display-clock
+    @include typography.figure
+
+    font-size: calc(var(--cu) * 4.4)

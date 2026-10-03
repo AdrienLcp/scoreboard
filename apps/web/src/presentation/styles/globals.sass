@@ -1,0 +1,61 @@
+@use '@adrienlcp/styles/reduced-motion.css'
+@use '@adrienlcp/styles/reset.css'
+@use './fonts'
+@use './tokens'
+@use './typography'
+@use './layout'
+
+@layer base
+  html
+    background: var(--field)
+    scrollbar-color: var(--surface-high) var(--field)
+
+  body
+    @include typography.body
+    @include layout.container
+
+    background: var(--field)
+    caret-color: var(--live)
+    color: var(--ink)
+    font-variant-numeric: tabular-nums lining-nums
+    min-height: 100dvh
+    overflow-x: clip
+    text-rendering: optimizeLegibility
+
+  #root
+    display: flex
+    flex-direction: column
+    min-height: 100dvh
+
+  a
+    color: inherit
+    text-decoration-thickness: var(--outline-thin)
+    text-underline-offset: 0.22em
+
+  ::selection
+    background: var(--live)
+    color: var(--on-live)
+
+  ::-webkit-scrollbar
+    height: 0.625rem
+    width: 0.625rem
+
+  ::-webkit-scrollbar-track
+    background: transparent
+
+  ::-webkit-scrollbar-thumb
+    background: var(--surface-high)
+    border: var(--outline-medium) solid var(--field)
+    border-radius: var(--radius-xs)
+
+  :focus-visible
+    outline: var(--outline-thick) solid var(--focus)
+    outline-offset: var(--outline-thick)
+
+  .visually-hidden
+    clip-path: inset(50%)
+    height: 1px
+    overflow: hidden
+    position: absolute
+    white-space: nowrap
+    width: 1px
