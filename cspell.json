@@ -7,7 +7,9 @@
     ".wrangler",
     ".impeccable"
   ],
-  "import": ["@cspell/dict-fr-fr/cspell-ext.json"],
+  "import": [
+    "@cspell/dict-fr-fr/cspell-ext.json"
+  ],
   "language": "en,en-GB",
   "overrides": [
     {
@@ -30,11 +32,27 @@
     "esbuild",
     "FFTT",
     "fftt",
+    "fieldset",
     "GHJKLM",
+    "Huet",
+    "Inès",
     "ITTF",
     "Lacourpaille",
+    "linecap",
+    "linejoin",
+    "Léna",
+    "minmax",
+    "nowrap",
+    "nums",
+    "oklch",
+    "Pineau",
+    "pineau",
     "PQRSTUVWXYZ",
     "rhysd",
-    "workerd"
+    "Rivière",
+    "Segoe",
+    "suivre",
+    "workerd",
+    "Yanis"
   ]
 }
