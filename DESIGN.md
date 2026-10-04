@@ -190,7 +190,7 @@ A near-monochrome navy ramp with white ink and one saturated lime voice. All tok
 - **Raised Navy** (surface-raised, ≈ #172039): table-number chips, games-won wells, popovers, hover on surface.
 - **High Navy** (surface-high, ≈ #212C4A): selected tab, finished-match pill, list hover, scrollbar thumb.
 - **Rule Navy** (rule, ≈ #26324F): hairlines, input borders, the 1px edge on secondary buttons and point targets.
-- **Chalk White** (ink, ≈ #F3F6FB): names and figures; also the fill of the primary and "stop" buttons, the selected toggle and the offline badge.
+- **Chalk White** (ink, ≈ #F3F6FB): names and figures; also the fill of the primary and "stop" buttons, the selected toggle, the check on a selected list option and the offline badge.
 - **Mist** (ink-muted, ≈ #A3AEC8): labels, section headings, times, hints, secondary detail.
 - **Dusk** (ink-dim, ≈ #7A86A4): the losing side of a finished match, disabled text, placeholders, the games strip in a tile foot.
 - **Deep Ink Navy** (on-live, ≈ #0B1120): text on lime and on white fills.
@@ -267,7 +267,7 @@ Plain and confident; one obvious action per screen.
 
 ### Cards / Containers
 - **Live tile:** surface navy, viewport-relative radius, no border, no shadow; enters with a fade and scale from 0.95 (640ms). The hot score turns lime; the losing side dims after the match.
-- **Summary column:** one surface panel; blocks for team encounters, results with finish times, free tables with next-match ETA, "à suivre", and the QR.
+- **Summary column:** one surface panel; blocks for team encounters, results with finish times, free tables with next-match ETA, "à suivre" (each start in muted figures above the names, so a doubles pair keeps the full width), and the QR.
 - **Match card (spectator):** surface navy, 1.125rem radius, header row is the disclosure trigger; expanded detail sits below a hairline with a per-game table.
 - **Internal padding:** tool cards 0.75 to 1rem; display panels in cu.
 

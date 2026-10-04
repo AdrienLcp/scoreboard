@@ -85,8 +85,15 @@
     &[data-focus-visible]
       outline: var(--outline-thick) solid var(--focus)
 
-    &[data-selected]
-      color: var(--live)
+    // A neutral check rather than lime, which only ever means live.
+    &[data-selected]::after
+      background: currentColor
+      content: ''
+      flex: none
+      height: var(--icon-m)
+      margin-inline-start: auto
+      mask: url("data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='black' stroke-width='2.5' stroke-linecap='round' stroke-linejoin='round'><path d='M4.5 12.5l5 5 10-11'/></svg>") center / contain no-repeat
+      width: var(--icon-m)
 
     &[data-disabled]
       color: var(--ink-dim)

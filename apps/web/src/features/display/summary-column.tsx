@@ -75,6 +75,7 @@ export const SummaryColumn: React.FC<SummaryColumnProps> = ({
   summary
 }) => {
   const translate = useTranslate()
+  // The non-breaking space keeps the dash on the home line, so a wrap never starts a line with it.
   const namesOf = (match: MatchView): string =>
     [match.home, match.away]
       .map(
@@ -82,7 +83,7 @@ export const SummaryColumn: React.FC<SummaryColumnProps> = ({
           sideName({ form: 'full', participant, players }) ??
           translate('match.unnamedSide')
       )
-      .join(' – ')
+      .join(' – ')
 
   return (
     <aside aria-label={translate('display.summary')} className='summary-column'>
