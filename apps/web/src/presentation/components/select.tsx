@@ -54,4 +54,9 @@ export const ListBoxItem: React.FC<ListBoxItemProps> = ({
   />
 )
 
+/** A secondary part of an option, shown in the list and left out of the closed select. */
+export const OptionDetail: React.FC<{ children: React.ReactNode }> = ({
+  children
+}) => <span className='option-detail'>{children}</span>
+
 export { Label } from './field'

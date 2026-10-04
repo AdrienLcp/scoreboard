@@ -92,8 +92,11 @@ export const FR_DICTIONARY = defineDictionary({
     wrong_code: 'Ce code ne correspond à aucune table.'
   },
   home: {
-    bestOf: 'Format des matchs',
-    bestOfOption: 'Au meilleur des {count:number} manches',
+    bestOf: 'Manches à gagner',
+    bestOfHelp:
+      'Chaque manche se joue en {points:number} points. Le premier à remporter ce nombre de manches gagne le match.',
+    bestOfOption: '{toWin:number} manches gagnantes',
+    bestOfOptionDetail: 'au meilleur des {count:number}',
     create: 'Créer la rencontre',
     createNote:
       'Vous recevrez un code organisateur : il ouvre la préparation et les corrections.',

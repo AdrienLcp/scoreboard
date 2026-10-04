@@ -4,6 +4,8 @@ import { useState } from 'react'
 import { eventIdSchema } from '@scoreboard/protocol/identifiers'
 import { tableTennisBestOfs } from '@scoreboard/protocol/match-format'
 
+import { gamesToWinMatch } from '@scoreboard/core/table-tennis/table-tennis-game'
+
 import {
   spectatorPathFor,
   umpireEntryPathFor,
@@ -18,6 +20,7 @@ import { Group, NumberField } from '@/presentation/components/number-field'
 import {
   ListBox,
   ListBoxItem,
+  OptionDetail,
   Popover,
   Select,
   SelectTrigger
@@ -100,13 +103,28 @@ const CreateEventForm: React.FC = () => {
         >
           <Label>{translate('home.bestOf')}</Label>
           <SelectTrigger />
+          <Description>
+            {translate('home.bestOfHelp', { points: POINTS_PER_GAME })}
+          </Description>
           <Popover>
             <ListBox>
-              {tableTennisBestOfs.map((count) => (
-                <ListBoxItem id={count} key={count}>
-                  {translate('home.bestOfOption', { count })}
-                </ListBoxItem>
-              ))}
+              {tableTennisBestOfs.map((count) => {
+                const option = translate('home.bestOfOption', {
+                  toWin: gamesToWinMatch(count)
+                })
+                const detail = translate('home.bestOfOptionDetail', { count })
+
+                return (
+                  <ListBoxItem
+                    id={count}
+                    key={count}
+                    textValue={`${option} (${detail})`}
+                  >
+                    {option}
+                    <OptionDetail>{detail}</OptionDetail>
+                  </ListBoxItem>
+                )
+              })}
             </ListBox>
           </Popover>
         </Select>
