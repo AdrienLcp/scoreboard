@@ -1,57 +1,48 @@
+import type { Time } from '@internationalized/date'
 import type React from 'react'
 import { useState } from 'react'
 
 import type { MatchView } from '@scoreboard/protocol/event-snapshot'
 import type { InstantMs } from '@scoreboard/protocol/scoring-event'
 
-import { toLocalDateTime } from '@/infrastructure/dates'
+import { atTimeOfDay, toTimeOfDay } from '@/infrastructure/dates'
 import { Button } from '@/presentation/components/button'
 import { Form } from '@/presentation/components/form'
-import { Input, Label, TextField } from '@/presentation/components/text-field'
+import { TimeField } from '@/presentation/components/time-field'
 import { useTranslate } from '@/presentation/i18n/i18n-provider'
 
-import { readTypedInstant } from './typed-instant'
-
 type PlannedTimeFormProps = {
+  /** Any instant on the event's day: an event is one day, so only the time is typed. */
+  eventDay: InstantMs
   match: MatchView
   onPlan: (plannedAtMs: InstantMs | null) => void
 }
 
 /** The time the organiser wants a match played; empty leaves it to the queue. */
 export const PlannedTimeForm: React.FC<PlannedTimeFormProps> = ({
+  eventDay,
   match,
   onPlan
 }) => {
   const translate = useTranslate()
-  const [typed, setTyped] = useState(
-    match.plannedAtMs === null ? '' : toLocalDateTime(match.plannedAtMs)
+  const [time, setTime] = useState<Time | null>(
+    match.plannedAtMs === null ? null : toTimeOfDay(match.plannedAtMs)
   )
-  const plannedAtMs = readTypedInstant(typed)
 
   return (
     <Form
       className='planned-time-form'
       onSubmit={(event) => {
         event.preventDefault()
-
-        if (plannedAtMs !== 'invalid') {
-          onPlan(plannedAtMs)
-        }
+        onPlan(time === null ? null : atTimeOfDay(time, eventDay))
       }}
     >
-      <TextField
-        isInvalid={plannedAtMs === 'invalid'}
-        onChange={setTyped}
-        value={typed}
-      >
-        <Label>{translate('organiser.matches.plannedAt')}</Label>
-        <Input type='datetime-local' />
-      </TextField>
-      <Button
-        isDisabled={plannedAtMs === 'invalid'}
-        type='submit'
-        variant='quiet'
-      >
+      <TimeField
+        label={translate('organiser.matches.plannedAt')}
+        onChange={setTime}
+        value={time}
+      />
+      <Button type='submit' variant='quiet'>
         {translate('organiser.matches.plannedAtSave')}
       </Button>
     </Form>

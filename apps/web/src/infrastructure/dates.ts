@@ -1,4 +1,5 @@
 import { Result } from '@adrienlcp/result'
+import { Time } from '@internationalized/date'
 
 import type { InstantMs } from '@scoreboard/protocol/scoring-event'
 
@@ -34,3 +35,17 @@ export const toLocalDateTime = (instant: InstantMs): string => {
 
 /** `Intl` formats a `Date`: this is where an instant becomes one. */
 export const toDate = (instant: InstantMs): Date => new Date(instant)
+
+/** The wall-clock time of day of an instant, on this device. */
+export const toTimeOfDay = (instant: InstantMs): Time => {
+  const date = new Date(instant)
+
+  return new Time(date.getHours(), date.getMinutes())
+}
+
+/** The instant a time of day falls on, on the same local day as `day`. */
+export const atTimeOfDay = (time: Time, day: InstantMs): InstantMs => {
+  const date = new Date(day)
+
+  return date.setHours(time.hour, time.minute, 0, 0)
+}

@@ -214,6 +214,9 @@ importers:
       '@adrienlcp/styles':
         specifier: ^0.4.1
         version: 0.4.1(sass@1.105.1)
+      '@internationalized/date':
+        specifier: 3.12.4
+        version: 3.12.4
       '@scoreboard/core':
         specifier: workspace:*
         version: link:../../packages/core

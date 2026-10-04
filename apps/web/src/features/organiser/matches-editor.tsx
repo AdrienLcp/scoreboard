@@ -8,6 +8,7 @@ import type { ScoringEvent } from '@scoreboard/protocol/scoring-event'
 
 import { tableNumbers } from '@scoreboard/core/event/table-queue'
 
+import { nowMs } from '@/infrastructure/clock'
 import { newId } from '@/infrastructure/ids'
 import { Button } from '@/presentation/components/button'
 import { Form } from '@/presentation/components/form'
@@ -154,6 +155,7 @@ export const MatchesEditor: React.FC<MatchesEditorProps> = ({
                   }
                 />
                 <PlannedTimeForm
+                  eventDay={setup.startsAtMs ?? match.plannedAtMs ?? nowMs()}
                   key={match.plannedAtMs}
                   match={match}
                   onPlan={(plannedAtMs) =>

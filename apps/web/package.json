@@ -6,6 +6,7 @@
     "@adrienlcp/result": "^0.1.0",
     "@adrienlcp/safe-storage": "^0.1.0",
     "@adrienlcp/styles": "^0.4.1",
+    "@internationalized/date": "3.12.4",
     "@scoreboard/core": "workspace:*",
     "@scoreboard/protocol": "workspace:*",
     "react": "19.3.0",

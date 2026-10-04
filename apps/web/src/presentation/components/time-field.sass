@@ -1,0 +1,33 @@
+@use '../styles/typography'
+
+@layer components
+  .time-field-input
+    @include typography.figure
+
+    align-items: center
+    display: flex
+    font-size: var(--text-l)
+    gap: var(--space-4xs)
+    width: auto
+
+    &[data-focus-within]
+      border-color: var(--live)
+
+  .time-field-segment
+    border-radius: var(--radius-xs)
+    caret-color: transparent
+    outline: none
+    padding: var(--space-4xs) var(--space-3xs)
+    text-align: end
+
+    &[data-placeholder]
+      color: var(--ink-dim)
+
+    &[data-focused]
+      background: var(--live)
+      color: var(--on-live)
+
+  .time-field-separator
+    color: var(--ink-muted)
+    font-size: var(--text-m)
+    padding-inline: var(--space-4xs)
