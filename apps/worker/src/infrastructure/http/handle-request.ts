@@ -17,6 +17,8 @@ import {
 import type { Env } from '@/env'
 import { cryptoRandomIndex } from '@/infrastructure/random'
 
+import { serveWebApp } from './serve-web-app'
+
 const EVENT_SOCKET_PATTERN = new URLPattern({ pathname: EVENT_SOCKET_ROUTE })
 
 /** An event id is drawn at random; a clash is retried rather than overwritten. */
@@ -77,7 +79,7 @@ const connectToEvent = (
   )
 }
 
-/** The worker's front door: the API and the event sockets; the rest is the web app's assets. */
+/** The worker's front door: the API and the event sockets; every other address is the web app. */
 export const handleRequest = (
   request: Request,
   env: Env
@@ -96,5 +98,5 @@ export const handleRequest = (
     return apiError(404, 'not_found', 'No route behind this address')
   }
 
-  return env.ASSETS.fetch(request)
+  return serveWebApp(request, env.ASSETS)
 }

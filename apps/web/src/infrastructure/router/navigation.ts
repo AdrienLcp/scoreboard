@@ -15,18 +15,11 @@ import {
   eventIdSchema,
   type UmpireCode
 } from '@scoreboard/protocol/identifiers'
+import { PAGE_ROUTES } from '@scoreboard/protocol/page-routes'
 
 import { parseUmpireCode } from '@scoreboard/core/access/access-codes'
 
-export const paths = {
-  display: '/e/:eventId/display',
-  displayOf: '/e/:eventId/display/:displayId',
-  home: '/',
-  organiser: '/e/:eventId/organiser',
-  spectator: '/e/:eventId',
-  umpire: '/e/:eventId/umpire/:umpireCode',
-  umpireEntry: '/e/:eventId/umpire'
-} as const
+export const paths = PAGE_ROUTES
 
 const pathFor = <TPath extends string>(
   path: TPath,

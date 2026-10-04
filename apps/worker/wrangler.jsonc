@@ -1,9 +1,11 @@
 {
   "$schema": "node_modules/wrangler/config-schema.json",
   "assets": {
+    "binding": "ASSETS",
     "directory": "../web/dist",
     "not_found_handling": "single-page-application",
-    "run_worker_first": ["/api/*", "/ws/*"]
+    // Pages go through the worker so an unknown address answers 404; built files skip it.
+    "run_worker_first": ["/*", "!/assets/*", "!/fonts/*"]
   },
   "compatibility_date": "2026-09-01",
   "dev": {
