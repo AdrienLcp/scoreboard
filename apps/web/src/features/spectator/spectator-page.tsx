@@ -13,8 +13,8 @@ import { EncounterScore } from '@/features/event/encounter-score'
 import { FeedMessage } from '@/features/event/feed-message'
 import { sideName } from '@/features/event/participant-names'
 import { startLabel } from '@/features/event/start-label'
+import { useCurrentSnapshot } from '@/features/event/use-current-snapshot'
 import { usePublicFeed } from '@/features/event/use-public-feed'
-import { useServerNow } from '@/features/event/use-server-now'
 import { toDate } from '@/infrastructure/dates'
 import { useEventIdParam } from '@/infrastructure/router/navigation'
 import { BrandMark } from '@/presentation/components/brand-mark'
@@ -42,11 +42,12 @@ const startOf = (match: MatchView): number | null =>
 
 const SpectatorProgramme: React.FC<{ eventId: EventId }> = ({ eventId }) => {
   const translate = useTranslate()
-  const { error, snapshot, status } = usePublicFeed({
+  const feed = usePublicFeed({
     eventId,
     role: 'spectator'
   })
-  const nowMs = useServerNow(snapshot?.generatedAtMs ?? null)
+  const { error, status } = feed
+  const { nowMs, snapshot } = useCurrentSnapshot(feed.snapshot)
   const { follow, followed, unfollow } = useFollowedPlayers(eventId)
 
   if (snapshot === null) {

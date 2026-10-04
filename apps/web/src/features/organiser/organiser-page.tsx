@@ -7,6 +7,7 @@ import { organiserCodeSchema } from '@scoreboard/protocol/identifiers'
 import { encounterLinesFor } from '@/features/event/encounter-lines'
 import { EncounterScore } from '@/features/event/encounter-score'
 import { FeedMessage } from '@/features/event/feed-message'
+import { useCurrentSnapshot } from '@/features/event/use-current-snapshot'
 import {
   displayPathFor,
   spectatorPathFor,
@@ -74,8 +75,9 @@ const OrganiserConsole: React.FC<{ code: OrganiserCode; eventId: EventId }> = ({
   const translate = useTranslate()
   const organiser = useOrganiserConsole({ code, eventId })
   const { snapshot } = organiser
+  const { snapshot: event } = useCurrentSnapshot(snapshot?.event ?? null)
 
-  if (snapshot === null) {
+  if (snapshot === null || event === null) {
     return (
       <FeedMessage
         error={organiser.error}
@@ -153,11 +155,11 @@ const OrganiserConsole: React.FC<{ code: OrganiserCode; eventId: EventId }> = ({
           </TabList>
         </div>
         <TabPanel id='live'>
-          <LiveTables event={snapshot.event} onRecord={organiser.record} />
+          <LiveTables event={event} onRecord={organiser.record} />
         </TabPanel>
         <TabPanel id='matches'>
           <MatchesEditor
-            matches={snapshot.event.matches}
+            matches={event.matches}
             onRecord={organiser.record}
             onSave={organiser.saveSetup}
             setup={setup}
@@ -168,13 +170,13 @@ const OrganiserConsole: React.FC<{ code: OrganiserCode; eventId: EventId }> = ({
         </TabPanel>
         <TabPanel id='encounters'>
           <div className='organiser-stack'>
-            {encounterLinesFor(snapshot.event).length === 0 ? (
+            {encounterLinesFor(event).length === 0 ? (
               <p className='organiser-empty'>
                 {translate('organiser.encounter.empty')}
               </p>
             ) : (
               <ul className='encounter-list'>
-                {encounterLinesFor(snapshot.event).map((encounter) => (
+                {encounterLinesFor(event).map((encounter) => (
                   <li key={encounter.id}>
                     <EncounterScore encounter={encounter} />
                   </li>

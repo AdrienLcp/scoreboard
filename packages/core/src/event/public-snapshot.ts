@@ -1,11 +1,10 @@
-import type { EventSetup, MatchSetup } from '@scoreboard/protocol/event-setup'
+import type { EventSetup } from '@scoreboard/protocol/event-setup'
 import type {
   EncounterView,
   MatchView,
   PublicSnapshot
 } from '@scoreboard/protocol/event-snapshot'
 import type { MatchId } from '@scoreboard/protocol/identifiers'
-import type { MatchState } from '@scoreboard/protocol/match-state'
 import type {
   InstantMs,
   StampedEvent
@@ -14,7 +13,7 @@ import type {
 import { encounterFormatFor } from '../encounter/encounter-formats'
 import { scoreEncounter } from '../encounter/encounter-score'
 import { describeMatch } from '../match/match-log'
-import { type MatchTimes, matchTimesOf } from '../match/match-times'
+import { matchTimesOf } from '../match/match-times'
 import { estimatedDurationMs, type PlayedMatch } from './duration-estimate'
 import { estimatedStartsFor } from './start-estimate'
 import { matchOnTable, tableNumbers } from './table-queue'
@@ -23,22 +22,71 @@ export type MatchLogs = ReadonlyMap<MatchId, readonly StampedEvent[]>
 
 const NO_EVENTS: readonly StampedEvent[] = []
 
-type PlayedSetup = MatchSetup & { state: MatchState; times: MatchTimes }
-
-const playedMatchesOf = (matches: readonly PlayedSetup[]): PlayedMatch[] =>
+const playedMatchesOf = (matches: readonly MatchView[]): PlayedMatch[] =>
   matches
-    .flatMap(({ format, times }) =>
-      times.durationMs === null || times.finishedAtMs === null
+    .flatMap(({ format, timing }) =>
+      timing.durationMs === null || timing.finishedAtMs === null
         ? []
         : [
             {
-              durationMs: times.durationMs,
-              finishedAtMs: times.finishedAtMs,
+              durationMs: timing.durationMs,
+              finishedAtMs: timing.finishedAtMs,
               format
             }
           ]
     )
     .toSorted((left, right) => left.finishedAtMs - right.finishedAtMs)
+
+const withEstimatedStarts = ({
+  matches,
+  nowMs,
+  startsAtMs
+}: {
+  matches: readonly MatchView[]
+  nowMs: InstantMs
+  startsAtMs: InstantMs | null
+}): MatchView[] => {
+  const playedMatches = playedMatchesOf(matches)
+  const estimates = estimatedStartsFor({
+    durationFor: (format) =>
+      estimatedDurationMs({ format, played: playedMatches }),
+    matches: matches.map((match) => ({
+      format: match.format,
+      id: match.id,
+      plannedAtMs: match.plannedAtMs,
+      startedAtMs: match.timing.startedAtMs,
+      status: match.state.status,
+      table: match.table
+    })),
+    nowMs,
+    startsAtMs
+  })
+
+  return matches.map((match) => ({
+    ...match,
+    timing: {
+      ...match.timing,
+      estimatedStartMs: estimates.get(match.id) ?? null
+    }
+  }))
+}
+
+/**
+ * The same snapshot with its expected starts worked out again at `nowMs`: a
+ * screen keeps them moving while nobody scores, instead of showing starts
+ * that have slipped into the past.
+ */
+export const withStartsEstimatedAt = (
+  snapshot: PublicSnapshot,
+  nowMs: InstantMs
+): PublicSnapshot => ({
+  ...snapshot,
+  matches: withEstimatedStarts({
+    matches: snapshot.matches,
+    nowMs,
+    startsAtMs: snapshot.startsAtMs
+  })
+})
 
 const matchViewsFor = ({
   logs,
@@ -48,38 +96,24 @@ const matchViewsFor = ({
   logs: MatchLogs
   nowMs: InstantMs
   setup: EventSetup
-}): MatchView[] => {
-  const played = setup.matches.map((match): PlayedSetup => {
-    const log = logs.get(match.id) ?? NO_EVENTS
-    const state = describeMatch(
-      match.format,
-      log.map(({ event }) => event)
-    )
+}): MatchView[] =>
+  withEstimatedStarts({
+    matches: setup.matches.map((match): MatchView => {
+      const log = logs.get(match.id) ?? NO_EVENTS
+      const state = describeMatch(
+        match.format,
+        log.map(({ event }) => event)
+      )
 
-    return { ...match, state, times: matchTimesOf(log, state) }
-  })
-
-  const playedMatches = playedMatchesOf(played)
-  const estimates = estimatedStartsFor({
-    durationFor: (format) =>
-      estimatedDurationMs({ format, played: playedMatches }),
-    matches: played.map((match) => ({
-      format: match.format,
-      id: match.id,
-      plannedAtMs: match.plannedAtMs,
-      startedAtMs: match.times.startedAtMs,
-      status: match.state.status,
-      table: match.table
-    })),
+      return {
+        ...match,
+        state,
+        timing: { ...matchTimesOf(log, state), estimatedStartMs: null }
+      }
+    }),
     nowMs,
     startsAtMs: setup.startsAtMs
   })
-
-  return played.map(({ times, ...match }) => ({
-    ...match,
-    timing: { ...times, estimatedStartMs: estimates.get(match.id) ?? null }
-  }))
-}
 
 /** Everything the room may see, derived from the setup, every match's log and the time it is now. */
 export const publicSnapshotFor = ({

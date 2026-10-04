@@ -165,6 +165,18 @@ describe('estimatedDurationMs', () => {
     ).toBe(25 * MINUTE)
   })
 
+  it('[timing] leaves out matches too short to tell the room’s pace', () => {
+    expect(
+      estimatedDurationMs({
+        format: BEST_OF_5,
+        played: [
+          { durationMs: 20 * MINUTE, format: BEST_OF_5 },
+          { durationMs: 30_000, format: BEST_OF_5 }
+        ]
+      })
+    ).toBe(20 * MINUTE)
+  })
+
   it('[timing] forgets matches older than the rolling window', () => {
     const played = [
       { durationMs: 90 * MINUTE, format: BEST_OF_5 },

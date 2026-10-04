@@ -9,8 +9,8 @@ import {
   encounterTitleOf
 } from '@/features/event/encounter-lines'
 import { FeedMessage } from '@/features/event/feed-message'
+import { useCurrentSnapshot } from '@/features/event/use-current-snapshot'
 import { usePublicFeed } from '@/features/event/use-public-feed'
-import { useServerNow } from '@/features/event/use-server-now'
 import { pageOrigin } from '@/infrastructure/browser'
 import {
   spectatorPathFor,
@@ -34,11 +34,12 @@ const DisplayBoard: React.FC<{
   eventId: EventId
 }> = ({ displayId, eventId }) => {
   const translate = useTranslate()
-  const { error, snapshot, status } = usePublicFeed({
+  const feed = usePublicFeed({
     eventId,
     role: 'display'
   })
-  const nowMs = useServerNow(snapshot?.generatedAtMs ?? null)
+  const { error, status } = feed
+  const { nowMs, snapshot } = useCurrentSnapshot(feed.snapshot)
 
   if (snapshot === null) {
     return (

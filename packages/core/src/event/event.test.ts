@@ -6,7 +6,7 @@ import type { EventSetup, MatchSetup } from '@scoreboard/protocol/event-setup'
 import type { StampedEvent } from '@scoreboard/protocol/scoring-event'
 
 import { checkEventSetup } from './event-setup-check'
-import { publicSnapshotFor } from './public-snapshot'
+import { publicSnapshotFor, withStartsEstimatedAt } from './public-snapshot'
 import { matchOnTable } from './table-queue'
 
 const FORMAT = { bestOf: 3, pointsPerGame: 11, sport: 'table-tennis' } as const
@@ -127,5 +127,20 @@ describe('publicSnapshotFor', () => {
       { matchId: null, number: 2 }
     ])
     expect(snapshot.matches[1]?.state.status).toBe('live')
+  })
+})
+
+describe('withStartsEstimatedAt', () => {
+  it('[snapshot] moves a waiting match’s start to the time it is now', () => {
+    const waiting = matchOn(1)
+    const snapshot = publicSnapshotFor({
+      logs: new Map(),
+      nowMs: 0,
+      setup: setupWith([waiting])
+    })
+
+    const later = withStartsEstimatedAt(snapshot, 60_000)
+
+    expect(later.matches[0]?.timing.estimatedStartMs).toBe(60_000)
   })
 })
