@@ -8,7 +8,12 @@ import { toLocalDateTime } from '@/infrastructure/dates'
 import { Button } from '@/presentation/components/button'
 import { Form } from '@/presentation/components/form'
 import { Group, NumberField } from '@/presentation/components/number-field'
-import { Input, Label, TextField } from '@/presentation/components/text-field'
+import {
+  Description,
+  Input,
+  Label,
+  TextField
+} from '@/presentation/components/text-field'
 import { useTranslate } from '@/presentation/i18n/i18n-provider'
 
 import { changeTableCount } from './setup-edits'
@@ -75,6 +80,9 @@ export const EventSettingsForm: React.FC<EventSettingsFormProps> = ({
       >
         <Label>{translate('organiser.settings.startsAt')}</Label>
         <Input type='datetime-local' />
+        <Description>
+          {translate('organiser.settings.startsAtHelp')}
+        </Description>
       </TextField>
       <NumberField
         maxValue={MAX_TABLES}

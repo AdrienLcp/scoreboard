@@ -6,6 +6,8 @@ import type { PlayerId } from '@scoreboard/protocol/identifiers'
 import type { InstantMs } from '@scoreboard/protocol/scoring-event'
 import { type Side, sides } from '@scoreboard/protocol/side'
 
+import { gamesToWinMatch } from '@scoreboard/core/table-tennis/table-tennis-game'
+
 import { formatDuration } from '@/features/event/durations'
 import { hotSideOf, matchCallOf } from '@/features/event/match-call'
 import { MatchCallPill } from '@/features/event/match-call-pill'
@@ -224,7 +226,9 @@ export const MatchCard: React.FC<MatchCardProps> = ({
               timing.durationMs === null
                 ? null
                 : formatDuration(translate, timing.durationMs),
-              translate('spectator.bestOf', { count: match.format.bestOf })
+              translate('match.gamesToWin', {
+                count: gamesToWinMatch(match.format.bestOf)
+              })
             ]
               .filter((part) => part !== null)
               .join(' · ')}

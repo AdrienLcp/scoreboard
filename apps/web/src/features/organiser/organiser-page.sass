@@ -115,6 +115,11 @@
     > .field
       flex: 1 1 12rem
 
+    > .organiser-note
+      flex-basis: 100%
+      margin: 0
+      max-width: none
+
   .organiser-empty, .organiser-note
     @include typography.hint
 
@@ -309,6 +314,10 @@
     > .button
       grid-column: 1 / -1
       justify-self: start
+
+    > .organiser-note
+      grid-column: 1 / -1
+      margin: 0
 
   .encounter-letters
     display: grid

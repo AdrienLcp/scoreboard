@@ -64,8 +64,8 @@ export const FR_DICTIONARY = defineDictionary({
   },
   encounter: {
     format: {
-      'fftt-3-players-10-games': 'FFTT · 3 joueurs, 10 parties',
-      'fftt-4-players-14-games': 'FFTT · 4 joueurs, 14 parties'
+      'fftt-3-players-10-games': '3 joueurs, 10 matchs',
+      'fftt-4-players-14-games': '4 joueurs, 14 matchs'
     },
     noTable: 'tables à définir',
     tables: defineTranslation('{count:plural} {tables:list}', {
@@ -127,6 +127,14 @@ export const FR_DICTIONARY = defineDictionary({
       retirement: 'Abandon',
       walkover: 'Forfait'
     },
+    gamesToWin: defineTranslation('{count:plural}', {
+      plural: {
+        count: {
+          one: '{?} manche gagnante',
+          other: '{?} manches gagnantes'
+        }
+      }
+    }),
     gamesWon: 'manches ',
     serving: 'au service',
     status: {
@@ -188,6 +196,8 @@ export const FR_DICTIONARY = defineDictionary({
       addTitle: 'Nouvel écran',
       all: 'Écran principal',
       allTables: 'toutes les tables',
+      explain:
+        'Un écran montre les tables de la première à la dernière. Ouvrez son lien sur l’ordinateur branché au téléviseur.',
       first: 'Première table',
       last: 'Dernière table',
       name: 'Nom de l’écran',
@@ -201,7 +211,9 @@ export const FR_DICTIONARY = defineDictionary({
       away: 'Équipe extérieure',
       empty:
         'Aucune rencontre par équipes. Créez d’abord les équipes et leurs joueurs.',
-      format: 'Feuille de rencontre',
+      format: 'Type de rencontre',
+      formatHelp:
+        'Le type de rencontre fixe le nombre de joueurs par équipe et l’ordre des matchs, comme la feuille officielle FFTT.',
       home: 'Équipe à domicile'
     },
     keep: 'Garder',
@@ -216,7 +228,7 @@ export const FR_DICTIONARY = defineDictionary({
       home: 'Joueur à domicile',
       noTable: 'Sans table',
       plannedAt: 'Heure prévue',
-      plannedAtSave: 'Fixer',
+      plannedAtSave: 'Enregistrer',
       remove: 'Retirer',
       removeConfirm: 'Retirer ce match',
       table: 'Table'
@@ -238,6 +250,8 @@ export const FR_DICTIONARY = defineDictionary({
       club: 'Nom du club',
       name: 'Nom de la rencontre',
       startsAt: 'Début de la rencontre',
+      startsAtHelp:
+        'Sert à annoncer l’heure des premiers matchs et à estimer celle des suivants.',
       tableCount: 'Nombre de tables'
     },
     summary: '{tables:number} tables · {matches:number} matchs',
@@ -286,7 +300,6 @@ export const FR_DICTIONARY = defineDictionary({
     }
   },
   spectator: {
-    bestOf: 'au meilleur des {count:number} manches',
     empty: {
       finished: 'Aucun match terminé pour l’instant.',
       live: 'Aucun match en cours. Les prochains sont dans « À venir ».',
@@ -397,14 +410,6 @@ export const FR_DICTIONARY = defineDictionary({
     finished: 'Match terminé — {name} gagne {games}',
     gameOn: 'Manche {number:number} en cours',
     gameShort: 'M{number:number}',
-    gamesToWin: defineTranslation('{count:plural}', {
-      plural: {
-        count: {
-          one: '{?} manche gagnante',
-          other: '{?} manches gagnantes'
-        }
-      }
-    }),
     gamesWon: 'Manches',
     idle: {
       explain:

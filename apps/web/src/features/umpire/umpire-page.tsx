@@ -100,7 +100,7 @@ const UmpireConsole: React.FC<{ code: UmpireCode; eventId: EventId }> = ({
     match?.label ?? null,
     match === null
       ? null
-      : translate('umpire.gamesToWin', {
+      : translate('match.gamesToWin', {
           count: Math.ceil(match.format.bestOf / 2)
         })
   ]

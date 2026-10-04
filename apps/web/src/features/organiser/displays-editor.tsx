@@ -91,6 +91,9 @@ export const DisplaysEditor: React.FC<DisplaysEditorProps> = ({
         }}
       >
         <h3>{translate('organiser.displays.addTitle')}</h3>
+        <p className='organiser-note'>
+          {translate('organiser.displays.explain')}
+        </p>
         <TextField isRequired onChange={setName} value={name}>
           <Label>{translate('organiser.displays.name')}</Label>
           <Input

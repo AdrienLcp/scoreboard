@@ -98,6 +98,9 @@ export const EncounterForm: React.FC<EncounterFormProps> = ({
         )
       }}
     >
+      <p className='organiser-note'>
+        {translate('organiser.encounter.formatHelp')}
+      </p>
       <ChoiceField
         choices={encounterFormatIds.map((id) => ({
           id,
