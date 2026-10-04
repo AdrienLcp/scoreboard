@@ -9,3 +9,6 @@
 *.dev.vars
 
 .claude/settings.local.json
+
+# Review screenshots from the design passes: evidence, not source.
+.impeccable/review/
