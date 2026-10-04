@@ -1,22 +1,11 @@
 import { describe, expect, it } from 'vitest'
 
+import { countingIndex } from '../testing/counting-index'
 import {
   newOrganiserCode,
   parseUmpireCode,
   tableAccessesFor
 } from './access-codes'
-
-/** Walks the alphabet in order, so every code it draws is predictable. */
-const countingIndex = () => {
-  let next = 0
-
-  return (size: number): number => {
-    const index = next % size
-    next += 1
-
-    return index
-  }
-}
 
 describe('parseUmpireCode', () => {
   it('[access] forgives case, spaces and hyphens', () => {

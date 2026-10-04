@@ -1,12 +1,12 @@
-import { randomUUID } from 'node:crypto'
-
 import { describe, expect, it } from 'vitest'
 
-import type { EventSetup, MatchSetup } from '@scoreboard/protocol/event-setup'
-import type {
-  ScoringEvent,
-  StampedEvent
-} from '@scoreboard/protocol/scoring-event'
+import type { MatchSetup } from '@scoreboard/protocol/event-setup'
+import { matchOn, setupWith } from '@scoreboard/protocol/testing/event-setups'
+import {
+  stampedAt,
+  started,
+  walkover
+} from '@scoreboard/protocol/testing/scoring-events'
 
 import { publicSnapshotFor } from '@scoreboard/core/event/public-snapshot'
 
@@ -14,53 +14,8 @@ import { bestGridFor, pagesOf, tilesPerPage } from './display-fit'
 import { LINGER_MS, stageTilesFor } from './display-stage'
 import { displaySummaryFor, hasNotStarted } from './display-summary'
 
-const FORMAT = { bestOf: 3, pointsPerGame: 11, sport: 'table-tennis' } as const
-const camille = { id: randomUUID(), name: 'Camille Huet', teamId: null }
-const louis = { id: randomUUID(), name: 'Louis Moreau', teamId: null }
-
-const matchOn = (table: number): MatchSetup => ({
-  away: { playerIds: [louis.id] },
-  encounterId: null,
-  format: FORMAT,
-  home: { playerIds: [camille.id] },
-  id: randomUUID(),
-  label: null,
-  plannedAtMs: null,
-  table
-})
-
-const at = (recordedAtMs: number, event: ScoringEvent): StampedEvent => ({
-  event,
-  recordedAtMs
-})
-
-const startedAt = (recordedAtMs: number) =>
-  at(recordedAtMs, {
-    firstServer: 'home',
-    id: randomUUID(),
-    type: 'match.started'
-  })
-
-const walkoverAt = (recordedAtMs: number) =>
-  at(recordedAtMs, {
-    by: 'away',
-    id: randomUUID(),
-    reason: 'walkover',
-    type: 'match.conceded'
-  })
-
-const setupWith = (matches: MatchSetup[]): EventSetup => ({
-  club: null,
-  defaultFormat: FORMAT,
-  displays: [],
-  encounters: [],
-  matches,
-  name: 'Club day',
-  players: [camille, louis],
-  startsAtMs: null,
-  tableCount: 3,
-  teams: []
-})
+const onThreeTables = (matches: MatchSetup[]) =>
+  setupWith(matches, { tableCount: 3 })
 
 const HD = { gap: 12, height: 900, width: 1460 }
 
@@ -90,11 +45,11 @@ describe('display stage', () => {
   const snapshotAt = (nowMs: number) =>
     publicSnapshotFor({
       logs: new Map([
-        [live.id, [startedAt(0)]],
-        [finished.id, [walkoverAt(10_000)]]
+        [live.id, [stampedAt(0, started())]],
+        [finished.id, [stampedAt(10_000, walkover())]]
       ]),
       nowMs,
-      setup: setupWith([live, finished, matchOn(3)])
+      setup: onThreeTables([live, finished, matchOn(3)])
     })
 
   it('[display] keeps a match that just ended on screen, then lets it go', () => {
@@ -129,7 +84,7 @@ describe('display stage', () => {
     const snapshot = publicSnapshotFor({
       logs: new Map(),
       nowMs: 0,
-      setup: setupWith([matchOn(1)])
+      setup: onThreeTables([matchOn(1)])
     })
 
     expect(hasNotStarted(snapshot)).toBe(true)

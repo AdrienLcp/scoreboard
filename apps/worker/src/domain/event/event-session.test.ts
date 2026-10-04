@@ -3,9 +3,14 @@ import { randomUUID } from 'node:crypto'
 import { describe, expect, it } from 'vitest'
 
 import type { ClientMessage } from '@scoreboard/protocol/client-message'
-import type { EventSetup, MatchSetup } from '@scoreboard/protocol/event-setup'
+import type { MatchSetup } from '@scoreboard/protocol/event-setup'
 import type { ServerMessage } from '@scoreboard/protocol/server-message'
+import { matchOn, setupWith } from '@scoreboard/protocol/testing/event-setups'
+import { BEST_OF_3 } from '@scoreboard/protocol/testing/match-formats'
+import { point, started } from '@scoreboard/protocol/testing/scoring-events'
 import { PROTOCOL_VERSION } from '@scoreboard/protocol/version'
+
+import { countingIndex } from '@scoreboard/core/testing/counting-index'
 
 import type { Admission } from './admission'
 import { openEvent } from './event-service'
@@ -14,25 +19,13 @@ import type { EventStore } from './event-store'
 import { createMemoryEventStore } from './memory-event-store'
 
 const ORGANISER_CODE = 'PQRSTUVWXYZ2'
-const FORMAT = { bestOf: 3, pointsPerGame: 11, sport: 'table-tennis' } as const
 
-/** Draws `A`, then `B`… so table 1's umpire code is `ABCDEF` and table 2's `GHJKLM`. */
-const countingIndex = () => {
-  let next = 0
-
-  return (size: number): number => {
-    const index = next % size
-    next += 1
-
-    return index
-  }
-}
-
+/** Opens a two-table event whose umpire codes, drawn by {@link countingIndex}, are `ABCDEF` for table 1 and `GHJKLM` for table 2. */
 const openedStore = (): EventStore => {
   const store = createMemoryEventStore()
 
   openEvent({
-    input: { format: FORMAT, name: 'Club day', tableCount: 2 },
+    input: { format: BEST_OF_3, name: 'Club day', tableCount: 2 },
     organiserCode: ORGANISER_CODE,
     randomIndex: countingIndex(),
     store
@@ -60,32 +53,8 @@ const hello = (
 ) =>
   ({ credentials, protocolVersion: PROTOCOL_VERSION, type: 'hello' }) as const
 
-const camille = { id: randomUUID(), name: 'Camille', teamId: null }
-const louis = { id: randomUUID(), name: 'Louis', teamId: null }
-
-const matchOnTable = (table: number): MatchSetup => ({
-  away: { playerIds: [louis.id] },
-  encounterId: null,
-  format: FORMAT,
-  home: { playerIds: [camille.id] },
-  id: randomUUID(),
-  label: null,
-  plannedAtMs: null,
-  table
-})
-
-const programme = (matches: MatchSetup[]): EventSetup => ({
-  club: null,
-  defaultFormat: FORMAT,
-  displays: [],
-  encounters: [],
-  matches,
-  name: 'Club day',
-  players: [camille, louis],
-  startsAtMs: null,
-  tableCount: 2,
-  teams: []
-})
+const programme = (matches: MatchSetup[]) =>
+  setupWith(matches, { tableCount: 2 })
 
 const types = (replies: readonly ServerMessage[]) =>
   replies.map((reply) => reply.type)
@@ -171,7 +140,7 @@ describe('handleFrame', () => {
 
   it('[session] asks for a hello before anything else', () => {
     const outcome = send(openedStore(), null, {
-      event: { id: randomUUID(), side: 'home', type: 'point.scored' },
+      event: point('home'),
       matchId: randomUUID(),
       type: 'match.record'
     })
@@ -195,8 +164,8 @@ describe('handleFrame', () => {
   })
 
   describe('with a programme saved', () => {
-    const tableOneMatch = matchOnTable(1)
-    const tableTwoMatch = matchOnTable(2)
+    const tableOneMatch = matchOn(1)
+    const tableTwoMatch = matchOn(2)
 
     const programmedStore = (): EventStore => {
       const store = openedStore()
@@ -214,11 +183,11 @@ describe('handleFrame', () => {
     }
 
     const umpireAtTableOne: Admission = { role: 'umpire', table: 1 }
-    const startedId = randomUUID()
+    const startedEvent = started()
 
     const start = (store: EventStore) =>
       send(store, umpireAtTableOne, {
-        event: { firstServer: 'home', id: startedId, type: 'match.started' },
+        event: startedEvent,
         matchId: tableOneMatch.id,
         type: 'match.record'
       })
@@ -228,7 +197,7 @@ describe('handleFrame', () => {
 
       expect(outcome).toMatchObject({
         isEventChanged: true,
-        replies: [{ eventId: startedId, type: 'record.accepted' }]
+        replies: [{ eventId: startedEvent.id, type: 'record.accepted' }]
       })
     })
 
@@ -239,21 +208,21 @@ describe('handleFrame', () => {
 
       expect(start(store)).toMatchObject({
         isEventChanged: false,
-        replies: [{ eventId: startedId, type: 'record.accepted' }]
+        replies: [{ eventId: startedEvent.id, type: 'record.accepted' }]
       })
     })
 
     it('[session] refuses a point on another table’s match', () => {
-      const pointId = randomUUID()
+      const event = started()
       const outcome = send(programmedStore(), umpireAtTableOne, {
-        event: { firstServer: 'home', id: pointId, type: 'match.started' },
+        event,
         matchId: tableTwoMatch.id,
         type: 'match.record'
       })
 
       expect(outcome.replies).toEqual([
         {
-          eventId: pointId,
+          eventId: event.id,
           reason: 'match_not_on_table',
           type: 'record.refused'
         }
@@ -268,11 +237,7 @@ describe('handleFrame', () => {
         store,
         umpireAtTableOne,
         {
-          event: {
-            firstServer: 'home',
-            id: randomUUID(),
-            type: 'match.started'
-          },
+          event: started(),
           matchId: tableOneMatch.id,
           type: 'match.record'
         },
@@ -289,11 +254,7 @@ describe('handleFrame', () => {
         programmedStore(),
         { role: 'organiser' },
         {
-          event: {
-            firstServer: 'away',
-            id: randomUUID(),
-            type: 'match.started'
-          },
+          event: started('away'),
           matchId: tableTwoMatch.id,
           type: 'match.record'
         }
@@ -315,7 +276,7 @@ describe('handleFrame', () => {
 
       expect(welcome.replies).toMatchObject([
         {
-          snapshot: { log: [{ id: startedId }], table: 1 },
+          snapshot: { log: [{ id: startedEvent.id }], table: 1 },
           type: 'snapshot.umpire'
         }
       ])
@@ -326,7 +287,7 @@ describe('handleFrame', () => {
         programmedStore(),
         { role: 'organiser' },
         {
-          setup: programme([matchOnTable(3)]),
+          setup: programme([matchOn(3)]),
           type: 'setup.save'
         }
       )

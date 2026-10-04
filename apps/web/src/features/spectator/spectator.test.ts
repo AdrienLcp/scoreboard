@@ -4,6 +4,7 @@ import { describe, expect, it } from 'vitest'
 
 import type { MatchView } from '@scoreboard/protocol/event-snapshot'
 import { scheduledMatchState } from '@scoreboard/protocol/match-state'
+import { matchOn } from '@scoreboard/protocol/testing/event-setups'
 
 import { followedFirst } from './followed-first'
 
@@ -12,15 +13,8 @@ const louis = randomUUID()
 const ada = randomUUID()
 
 const between = (home: string, away: string): MatchView => ({
-  away: { playerIds: [away] },
-  encounterId: null,
-  format: { bestOf: 3, pointsPerGame: 11, sport: 'table-tennis' },
-  home: { playerIds: [home] },
-  id: randomUUID(),
-  label: null,
-  plannedAtMs: null,
+  ...matchOn(1, { away: { playerIds: [away] }, home: { playerIds: [home] } }),
   state: scheduledMatchState,
-  table: 1,
   timing: {
     durationMs: null,
     estimatedStartMs: null,

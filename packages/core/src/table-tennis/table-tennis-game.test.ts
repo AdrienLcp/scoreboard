@@ -13,16 +13,12 @@ import {
 const TO_11 = 11
 
 describe('gameWinner', () => {
-  it('[table-tennis] gives the game at 11 with two clear points', () => {
-    expect(gameWinner({ away: 9, home: 11 }, TO_11)).toBe('home')
-  })
-
-  it('[table-tennis] keeps the game going at 11-10', () => {
-    expect(gameWinner({ away: 10, home: 11 }, TO_11)).toBeNull()
-  })
-
-  it('[table-tennis] gives the game past deuce with two clear points', () => {
-    expect(gameWinner({ away: 14, home: 12 }, TO_11)).toBe('away')
+  it.each([
+    [{ away: 9, home: 11 }, 'home'],
+    [{ away: 10, home: 11 }, null],
+    [{ away: 14, home: 12 }, 'away']
+  ])('[table-tennis] %o goes to: %s', (score, expected) => {
+    expect(gameWinner(score, TO_11)).toBe(expected)
   })
 })
 
@@ -110,16 +106,12 @@ describe('serverOf', () => {
 })
 
 describe('gamePointHolder', () => {
-  it('[table-tennis] finds the side one point from the game', () => {
-    expect(gamePointHolder({ away: 4, home: 10 }, TO_11)).toBe('home')
-  })
-
-  it('[table-tennis] finds nobody at deuce', () => {
-    expect(gamePointHolder({ away: 10, home: 10 }, TO_11)).toBeNull()
-  })
-
-  it('[table-tennis] finds the side ahead by one past deuce', () => {
-    expect(gamePointHolder({ away: 12, home: 11 }, TO_11)).toBe('away')
+  it.each([
+    [{ away: 4, home: 10 }, 'home'],
+    [{ away: 10, home: 10 }, null],
+    [{ away: 12, home: 11 }, 'away']
+  ])('[table-tennis] %o has a game point for: %s', (score, expected) => {
+    expect(gamePointHolder(score, TO_11)).toBe(expected)
   })
 })
 

@@ -2,31 +2,19 @@ import { randomUUID } from 'node:crypto'
 
 import { describe, expect, it } from 'vitest'
 
-import type { TableTennisFormat } from '@scoreboard/protocol/match-format'
 import type { ScoringEvent } from '@scoreboard/protocol/scoring-event'
-import type { Score, Side } from '@scoreboard/protocol/side'
+import type { Side } from '@scoreboard/protocol/side'
+import { BEST_OF_5 } from '@scoreboard/protocol/testing/match-formats'
+import {
+  correction,
+  point,
+  retirement,
+  started,
+  undo,
+  walkover
+} from '@scoreboard/protocol/testing/scoring-events'
 
 import { describeMatch, recordScoringEvent } from './match-log'
-
-const BEST_OF_5: TableTennisFormat = {
-  bestOf: 5,
-  pointsPerGame: 11,
-  sport: 'table-tennis'
-}
-
-const started = (firstServer: Side = 'home'): ScoringEvent => ({
-  firstServer,
-  id: randomUUID(),
-  type: 'match.started'
-})
-
-const point = (side: Side): ScoringEvent => ({
-  id: randomUUID(),
-  side,
-  type: 'point.scored'
-})
-
-const undo = (): ScoringEvent => ({ id: randomUUID(), type: 'score.undone' })
 
 /** `'hha'` is two points for home then one for away. */
 const rally = (sequence: string): ScoringEvent[] =>
@@ -162,16 +150,7 @@ describe('describeMatch', () => {
   })
 
   it('[match-log] gives the match to the opponent of a side that retires', () => {
-    const state = stateOf([
-      started(),
-      ...rally('hh'),
-      {
-        by: 'home',
-        id: randomUUID(),
-        reason: 'retirement',
-        type: 'match.conceded'
-      }
-    ])
+    const state = stateOf([started(), ...rally('hh'), retirement('home')])
 
     expect(state).toMatchObject({
       concession: { by: 'home', reason: 'retirement' },
@@ -181,14 +160,7 @@ describe('describeMatch', () => {
   })
 
   it('[match-log] records a walkover on a match that never started', () => {
-    const walkover: ScoringEvent = {
-      by: 'away',
-      id: randomUUID(),
-      reason: 'walkover',
-      type: 'match.conceded'
-    }
-
-    expect(stateOf([walkover])).toMatchObject({
+    expect(stateOf([walkover()])).toMatchObject({
       current: null,
       status: 'finished',
       winner: 'home'
@@ -196,25 +168,14 @@ describe('describeMatch', () => {
   })
 
   it('[match-log] undoes a walkover back to a scheduled match', () => {
-    const walkover: ScoringEvent = {
-      by: 'away',
-      id: randomUUID(),
-      reason: 'walkover',
-      type: 'match.conceded'
-    }
-
-    expect(stateOf([walkover, undo()]).status).toBe('scheduled')
+    expect(stateOf([walkover(), undo()]).status).toBe('scheduled')
   })
 
   it('[match-log] lets the organiser rewrite the score mid-match', () => {
-    const corrected: ScoringEvent = {
-      id: randomUUID(),
-      periods: [
-        { away: 11, home: 7 },
-        { away: 4, home: 6 }
-      ],
-      type: 'score.corrected'
-    }
+    const corrected = correction([
+      { away: 11, home: 7 },
+      { away: 4, home: 6 }
+    ])
 
     expect(stateOf([started(), ...rally('hhh'), corrected])).toMatchObject({
       current: { away: 4, home: 6 },
@@ -223,11 +184,7 @@ describe('describeMatch', () => {
   })
 
   it('[match-log] undoes a correction like a point', () => {
-    const corrected: ScoringEvent = {
-      id: randomUUID(),
-      periods: [{ away: 4, home: 6 }],
-      type: 'score.corrected'
-    }
+    const corrected = correction([{ away: 4, home: 6 }])
 
     expect(
       stateOf([started(), ...rally('h'), corrected, undo()]).current
@@ -255,74 +212,37 @@ describe('recordScoringEvent', () => {
     )
   })
 
-  it('[match-log] refuses a point before the start', () => {
-    expect(record([], point('home'))).toEqual({
-      error: 'not_started',
-      status: 'failure'
-    })
-  })
+  const won = [
+    started(),
+    ...gameTo('home', 0),
+    ...gameTo('home', 0),
+    ...gameTo('home', 0)
+  ]
+  const alreadyHeld = point('home')
 
-  it('[match-log] refuses a second start', () => {
-    expect(record([started()], started())).toEqual({
-      error: 'already_started',
-      status: 'failure'
-    })
-  })
-
-  it('[match-log] refuses a point once the match is won', () => {
-    const won = [
-      started(),
-      ...gameTo('home', 0),
-      ...gameTo('home', 0),
-      ...gameTo('home', 0)
+  it.each<[string, readonly ScoringEvent[], ScoringEvent, string]>([
+    ['a point before the start', [], point('home'), 'not_started'],
+    ['a second start', [started()], started(), 'already_started'],
+    ['a point once the match is won', won, point('away'), 'match_over'],
+    ['an undo with nothing to undo', [started()], undo(), 'nothing_to_undo'],
+    [
+      'an event it already holds',
+      [started(), alreadyHeld],
+      alreadyHeld,
+      'duplicate'
+    ],
+    [
+      'to end a table tennis match by hand',
+      [started()],
+      { id: randomUUID(), type: 'match.ended' },
+      'cannot_end'
     ]
-
-    expect(record(won, point('away'))).toEqual({
-      error: 'match_over',
-      status: 'failure'
-    })
+  ])('[match-log] refuses %s', (_, log, event, error) => {
+    expect(record(log, event)).toEqual({ error, status: 'failure' })
   })
 
   it('[match-log] still lets the last point of a won match be undone', () => {
-    const won = [
-      started(),
-      ...gameTo('home', 0),
-      ...gameTo('home', 0),
-      ...gameTo('home', 0)
-    ]
-
     expect(record(won, undo()).status).toBe('success')
-  })
-
-  it('[match-log] refuses an undo with nothing to undo', () => {
-    expect(record([started()], undo())).toEqual({
-      error: 'nothing_to_undo',
-      status: 'failure'
-    })
-  })
-
-  it('[match-log] reports an event it already holds as a duplicate', () => {
-    const scored = point('home')
-
-    expect(record([started(), scored], scored)).toEqual({
-      error: 'duplicate',
-      status: 'failure'
-    })
-  })
-
-  it('[match-log] refuses to end a table tennis match by hand', () => {
-    expect(
-      record([started()], { id: randomUUID(), type: 'match.ended' })
-    ).toEqual({
-      error: 'cannot_end',
-      status: 'failure'
-    })
-  })
-
-  const correction = (periods: Score[]): ScoringEvent => ({
-    id: randomUUID(),
-    periods,
-    type: 'score.corrected'
   })
 
   it.each([

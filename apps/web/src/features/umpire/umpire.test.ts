@@ -1,31 +1,19 @@
-import { randomUUID } from 'node:crypto'
-
 import { describe, expect, it } from 'vitest'
 
-import type { ScoringEvent } from '@scoreboard/protocol/scoring-event'
-import type { Side } from '@scoreboard/protocol/side'
+import { BEST_OF_3 } from '@scoreboard/protocol/testing/match-formats'
+import {
+  point,
+  started,
+  undo
+} from '@scoreboard/protocol/testing/scoring-events'
 
 import { connectionStateOf } from './connection-state'
 import { lastPointSideOf, pointHistoryOf } from './point-history'
 
-const FORMAT = { bestOf: 3, pointsPerGame: 11, sport: 'table-tennis' } as const
-
-const start: ScoringEvent = {
-  firstServer: 'home',
-  id: randomUUID(),
-  type: 'match.started'
-}
-const point = (side: Side): ScoringEvent => ({
-  id: randomUUID(),
-  side,
-  type: 'point.scored'
-})
-const undo: ScoringEvent = { id: randomUUID(), type: 'score.undone' }
-
 describe('point history', () => {
   it('[umpire] lists points latest first with the score each one left', () => {
-    const history = pointHistoryOf(FORMAT, [
-      start,
+    const history = pointHistoryOf(BEST_OF_3, [
+      started(),
       point('home'),
       point('away')
     ])
@@ -37,11 +25,11 @@ describe('point history', () => {
   })
 
   it('[umpire] strikes the point an undo took back, and offers the one before', () => {
-    const history = pointHistoryOf(FORMAT, [
-      start,
+    const history = pointHistoryOf(BEST_OF_3, [
+      started(),
       point('home'),
       point('away'),
-      undo
+      undo()
     ])
 
     expect(history.map((entry) => entry.isUndone)).toEqual([true, false])

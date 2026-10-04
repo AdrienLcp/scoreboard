@@ -3,6 +3,7 @@ import { describe, expect, it } from 'vitest'
 import { clientMessageSchema } from './client-message'
 import { decodeMessage, encodeChecked } from './codec'
 import { umpireSnapshotMessageSchema } from './server-message'
+import { BEST_OF_5 } from './testing/match-formats'
 import { PROTOCOL_VERSION } from './version'
 
 const POINT_ID = '6f1c1d3a-4a8f-4b55-9d6e-0d2f5c1b7a10'
@@ -64,11 +65,7 @@ describe('encodeChecked', () => {
       snapshot: {
         event: {
           club: null,
-          defaultFormat: {
-            bestOf: 5,
-            pointsPerGame: 11,
-            sport: 'table-tennis'
-          },
+          defaultFormat: BEST_OF_5,
           displays: [],
           encounters: [],
           encounterViews: [],

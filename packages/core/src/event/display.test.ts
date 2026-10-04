@@ -2,61 +2,19 @@ import { randomUUID } from 'node:crypto'
 
 import { describe, expect, it } from 'vitest'
 
-import type { EventSetup, MatchSetup } from '@scoreboard/protocol/event-setup'
-import type {
-  ScoringEvent,
-  StampedEvent
-} from '@scoreboard/protocol/scoring-event'
+import { matchOn, setupWith } from '@scoreboard/protocol/testing/event-setups'
+import {
+  stampedAt,
+  started,
+  walkover
+} from '@scoreboard/protocol/testing/scoring-events'
 
 import { displayBoardFor, tablesShownOn } from './display-board'
 import { publicSnapshotFor } from './public-snapshot'
 import { spectatorProgrammeFor } from './spectator-programme'
 
-const FORMAT = { bestOf: 3, pointsPerGame: 11, sport: 'table-tennis' } as const
-const camille = { id: randomUUID(), name: 'Camille', teamId: null }
-const louis = { id: randomUUID(), name: 'Louis', teamId: null }
-
-const matchOn = (table: number | null): MatchSetup => ({
-  away: { playerIds: [louis.id] },
-  encounterId: null,
-  format: FORMAT,
-  home: { playerIds: [camille.id] },
-  id: randomUUID(),
-  label: null,
-  plannedAtMs: null,
-  table
-})
-
-const stamped = (event: ScoringEvent): StampedEvent => ({
-  event,
-  recordedAtMs: 0
-})
-
-const started = stamped({
-  firstServer: 'home',
-  id: randomUUID(),
-  type: 'match.started'
-})
-
-const walkover = stamped({
-  by: 'away',
-  id: randomUUID(),
-  reason: 'walkover',
-  type: 'match.conceded'
-})
-
-const setupWith = (matches: MatchSetup[]): EventSetup => ({
-  club: null,
-  defaultFormat: FORMAT,
-  displays: [],
-  encounters: [],
-  matches,
-  name: 'Club day',
-  players: [camille, louis],
-  startsAtMs: null,
-  tableCount: 4,
-  teams: []
-})
+const startedAtZero = stampedAt(0, started())
+const walkoverAtZero = stampedAt(0, walkover())
 
 describe('tablesShownOn', () => {
   const hallB = { id: randomUUID(), name: 'Hall B', tables: [4, 3] }
@@ -91,8 +49,8 @@ describe('displayBoardFor', () => {
 
   const snapshot = publicSnapshotFor({
     logs: new Map([
-      [live.id, [started]],
-      [done.id, [walkover]]
+      [live.id, [startedAtZero]],
+      [done.id, [walkoverAtZero]]
     ]),
     nowMs: 0,
     setup: setupWith([upcoming, live, done])
@@ -128,8 +86,8 @@ describe('spectatorProgrammeFor', () => {
     const programme = spectatorProgrammeFor(
       publicSnapshotFor({
         logs: new Map([
-          [live.id, [started]],
-          [done.id, [walkover]]
+          [live.id, [startedAtZero]],
+          [done.id, [walkoverAtZero]]
         ]),
         nowMs: 0,
         setup: setupWith([done, live, upcoming])
