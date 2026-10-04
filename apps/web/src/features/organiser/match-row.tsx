@@ -48,6 +48,9 @@ export const MatchRow: React.FC<MatchRowProps> = ({
     state.status === 'scheduled'
       ? null
       : [
+          state.concession === null
+            ? null
+            : `${translate(`match.concession.${state.concession.reason}`)} ·`,
           `${state.periodsWon.home}–${state.periodsWon.away}`,
           state.current === null
             ? null

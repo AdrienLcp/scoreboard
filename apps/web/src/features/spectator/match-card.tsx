@@ -49,7 +49,8 @@ export const MatchCard: React.FC<MatchCardProps> = ({
   const isLive = state.status === 'live'
   const call = isLive ? matchCallOf(match) : null
   const hotSide = hotSideOf(call)
-  const isWalkover = state.concession?.reason === 'walkover'
+  const { concession } = state
+  const isWalkover = concession?.reason === 'walkover'
   const nameOf = (side: Side): string =>
     sideName({ form: 'full', participant: match[side], players }) ??
     translate('match.unnamedSide')
@@ -136,9 +137,11 @@ export const MatchCard: React.FC<MatchCardProps> = ({
                   <RollingNumber value={state.periodsWon[side]} />
                 </span>
               ) : null}
-              {isWalkover ? (
-                <span className='match-card-walkover'>
-                  {isWinner ? null : translate('match.concession.walkover')}
+              {concession !== null && !isLive ? (
+                <span className='match-card-concession'>
+                  {isWinner
+                    ? null
+                    : translate(`match.concession.${concession.reason}`)}
                 </span>
               ) : (
                 <span className='match-card-score'>

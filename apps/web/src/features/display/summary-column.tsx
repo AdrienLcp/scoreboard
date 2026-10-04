@@ -41,19 +41,19 @@ const ResultItem: React.FC<{
     translate('match.unnamedSide')
   const won = match.state.periodsWon[winner]
   const lost = match.state.periodsWon[loser]
-  const isWalkover = match.state.concession?.reason === 'walkover'
+  const { concession } = match.state
   const finishedAt = toDate(match.timing.finishedAtMs ?? 0)
 
   return (
     <li className='result-item'>
       <TableNumber number={match.table ?? 0} />
       <span className='result-winner'>{nameOf(winner)}</span>
-      {isWalkover ? (
-        <span className='result-walkover'>
-          {translate('match.concession.walkover')}
-        </span>
-      ) : (
+      {concession === null ? (
         <span className='result-score'>{`${won}–${lost}`}</span>
+      ) : (
+        <span className='result-concession'>
+          {translate(`match.concession.${concession.reason}`)}
+        </span>
       )}
       <span className='result-detail'>
         {translate('display.resultDetail', {
