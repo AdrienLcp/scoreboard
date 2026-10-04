@@ -45,15 +45,17 @@
 
   .option-detail
     color: var(--ink-muted)
+    font-size: var(--text-s)
     font-weight: 500
+    grid-column: 1
 
   .popover
     background: var(--surface-raised)
     border-radius: var(--radius-m)
     box-shadow: var(--shadow-overlay)
     max-height: min(22rem, 60dvh)
-    min-width: var(--trigger-width)
     overflow: auto
+    width: var(--trigger-width)
     padding: var(--space-2xs)
     transition: opacity var(--transition-fast), translate var(--transition-fast) var(--ease-out)
 
@@ -66,15 +68,17 @@
     flex-direction: column
     outline: none
 
+  // The detail sits under its option so the list never outgrows its trigger.
   .list-box-item
     @include focus.ring-inset
 
     align-items: center
     border-radius: var(--radius-s)
+    column-gap: var(--space-xs)
     cursor: pointer
-    display: flex
+    display: grid
     font-weight: 600
-    gap: var(--space-xs)
+    grid-template-columns: 1fr auto
     min-height: var(--control-touch)
     padding: var(--space-xs) var(--space-s)
 
@@ -89,9 +93,9 @@
     &[data-selected]::after
       background: currentColor
       content: ''
-      flex: none
+      grid-column: 2
+      grid-row: 1 / span 2
       height: var(--icon-m)
-      margin-inline-start: auto
       mask: url("data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='black' stroke-width='2.5' stroke-linecap='round' stroke-linejoin='round'><path d='M4.5 12.5l5 5 10-11'/></svg>") center / contain no-repeat
       width: var(--icon-m)
 
