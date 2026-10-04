@@ -76,7 +76,7 @@ components:
   button-secondary-hover:
     backgroundColor: "{colors.surface}"
   button-primary:
-    backgroundColor: "{colors.live}"
+    backgroundColor: "{colors.ink}"
     textColor: "{colors.on-live}"
     rounded: "{rounded.m}"
     padding: "0.75rem 1rem"
@@ -190,7 +190,7 @@ A near-monochrome navy ramp with white ink and one saturated lime voice. All tok
 - **Raised Navy** (surface-raised, ≈ #172039): table-number chips, games-won wells, popovers, hover on surface.
 - **High Navy** (surface-high, ≈ #212C4A): selected tab, finished-match pill, list hover, scrollbar thumb.
 - **Rule Navy** (rule, ≈ #26324F): hairlines, input borders, the 1px edge on secondary buttons and point targets.
-- **Chalk White** (ink, ≈ #F3F6FB): names and figures; also the fill of the "stop" button, the selected toggle and the offline badge.
+- **Chalk White** (ink, ≈ #F3F6FB): names and figures; also the fill of the primary and "stop" buttons, the selected toggle and the offline badge.
 - **Mist** (ink-muted, ≈ #A3AEC8): labels, section headings, times, hints, secondary detail.
 - **Dusk** (ink-dim, ≈ #7A86A4): the losing side of a finished match, disabled text, placeholders, the games strip in a tile foot.
 - **Deep Ink Navy** (on-live, ≈ #0B1120): text on lime and on white fills.
@@ -308,4 +308,4 @@ A full-half-screen tap target per side: surface fill, 1.375rem radius, 1px inset
 - **Don't** size display text in rem; the display draws on `--cu` and tiles on `--unit`.
 - **Don't** show half a list item in the summary column; clip to whole rows.
 
-**Open tension.** Primary buttons currently use the lime fill (as in the reference the user chose), which sits outside the Lime Means Live Rule. It is recorded as the build's state, not as a licence: the only rule canonized for primary buttons is "one primary action per screen". Whether the primary fill stays lime or moves to a neutral inversion is unresolved.
+**Primary buttons are white.** Primary actions are filled with Chalk White and Deep Ink Navy text, never lime: a button is not live, so it falls under the Lime Means Live Rule like everything else. Primary and stop share the fill and never share a screen (primary starts or confirms, stop ends); primary is set apart by its larger height and type. One primary action per screen.
