@@ -6,6 +6,7 @@
     "@biomejs/biome": "2.5.14",
     "@cspell/dict-fr-fr": "^2.3.2",
     "@types/node": "^26.6.1",
+    "@vitest/coverage-v8": "~5.0.3",
     "concurrently": "^10.0.5",
     "cspell": "^10.3.6",
     "typescript": "^7.0.2",
@@ -27,6 +28,7 @@
     "lint:ci": "biome ci",
     "spell": "cspell --no-progress --gitignore \"**\"",
     "test": "vitest run",
+    "test:coverage": "vitest run --coverage",
     "test:watch": "vitest",
     "typecheck": "pnpm -r --parallel exec tsc --noEmit",
     "validate": "pnpm lint:ci && pnpm spell && pnpm build && pnpm test"
