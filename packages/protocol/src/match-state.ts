@@ -14,6 +14,16 @@ export const stakeSchema = z.object({
 })
 export type Stake = z.infer<typeof stakeSchema>
 
+/**
+ * Where the coming serve falls in its server's turn: the first of two, the
+ * second of two, or a lone serve when the sport alternates every point.
+ */
+export const serveTurnSchema = z.object({
+  serve: z.number().int().positive(),
+  serves: z.number().int().positive()
+})
+export type ServeTurn = z.infer<typeof serveTurnSchema>
+
 export const concessionSchema = z.object({
   by: sideSchema,
   reason: concessionReasonSchema
@@ -33,9 +43,25 @@ export const matchStateSchema = z.object({
   endsSwapped: z.boolean(),
   periods: z.array(scoreSchema),
   periodsWon: scoreSchema,
+  serveTurn: serveTurnSchema.nullable().default(null),
   serving: sideSchema.nullable(),
   stake: stakeSchema.nullable(),
   status: matchStatusSchema,
   winner: sideSchema.nullable()
 })
 export type MatchState = z.infer<typeof matchStateSchema>
+
+/** A match nobody has started: the state every match begins from. */
+export const scheduledMatchState: MatchState = {
+  canUndo: false,
+  concession: null,
+  current: null,
+  endsSwapped: false,
+  periods: [],
+  periodsWon: { away: 0, home: 0 },
+  serveTurn: null,
+  serving: null,
+  stake: null,
+  status: 'scheduled',
+  winner: null
+}

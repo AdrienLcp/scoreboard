@@ -250,6 +250,7 @@ const UmpireConsole: React.FC<{ code: UmpireCode; eventId: EventId }> = ({
                     name={nameOf(side)}
                     onPoint={() => umpire.score(side)}
                     score={state.current?.[side] ?? 0}
+                    serveTurn={state.serveTurn}
                   />
                 ))}
               </div>

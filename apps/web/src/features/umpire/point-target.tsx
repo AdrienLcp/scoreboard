@@ -1,5 +1,7 @@
 import type React from 'react'
 
+import type { ServeTurn } from '@scoreboard/protocol/match-state'
+
 import { PlainButton } from '@/presentation/components/button'
 import { Icon } from '@/presentation/components/icon'
 import { RollingNumber } from '@/presentation/components/rolling-number'
@@ -17,6 +19,22 @@ type PointTargetProps = {
   name: string
   onPoint: () => void
   score: number
+  /** Where the coming serve falls in the server's turn, when the sport counts it. */
+  serveTurn: ServeTurn | null
+}
+
+const serveLabelKeyOf = (serveTurn: ServeTurn | null) => {
+  if (serveTurn === null) {
+    return 'umpire.serve'
+  }
+
+  if (serveTurn.serves === 1) {
+    return 'umpire.serveTurn.lone'
+  }
+
+  return serveTurn.serve === 1
+    ? 'umpire.serveTurn.first'
+    : 'umpire.serveTurn.second'
 }
 
 /** Half of the console: the whole surface gives this side a point. */
@@ -27,7 +45,8 @@ export const PointTarget: React.FC<PointTargetProps> = ({
   keyHint,
   name,
   onPoint,
-  score
+  score,
+  serveTurn
 }) => {
   const translate = useTranslate()
 
@@ -43,7 +62,7 @@ export const PointTarget: React.FC<PointTargetProps> = ({
         {isServing ? (
           <span className='point-target-serve'>
             <Icon name='serve' />
-            {translate('umpire.serve')}
+            {translate(serveLabelKeyOf(serveTurn))}
           </span>
         ) : null}
       </span>

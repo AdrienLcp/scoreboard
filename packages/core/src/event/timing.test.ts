@@ -3,7 +3,10 @@ import { randomUUID } from 'node:crypto'
 import { describe, expect, it } from 'vitest'
 
 import type { TableTennisFormat } from '@scoreboard/protocol/match-format'
-import type { MatchState } from '@scoreboard/protocol/match-state'
+import {
+  type MatchState,
+  scheduledMatchState
+} from '@scoreboard/protocol/match-state'
 import type { StampedEvent } from '@scoreboard/protocol/scoring-event'
 
 import { typicalMatchDurationMs } from '../match/match-log'
@@ -184,14 +187,7 @@ describe('matchTimesOf', () => {
     recordedAtMs
   })
   const state = (overrides: Partial<MatchState>): MatchState => ({
-    canUndo: true,
-    concession: null,
-    current: null,
-    endsSwapped: false,
-    periods: [],
-    periodsWon: { away: 0, home: 0 },
-    serving: null,
-    stake: null,
+    ...scheduledMatchState,
     status: 'finished',
     winner: 'home',
     ...overrides

@@ -6,7 +6,8 @@ import {
   gameWinner,
   isFinishedGame,
   isGameInProgress,
-  serverOf
+  serverOf,
+  serveTurnOf
 } from './table-tennis-game'
 
 const TO_11 = 11
@@ -48,6 +49,27 @@ describe('isGameInProgress', () => {
     [{ away: 3, home: 15 }, false]
   ])('[table-tennis] %o can be a game still on: %s', (score, expected) => {
     expect(isGameInProgress(score, TO_11)).toBe(expected)
+  })
+})
+
+describe('serveTurnOf', () => {
+  const turnAt = (home: number, away: number) =>
+    serveTurnOf({ pointsPerGame: TO_11, score: { away, home } })
+
+  it('[table-tennis] counts the first and second serve of a turn', () => {
+    expect([turnAt(0, 0), turnAt(1, 0), turnAt(1, 1), turnAt(9, 8)]).toEqual([
+      { serve: 1, serves: 2 },
+      { serve: 2, serves: 2 },
+      { serve: 1, serves: 2 },
+      { serve: 2, serves: 2 }
+    ])
+  })
+
+  it('[table-tennis] gives a lone serve from 10-10', () => {
+    expect([turnAt(10, 10), turnAt(11, 10)]).toEqual([
+      { serve: 1, serves: 1 },
+      { serve: 1, serves: 1 }
+    ])
   })
 })
 

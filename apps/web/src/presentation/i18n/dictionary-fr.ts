@@ -420,6 +420,11 @@ export const FR_DICTIONARY = defineDictionary({
     pointFor: 'Point {name}',
     recent: 'Derniers points',
     serve: 'Service',
+    serveTurn: {
+      first: '1er service',
+      lone: 'Service unique',
+      second: '2e service'
+    },
     start: {
       last: 'Match précédent : {winner} bat {loser} {games}',
       title: 'Qui sert en premier ?'

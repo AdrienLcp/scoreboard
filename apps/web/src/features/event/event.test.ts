@@ -2,7 +2,10 @@ import { randomUUID } from 'node:crypto'
 
 import { describe, expect, it } from 'vitest'
 
-import type { MatchState } from '@scoreboard/protocol/match-state'
+import {
+  type MatchState,
+  scheduledMatchState
+} from '@scoreboard/protocol/match-state'
 
 import { matchCallOf } from './match-call'
 import { shortName, sideName } from './participant-names'
@@ -14,16 +17,11 @@ const liveAt = (
   away: number,
   stake: MatchState['stake'] = null
 ): MatchState => ({
-  canUndo: true,
-  concession: null,
+  ...scheduledMatchState,
   current: { away, home },
-  endsSwapped: false,
-  periods: [],
-  periodsWon: { away: 0, home: 0 },
   serving: 'home',
   stake,
-  status: 'live',
-  winner: null
+  status: 'live'
 })
 
 describe('names', () => {

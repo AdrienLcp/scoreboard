@@ -3,7 +3,10 @@ import { randomUUID } from 'node:crypto'
 import { describe, expect, it } from 'vitest'
 
 import type { Encounter } from '@scoreboard/protocol/event-setup'
-import type { MatchState } from '@scoreboard/protocol/match-state'
+import {
+  type MatchState,
+  scheduledMatchState
+} from '@scoreboard/protocol/match-state'
 import type { Side } from '@scoreboard/protocol/side'
 
 import { encounterFormatFor } from './encounter-formats'
@@ -23,14 +26,8 @@ const finished = (
   winner: Side,
   concession: MatchState['concession'] = null
 ): MatchState => ({
-  canUndo: true,
+  ...scheduledMatchState,
   concession,
-  current: null,
-  endsSwapped: false,
-  periods: [],
-  periodsWon: { away: 0, home: 0 },
-  serving: null,
-  stake: null,
   status: 'finished',
   winner
 })

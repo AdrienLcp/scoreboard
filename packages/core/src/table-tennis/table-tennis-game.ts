@@ -1,3 +1,4 @@
+import type { ServeTurn } from '@scoreboard/protocol/match-state'
 import type { Score, Side } from '@scoreboard/protocol/side'
 
 import { opponentOf } from '../match/opponent'
@@ -76,6 +77,21 @@ export const serverOf = ({
 
   return turnsTaken % 2 === 0 ? gameServer : opponentOf(gameServer)
 }
+
+/** The coming serve within its server's turn: one of two, or a lone serve from 10-10. */
+export const serveTurnOf = ({
+  pointsPerGame,
+  score
+}: {
+  pointsPerGame: number
+  score: Score
+}): ServeTurn =>
+  isPastDeuce(score, pointsPerGame)
+    ? { serve: 1, serves: 1 }
+    : {
+        serve: ((score.home + score.away) % SERVES_PER_TURN) + 1,
+        serves: SERVES_PER_TURN
+      }
 
 /** The side one point away from taking the game, if any. */
 export const gamePointHolder = (

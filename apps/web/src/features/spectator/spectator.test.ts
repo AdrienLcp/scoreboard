@@ -3,6 +3,7 @@ import { randomUUID } from 'node:crypto'
 import { describe, expect, it } from 'vitest'
 
 import type { MatchView } from '@scoreboard/protocol/event-snapshot'
+import { scheduledMatchState } from '@scoreboard/protocol/match-state'
 
 import { followedFirst } from './followed-first'
 
@@ -18,18 +19,7 @@ const between = (home: string, away: string): MatchView => ({
   id: randomUUID(),
   label: null,
   plannedAtMs: null,
-  state: {
-    canUndo: false,
-    concession: null,
-    current: null,
-    endsSwapped: false,
-    periods: [],
-    periodsWon: { away: 0, home: 0 },
-    serving: null,
-    stake: null,
-    status: 'scheduled',
-    winner: null
-  },
+  state: scheduledMatchState,
   table: 1,
   timing: {
     durationMs: null,

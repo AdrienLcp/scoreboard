@@ -11,7 +11,8 @@ import {
   gameWinner,
   isFinishedGame,
   isGameInProgress,
-  serverOf
+  serverOf,
+  serveTurnOf
 } from './table-tennis-game'
 
 export type TableTennisProgress = {
@@ -74,6 +75,7 @@ const view = (progress: TableTennisProgress): RulesetView => {
       endsSwapped: endsSwappedIn(progress),
       periods,
       periodsWon,
+      serveTurn: null,
       serving: null,
       stake: null,
       winner
@@ -89,6 +91,7 @@ const view = (progress: TableTennisProgress): RulesetView => {
     endsSwapped: endsSwappedIn(progress),
     periods,
     periodsWon,
+    serveTurn: serveTurnOf({ pointsPerGame, score: progress.currentGame }),
     serving: serverOf({
       firstServer: progress.firstServer,
       gameIndex: progress.completedGames.length,

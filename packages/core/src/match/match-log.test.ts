@@ -84,6 +84,7 @@ describe('describeMatch', () => {
     expect(state).toMatchObject({
       current: null,
       periodsWon: { away: 1, home: 3 },
+      serveTurn: null,
       serving: null,
       status: 'finished',
       winner: 'home'

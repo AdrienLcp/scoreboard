@@ -2,7 +2,11 @@ import { Result } from '@adrienlcp/result'
 
 import type { RecordRefusal } from '@scoreboard/protocol/error-code'
 import type { MatchFormat } from '@scoreboard/protocol/match-format'
-import type { Concession, MatchState } from '@scoreboard/protocol/match-state'
+import {
+  type Concession,
+  type MatchState,
+  scheduledMatchState
+} from '@scoreboard/protocol/match-state'
 import type { ScoringEvent } from '@scoreboard/protocol/scoring-event'
 
 import { tableTennisRuleset } from '../table-tennis/table-tennis-ruleset'
@@ -171,19 +175,6 @@ const fold = <TFormat extends MatchFormat, TProgress>(
     { seenIds: new Set(), standing: null, undoStack: [] }
   )
 
-const SCHEDULED: MatchState = {
-  canUndo: false,
-  concession: null,
-  current: null,
-  endsSwapped: false,
-  periods: [],
-  periodsWon: { away: 0, home: 0 },
-  serving: null,
-  stake: null,
-  status: 'scheduled',
-  winner: null
-}
-
 const stateOf = <TFormat extends MatchFormat, TProgress>(
   ruleset: Ruleset<TFormat, TProgress>,
   folded: Folded<TProgress>
@@ -191,7 +182,7 @@ const stateOf = <TFormat extends MatchFormat, TProgress>(
   const { standing } = folded
 
   if (standing === null) {
-    return SCHEDULED
+    return scheduledMatchState
   }
 
   const view = ruleset.view(standing.progress)
@@ -203,6 +194,7 @@ const stateOf = <TFormat extends MatchFormat, TProgress>(
       canUndo,
       concession: standing.concession,
       current: standing.concession.reason === 'walkover' ? null : view.current,
+      serveTurn: null,
       serving: null,
       stake: null,
       status: 'finished',
@@ -216,6 +208,7 @@ const stateOf = <TFormat extends MatchFormat, TProgress>(
     ...view,
     canUndo,
     concession: null,
+    serveTurn: isFinished ? null : view.serveTurn,
     serving: isFinished ? null : view.serving,
     stake: isFinished ? null : view.stake,
     status: isFinished ? 'finished' : 'live'
