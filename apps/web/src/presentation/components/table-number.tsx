@@ -1,6 +1,6 @@
 import type React from 'react'
 
-import { useTranslate } from '@/presentation/i18n/i18n-provider'
+import { useTranslate } from '@/presentation/i18n/i18n-context'
 
 import { withClass } from './class-names'
 

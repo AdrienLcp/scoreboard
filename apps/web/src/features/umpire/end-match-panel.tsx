@@ -13,7 +13,7 @@ import {
   ToggleButton,
   ToggleButtonGroup
 } from '@/presentation/components/toggle-button-group'
-import { useTranslate } from '@/presentation/i18n/i18n-provider'
+import { useTranslate } from '@/presentation/i18n/i18n-context'
 
 import './end-match-panel.sass'
 

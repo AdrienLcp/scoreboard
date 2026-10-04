@@ -8,7 +8,7 @@ import type { TableNumber } from '@scoreboard/protocol/identifiers'
 import type { InstantMs } from '@scoreboard/protocol/scoring-event'
 
 import type { EncounterLine } from '@/features/event/encounter-lines'
-import { useTranslate } from '@/presentation/i18n/i18n-provider'
+import { useTranslate } from '@/presentation/i18n/i18n-context'
 
 import {
   bestGridFor,

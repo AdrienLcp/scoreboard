@@ -23,7 +23,7 @@ import { Main } from '@/presentation/components/main'
 import { TableNumber } from '@/presentation/components/table-number'
 import { Tab, TabList, TabPanel, Tabs } from '@/presentation/components/tabs'
 import { DocumentTitle } from '@/presentation/head/document-title'
-import { useTranslate } from '@/presentation/i18n/i18n-provider'
+import { useTranslate } from '@/presentation/i18n/i18n-context'
 import { socketStatusKey } from '@/presentation/i18n/translation'
 
 import { FollowField } from './follow-field'

@@ -19,7 +19,7 @@ import {
 } from '@/infrastructure/router/navigation'
 import { Main } from '@/presentation/components/main'
 import { DocumentTitle } from '@/presentation/head/document-title'
-import { useTranslate } from '@/presentation/i18n/i18n-provider'
+import { useTranslate } from '@/presentation/i18n/i18n-context'
 
 import { DisplayHeader, type PageIndicator } from './display-header'
 import { firstStartOf, hasNotStarted } from './display-summary'

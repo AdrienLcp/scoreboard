@@ -29,7 +29,7 @@ import { Main } from '@/presentation/components/main'
 import { StatePill } from '@/presentation/components/state-pill'
 import { TableNumber } from '@/presentation/components/table-number'
 import { DocumentTitle } from '@/presentation/head/document-title'
-import { useTranslate } from '@/presentation/i18n/i18n-provider'
+import { useTranslate } from '@/presentation/i18n/i18n-context'
 import { recordRefusalKey } from '@/presentation/i18n/translation'
 
 import { ConnectionBadge } from './connection-badge'

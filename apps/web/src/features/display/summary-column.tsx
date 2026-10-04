@@ -14,7 +14,7 @@ import { startLabel } from '@/features/event/start-label'
 import { toDate } from '@/infrastructure/dates'
 import { QrCode } from '@/presentation/components/qr-code'
 import { TableNumber } from '@/presentation/components/table-number'
-import { useTranslate } from '@/presentation/i18n/i18n-provider'
+import { useTranslate } from '@/presentation/i18n/i18n-context'
 
 import type { DisplaySummary } from './display-summary'
 

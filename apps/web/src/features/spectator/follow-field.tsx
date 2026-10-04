@@ -14,7 +14,7 @@ import {
   Popover
 } from '@/presentation/components/combo-box'
 import { Icon } from '@/presentation/components/icon'
-import { useTranslate } from '@/presentation/i18n/i18n-provider'
+import { useTranslate } from '@/presentation/i18n/i18n-context'
 
 import './follow-field.sass'
 

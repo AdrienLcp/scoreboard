@@ -5,7 +5,7 @@ import type { InstantMs } from '@scoreboard/protocol/scoring-event'
 import { toDate } from '@/infrastructure/dates'
 import type { SocketStatus } from '@/infrastructure/messaging/use-event-socket'
 import { Icon } from '@/presentation/components/icon'
-import { useTranslate } from '@/presentation/i18n/i18n-provider'
+import { useTranslate } from '@/presentation/i18n/i18n-context'
 import { socketStatusKey } from '@/presentation/i18n/translation'
 
 import { PAGE_MS } from './use-paging'

@@ -2,7 +2,7 @@ import type React from 'react'
 
 import { Icon } from '@/presentation/components/icon'
 import { ToggleButton } from '@/presentation/components/toggle-button-group'
-import { useTranslate } from '@/presentation/i18n/i18n-provider'
+import { useTranslate } from '@/presentation/i18n/i18n-context'
 
 import './follow-button.sass'
 

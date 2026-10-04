@@ -3,7 +3,7 @@ import type React from 'react'
 import type { MatchView } from '@scoreboard/protocol/event-snapshot'
 
 import { toDate } from '@/infrastructure/dates'
-import { useTranslate } from '@/presentation/i18n/i18n-provider'
+import { useTranslate } from '@/presentation/i18n/i18n-context'
 
 type MatchTimingLineProps = {
   match: MatchView

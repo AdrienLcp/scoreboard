@@ -33,7 +33,7 @@ import {
   TextField
 } from '@/presentation/components/text-field'
 import { DocumentTitle } from '@/presentation/head/document-title'
-import { useTranslate } from '@/presentation/i18n/i18n-provider'
+import { useTranslate } from '@/presentation/i18n/i18n-context'
 import { apiErrorKey } from '@/presentation/i18n/translation'
 
 import { useCreateEvent } from './use-create-event'

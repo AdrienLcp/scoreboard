@@ -3,7 +3,7 @@ import type React from 'react'
 import type { MatchView } from '@scoreboard/protocol/event-snapshot'
 
 import { StatePill } from '@/presentation/components/state-pill'
-import { useTranslate } from '@/presentation/i18n/i18n-provider'
+import { useTranslate } from '@/presentation/i18n/i18n-context'
 
 import type { MatchCall } from './match-call'
 

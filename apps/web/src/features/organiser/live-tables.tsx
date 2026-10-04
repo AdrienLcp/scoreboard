@@ -5,7 +5,7 @@ import type { MatchId } from '@scoreboard/protocol/identifiers'
 import type { ScoringEvent } from '@scoreboard/protocol/scoring-event'
 
 import { TableNumber } from '@/presentation/components/table-number'
-import { useTranslate } from '@/presentation/i18n/i18n-provider'
+import { useTranslate } from '@/presentation/i18n/i18n-context'
 
 import { MatchRow } from './match-row'
 

@@ -9,7 +9,7 @@ import { atTimeOfDay, toTimeOfDay } from '@/infrastructure/dates'
 import { Button } from '@/presentation/components/button'
 import { Form } from '@/presentation/components/form'
 import { TimeField } from '@/presentation/components/time-field'
-import { useTranslate } from '@/presentation/i18n/i18n-provider'
+import { useTranslate } from '@/presentation/i18n/i18n-context'
 
 type PlannedTimeFormProps = {
   /** Any instant on the event's day: an event is one day, so only the time is typed. */

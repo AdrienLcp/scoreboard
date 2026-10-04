@@ -9,7 +9,7 @@ import { Icon } from '@/presentation/components/icon'
 import { TextLink } from '@/presentation/components/link'
 import { Main } from '@/presentation/components/main'
 import { DocumentTitle } from '@/presentation/head/document-title'
-import { useTranslate } from '@/presentation/i18n/i18n-provider'
+import { useTranslate } from '@/presentation/i18n/i18n-context'
 import {
   protocolErrorKey,
   socketStatusKey

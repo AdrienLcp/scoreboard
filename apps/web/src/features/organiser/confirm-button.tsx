@@ -3,7 +3,7 @@ import { useState } from 'react'
 
 import { Button } from '@/presentation/components/button'
 import { Icon } from '@/presentation/components/icon'
-import { useTranslate } from '@/presentation/i18n/i18n-provider'
+import { useTranslate } from '@/presentation/i18n/i18n-context'
 
 type ConfirmButtonProps = {
   /** What the second press does, named: "Retirer Camille Huet". */

@@ -17,7 +17,7 @@ import {
   Label,
   TextField
 } from '@/presentation/components/text-field'
-import { useTranslate } from '@/presentation/i18n/i18n-provider'
+import { useTranslate } from '@/presentation/i18n/i18n-context'
 
 import { ConfirmButton } from './confirm-button'
 import { parsePeriodsText, periodsText } from './periods-text'

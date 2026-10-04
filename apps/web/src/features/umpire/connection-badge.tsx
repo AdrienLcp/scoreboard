@@ -2,7 +2,7 @@ import type React from 'react'
 
 import type { SocketStatus } from '@/infrastructure/messaging/use-event-socket'
 import { Icon } from '@/presentation/components/icon'
-import { useTranslate } from '@/presentation/i18n/i18n-provider'
+import { useTranslate } from '@/presentation/i18n/i18n-context'
 import { socketStatusKey } from '@/presentation/i18n/translation'
 
 import { connectionStateOf } from './connection-state'

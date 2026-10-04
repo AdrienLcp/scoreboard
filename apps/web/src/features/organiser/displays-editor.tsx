@@ -15,7 +15,7 @@ import { Icon } from '@/presentation/components/icon'
 import { TextLink } from '@/presentation/components/link'
 import { Group, NumberField } from '@/presentation/components/number-field'
 import { Input, Label, TextField } from '@/presentation/components/text-field'
-import { useTranslate } from '@/presentation/i18n/i18n-provider'
+import { useTranslate } from '@/presentation/i18n/i18n-context'
 
 import { ConfirmButton } from './confirm-button'
 import { addDisplay, removeDisplay, tableRange } from './setup-edits'

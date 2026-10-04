@@ -3,7 +3,7 @@ import type React from 'react'
 import { paths, useCurrentPath } from '@/infrastructure/router/navigation'
 import { ButtonLink } from '@/presentation/components/link'
 import { MessagePage } from '@/presentation/components/message-page'
-import { useTranslate } from '@/presentation/i18n/i18n-provider'
+import { useTranslate } from '@/presentation/i18n/i18n-context'
 
 /** Names the address no route owns rather than sending home in silence. */
 export const NotFoundPage: React.FC = () => {

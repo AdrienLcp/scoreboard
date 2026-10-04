@@ -2,7 +2,7 @@ import type React from 'react'
 
 import { TextLink } from '@/presentation/components/link'
 import { MessagePage } from '@/presentation/components/message-page'
-import { useTranslate } from '@/presentation/i18n/i18n-provider'
+import { useTranslate } from '@/presentation/i18n/i18n-context'
 
 import { paths, useRouteFailure } from './navigation'
 

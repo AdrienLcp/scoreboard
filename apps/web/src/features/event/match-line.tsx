@@ -4,7 +4,7 @@ import type { Player } from '@scoreboard/protocol/event-setup'
 import type { MatchView } from '@scoreboard/protocol/event-snapshot'
 import type { Score } from '@scoreboard/protocol/side'
 
-import { useTranslate } from '@/presentation/i18n/i18n-provider'
+import { useTranslate } from '@/presentation/i18n/i18n-context'
 
 import { MatchTimingLine } from './match-timing-line'
 import { participantNames } from './participant-names'

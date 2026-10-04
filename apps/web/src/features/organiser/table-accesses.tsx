@@ -14,7 +14,7 @@ import { Icon } from '@/presentation/components/icon'
 import { TextLink } from '@/presentation/components/link'
 import { QrCode } from '@/presentation/components/qr-code'
 import { TableNumber } from '@/presentation/components/table-number'
-import { useTranslate } from '@/presentation/i18n/i18n-provider'
+import { useTranslate } from '@/presentation/i18n/i18n-context'
 
 type TableAccessesProps = {
   accesses: readonly TableAccess[]

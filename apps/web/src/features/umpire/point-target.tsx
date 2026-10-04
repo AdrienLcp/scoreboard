@@ -5,7 +5,7 @@ import type { ServeTurn } from '@scoreboard/protocol/match-state'
 import { PlainButton } from '@/presentation/components/button'
 import { Icon } from '@/presentation/components/icon'
 import { RollingNumber } from '@/presentation/components/rolling-number'
-import { useTranslate } from '@/presentation/i18n/i18n-provider'
+import { useTranslate } from '@/presentation/i18n/i18n-context'
 
 import './point-target.sass'
 

@@ -26,7 +26,7 @@ import { Main } from '@/presentation/components/main'
 import { Tab, TabList, TabPanel, Tabs } from '@/presentation/components/tabs'
 import { Input, Label, TextField } from '@/presentation/components/text-field'
 import { DocumentTitle } from '@/presentation/head/document-title'
-import { useTranslate } from '@/presentation/i18n/i18n-provider'
+import { useTranslate } from '@/presentation/i18n/i18n-context'
 import {
   recordRefusalKey,
   setupRefusalKey,
