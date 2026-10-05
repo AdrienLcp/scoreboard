@@ -6,7 +6,7 @@ import type { MatchId } from '@scoreboard/protocol/identifiers'
 import type { ScoringEvent } from '@scoreboard/protocol/scoring-event'
 import { sides } from '@scoreboard/protocol/side'
 
-import { newId } from '@/infrastructure/ids'
+import { newScoringEventId } from '@/infrastructure/ids'
 import { Button } from '@/presentation/components/button'
 import { Form } from '@/presentation/components/form'
 import { Icon } from '@/presentation/components/icon'
@@ -54,7 +54,7 @@ export const ScoreCorrection: React.FC<ScoreCorrectionProps> = ({
               onConfirm={() =>
                 onRecord(match.id, {
                   by: side,
-                  id: newId(),
+                  id: newScoringEventId(),
                   reason: 'walkover',
                   type: 'match.conceded'
                 })
@@ -73,7 +73,11 @@ export const ScoreCorrection: React.FC<ScoreCorrectionProps> = ({
         event.preventDefault()
 
         if (periods !== null) {
-          onRecord(match.id, { id: newId(), periods, type: 'score.corrected' })
+          onRecord(match.id, {
+            id: newScoringEventId(),
+            periods,
+            type: 'score.corrected'
+          })
         }
       }}
     >
@@ -90,7 +94,10 @@ export const ScoreCorrection: React.FC<ScoreCorrectionProps> = ({
         <Button
           isDisabled={!state.canUndo}
           onPress={() =>
-            onRecord(match.id, { id: newId(), type: 'score.undone' })
+            onRecord(match.id, {
+              id: newScoringEventId(),
+              type: 'score.undone'
+            })
           }
           variant='quiet'
         >

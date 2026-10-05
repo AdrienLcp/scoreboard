@@ -2,6 +2,7 @@ import { useEffect, useState } from 'react'
 
 import type { EventId, PlayerId } from '@scoreboard/protocol/identifiers'
 
+import { warnOnFailure } from '@/infrastructure/diagnostics'
 import {
   readFollowedPlayers,
   writeFollowedPlayers
@@ -21,11 +22,10 @@ export const useFollowedPlayers = (eventId: EventId) => {
   )
 
   useEffect(() => {
-    const written = writeFollowedPlayers({ eventId, playerIds: followed })
-
-    if (written.status === 'failure') {
-      console.warn(`Followed players not kept on this device: ${written.error}`)
-    }
+    warnOnFailure(
+      writeFollowedPlayers({ eventId, playerIds: followed }),
+      'Followed players not kept on this device'
+    )
   }, [eventId, followed])
 
   return {

@@ -10,7 +10,7 @@ import type { EventSetup } from '@scoreboard/protocol/event-setup'
 import { encounterFormatFor } from '@scoreboard/core/encounter/encounter-formats'
 import type { Lineup } from '@scoreboard/core/encounter/encounter-sheet'
 
-import { newId } from '@/infrastructure/ids'
+import { newEncounterId, newMatchId } from '@/infrastructure/ids'
 import { Button } from '@/presentation/components/button'
 import { Form } from '@/presentation/components/form'
 import { Icon } from '@/presentation/components/icon'
@@ -89,10 +89,10 @@ export const EncounterForm: React.FC<EncounterFormProps> = ({
               away: awayTeamId,
               formatId,
               home: homeTeamId,
-              id: newId()
+              id: newEncounterId()
             },
             lineups,
-            newMatchId: newId,
+            newMatchId,
             setup
           })
         )

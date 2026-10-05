@@ -3,7 +3,7 @@ import { useState } from 'react'
 
 import type { EventSetup } from '@scoreboard/protocol/event-setup'
 
-import { newId } from '@/infrastructure/ids'
+import { newPlayerId, newTeamId } from '@/infrastructure/ids'
 import { Button } from '@/presentation/components/button'
 import { Form } from '@/presentation/components/form'
 import { Icon } from '@/presentation/components/icon'
@@ -52,7 +52,7 @@ export const PlayersEditor: React.FC<PlayersEditorProps> = ({
             event.preventDefault()
             onSave(
               addPlayer(setup, {
-                id: newId(),
+                id: newPlayerId(),
                 name: playerName,
                 teamId: teamId === NO_TEAM ? null : teamId
               })
@@ -111,7 +111,7 @@ export const PlayersEditor: React.FC<PlayersEditorProps> = ({
           className='organiser-panel organiser-inline-form'
           onSubmit={(event) => {
             event.preventDefault()
-            onSave(addTeam(setup, { id: newId(), name: teamName }))
+            onSave(addTeam(setup, { id: newTeamId(), name: teamName }))
             setTeamName('')
           }}
         >

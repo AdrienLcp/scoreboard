@@ -9,7 +9,7 @@ import type { ScoringEvent } from '@scoreboard/protocol/scoring-event'
 import { tableNumbers } from '@scoreboard/core/event/table-queue'
 
 import { nowMs } from '@/infrastructure/clock'
-import { newId } from '@/infrastructure/ids'
+import { newMatchId } from '@/infrastructure/ids'
 import { Button } from '@/presentation/components/button'
 import { Form } from '@/presentation/components/form'
 import { Icon } from '@/presentation/components/icon'
@@ -78,7 +78,7 @@ export const MatchesEditor: React.FC<MatchesEditorProps> = ({
               encounterId: null,
               format: setup.defaultFormat,
               home: { playerIds: [homeId] },
-              id: newId(),
+              id: newMatchId(),
               label: null,
               plannedAtMs: null,
               table: tableOf(table)

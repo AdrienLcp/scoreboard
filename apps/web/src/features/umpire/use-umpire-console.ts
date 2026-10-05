@@ -12,7 +12,8 @@ import type { Side } from '@scoreboard/protocol/side'
 
 import { describeMatch } from '@scoreboard/core/match/match-log'
 
-import { newId } from '@/infrastructure/ids'
+import { warnOnFailure } from '@/infrastructure/diagnostics'
+import { newScoringEventId } from '@/infrastructure/ids'
 import {
   enqueue,
   type Outbox,
@@ -31,13 +32,9 @@ type Seat = { code: UmpireCode; eventId: EventId }
 const readOutboxOrEmpty = (seat: Seat): Outbox => {
   const stored = readOutbox(seat)
 
-  if (stored.status === 'failure') {
-    console.warn(`Pending points unreadable: ${stored.error}`)
+  warnOnFailure(stored, 'Pending points unreadable')
 
-    return []
-  }
-
-  return stored.data ?? []
+  return stored.status === 'success' ? (stored.data ?? []) : []
 }
 
 /**
@@ -54,11 +51,10 @@ export const useUmpireConsole = ({ code, eventId }: Seat) => {
   const credentials: Credentials = { code, role: 'umpire' }
 
   useEffect(() => {
-    const written = writeOutbox({ code, eventId, outbox })
-
-    if (written.status === 'failure') {
-      console.warn(`Pending points not saved: ${written.error}`)
-    }
+    warnOnFailure(
+      writeOutbox({ code, eventId, outbox }),
+      'Pending points not saved'
+    )
   }, [code, eventId, outbox])
 
   const socket = useEventSocket({
@@ -111,7 +107,7 @@ export const useUmpireConsole = ({ code, eventId }: Seat) => {
 
   return {
     concede: ({ by, reason }: { by: Side; reason: ConcessionReason }) => {
-      record({ by, id: newId(), reason, type: 'match.conceded' })
+      record({ by, id: newScoringEventId(), reason, type: 'match.conceded' })
     },
     error: socket.error,
     events,
@@ -119,16 +115,16 @@ export const useUmpireConsole = ({ code, eventId }: Seat) => {
     pendingCount: outbox.length,
     refusal,
     score: (side: Side) => {
-      record({ id: newId(), side, type: 'point.scored' })
+      record({ id: newScoringEventId(), side, type: 'point.scored' })
     },
     snapshot,
     start: (firstServer: Side) => {
-      record({ firstServer, id: newId(), type: 'match.started' })
+      record({ firstServer, id: newScoringEventId(), type: 'match.started' })
     },
     state,
     status: socket.status,
     undo: () => {
-      record({ id: newId(), type: 'score.undone' })
+      record({ id: newScoringEventId(), type: 'score.undone' })
     }
   }
 }

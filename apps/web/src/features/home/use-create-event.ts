@@ -3,6 +3,7 @@ import { useState } from 'react'
 import type { CreateEventInput } from '@scoreboard/protocol/routes'
 
 import { type ApiError, createEvent } from '@/infrastructure/api/scoreboard-api'
+import { warnOnFailure } from '@/infrastructure/diagnostics'
 import {
   organiserPathFor,
   useNavigateTo
@@ -30,14 +31,13 @@ export const useCreateEvent = () => {
       return
     }
 
-    const stored = writeOrganiserCode({
-      code: created.data.organiserCode,
-      eventId: created.data.eventId
-    })
-
-    if (stored.status === 'failure') {
-      console.warn(`Organiser code not kept on this device: ${stored.error}`)
-    }
+    warnOnFailure(
+      writeOrganiserCode({
+        code: created.data.organiserCode,
+        eventId: created.data.eventId
+      }),
+      'Organiser code not kept on this device'
+    )
 
     navigateTo(organiserPathFor(created.data.eventId))
   }

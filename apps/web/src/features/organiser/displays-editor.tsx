@@ -4,7 +4,7 @@ import { useState } from 'react'
 import type { EventSetup } from '@scoreboard/protocol/event-setup'
 import type { EventId } from '@scoreboard/protocol/identifiers'
 
-import { newId } from '@/infrastructure/ids'
+import { newDisplayId } from '@/infrastructure/ids'
 import {
   displayOfPathFor,
   displayPathFor
@@ -82,7 +82,7 @@ export const DisplaysEditor: React.FC<DisplaysEditorProps> = ({
           event.preventDefault()
           onSave(
             addDisplay(setup, {
-              id: newId(),
+              id: newDisplayId(),
               name,
               tables: tableRange({ first: firstTable, last: lastTable })
             })
