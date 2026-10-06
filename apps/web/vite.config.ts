@@ -2,6 +2,7 @@ import { resolve } from 'node:path'
 
 import optimizeLocales from '@react-aria/optimize-locales-plugin'
 import react from '@vitejs/plugin-react'
+import fontaine from 'fontaine/postcss'
 import { defineConfig } from 'vite'
 
 import { API_PREFIX, SOCKET_PREFIX } from '../../packages/protocol/src/routes'
@@ -10,7 +11,20 @@ import { REGIONAL_LOCALES } from './src/presentation/i18n/regional-locales'
 
 const WORKER_ORIGIN = 'http://127.0.0.1:8788'
 
+/**
+ * Each face gets a fallback face of its own, a local font scaled to the same
+ * metrics: text paints at once in it and keeps its place when the real face
+ * swaps in.
+ */
+const metricMatchedFallbackFaces = fontaine({
+  fallbacks: ['Arial'],
+  resolvePath: (path) => resolve(import.meta.dirname, 'public', `.${path}`)
+})
+
 export default defineConfig({
+  css: {
+    postcss: { plugins: [metricMatchedFallbackFaces] }
+  },
   plugins: [
     react({ compiler: { logDiagnostics: true } }),
     {
