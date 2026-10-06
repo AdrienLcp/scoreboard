@@ -32,14 +32,10 @@ const isPlayerId = (
   players: readonly Player[]
 ): key is PlayerId => players.some((player) => player.id === key)
 
-/** "Léna" is found by typing "lena": case and accents set aside. */
-const foldedForSearch = (text: string): string =>
-  text
-    .normalize('NFD')
-    .replace(/\p{Diacritic}/gu, '')
-    .toLowerCase()
-
-/** Finds a player by name and follows them; the followed ones stay listed as chips. */
+/**
+ * Finds a player by name, case and accents set aside ("lena" finds Léna), and
+ * follows them; the followed ones stay listed as chips.
+ */
 export const FollowField: React.FC<FollowFieldProps> = ({
   followed,
   onFollow,
@@ -49,12 +45,8 @@ export const FollowField: React.FC<FollowFieldProps> = ({
 }) => {
   const translate = useTranslate()
   const [typed, setTyped] = useState('')
-  const candidates = players
-    .filter(
-      (player) =>
-        !followed.includes(player.id) &&
-        foldedForSearch(player.name).includes(foldedForSearch(typed.trim()))
-    )
+  const unfollowed = players
+    .filter((player) => !followed.includes(player.id))
     .toSorted((left, right) => left.name.localeCompare(right.name, 'fr'))
 
   return (
@@ -62,8 +54,8 @@ export const FollowField: React.FC<FollowFieldProps> = ({
       <ComboBox
         allowsEmptyCollection
         aria-label={translate('spectator.followPlayer')}
+        defaultItems={unfollowed}
         inputValue={typed}
-        items={candidates}
         menuTrigger='input'
         onInputChange={setTyped}
         onSelectionChange={(key) => {
