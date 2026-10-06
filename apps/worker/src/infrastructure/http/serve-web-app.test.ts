@@ -64,8 +64,7 @@ describe('serveWebApp', () => {
     `${SITE_ORIGIN}/e/club-day/display`,
     `${SITE_ORIGIN}/e/club-day/umpire/ABCDEF`,
     `${SITE_ORIGIN}/nope`,
-    'https://scoreboard.adrienlcp.workers.dev/',
-    'https://scoreboard.adrienlcp.workers.dev/e/club-day'
+    'http://localhost:8788/'
   ])('keeps %s out of search results', async (address) => {
     const response = await serveWebApp(new Request(address), appAssets)
 

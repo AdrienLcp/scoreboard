@@ -27,5 +27,5 @@
   "name": "scoreboard",
   "observability": { "enabled": true },
   "routes": [{ "custom_domain": true, "pattern": "scoreboard.adrienlcp.com" }],
-  "workers_dev": true
+  "workers_dev": false
 }

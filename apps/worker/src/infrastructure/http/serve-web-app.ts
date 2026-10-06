@@ -19,8 +19,8 @@ const isPagePath = (pathname: string): boolean =>
 
 /**
  * Only the home page on the published host belongs in search results: event
- * screens are private to their event, and any other host, like workers.dev,
- * mirrors the site.
+ * screens are private to their event, and any other host, like a local dev
+ * server, mirrors the site.
  */
 const isIndexable = (url: URL): boolean =>
   url.origin === SITE_ORIGIN && url.pathname === PAGE_ROUTES.home
