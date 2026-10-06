@@ -280,6 +280,16 @@
     margin-top: var(--space-l)
     padding-top: var(--space-l)
 
+  /// On a phone the targets take the height left above the pinned undo button,
+  /// never the height their digits ask for: the score scales with its target,
+  /// so a short screen shrinks the figure instead of sliding the button over it.
+  @media (width < 700px)
+    .umpire-targets .point-target
+      container-type: size
+
+    .umpire-console .point-target-score
+      font-size: clamp(4rem, min(calc(116cqh - 5rem), 42vw), 18.75rem)
+
   @media (width >= 700px)
     .umpire-targets
       grid-template-columns: 1fr 1fr
