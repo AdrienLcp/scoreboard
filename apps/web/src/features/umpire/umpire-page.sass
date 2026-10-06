@@ -172,13 +172,23 @@
     display: grid
     gap: var(--space-s)
     grid-template-rows: 1fr 1fr
-    min-height: min(60vh, 38.75rem)
+    min-height: clamp(20rem, calc(100dvh - 19rem), 38.75rem)
 
+  /// Pinned to the bottom of the screen: on a short phone the targets would
+  /// otherwise push it out of sight, and an umpire who cannot see it believes
+  /// a point cannot be taken back.
   .button.umpire-undo
+    background: var(--surface-raised)
     border-radius: var(--radius-l)
+    bottom: var(--space-s)
     font-size: var(--text-l)
     font-weight: 700
     min-height: 4rem
+    position: sticky
+    z-index: 1
+
+    &[data-hovered]:not([data-disabled])
+      background: var(--surface-high)
 
     .icon
       font-size: var(--icon-l)
