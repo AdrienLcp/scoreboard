@@ -3,7 +3,12 @@ import { describe, expect, it } from 'vitest'
 
 import type { InstantMs } from '@scoreboard/protocol/scoring-event'
 
-import { atTimeOfDay, parseLocalDateTime, toTimeOfDay } from './dates'
+import {
+  atTimeOfDay,
+  parseLocalDateTime,
+  toLocalDateTime,
+  toTimeOfDay
+} from './dates'
 
 const localInstant = (text: string): InstantMs => {
   const parsed = parseLocalDateTime(text)
@@ -28,5 +33,21 @@ describe('time of day', () => {
     const planned = atTimeOfDay(new Time(18, 45), eventDay)
 
     expect(toTimeOfDay(planned).toString()).toBe('18:45:00')
+  })
+})
+
+describe('datetime-local field', () => {
+  it('[dates] shows back the minute it read', () => {
+    expect(toLocalDateTime(localInstant('2026-10-04T09:30'))).toBe(
+      '2026-10-04T09:30:00'
+    )
+  })
+
+  it('[dates] refuses a day the calendar does not have', () => {
+    expect(parseLocalDateTime('2026-02-31T10:00').status).toBe('failure')
+  })
+
+  it('[dates] refuses text that is not a local date and time', () => {
+    expect(parseLocalDateTime('tomorrow').status).toBe('failure')
   })
 })

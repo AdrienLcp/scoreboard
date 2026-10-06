@@ -1,11 +1,18 @@
 import { Result } from '@adrienlcp/result'
-import { Time } from '@internationalized/date'
+import {
+  fromAbsolute,
+  getLocalTimeZone,
+  parseDateTime,
+  type Time,
+  toCalendarDate,
+  toCalendarDateTime,
+  toTime
+} from '@internationalized/date'
 
 import type { InstantMs } from '@scoreboard/protocol/scoring-event'
 
-const LOCAL_DATE_TIME = /^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}$/
-
-const pad = (value: number): string => String(value).padStart(2, '0')
+const onThisDevice = (instant: InstantMs) =>
+  fromAbsolute(instant, getLocalTimeZone())
 
 /**
  * What a `datetime-local` field holds, `YYYY-MM-DDTHH:mm`, read on this
@@ -14,38 +21,30 @@ const pad = (value: number): string => String(value).padStart(2, '0')
 export const parseLocalDateTime = (
   text: string
 ): Result<InstantMs, 'invalid'> => {
-  if (!LOCAL_DATE_TIME.test(text)) {
+  try {
+    return Result.success(
+      parseDateTime(text).toDate(getLocalTimeZone()).getTime()
+    )
+  } catch {
     return Result.failure('invalid')
   }
-
-  const instant = new Date(text).getTime()
-
-  return Number.isNaN(instant)
-    ? Result.failure('invalid')
-    : Result.success(instant)
 }
 
 /** The value a `datetime-local` field shows for an instant, on this device's wall clock. */
-export const toLocalDateTime = (instant: InstantMs): string => {
-  const date = new Date(instant)
-  const day = `${date.getFullYear()}-${pad(date.getMonth() + 1)}-${pad(date.getDate())}`
-
-  return `${day}T${pad(date.getHours())}:${pad(date.getMinutes())}`
-}
+export const toLocalDateTime = (instant: InstantMs): string =>
+  toCalendarDateTime(onThisDevice(instant))
+    .set({ millisecond: 0, second: 0 })
+    .toString()
 
 /** `Intl` formats a `Date`: this is where an instant becomes one. */
 export const toDate = (instant: InstantMs): Date => new Date(instant)
 
 /** The wall-clock time of day of an instant, on this device. */
-export const toTimeOfDay = (instant: InstantMs): Time => {
-  const date = new Date(instant)
-
-  return new Time(date.getHours(), date.getMinutes())
-}
+export const toTimeOfDay = (instant: InstantMs): Time =>
+  toTime(onThisDevice(instant)).set({ millisecond: 0, second: 0 })
 
 /** The instant a time of day falls on, on the same local day as `day`. */
-export const atTimeOfDay = (time: Time, day: InstantMs): InstantMs => {
-  const date = new Date(day)
-
-  return date.setHours(time.hour, time.minute, 0, 0)
-}
+export const atTimeOfDay = (time: Time, day: InstantMs): InstantMs =>
+  toCalendarDateTime(toCalendarDate(onThisDevice(day)), time)
+    .toDate(getLocalTimeZone())
+    .getTime()
