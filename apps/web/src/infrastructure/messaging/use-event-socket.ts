@@ -1,3 +1,4 @@
+import ReconnectingWebSocket from 'partysocket/ws'
 import { useEffect, useEffectEvent, useRef, useState } from 'react'
 
 import type {
@@ -29,11 +30,13 @@ export type EventSocket = {
   status: SocketStatus
 }
 
-const RECONNECT_BASE_MS = 500
+const RECONNECT_FLOOR_MS = 500
+const RECONNECT_SPREAD_MS = 1_000
 const RECONNECT_CEILING_MS = 8_000
 
-const reconnectDelayFor = (attempt: number): number =>
-  Math.min(RECONNECT_CEILING_MS, RECONNECT_BASE_MS * 2 ** (attempt - 1))
+/** Each device waits its own first delay, so a hall whose Wi-Fi comes back does not reconnect in one burst. */
+const reconnectFloorMs = (): number =>
+  RECONNECT_FLOOR_MS + Math.random() * RECONNECT_SPREAD_MS
 
 /**
  * Owns the event's socket: the hello, the reconnect policy and decoding. The
@@ -54,7 +57,7 @@ export const useEventSocket = ({
 }): EventSocket => {
   const [status, setStatus] = useState<SocketStatus>('connecting')
   const [error, setError] = useState<ProtocolErrorMessage | null>(null)
-  const socketRef = useRef<WebSocket | null>(null)
+  const socketRef = useRef<ReconnectingWebSocket | null>(null)
 
   const forwardMessage = useEffectEvent(onMessage)
   const announceOpen = useEffectEvent(
@@ -68,25 +71,28 @@ export const useEventSocket = ({
       return
     }
 
-    let isDisposed = false
-    let hasGivenUp = false
-    let attempt = 0
-    let reconnectTimer: number | undefined
-
-    const connect = (): void => {
-      const socket = new WebSocket(
-        `${socketOrigin()}${fillRoute(EVENT_SOCKET_ROUTE, { eventId })}`
-      )
-
-      socketRef.current = socket
-      setStatus('connecting')
-
-      const sendOnSocket = (message: ClientMessage): void => {
-        socket.send(encodeMessage(message))
+    const socket = new ReconnectingWebSocket(
+      `${socketOrigin()}${fillRoute(EVENT_SOCKET_ROUTE, { eventId })}`,
+      undefined,
+      {
+        maxEnqueuedMessages: 0,
+        maxReconnectionDelay: RECONNECT_CEILING_MS,
+        minReconnectionDelay: reconnectFloorMs()
       }
+    )
+    const listening = new AbortController()
+    let hasGivenUp = false
 
-      socket.addEventListener('open', () => {
-        attempt = 0
+    socketRef.current = socket
+    setStatus('connecting')
+
+    const sendOnSocket = (message: ClientMessage): void => {
+      socket.send(encodeMessage(message))
+    }
+
+    socket.addEventListener(
+      'open',
+      () => {
         setStatus('open')
         setError(null)
         sendOnSocket({
@@ -95,9 +101,13 @@ export const useEventSocket = ({
           type: 'hello'
         })
         announceOpen(sendOnSocket)
-      })
+      },
+      { signal: listening.signal }
+    )
 
-      socket.addEventListener('message', (event) => {
+    socket.addEventListener(
+      'message',
+      (event) => {
         if (typeof event.data !== 'string') {
           return
         }
@@ -114,32 +124,28 @@ export const useEventSocket = ({
           if (decoded.message.fatal) {
             hasGivenUp = true
             setStatus('refused')
+            socket.close()
           }
 
           return
         }
 
         forwardMessage(decoded.message)
-      })
+      },
+      { signal: listening.signal }
+    )
 
-      socket.addEventListener('close', () => {
+    socket.addEventListener(
+      'close',
+      () => {
         setStatus(hasGivenUp ? 'refused' : 'closed')
-
-        if (isDisposed || hasGivenUp) {
-          return
-        }
-
-        attempt += 1
-        reconnectTimer = window.setTimeout(connect, reconnectDelayFor(attempt))
-      })
-    }
-
-    connect()
+      },
+      { signal: listening.signal }
+    )
 
     return () => {
-      isDisposed = true
-      window.clearTimeout(reconnectTimer)
-      socketRef.current?.close()
+      listening.abort()
+      socket.close()
       socketRef.current = null
     }
   }, [credentials, eventId])
@@ -147,7 +153,7 @@ export const useEventSocket = ({
   const send = (message: ClientMessage): boolean => {
     const socket = socketRef.current
 
-    if (socket === null || socket.readyState !== WebSocket.OPEN) {
+    if (socket === null || socket.readyState !== socket.OPEN) {
       return false
     }
 
