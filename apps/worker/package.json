@@ -3,6 +3,7 @@
     "@adrienlcp/result": "^0.1.0",
     "@scoreboard/core": "workspace:*",
     "@scoreboard/protocol": "workspace:*",
+    "nanoid": "^6.0.1",
     "zod": "^4.6.5"
   },
   "devDependencies": {

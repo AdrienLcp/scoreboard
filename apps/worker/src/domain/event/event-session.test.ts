@@ -10,7 +10,7 @@ import { BEST_OF_3 } from '@scoreboard/protocol/testing/match-formats'
 import { point, started } from '@scoreboard/protocol/testing/scoring-events'
 import { PROTOCOL_VERSION } from '@scoreboard/protocol/version'
 
-import { countingIndex } from '@scoreboard/core/testing/counting-index'
+import { countingCode } from '@scoreboard/core/testing/counting-code'
 
 import type { Admission } from './admission'
 import { openEvent } from './event-service'
@@ -20,14 +20,14 @@ import { createMemoryEventStore } from './memory-event-store'
 
 const ORGANISER_CODE = 'PQRSTUVWXYZ2'
 
-/** Opens a two-table event whose umpire codes, drawn by {@link countingIndex}, are `ABCDEF` for table 1 and `GHJKLM` for table 2. */
+/** Opens a two-table event whose umpire codes, drawn by {@link countingCode}, are `ABCDEF` for table 1 and `GHJKLM` for table 2. */
 const openedStore = (): EventStore => {
   const store = createMemoryEventStore()
 
   openEvent({
+    drawCode: countingCode(),
     input: { format: BEST_OF_3, name: 'Club day', tableCount: 2 },
     organiserCode: ORGANISER_CODE,
-    randomIndex: countingIndex(),
     store
   })
 
@@ -42,8 +42,8 @@ const send = (
 ) =>
   handleFrame({
     admission,
+    drawCode: countingCode(),
     nowMs,
-    randomIndex: countingIndex(),
     raw: JSON.stringify(message),
     store
   })

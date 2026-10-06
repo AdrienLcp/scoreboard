@@ -284,6 +284,9 @@ importers:
       '@scoreboard/protocol':
         specifier: workspace:*
         version: link:../../packages/protocol
+      nanoid:
+        specifier: ^6.0.1
+        version: 6.0.1
       zod:
         specifier: ^4.6.5
         version: 4.6.5
@@ -1931,6 +1934,11 @@ packages:
     engines: {node: ^10 || ^12 || ^13.7 || ^14 || >=15.0.1}
     hasBin: true
 
+  nanoid@6.0.1:
+    resolution: {integrity: sha512-3wVS3i51pE2pi1k5FFL/95BGfVS0kSsvDVuGXHOtxox/TywUmtgq+3qiTOTbs9J7KfHaXPiN171k/A6dBnaXFw==}
+    engines: {node: ^22 || ^24 || >=26}
+    hasBin: true
+
   node-addon-api@7.1.1:
     resolution: {integrity: sha512-5m3bsyrjFWE1xf7nz7YXdN4udnVtXK6/Yfgn5qnahL6bCkf2yKt4k3nuTKAtT4r3IG8JNR2ncsIMdZuAzJjHQQ==}
 
@@ -3470,6 +3478,8 @@ snapshots:
       - utf-8-validate
 
   nanoid@3.3.19: {}
+
+  nanoid@6.0.1: {}
 
   node-addon-api@7.1.1:
     optional: true

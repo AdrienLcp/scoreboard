@@ -5,7 +5,7 @@ import type { InstantMs } from '@scoreboard/protocol/scoring-event'
 import type { ServerMessage } from '@scoreboard/protocol/server-message'
 import { PROTOCOL_VERSION } from '@scoreboard/protocol/version'
 
-import type { RandomIndex } from '@scoreboard/core/access/access-codes'
+import type { DrawCode } from '@scoreboard/core/access/access-codes'
 
 import type { Admission } from './admission'
 import { admit, recordEvent, saveSetup } from './event-service'
@@ -56,14 +56,14 @@ const answered = (
 export const handleFrame = ({
   admission,
   nowMs,
-  randomIndex,
+  drawCode,
   raw,
   store
 }: {
   admission: Admission | null
   /** The server's clock as the frame arrived. */
   nowMs: InstantMs
-  randomIndex: RandomIndex
+  drawCode: DrawCode
   raw: string
   store: EventStore
 }): FrameOutcome => {
@@ -134,7 +134,7 @@ export const handleFrame = ({
     case 'setup.save': {
       const saved = saveSetup({
         admission,
-        randomIndex,
+        drawCode,
         setup: message.setup,
         store
       })

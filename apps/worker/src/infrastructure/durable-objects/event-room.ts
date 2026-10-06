@@ -16,7 +16,7 @@ import type { EventStore } from '@/domain/event/event-store'
 import { snapshotMessageFor } from '@/domain/event/event-view'
 import type { Env } from '@/env'
 import { nowMs } from '@/infrastructure/clock'
-import { cryptoRandomIndex } from '@/infrastructure/random'
+import { drawSecureCode } from '@/infrastructure/ids'
 
 import { createSqlEventStore } from './sql-event-store'
 
@@ -49,9 +49,9 @@ export class EventRoom extends DurableObject<Env> {
     organiserCode: OrganiserCode
   ): Result<void, 'already_open'> {
     return openEvent({
+      drawCode: drawSecureCode,
       input,
       organiserCode,
-      randomIndex: cryptoRandomIndex,
       store: this.store
     })
   }
@@ -78,8 +78,8 @@ export class EventRoom extends DurableObject<Env> {
 
     const outcome = handleFrame({
       admission: admissionOf(socket),
+      drawCode: drawSecureCode,
       nowMs: nowMs(),
-      randomIndex: cryptoRandomIndex,
       raw: message,
       store: this.store
     })

@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest'
 
-import { countingIndex } from '../testing/counting-index'
+import { countingCode } from '../testing/counting-code'
 import {
   newOrganiserCode,
   parseUmpireCode,
@@ -19,7 +19,7 @@ describe('parseUmpireCode', () => {
 
 describe('newOrganiserCode', () => {
   it('[access] draws twelve characters from the code alphabet', () => {
-    expect(newOrganiserCode(countingIndex())).toBe('ABCDEFGHJKLM')
+    expect(newOrganiserCode(countingCode())).toBe('ABCDEFGHJKLM')
   })
 })
 
@@ -29,8 +29,8 @@ describe('tableAccessesFor', () => {
 
     expect(
       tableAccessesFor({
+        drawCode: countingCode(),
         existing,
-        randomIndex: countingIndex(),
         tableCount: 2
       })
     ).toEqual([
@@ -47,21 +47,21 @@ describe('tableAccessesFor', () => {
 
     expect(
       tableAccessesFor({
+        drawCode: countingCode(),
         existing,
-        randomIndex: countingIndex(),
         tableCount: 1
       })
     ).toEqual([{ code: 'ZZZZZZ', table: 1 }])
   })
 
   it('[access] never hands two tables the same code', () => {
-    const draws = [0, 0, 0, 0, 0, 0, 1, 1, 1, 1, 1, 1]
-    const scripted = () => draws.shift() ?? 0
+    const draws = ['AAAAAA', 'BBBBBB']
+    const scripted = () => draws.shift() ?? ''
 
     expect(
       tableAccessesFor({
+        drawCode: scripted,
         existing: [{ code: 'AAAAAA', table: 1 }],
-        randomIndex: scripted,
         tableCount: 2
       })
     ).toEqual([

@@ -15,7 +15,7 @@ import type {
 } from '@scoreboard/protocol/scoring-event'
 
 import {
-  type RandomIndex,
+  type DrawCode,
   tableAccessesFor
 } from '@scoreboard/core/access/access-codes'
 import { checkEventSetup } from '@scoreboard/core/event/event-setup-check'
@@ -28,12 +28,12 @@ import type { EventStore } from './event-store'
 export const openEvent = ({
   input,
   organiserCode,
-  randomIndex,
+  drawCode,
   store
 }: {
   input: CreateEventInput
   organiserCode: OrganiserCode
-  randomIndex: RandomIndex
+  drawCode: DrawCode
   store: EventStore
 }): Result<void, 'already_open'> => {
   if (store.readSetup() !== null) {
@@ -55,8 +55,8 @@ export const openEvent = ({
   store.writeOrganiserCode(organiserCode)
   store.writeTableAccesses(
     tableAccessesFor({
+      drawCode,
       existing: [],
-      randomIndex,
       tableCount: input.tableCount
     })
   )
@@ -154,12 +154,12 @@ export const recordEvent = ({
 /** Replaces the organiser's setup, keeping each remaining table's umpire code. */
 export const saveSetup = ({
   admission,
-  randomIndex,
+  drawCode,
   setup,
   store
 }: {
   admission: Admission
-  randomIndex: RandomIndex
+  drawCode: DrawCode
   setup: EventSetup
   store: EventStore
 }): Result<void, SetupRefusal | 'not_allowed'> => {
@@ -176,8 +176,8 @@ export const saveSetup = ({
   store.writeSetup(checked.data)
   store.writeTableAccesses(
     tableAccessesFor({
+      drawCode,
       existing: store.readTableAccesses(),
-      randomIndex,
       tableCount: checked.data.tableCount
     })
   )

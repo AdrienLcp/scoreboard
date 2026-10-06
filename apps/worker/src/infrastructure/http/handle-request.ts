@@ -15,7 +15,7 @@ import {
 } from '@scoreboard/core/access/access-codes'
 
 import type { Env } from '@/env'
-import { cryptoRandomIndex } from '@/infrastructure/random'
+import { drawSecureCode } from '@/infrastructure/ids'
 
 import { serveWebApp } from './serve-web-app'
 
@@ -47,8 +47,8 @@ const createEvent = async (request: Request, env: Env): Promise<Response> => {
   }
 
   for (let attempt = 0; attempt < OPEN_ATTEMPTS; attempt++) {
-    const eventId = newEventId(cryptoRandomIndex)
-    const organiserCode = newOrganiserCode(cryptoRandomIndex)
+    const eventId = newEventId(drawSecureCode)
+    const organiserCode = newOrganiserCode(drawSecureCode)
     const room = env.EVENT_ROOMS.get(env.EVENT_ROOMS.idFromName(eventId))
     const opened = await room.open(input.data, organiserCode)
 

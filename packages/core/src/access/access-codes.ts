@@ -14,43 +14,17 @@ import {
 
 import { tableNumbers } from '../event/table-queue'
 
-/** A uniformly random integer in `[0, size)`, from a cryptographic source in production. */
-export type RandomIndex = (size: number) => number
+/** Draws `length` characters from `alphabet`, from a cryptographic source in production. */
+export type DrawCode = (alphabet: string, length: number) => string
 
-const randomCode = ({
-  alphabet,
-  length,
-  randomIndex
-}: {
-  alphabet: string
-  length: number
-  randomIndex: RandomIndex
-}): string =>
-  Array.from(
-    { length },
-    () => alphabet[randomIndex(alphabet.length)] ?? ''
-  ).join('')
+export const newEventId = (drawCode: DrawCode): EventId =>
+  drawCode(EVENT_ID_ALPHABET, EVENT_ID_LENGTH)
 
-export const newEventId = (randomIndex: RandomIndex): EventId =>
-  randomCode({
-    alphabet: EVENT_ID_ALPHABET,
-    length: EVENT_ID_LENGTH,
-    randomIndex
-  })
+export const newOrganiserCode = (drawCode: DrawCode): OrganiserCode =>
+  drawCode(ACCESS_CODE_ALPHABET, ORGANISER_CODE_LENGTH)
 
-export const newOrganiserCode = (randomIndex: RandomIndex): OrganiserCode =>
-  randomCode({
-    alphabet: ACCESS_CODE_ALPHABET,
-    length: ORGANISER_CODE_LENGTH,
-    randomIndex
-  })
-
-const newUmpireCode = (randomIndex: RandomIndex): UmpireCode =>
-  randomCode({
-    alphabet: ACCESS_CODE_ALPHABET,
-    length: UMPIRE_CODE_LENGTH,
-    randomIndex
-  })
+const newUmpireCode = (drawCode: DrawCode): UmpireCode =>
+  drawCode(ACCESS_CODE_ALPHABET, UMPIRE_CODE_LENGTH)
 
 const CODE_SEPARATORS = /[\s-]/g
 
@@ -69,20 +43,20 @@ export const parseUmpireCode = (typed: string): UmpireCode | null => {
  */
 export const tableAccessesFor = ({
   existing,
-  randomIndex,
+  drawCode,
   tableCount
 }: {
   existing: readonly TableAccess[]
-  randomIndex: RandomIndex
+  drawCode: DrawCode
   tableCount: number
 }): TableAccess[] => {
   const taken = new Set(existing.map((access) => access.code))
 
   const freshCode = (): UmpireCode => {
-    const code = newUmpireCode(randomIndex)
+    let code = newUmpireCode(drawCode)
 
-    if (taken.has(code)) {
-      return freshCode()
+    while (taken.has(code)) {
+      code = newUmpireCode(drawCode)
     }
 
     taken.add(code)
