@@ -1,4 +1,5 @@
 import { PAGE_ROUTES } from '@scoreboard/protocol/page-routes'
+import { SITE_ORIGIN } from '@scoreboard/protocol/site'
 
 type AssetFetcher = Pick<Fetcher, 'fetch'>
 
@@ -17,6 +18,28 @@ const isPagePath = (pathname: string): boolean =>
   )
 
 /**
+ * Only the home page on the published host belongs in search results: event
+ * screens are private to their event, and any other host, like workers.dev,
+ * mirrors the site.
+ */
+const isIndexable = (url: URL): boolean =>
+  url.origin === SITE_ORIGIN && url.pathname === PAGE_ROUTES.home
+
+const appDocument = async (
+  url: URL,
+  request: Request,
+  assets: AssetFetcher
+): Promise<Response> => {
+  if (isPagePath(url.pathname)) {
+    return assets.fetch(request)
+  }
+
+  const app = await assets.fetch(new URL(PAGE_ROUTES.home, url))
+
+  return new Response(app.body, { headers: app.headers, status: 404 })
+}
+
+/**
  * Any address gets the web app so it can render its own not-found page,
  * but one that names no page answers 404 for crawlers and link checkers.
  */
@@ -24,11 +47,19 @@ export const serveWebApp = async (
   request: Request,
   assets: AssetFetcher
 ): Promise<Response> => {
-  if (isPagePath(new URL(request.url).pathname)) {
-    return assets.fetch(request)
+  const url = new URL(request.url)
+  const app = await appDocument(url, request, assets)
+
+  if (isIndexable(url)) {
+    return app
   }
 
-  const app = await assets.fetch(new URL('/', request.url))
+  const unlisted = new Response(app.body, {
+    headers: app.headers,
+    status: app.status,
+    statusText: app.statusText
+  })
+  unlisted.headers.set('X-Robots-Tag', 'noindex')
 
-  return new Response(app.body, { headers: app.headers, status: 404 })
+  return unlisted
 }

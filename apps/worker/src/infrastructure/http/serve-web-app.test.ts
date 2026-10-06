@@ -1,5 +1,7 @@
 import { describe, expect, it } from 'vitest'
 
+import { SITE_ORIGIN } from '@scoreboard/protocol/site'
+
 import { serveWebApp } from './serve-web-app'
 
 const APP_DOCUMENT = '<!doctype html><title>Scoreboard</title>'
@@ -46,5 +48,27 @@ describe('serveWebApp', () => {
 
     expect(response.headers.get('content-type')).toBe('text/html')
     expect(await response.text()).toBe(APP_DOCUMENT)
+  })
+
+  it('lets search engines index the home page on the published host', async () => {
+    const response = await serveWebApp(
+      new Request(`${SITE_ORIGIN}/`),
+      appAssets
+    )
+
+    expect(response.headers.get('X-Robots-Tag')).toBeNull()
+  })
+
+  it.each([
+    `${SITE_ORIGIN}/e/club-day`,
+    `${SITE_ORIGIN}/e/club-day/display`,
+    `${SITE_ORIGIN}/e/club-day/umpire/ABCDEF`,
+    `${SITE_ORIGIN}/nope`,
+    'https://scoreboard.adrienlcp.workers.dev/',
+    'https://scoreboard.adrienlcp.workers.dev/e/club-day'
+  ])('keeps %s out of search results', async (address) => {
+    const response = await serveWebApp(new Request(address), appAssets)
+
+    expect(response.headers.get('X-Robots-Tag')).toBe('noindex')
   })
 })

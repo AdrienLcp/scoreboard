@@ -5,6 +5,7 @@ import react from '@vitejs/plugin-react'
 import { defineConfig } from 'vite'
 
 import { API_PREFIX, SOCKET_PREFIX } from '../../packages/protocol/src/routes'
+import { searchEnginePlugin } from './search-engine-plugin'
 import { REGIONAL_LOCALES } from './src/presentation/i18n/regional-locales'
 
 const WORKER_ORIGIN = 'http://127.0.0.1:8788'
@@ -15,7 +16,8 @@ export default defineConfig({
     {
       ...optimizeLocales.vite({ locales: Object.values(REGIONAL_LOCALES) }),
       enforce: 'pre'
-    }
+    },
+    searchEnginePlugin()
   ],
   resolve: {
     alias: {

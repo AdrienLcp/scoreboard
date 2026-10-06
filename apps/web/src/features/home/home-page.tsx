@@ -36,6 +36,7 @@ import { DocumentTitle } from '@/presentation/head/document-title'
 import { useTranslate } from '@/presentation/i18n/i18n-context'
 import { apiErrorKey } from '@/presentation/i18n/translation'
 
+import { homeDocumentTitle } from './home-document-title'
 import { useCreateEvent } from './use-create-event'
 
 import './home-page.sass'
@@ -209,7 +210,7 @@ export const HomePage: React.FC = () => {
 
   return (
     <Main className='home-page'>
-      <DocumentTitle>{translate('app.name')}</DocumentTitle>
+      <DocumentTitle>{homeDocumentTitle(translate)}</DocumentTitle>
       <header className='home-bar'>
         <BrandMark />
       </header>

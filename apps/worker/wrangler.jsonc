@@ -5,7 +5,14 @@
     "directory": "../web/dist",
     "not_found_handling": "single-page-application",
     // Pages go through the worker so an unknown address answers 404; built files skip it.
-    "run_worker_first": ["/*", "!/assets/*", "!/fonts/*", "!/favicon.svg"]
+    "run_worker_first": [
+      "/*",
+      "!/assets/*",
+      "!/fonts/*",
+      "!/favicon.svg",
+      "!/robots.txt",
+      "!/sitemap.xml"
+    ]
   },
   "compatibility_date": "2026-09-01",
   "dev": {
@@ -18,5 +25,7 @@
   // The free plan only offers Durable Objects backed by SQLite.
   "migrations": [{ "new_sqlite_classes": ["EventRoom"], "tag": "v1" }],
   "name": "scoreboard",
-  "observability": { "enabled": true }
+  "observability": { "enabled": true },
+  "routes": [{ "custom_domain": true, "pattern": "scoreboard.adrienlcp.com" }],
+  "workers_dev": true
 }
