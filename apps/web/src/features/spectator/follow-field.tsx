@@ -14,6 +14,7 @@ import {
   Popover
 } from '@/presentation/components/combo-box'
 import { Icon } from '@/presentation/components/icon'
+import { compareFrench } from '@/presentation/i18n/compare-french'
 import { useTranslate } from '@/presentation/i18n/i18n-context'
 
 import './follow-field.sass'
@@ -47,7 +48,7 @@ export const FollowField: React.FC<FollowFieldProps> = ({
   const [typed, setTyped] = useState('')
   const unfollowed = players
     .filter((player) => !followed.includes(player.id))
-    .toSorted((left, right) => left.name.localeCompare(right.name, 'fr'))
+    .toSorted((left, right) => compareFrench(left.name, right.name))
 
   return (
     <div className='follow-field'>
