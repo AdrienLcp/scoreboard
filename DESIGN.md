@@ -9,7 +9,7 @@ colors:
   rule: "oklch(32.1% 0.055 266)"
   ink: "oklch(97.2% 0.007 261)"
   ink-muted: "oklch(75.1% 0.039 267)"
-  ink-dim: "oklch(62.1% 0.048 268)"
+  ink-dim: "oklch(66.6% 0.048 268)"
   live: "oklch(89.6% 0.199 122)"
   on-live: "oklch(18% 0.032 267)"
   qr-paper: "oklch(100% 0 0)"
@@ -47,11 +47,11 @@ typography:
     lineHeight: 1
     fontFeature: "tnum, lnum"
 rounded:
-  xs: "0.375rem"
-  s: "0.625rem"
-  m: "0.875rem"
-  l: "1.125rem"
-  xl: "1.375rem"
+  xs: "6px"
+  s: "10px"
+  m: "14px"
+  l: "18px"
+  xl: "22px"
   full: "999px"
 spacing:
   4xs: "0.125rem"
@@ -211,14 +211,14 @@ A near-monochrome navy ramp with white ink and one saturated lime voice. All tok
 **Character:** a condensed athletic numeral for everything counted and a plain humanist sans for everything named. The pair reads like a hall scoreboard, not a magazine.
 
 ### Hierarchy
-- **Display** (Barlow Condensed 700, 37% of a tile's unit, line-height 0.86, -0.01em): the point score inside a live tile; the umpire's point target uses the same face at clamp(6rem, min(21vh, 42vw), 18.75rem). Always the largest element on the surface.
+- **Display** (Barlow Condensed 700, 37% of a tile's unit, line-height 0.86, -0.01em): the point score inside a live tile; the umpire's point target uses the same face fitted to its target, `clamp(4rem, min(52cqi, 116cqh - 5rem), 20.625rem)`. Always the largest element on the surface.
 - **Headline** (Barlow 700, 1.75rem, 1.15): page titles on tool pages; on the display, the club name at 3cu.
 - **Title** (Barlow 600, 1.0625rem, 1.25): player and team names in cards and lists. In tiles, names scale with the tile (10 units, 8 when long) and truncate with an ellipsis.
 - **Body** (Barlow 500, 1rem, 1.45): running text; measure capped at 65ch, forms at 28rem.
 - **Label** (Barlow 600, 0.875rem, 1.2, muted): section headings and field labels, sentence case.
 - **Figure** (Barlow Condensed 700, tabular and lining numerals, line-height 1): table numbers, games won, game scores, clock, times, counts. Body text also enables tabular numerals globally.
 
-The text scale is fine-grained between 0.75rem and 1.3125rem (2xs to 2xl), then jumps to 1.75rem and 2.25rem; the big numbers do not come from this scale but from container-relative units.
+UI and body text take the steps `--text-2xs` to `--text-2xl` (0.75rem to 1.3125rem), `--text-m` (1rem) being the body. A display size takes a role name: `--text-title` (1.75rem), `--text-code` (1.75rem), `--text-figure` (2.25rem), and two that grow with the screen through `sizes.fluid`, `--text-hero` (2rem to 3.25rem, the home title) and `--text-player` (1.25rem to 2rem, a name on a point target). The big numbers do not come from this scale but from container-relative units. Weight, leading and tracking live only in the `_typography.sass` mixins, tracking through `--tracking-*`.
 
 ### Named Rules
 **The Every Number Is A Figure Rule.** Any number the room reads (score, games, table, time, clock, count) uses the figure style: Barlow Condensed with tabular lining numerals, so digits never shift width as they change.
@@ -229,32 +229,32 @@ The text scale is fine-grained between 0.75rem and 1.3125rem (2xs to 2xl), then 
 
 Two geometries share one token set.
 
-**The display** is sized by the viewport through `--cu` (one hundredth of the screen height, capped by width at 16:9: `min(1vh, 0.5625vw)`), so a TV, a projector and a laptop show the same composition at their own size. Header row, then a board: live tiles grid on the left taking the remaining width, summary column fixed at 40cu (~22% of a 16:9 screen) on the right. Gaps and tile radii are 1.2cu. Tiles are ordered by table number and laid out by a computed column/row count; paging is a last resort with a thin lime progress bar in the header. Inside a tile, everything is drawn on `--unit` (`min(1cqh, 0.75cqw)` of the tile's container), in four rows: head (table number, label, one pill), two player rows, foot (game history and elapsed time). Player rows are a fixed grid: serve mark, name, games well, score. At 720px and below the display reflows into a single scrolling column with fixed-height tiles and the summary underneath.
+**The display** is sized by the viewport through `--cu` (one hundredth of the screen height, capped by width at 16:9: `min(1vh, 0.5625vw)`), so a TV, a projector and a laptop show the same composition at their own size. Header row, then a board: live tiles grid on the left taking the remaining width, summary column fixed at 40cu (~22% of a 16:9 screen) on the right. Gaps and tile radii are 1.2cu. Tiles are ordered by table number and laid out by a computed column/row count; paging is a last resort with a thin lime progress bar in the header. Inside a tile, everything is drawn on `--unit` (`min(1cqh, 0.75cqw)` of the tile's container), in four rows: head (table number, label, one pill), two player rows, foot (game history and elapsed time). Player rows are a fixed grid: serve mark, name, games well, score. Below a 45rem page the display reflows into a single scrolling column with fixed-height tiles and the summary underneath.
 
-**Tool surfaces** (umpire, organiser, spectator, home) use the rem spacing scale and a page column capped at 92.5rem with a 1rem gutter on both sides. Layout breaks are container- and width-based around 700, 860, 960 and 1100px. The umpire console splits into two large point targets, one per side.
+**Tool surfaces** (umpire, organiser, spectator, home) use the rem spacing scale and a page column capped at 92.5rem with a 1rem gutter on both sides. Layout breaks are container queries on the page width (`body` is the `page` container) at 43.75, 53.75, 60 and 68.75rem. The umpire console splits into two large point targets, one per side.
 
 The summary column clips lists to whole rows (never a half-visible item) and gives results priority: "à suivre" shrinks first when the column runs out of room; the QR block sits at the bottom.
 
 ## Elevation & Depth
 
-Flat by default. Depth is tonal: field, then surface, then raised, then high, each a small lightness step in the same navy hue. Edges are drawn as inset 1px or 2px rings (`--edge`, `--edge-live`, `--edge-muted`) rather than outer borders, so they never change layout.
+Flat by default. Depth is tonal: field, then surface, then raised, then high, each a small lightness step in the same navy hue. Edges are drawn as inset 1px or 2px rings (`--inset-hairline`, `--inset-live`, `--inset-muted`) rather than outer borders, so they never change layout.
 
 ### Shadow Vocabulary
-- **Overlay** (`box-shadow: 0 0.875rem 2.125rem oklch(0% 0 0 / 55%)`): popovers and list-box menus only, the one thing that floats above the page.
-- **Key cap** (`box-shadow: inset 0 -2px 0 var(--field)`): keyboard-shortcut hints on the umpire console on laptops.
+- **Overlay** (`--shadow-overlay: 0 14px 34px oklch(0% 0 0 / 55%)`): popovers and list-box menus only, the one thing that floats above the page.
+- **Key cap** (`--shadow-key-cap: inset 0 -2px 0 var(--field)`): keyboard-shortcut hints on the umpire console on laptops.
 
 ### Named Rules
 **The Tonal Step Rule.** Resting surfaces never cast shadows. To lift something, move it one step up the navy ramp; reserve the overlay shadow for content that actually floats.
 
 ## Shapes
 
-Softly rounded rectangles throughout, one radius family: 0.375rem for chips and key caps, 0.625rem for tabs, toggles and list items, 0.875rem for buttons, inputs and tab tracks, 1.125rem for spectator match cards, 1.375rem for the umpire's point targets, full pills for state pills and connection badges. On the display, tiles and the summary column share a viewport-relative radius (1.2cu); table-number chips are rounded at 0.2em of their own size so they stay proportional at any scale. Serving is a small solid triangle, the only pictorial shape inside a tile.
+Softly rounded rectangles throughout, one radius family: 6px for chips and key caps, 10px for tabs, toggles and list items, 14px for buttons, inputs and tab tracks, 18px for spectator match cards, 22px for the umpire's point targets, full pills for state pills and connection badges. On the display, tiles and the summary column share a viewport-relative radius (1.2cu); table-number chips are rounded at 0.2em of their own size so they stay proportional at any scale. Serving is a small solid triangle, the only pictorial shape inside a tile.
 
 ## Components
 
 ### Buttons
 Plain and confident; one obvious action per screen.
-- **Shape:** gently rounded (0.875rem).
+- **Shape:** gently rounded (14px).
 - **Secondary (default):** transparent with a 1px inset rule edge, ink text, 600 weight, 3rem minimum height; hover fills surface; pressed scales to 0.985.
 - **Primary:** lime fill with on-live text, 700 weight, larger type (1.0625rem) and taller (3.875rem); hover brightens slightly; disabled drops to raised navy with dim text. One per screen.
 - **Quiet:** no edge, muted text, 2.75rem touch height; hover fills raised navy and brightens the text.
@@ -268,11 +268,11 @@ Plain and confident; one obvious action per screen.
 ### Cards / Containers
 - **Live tile:** surface navy, viewport-relative radius, no border, no shadow; enters with a fade and scale from 0.95 (640ms). The hot score turns lime; the losing side dims after the match.
 - **Summary column:** one surface panel; blocks for team encounters, results with finish times, free tables with next-match ETA, "à suivre" (each start in muted figures above the names, so a doubles pair keeps the full width), and the QR.
-- **Match card (spectator):** surface navy, 1.125rem radius, header row is the disclosure trigger; expanded detail sits below a hairline with a per-game table.
+- **Match card (spectator):** surface navy, 18px radius, header row is the disclosure trigger; expanded detail sits below a hairline with a per-game table.
 - **Internal padding:** tool cards 0.75 to 1rem; display panels in cu.
 
 ### Inputs / Fields
-- **Style:** surface fill, 2px rule border, 0.875rem radius, 3rem minimum height, 600 weight value text; label above in muted 0.875rem 600.
+- **Style:** surface fill, 2px rule border, 14px radius, 3rem minimum height, 600 weight value text; label above in muted 0.875rem 600.
 - **Focus:** border turns lime (no extra glow).
 - **Error:** border and a 1px inset ring in white, error text in white 600 with an icon. **Disabled:** dim text.
 - **Code inputs:** figure face, large, centered, uppercase with wide tracking (literal codes only).
@@ -286,7 +286,7 @@ Plain and confident; one obvious action per screen.
 Table number chip, muted single-line label, optional single state pill; two rows of serve triangle, name, games-won well (raised navy, figure 600) and point score (display figure, right-aligned); a foot with the game history in dim figures (won games brighter) and elapsed time. Every dimension is a multiple of the tile's own unit, so the score keeps its share at any grid size.
 
 ### Point Target (signature, umpire)
-A full-half-screen tap target per side: surface fill, 1.375rem radius, 1px inset edge; name with a lime "serving" marker, a giant centered score, and a foot with games won. On tap it scales to 0.988 and flashes a 3px lime inset ring for 550ms. The hot score turns lime as on the display.
+A full-half-screen tap target per side: surface fill, 22px radius, 1px inset edge; name with a lime "serving" marker, a giant centered score, and a foot with games won. On tap it scales to 0.988 and flashes a 3px lime inset ring for 550ms. The hot score turns lime as on the display.
 
 ## Do's and Don'ts
 
