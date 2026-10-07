@@ -215,8 +215,8 @@ importers:
         specifier: ^0.1.1
         version: 0.1.1
       '@adrienlcp/styles':
-        specifier: ^0.7.0
-        version: 0.7.0(sass@1.105.1)
+        specifier: ^0.8.0
+        version: 0.8.0(sass@1.105.1)
       '@internationalized/date':
         specifier: 3.12.4
         version: 3.12.4
@@ -361,8 +361,8 @@ packages:
   '@adrienlcp/safe-storage@0.1.1':
     resolution: {integrity: sha512-zDhZcQi2OVy3EijNi0hvZG0tnM2zRAP3oZpqy7RbAqn4dozFfltzImN8CN/Ntjkhx02QgO+PJ6m3abrSGG4qxQ==}
 
-  '@adrienlcp/styles@0.7.0':
-    resolution: {integrity: sha512-FEFZ5R40qDlzx9eLvMerglzZ6f5wRnNiwrJxTxRFIao9gA5+Ac9y04maM3sOR55GJtMl2ZnDgZJVsuDY/NA8Jw==}
+  '@adrienlcp/styles@0.8.0':
+    resolution: {integrity: sha512-bC6DhW9WMxOXJ8+ocWm+fWfHloBL2/You9tx9I9ch0EAYPucKAz20sr/03sZcZVBmscq7LF64ETQZfgqf/h3fg==}
     peerDependencies:
       sass: '>=1.80.0'
     peerDependenciesMeta:
@@ -2387,7 +2387,7 @@ snapshots:
     dependencies:
       '@adrienlcp/result': 0.1.1
 
-  '@adrienlcp/styles@0.7.0(sass@1.105.1)':
+  '@adrienlcp/styles@0.8.0(sass@1.105.1)':
     dependencies:
       '@adrienlcp/result': 0.1.1
       culori: 4.0.2
