@@ -10,6 +10,7 @@ import { hotSideOf, matchCallOf } from '@/features/event/match-call'
 import { MatchCallPill } from '@/features/event/match-call-pill'
 import { sideName } from '@/features/event/participant-names'
 import { numberedPeriods } from '@/features/event/periods'
+import { SCORE_DASH, scoreText } from '@/features/event/score-text'
 import { toDate } from '@/infrastructure/dates'
 import { Icon } from '@/presentation/components/icon'
 import { RollingNumber } from '@/presentation/components/rolling-number'
@@ -56,7 +57,7 @@ export const LiveTile: React.FC<LiveTileProps> = ({
       aria-label={translate('display.tileLabel', {
         away: nameOf('away'),
         home: nameOf('home'),
-        score: `${scoreOf('home')}–${scoreOf('away')}`,
+        score: scoreText(scoreOf('home'), scoreOf('away')),
         table: match.table ?? 0
       })}
       className='live-tile'
@@ -124,7 +125,8 @@ export const LiveTile: React.FC<LiveTileProps> = ({
         <footer className='tile-foot'>
           {numberedPeriods(state.periods).map((period) => (
             <span key={period.number}>
-              {period.home > period.away ? <b>{period.home}</b> : period.home}–
+              {period.home > period.away ? <b>{period.home}</b> : period.home}
+              {SCORE_DASH}
               {period.away > period.home ? <b>{period.away}</b> : period.away}
             </span>
           ))}

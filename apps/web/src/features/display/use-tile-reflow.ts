@@ -1,17 +1,22 @@
 import { type RefObject, useLayoutEffect, useRef } from 'react'
 
-import { prefersReducedMotion } from '@/infrastructure/browser'
-
-const REFLOW_MS = 640
-const REFLOW_EASING = 'cubic-bezier(0.22, 0.8, 0.18, 1)'
 const RESIZED_FADE_MS = 420
 const RESIZED_FADE_DELAY_MS = 160
 const MOVED_PX = 0.5
 
+/** A CSS `<time>` in milliseconds: `640ms`, `0.64s`; anything else is no motion. */
+const millisecondsOf = (time: string): number => {
+  const [, amount, unit] = /^\s*([\d.]+)(ms|s)\s*$/.exec(time) ?? []
+
+  return amount === undefined ? 0 : Number(amount) * (unit === 's' ? 1000 : 1)
+}
+
 /**
  * Slides each tile from where it stood to where the new layout puts it (FLIP)
  * when a match starts or ends; a tile that changed size fades its content back
- * in rather than stretching it. A window resize moves nothing.
+ * in rather than stretching it. A window resize moves nothing. The slide
+ * takes the stylesheet's `--transition-slow` and `--ease-move`, so reduced
+ * motion, which zeroes the duration, stills it.
  */
 export const useTileReflow = (
   gridRef: RefObject<HTMLElement | null>,
@@ -27,8 +32,11 @@ export const useTileReflow = (
       return
     }
 
+    const style = getComputedStyle(grid)
+    const reflowMs = millisecondsOf(style.getPropertyValue('--transition-slow'))
+    const reflowEasing = style.getPropertyValue('--ease-move').trim()
     const isNewLayout = lastKey.current !== layoutKey
-    const shouldMove = isNewLayout && !prefersReducedMotion()
+    const shouldMove = isNewLayout && reflowMs > 0
     const rects = new Map<string, DOMRect>()
 
     for (const tile of grid.querySelectorAll<HTMLElement>('[data-table]')) {
@@ -54,7 +62,7 @@ export const useTileReflow = (
             { transform: `translate(${dx}px, ${dy}px)`, zIndex: travelLayer },
             { transform: 'none', zIndex: travelLayer }
           ],
-          { duration: REFLOW_MS, easing: REFLOW_EASING }
+          { duration: reflowMs, easing: reflowEasing }
         )
       }
 

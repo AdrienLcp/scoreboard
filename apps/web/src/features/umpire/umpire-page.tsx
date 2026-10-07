@@ -17,6 +17,7 @@ import { FeedMessage } from '@/features/event/feed-message'
 import { hotSideOf, matchCallOf } from '@/features/event/match-call'
 import { shortName, sideName } from '@/features/event/participant-names'
 import { numberedPeriods } from '@/features/event/periods'
+import { SCORE_DASH, scoreText, versusText } from '@/features/event/score-text'
 import { useServerNow } from '@/features/event/use-server-now'
 import { toDate } from '@/infrastructure/dates'
 import {
@@ -45,7 +46,7 @@ const RECENT_POINTS_SHOWN = 8
 
 /** "3–1": games won by the winner first, however the sides are listed. */
 const gamesLine = ({ away, home }: { away: number; home: number }): string =>
-  `${Math.max(home, away)}–${Math.min(home, away)}`
+  scoreText(Math.max(home, away), Math.min(home, away))
 
 const UmpireConsole: React.FC<{ code: UmpireCode; eventId: EventId }> = ({
   code,
@@ -152,7 +153,7 @@ const UmpireConsole: React.FC<{ code: UmpireCode; eventId: EventId }> = ({
       {match !== null && state?.status === 'scheduled' ? (
         <section className='umpire-start'>
           <p className='umpire-start-match'>
-            {`${nameOf('home')} – ${nameOf('away')}`}
+            {versusText(nameOf('home'), nameOf('away'))}
           </p>
           <h2>{translate('umpire.start.title')}</h2>
           <div className='umpire-start-choices'>
@@ -193,7 +194,8 @@ const UmpireConsole: React.FC<{ code: UmpireCode; eventId: EventId }> = ({
                       {translate('umpire.gameShort', { number: period.number })}
                     </small>
                     <span>
-                      {left > right ? <b>{left}</b> : left}–
+                      {left > right ? <b>{left}</b> : left}
+                      {SCORE_DASH}
                       {right > left ? <b>{right}</b> : right}
                     </span>
                   </span>
@@ -297,7 +299,10 @@ const UmpireConsole: React.FC<{ code: UmpireCode; eventId: EventId }> = ({
                       <b>
                         {point.scoreAfter === null
                           ? translate('umpire.matchOver')
-                          : `${point.scoreAfter[order[0]]}–${point.scoreAfter[order[1]]}`}
+                          : scoreText(
+                              point.scoreAfter[order[0]],
+                              point.scoreAfter[order[1]]
+                            )}
                       </b>
                     </li>
                   ))}

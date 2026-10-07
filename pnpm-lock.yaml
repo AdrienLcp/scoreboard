@@ -199,6 +199,9 @@ importers:
 
   apps/web:
     dependencies:
+      '@adrienlcp/browser':
+        specifier: ^0.2.1
+        version: 0.2.1(react@19.3.0)
       '@adrienlcp/i18n':
         specifier: ^0.5.1
         version: 0.5.1
@@ -339,6 +342,14 @@ packages:
     resolution: {integrity: sha512-HRJI/tnwsQB0M4N1vDN4Me5tzGaEizqfMdbtbaCI61KiT7O9ZqLBnw0rzwfaezap/gtF+8ntO/rqViU02fZlKw==}
     peerDependencies:
       '@biomejs/biome': '>=2.5.0'
+
+  '@adrienlcp/browser@0.2.1':
+    resolution: {integrity: sha512-Hpyvwt+krc2NBxRu2vaMdcRAIojUo1qBZr/i/ebH95HqQ+066kOkirdoCw8Zud7ICbVpc1a6PW/lZ2t95zwFAA==}
+    peerDependencies:
+      react: '>=18'
+    peerDependenciesMeta:
+      react:
+        optional: true
 
   '@adrienlcp/i18n@0.5.1':
     resolution: {integrity: sha512-V/tZYT41FjLIk00d2BGO2DiQ9WSGwqHvH9uVv3hFp7NIvtgcf4Tog7QD1hzz0SDy73yuWu9hi2Jd2H1cDW4IRA==}
@@ -2379,6 +2390,12 @@ snapshots:
   '@adrienlcp/biome-config@0.2.1(@biomejs/biome@2.5.14)':
     dependencies:
       '@biomejs/biome': 2.5.14
+
+  '@adrienlcp/browser@0.2.1(react@19.3.0)':
+    dependencies:
+      '@adrienlcp/result': 0.1.1
+    optionalDependencies:
+      react: 19.3.0
 
   '@adrienlcp/i18n@0.5.1': {}
 

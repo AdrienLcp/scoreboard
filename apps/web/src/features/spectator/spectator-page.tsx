@@ -12,6 +12,7 @@ import {
 import { EncounterScore } from '@/features/event/encounter-score'
 import { FeedMessage } from '@/features/event/feed-message'
 import { sideName } from '@/features/event/participant-names'
+import { versusText } from '@/features/event/score-text'
 import { startLabel } from '@/features/event/start-label'
 import { useCurrentSnapshot } from '@/features/event/use-current-snapshot'
 import { usePublicFeed } from '@/features/event/use-public-feed'
@@ -96,14 +97,11 @@ const SpectatorProgramme: React.FC<{ eventId: EventId }> = ({ eventId }) => {
         return translate(`spectator.section.${whereabouts.status}`)
     }
   }
+  const fullName = (participant: MatchView['home']): string =>
+    sideName({ form: 'full', participant, players: snapshot.players }) ??
+    translate('match.unnamedSide')
   const namesOf = (match: MatchView): string =>
-    [match.home, match.away]
-      .map(
-        (participant) =>
-          sideName({ form: 'full', participant, players: snapshot.players }) ??
-          translate('match.unnamedSide')
-      )
-      .join(' – ')
+    versusText(fullName(match.home), fullName(match.away))
 
   const card = (match: MatchView) => (
     <MatchCard

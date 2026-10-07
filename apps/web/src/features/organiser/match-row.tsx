@@ -6,6 +6,7 @@ import type { MatchId } from '@scoreboard/protocol/identifiers'
 import type { ScoringEvent } from '@scoreboard/protocol/scoring-event'
 
 import { sideName } from '@/features/event/participant-names'
+import { scoreText, versusText } from '@/features/event/score-text'
 import { toDate } from '@/infrastructure/dates'
 import { PlainButton } from '@/presentation/components/button'
 import {
@@ -37,13 +38,10 @@ export const MatchRow: React.FC<MatchRowProps> = ({
 }) => {
   const translate = useTranslate()
   const { state, timing } = match
-  const names = [match.home, match.away]
-    .map(
-      (participant) =>
-        sideName({ form: 'full', participant, players }) ??
-        translate('match.unnamedSide')
-    )
-    .join(' – ')
+  const fullName = (participant: MatchView['home']): string =>
+    sideName({ form: 'full', participant, players }) ??
+    translate('match.unnamedSide')
+  const names = versusText(fullName(match.home), fullName(match.away))
   const score =
     state.status === 'scheduled'
       ? null
@@ -51,10 +49,10 @@ export const MatchRow: React.FC<MatchRowProps> = ({
           state.concession === null
             ? null
             : `${translate(`match.concession.${state.concession.reason}`)} ·`,
-          `${state.periodsWon.home}–${state.periodsWon.away}`,
+          scoreText(state.periodsWon.home, state.periodsWon.away),
           state.current === null
             ? null
-            : `(${state.current.home}–${state.current.away})`
+            : `(${scoreText(state.current.home, state.current.away)})`
         ]
           .filter((part) => part !== null)
           .join(' ')

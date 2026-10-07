@@ -2,6 +2,8 @@ import type { PublicSnapshot } from '@scoreboard/protocol/event-snapshot'
 import type { EncounterId, TableNumber } from '@scoreboard/protocol/identifiers'
 import type { Score } from '@scoreboard/protocol/side'
 
+import { versusText } from './score-text'
+
 /** A team encounter as every screen sums it up: both teams, the running score, its tables. */
 export type EncounterLine = {
   awayName: string
@@ -40,4 +42,4 @@ export const encounterLinesFor = (
 
 /** "Club A – Club B": how a match of the encounter is introduced. */
 export const encounterTitleOf = (line: EncounterLine): string =>
-  `${line.homeName} – ${line.awayName}`
+  versusText(line.homeName, line.awayName)

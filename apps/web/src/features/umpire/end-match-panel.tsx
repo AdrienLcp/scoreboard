@@ -1,3 +1,4 @@
+import { prefersReducedMotion } from '@adrienlcp/browser'
 import type React from 'react'
 import { useEffect, useRef, useState } from 'react'
 
@@ -6,7 +7,6 @@ import { type Side, sides } from '@scoreboard/protocol/side'
 
 import { opponentOf } from '@scoreboard/core/match/opponent'
 
-import { prefersReducedMotion } from '@/infrastructure/browser'
 import { Button } from '@/presentation/components/button'
 import { Icon } from '@/presentation/components/icon'
 import {

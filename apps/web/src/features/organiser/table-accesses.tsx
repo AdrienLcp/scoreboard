@@ -1,10 +1,11 @@
+import { copyText } from '@adrienlcp/browser'
 import type React from 'react'
 import { useState } from 'react'
 
 import type { TableAccess } from '@scoreboard/protocol/event-snapshot'
 import type { EventId } from '@scoreboard/protocol/identifiers'
 
-import { copyText, pageOrigin } from '@/infrastructure/browser'
+import { pageOrigin } from '@/infrastructure/browser'
 import {
   umpireEntryPathFor,
   umpirePathFor

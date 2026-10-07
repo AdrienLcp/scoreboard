@@ -10,6 +10,7 @@ import { opponentOf } from '@scoreboard/core/match/opponent'
 import type { EncounterLine } from '@/features/event/encounter-lines'
 import { EncounterScore } from '@/features/event/encounter-score'
 import { sideName } from '@/features/event/participant-names'
+import { scoreText, versusText } from '@/features/event/score-text'
 import { startLabel } from '@/features/event/start-label'
 import { toDate } from '@/infrastructure/dates'
 import { QrCode } from '@/presentation/components/qr-code'
@@ -49,7 +50,7 @@ const ResultItem: React.FC<{
       <TableNumber number={match.table ?? 0} />
       <span className='result-winner'>{nameOf(winner)}</span>
       {concession === null ? (
-        <span className='result-score'>{`${won}–${lost}`}</span>
+        <span className='result-score'>{scoreText(won, lost)}</span>
       ) : (
         <span className='result-concession'>
           {translate(`match.concession.${concession.reason}`)}
@@ -75,15 +76,11 @@ export const SummaryColumn: React.FC<SummaryColumnProps> = ({
   summary
 }) => {
   const translate = useTranslate()
-  // The non-breaking space keeps the dash on the home line, so a wrap never starts a line with it.
+  const fullName = (participant: MatchView['home']): string =>
+    sideName({ form: 'full', participant, players }) ??
+    translate('match.unnamedSide')
   const namesOf = (match: MatchView): string =>
-    [match.home, match.away]
-      .map(
-        (participant) =>
-          sideName({ form: 'full', participant, players }) ??
-          translate('match.unnamedSide')
-      )
-      .join(' – ')
+    versusText(fullName(match.home), fullName(match.away))
 
   return (
     <aside aria-label={translate('display.summary')} className='summary-column'>

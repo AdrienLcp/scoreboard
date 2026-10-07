@@ -2,19 +2,17 @@ import type React from 'react'
 
 import type { Player } from '@scoreboard/protocol/event-setup'
 import type { MatchView } from '@scoreboard/protocol/event-snapshot'
-import type { Score } from '@scoreboard/protocol/side'
 
 import { useTranslate } from '@/presentation/i18n/i18n-context'
 
 import { MatchTimingLine } from './match-timing-line'
 import { participantNames } from './participant-names'
+import { scoreText } from './score-text'
 
 type MatchLineProps = {
   match: MatchView
   players: readonly Player[]
 }
-
-const scoreText = (score: Score): string => `${score.home}–${score.away}`
 
 /** One match: who plays, the games, the score of the game on, and its times. */
 export const MatchLine: React.FC<MatchLineProps> = ({ match, players }) => {
@@ -36,9 +34,14 @@ export const MatchLine: React.FC<MatchLineProps> = ({ match, players }) => {
         {state.status === 'scheduled' ? null : (
           <>
             {' · '}
-            <span>{scoreText(state.periodsWon)}</span>
+            <span>
+              {scoreText(state.periodsWon.home, state.periodsWon.away)}
+            </span>
             {state.current === null ? null : (
-              <span> ({scoreText(state.current)})</span>
+              <span>
+                {' '}
+                ({scoreText(state.current.home, state.current.away)})
+              </span>
             )}
           </>
         )}
