@@ -332,6 +332,7 @@ export const FR_DICTIONARY = defineDictionary({
       date: { at: { timeStyle: 'short' } }
     }),
     whereLive: 'Table {table:number} · en cours',
+    whereUnplaced: 'Pas encore dans un match',
     yourPlayers: 'Vos joueurs'
   },
   table: {

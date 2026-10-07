@@ -29,6 +29,7 @@ import { socketStatusKey } from '@/presentation/i18n/translation'
 import { FollowField } from './follow-field'
 import { followedFirst, involvesAnyOf } from './followed-first'
 import { MatchCard } from './match-card'
+import { whereaboutsOf } from './player-whereabouts'
 import { useFollowedPlayers } from './use-followed-players'
 
 import './spectator-page.sass'
@@ -82,17 +83,18 @@ const SpectatorProgramme: React.FC<{ eventId: EventId }> = ({ eventId }) => {
   const onFollow = (playerId: PlayerId, isFollowing: boolean) =>
     isFollowing ? follow(playerId) : unfollow(playerId)
   const whereIs = (playerId: PlayerId): string => {
-    const live = programme.live.find((match) =>
-      involvesAnyOf(match, [playerId])
-    )
+    const whereabouts = whereaboutsOf(playerId, programme)
 
-    if (live !== undefined) {
-      return translate('spectator.whereLive', { table: live.table ?? 0 })
+    switch (whereabouts.status) {
+      case 'live':
+        return translate('spectator.whereLive', {
+          table: whereabouts.table ?? 0
+        })
+      case 'unplaced':
+        return translate('spectator.whereUnplaced')
+      default:
+        return translate(`spectator.section.${whereabouts.status}`)
     }
-
-    return upcoming.some((match) => involvesAnyOf(match, [playerId]))
-      ? translate('spectator.section.upcoming')
-      : translate('spectator.section.finished')
   }
   const namesOf = (match: MatchView): string =>
     [match.home, match.away]
