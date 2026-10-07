@@ -167,11 +167,11 @@ importers:
   .:
     devDependencies:
       '@adrienlcp/biome-config':
-        specifier: ^0.2.0
-        version: 0.2.0(@biomejs/biome@2.5.14)
+        specifier: ^0.2.1
+        version: 0.2.1(@biomejs/biome@2.5.14)
       '@adrienlcp/tsconfig':
-        specifier: ^0.1.0
-        version: 0.1.0
+        specifier: ^0.1.1
+        version: 0.1.1
       '@biomejs/biome':
         specifier: 2.5.14
         version: 2.5.14
@@ -200,23 +200,23 @@ importers:
   apps/web:
     dependencies:
       '@adrienlcp/i18n':
-        specifier: ^0.5.0
-        version: 0.5.0
+        specifier: ^0.5.1
+        version: 0.5.1
       '@adrienlcp/react':
-        specifier: ^0.3.0
-        version: 0.3.0(react@19.3.0)
+        specifier: ^0.4.0
+        version: 0.4.0(react@19.3.0)
       '@adrienlcp/react-aria':
-        specifier: ^0.1.0
-        version: 0.1.0(react-aria-components@1.21.1(react-dom@19.3.0(react@19.3.0))(react@19.3.0))(react@19.3.0)(sass@1.105.1)
+        specifier: ^0.1.1
+        version: 0.1.1(react-aria-components@1.21.1(react-dom@19.3.0(react@19.3.0))(react@19.3.0))(react@19.3.0)(sass@1.105.1)
       '@adrienlcp/result':
-        specifier: ^0.1.0
-        version: 0.1.0
+        specifier: ^0.1.1
+        version: 0.1.1
       '@adrienlcp/safe-storage':
         specifier: ^0.1.0
         version: 0.1.0
       '@adrienlcp/styles':
-        specifier: ^0.6.0
-        version: 0.6.0(sass@1.105.1)
+        specifier: ^0.6.1
+        version: 0.6.1(sass@1.105.1)
       '@internationalized/date':
         specifier: 3.12.4
         version: 3.12.4
@@ -282,8 +282,8 @@ importers:
   apps/worker:
     dependencies:
       '@adrienlcp/result':
-        specifier: ^0.1.0
-        version: 0.1.0
+        specifier: ^0.1.1
+        version: 0.1.1
       '@scoreboard/core':
         specifier: workspace:*
         version: link:../../packages/core
@@ -310,8 +310,8 @@ importers:
   packages/core:
     dependencies:
       '@adrienlcp/result':
-        specifier: ^0.1.0
-        version: 0.1.0
+        specifier: ^0.1.1
+        version: 0.1.1
       '@scoreboard/protocol':
         specifier: workspace:*
         version: link:../protocol
@@ -332,16 +332,16 @@ importers:
 
 packages:
 
-  '@adrienlcp/biome-config@0.2.0':
-    resolution: {integrity: sha512-OIR0FxEYduRcIlfxidyL+7f9gEwylN/s9hfPb1zH2HOOSQKHem7m6r7pruJlLNPhnlW/DrrSkgxpmeaSp6aSQw==}
+  '@adrienlcp/biome-config@0.2.1':
+    resolution: {integrity: sha512-HRJI/tnwsQB0M4N1vDN4Me5tzGaEizqfMdbtbaCI61KiT7O9ZqLBnw0rzwfaezap/gtF+8ntO/rqViU02fZlKw==}
     peerDependencies:
       '@biomejs/biome': '>=2.5.0'
 
-  '@adrienlcp/i18n@0.5.0':
-    resolution: {integrity: sha512-Oaj7NMIqaXVN4o3zPKVEzRpEuqdJduqFzCpJPnGhgh0E8D67P9o2qALmoq3dEyiBiHYpEYxLJaxNkGklbxB9yA==}
+  '@adrienlcp/i18n@0.5.1':
+    resolution: {integrity: sha512-V/tZYT41FjLIk00d2BGO2DiQ9WSGwqHvH9uVv3hFp7NIvtgcf4Tog7QD1hzz0SDy73yuWu9hi2Jd2H1cDW4IRA==}
 
-  '@adrienlcp/react-aria@0.1.0':
-    resolution: {integrity: sha512-tIK5xmvKqM4T68pCeM5ZkAX3fut9GlBi/1JUhIsUWsvnP1c8iBcoCCQFSU2jqRlOammhj0+m5gu/Px965I6Y3Q==}
+  '@adrienlcp/react-aria@0.1.1':
+    resolution: {integrity: sha512-oxzhLPO/YrlDcZH1ouMLAV0SX4sopQltToGIQNQixe2R0Nd1k8SKrjv3NgdvhcIPjtWgEFft3DGIqR763bVhXA==}
     peerDependencies:
       react: '>=19'
       react-aria-components: '>=1.21.0'
@@ -350,27 +350,27 @@ packages:
       sass:
         optional: true
 
-  '@adrienlcp/react@0.3.0':
-    resolution: {integrity: sha512-V9ARaVZGdqhzUFxghQf8Hdb+Rp85354SpIroHvsAR65VEvKTThMswjSAiWWLUxgRTy9qZaJAQceUZuqbumwiog==}
+  '@adrienlcp/react@0.4.0':
+    resolution: {integrity: sha512-q/0pR48+tEqXPBr7wy1iqLpjnuwbNJ57dDgmj5EHlhPe4vXXWAjHFFPgioHNgSEEpoI3VTrm3//FXR7BWIUITg==}
     peerDependencies:
       react: '>=19.2'
 
-  '@adrienlcp/result@0.1.0':
-    resolution: {integrity: sha512-2LmABvoBLgB9bm+c0PKZApz4GXuyesb4m7zvZs+jn0efbdxxPc9ICFWXcDptiuy1LiBLxM6m/5WbenQx346GUA==}
+  '@adrienlcp/result@0.1.1':
+    resolution: {integrity: sha512-9eQiQGvWhr6BQ8InzgmCriQgkf3dj1mFmHxEA2Yxa0NqYRWbaUMTVWKshff3JRDr6TukRGWeZFI/pJHnbQVpXw==}
 
   '@adrienlcp/safe-storage@0.1.0':
     resolution: {integrity: sha512-7bdnrjNQF3fedYJvYSDIpP+9Vb+csASYjS7b2zTTiqhxr91AZx75R3Ixxhl8i7y7V0SFyCNgqhyLMngcUahbTg==}
 
-  '@adrienlcp/styles@0.6.0':
-    resolution: {integrity: sha512-Q8ocdNFyWPfnPqJpnZGl5OBAbtcN4jJ6R7L3qgK9LDUzgubelRCbhFjIIlCpxPopAg8e93D1wBNlRfgFR42geg==}
+  '@adrienlcp/styles@0.6.1':
+    resolution: {integrity: sha512-cNMFP2XHsKWdoJfDgWCA1TPWsxdZ2apFLo9LuxiZhlwvIFeNkzzdGfIGaKOR3zQ3rnra2tAb2bEXS87CCHGX1A==}
     peerDependencies:
       sass: '>=1.80.0'
     peerDependenciesMeta:
       sass:
         optional: true
 
-  '@adrienlcp/tsconfig@0.1.0':
-    resolution: {integrity: sha512-8M3i4zRtk7XpSk7qSqz/1bABVh+hXJ/A6UUaSqdzsxj/WG5aH6TKY6al2Eg+kINg/bT4cdlNH7RYvpLjTFqSHg==}
+  '@adrienlcp/tsconfig@0.1.1':
+    resolution: {integrity: sha512-PVFPJ88g51jUhYtHBK5lgyHzc5R4MN9lbDU4IM0PnKLsj2mRPBQa52+lbA923X3GvbzEsuu7hxa8qf9lM2py6g==}
 
   '@babel/helper-string-parser@7.29.7':
     resolution: {integrity: sha512-Pb5ijPrZ89GDH8223L4UP8i6QApWxs04RbPQJTeWDV0/keR2E36MeKnyr6LYmUUvqRRI+Iv87SuF1W6ErINzYw==}
@@ -2359,36 +2359,37 @@ packages:
 
 snapshots:
 
-  '@adrienlcp/biome-config@0.2.0(@biomejs/biome@2.5.14)':
+  '@adrienlcp/biome-config@0.2.1(@biomejs/biome@2.5.14)':
     dependencies:
       '@biomejs/biome': 2.5.14
 
-  '@adrienlcp/i18n@0.5.0': {}
+  '@adrienlcp/i18n@0.5.1': {}
 
-  '@adrienlcp/react-aria@0.1.0(react-aria-components@1.21.1(react-dom@19.3.0(react@19.3.0))(react@19.3.0))(react@19.3.0)(sass@1.105.1)':
+  '@adrienlcp/react-aria@0.1.1(react-aria-components@1.21.1(react-dom@19.3.0(react@19.3.0))(react@19.3.0))(react@19.3.0)(sass@1.105.1)':
     dependencies:
+      '@adrienlcp/react': 0.4.0(react@19.3.0)
       react: 19.3.0
       react-aria-components: 1.21.1(react-dom@19.3.0(react@19.3.0))(react@19.3.0)
     optionalDependencies:
       sass: 1.105.1
 
-  '@adrienlcp/react@0.3.0(react@19.3.0)':
+  '@adrienlcp/react@0.4.0(react@19.3.0)':
     dependencies:
       react: 19.3.0
 
-  '@adrienlcp/result@0.1.0': {}
+  '@adrienlcp/result@0.1.1': {}
 
   '@adrienlcp/safe-storage@0.1.0':
     dependencies:
-      '@adrienlcp/result': 0.1.0
+      '@adrienlcp/result': 0.1.1
 
-  '@adrienlcp/styles@0.6.0(sass@1.105.1)':
+  '@adrienlcp/styles@0.6.1(sass@1.105.1)':
     dependencies:
-      '@adrienlcp/result': 0.1.0
+      '@adrienlcp/result': 0.1.1
     optionalDependencies:
       sass: 1.105.1
 
-  '@adrienlcp/tsconfig@0.1.0': {}
+  '@adrienlcp/tsconfig@0.1.1': {}
 
   '@babel/helper-string-parser@7.29.7': {}
 
