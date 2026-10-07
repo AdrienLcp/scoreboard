@@ -10,27 +10,26 @@
     min-width: 0
 
   .field-label
-    color: var(--ink-muted)
-    font-size: var(--text-s)
-    font-weight: 600
-    line-height: 1.2
+    @include typography.label
 
   .field-input
+    @include typography.emphasis
+
     background: var(--surface)
-    border: var(--outline-medium) solid var(--rule)
+    border: var(--stroke-bold) solid var(--rule)
     border-radius: var(--radius-m)
     color: var(--ink)
     font-size: var(--text-base)
-    font-weight: 600
     min-height: var(--control-m)
     min-width: 0
     padding: var(--space-xs) var(--space-s)
-    transition: border-color var(--transition-fast)
+    transition: border-color var(--transition-fast, 0s)
     width: 100%
 
     &::placeholder
+      @include typography.plain
+
       color: var(--ink-dim)
-      font-weight: 500
 
     &[data-hovered]
       border-color: var(--surface-high)
@@ -41,7 +40,7 @@
 
     &[data-invalid]
       border-color: var(--ink)
-      box-shadow: inset 0 0 0 var(--outline-thin) var(--ink)
+      box-shadow: inset 0 0 0 var(--stroke-hair) var(--ink)
 
     &[data-disabled]
       color: var(--ink-dim)
@@ -55,9 +54,10 @@
     font-size: var(--text-s)
 
   .field-error
+    @include typography.emphasis
+
     align-items: center
     color: var(--ink)
     display: flex
     font-size: var(--text-m)
-    font-weight: 600
     gap: var(--space-xs)

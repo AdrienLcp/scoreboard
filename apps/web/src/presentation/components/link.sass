@@ -9,9 +9,9 @@
     cursor: pointer
     text-decoration: underline
     text-decoration-color: var(--ink-dim)
-    text-decoration-thickness: var(--outline-thin)
-    text-underline-offset: 0.22em
-    transition: color var(--transition-fast), text-decoration-color var(--transition-fast)
+    text-decoration-thickness: var(--stroke-hair)
+    text-underline-offset: var(--underline-offset)
+    transition: color var(--transition-fast, 0s), text-decoration-color var(--transition-fast, 0s)
 
     &[data-hovered]
       text-decoration-color: var(--live)

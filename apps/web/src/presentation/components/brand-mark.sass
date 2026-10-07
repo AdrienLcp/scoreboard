@@ -1,9 +1,12 @@
+@use '../styles/typography'
+
 @layer components
   .brand-mark
     align-items: center
     display: inline-flex
+    @include typography.strong
+
     font-size: var(--text-base)
-    font-weight: 700
     gap: var(--space-xs)
 
     svg

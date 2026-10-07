@@ -1,13 +1,15 @@
+@use '../styles/typography'
+
 @layer components
   .state-pill
+    @include typography.pill
+
     align-items: center
-    animation: pill-in var(--transition-base) var(--ease-out) both
+    animation: pill-in var(--transition-base, 0s) var(--ease-out) both
     border-radius: var(--radius-full)
     display: inline-flex
     flex: none
-    font-weight: 700
     gap: 0.4em
-    line-height: 1.05
     padding: 0.34em 0.82em
     white-space: nowrap
 
@@ -19,11 +21,11 @@
       color: var(--on-live)
 
     &[data-tone='game-point']
-      box-shadow: var(--edge-live)
+      box-shadow: var(--inset-live)
       color: var(--live)
 
     &[data-tone='deuce']
-      box-shadow: var(--edge-muted)
+      box-shadow: var(--inset-muted)
       color: var(--ink)
 
     &[data-tone='over']

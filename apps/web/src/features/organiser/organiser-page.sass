@@ -1,5 +1,7 @@
 @use '../../presentation/styles/layout'
 @use '../../presentation/styles/typography'
+@use '../../presentation/styles/focus'
+@use '../../presentation/styles/motion'
 
 /// The organiser's console as one style system: ruled lists, quiet panels for
 /// adding, a correction folded under each match. Calm on purpose: the live
@@ -18,11 +20,12 @@
     justify-content: space-between
 
   .organiser-status
+    @include typography.emphasis
+
     align-items: center
     color: var(--ink-muted)
     display: inline-flex
     font-size: var(--text-s)
-    font-weight: 600
     gap: var(--space-xs)
 
     .icon
@@ -55,12 +58,13 @@
     gap: var(--space-xs)
 
   .organiser-alert
+    @include typography.strong
+
     align-items: center
     background: var(--ink)
     border-radius: var(--radius-m)
     color: var(--on-ink)
     display: flex
-    font-weight: 700
     gap: var(--space-xs)
     padding: var(--space-s) var(--space-m)
 
@@ -93,8 +97,9 @@
       grid-template-columns: minmax(0, 3fr) minmax(0, 2fr)
 
   .organiser-subheading
+    @include typography.strong
+
     font-size: var(--text-l)
-    font-weight: 700
 
   .organiser-panel
     background: var(--surface)
@@ -102,7 +107,7 @@
     padding: var(--space-m) var(--space-l)
 
     h3
-      @include typography.section-heading
+      @include typography.label
 
       flex-basis: 100%
 
@@ -129,11 +134,10 @@
     margin-bottom: var(--space-m)
 
     b
-      @include typography.figure
+      @include typography.code
 
       color: var(--ink)
       font-size: var(--text-xl)
-      letter-spacing: 0.08em
       margin-left: var(--space-xs)
 
   .organiser-list
@@ -157,7 +161,7 @@
     min-width: 0
 
     b
-      font-weight: 600
+      @include typography.emphasis
 
     small
       color: var(--ink-muted)
@@ -180,7 +184,7 @@
     min-width: 0
 
   .match-row-names
-    font-weight: 600
+    @include typography.emphasis
 
   .match-row-meta
     color: var(--ink-muted)
@@ -207,17 +211,19 @@
       font-size: var(--text-xs)
 
   .match-row-toggle
+    @include focus.ring
+    @include motion.press-transition
+    @include typography.emphasis
+
     align-items: center
     border-radius: var(--radius-m)
     color: var(--ink-muted)
     cursor: pointer
     display: inline-flex
     font-size: var(--text-m)
-    font-weight: 600
     gap: var(--space-2xs)
     min-height: var(--control-m)
     padding-inline: var(--space-s)
-    transition: background-color var(--transition-fast), color var(--transition-fast), scale var(--transition-fast) var(--ease-out)
 
     &[data-hovered]
       background: var(--surface-raised)
@@ -226,11 +232,8 @@
     &[data-pressed]
       scale: 0.97
 
-    &[data-focus-visible]
-      outline: var(--outline-thick) solid var(--focus)
-
     .icon
-      transition: rotate var(--transition-base) var(--ease-out)
+      transition: rotate var(--transition-base, 0s) var(--ease-out)
 
   .match-row[data-expanded] .match-row-toggle .icon
     rotate: 180deg
@@ -258,9 +261,9 @@
       flex: 1 1 16rem
 
   .field-input.correction-input
-    font-family: var(--font-figure)
+    @include typography.code-entry
+
     font-size: var(--text-xl)
-    letter-spacing: 0.04em
 
   .correction-actions
     align-items: center
@@ -363,10 +366,9 @@
       padding-inline: var(--space-2xs)
 
   .access-code
-    @include typography.figure
+    @include typography.code
 
     font-size: var(--text-3xl)
-    letter-spacing: 0.08em
 
   .settings-form
     display: grid
@@ -399,7 +401,7 @@
       @include typography.hint
 
   .field-input.organiser-code-input
-    font-family: var(--font-figure)
+    @include typography.code-entry
+
     font-size: var(--text-2xl)
-    letter-spacing: 0.12em
     text-transform: uppercase

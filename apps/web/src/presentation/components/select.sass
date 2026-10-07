@@ -4,28 +4,28 @@
 @layer components
   .select-trigger
     @include focus.ring
+    @include typography.emphasis
 
     align-items: center
     background: var(--surface)
-    border: var(--outline-medium) solid var(--rule)
+    border: var(--stroke-bold) solid var(--rule)
     border-radius: var(--radius-m)
     cursor: pointer
     display: flex
     font-size: var(--text-base)
-    font-weight: 600
     gap: var(--space-xs)
     justify-content: space-between
     min-height: var(--control-m)
     min-width: 0
     padding: var(--space-xs) var(--space-s)
     text-align: start
-    transition: border-color var(--transition-fast)
+    transition: border-color var(--transition-fast, 0s)
     width: 100%
 
     .icon
       color: var(--ink-muted)
       font-size: var(--icon-m)
-      transition: rotate var(--transition-base) var(--ease-out)
+      transition: rotate var(--transition-base, 0s) var(--ease-out)
 
     &[data-hovered]
       border-color: var(--surface-high)
@@ -37,16 +37,18 @@
     @include typography.single-line
 
     &[data-placeholder]
+      @include typography.plain
+
       color: var(--ink-dim)
-      font-weight: 500
 
     .option-detail
       display: none
 
   .option-detail
+    @include typography.plain
+
     color: var(--ink-muted)
     font-size: var(--text-s)
-    font-weight: 500
     grid-column: 1
 
   .popover
@@ -57,7 +59,7 @@
     overflow: auto
     width: var(--trigger-width)
     padding: var(--space-2xs)
-    transition: opacity var(--transition-fast), translate var(--transition-fast) var(--ease-out)
+    transition: opacity var(--transition-fast, 0s), translate var(--transition-fast, 0s) var(--ease-out)
 
     &[data-entering], &[data-exiting]
       opacity: 0
@@ -71,13 +73,13 @@
   // The detail sits under its option so the list never outgrows its trigger.
   .list-box-item
     @include focus.ring-inset
+    @include typography.emphasis
 
     align-items: center
     border-radius: var(--radius-s)
     column-gap: var(--space-xs)
     cursor: pointer
     display: grid
-    font-weight: 600
     grid-template-columns: 1fr auto
     min-height: var(--control-touch)
     padding: var(--space-xs) var(--space-s)
@@ -88,9 +90,6 @@
 
     &[data-pressed]
       background: var(--rule)
-
-    &[data-focus-visible]
-      outline: var(--outline-thick) solid var(--focus)
 
     // A neutral check rather than lime, which only ever means live.
     &[data-selected]::after

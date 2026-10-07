@@ -1,14 +1,16 @@
+@use '../../presentation/styles/typography'
+
 @layer components
   .connection-badge
+    @include typography.control
+
     align-items: center
     background: var(--surface)
     border-radius: var(--radius-full)
     display: inline-flex
     flex: none
     font-size: var(--text-m)
-    font-weight: 600
     gap: var(--space-xs)
-    line-height: 1.15
     min-height: var(--control-touch)
     padding: var(--space-xs) var(--space-m)
 
@@ -28,9 +30,6 @@
 
   .connection-spin
     animation: connection-spin 1s linear infinite
-
-    @media (prefers-reduced-motion: reduce)
-      animation: none
 
   @keyframes connection-spin
     to

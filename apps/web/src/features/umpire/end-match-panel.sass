@@ -4,12 +4,13 @@
   .end-match-panel
     background: var(--surface)
     border-radius: var(--radius-l)
-    box-shadow: var(--edge)
+    box-shadow: var(--inset-hairline)
     padding: var(--space-l)
 
     h2
+      @include typography.strong
+
       font-size: var(--text-xl)
-      font-weight: 700
 
     > p
       @include typography.hint
@@ -22,7 +23,7 @@
       margin-top: var(--space-m)
 
     legend
-      @include typography.section-heading
+      @include typography.label
 
       margin-bottom: var(--space-xs)
 

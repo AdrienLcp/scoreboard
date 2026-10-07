@@ -6,18 +6,18 @@
 
   .encounter-meta
     @include typography.single-line
+    @include typography.caption
 
     color: var(--ink-muted)
     font-size: 0.78em
-    line-height: 1.3
 
   .encounter-team
+    @include typography.name
+
     align-items: center
     display: flex
-    font-weight: 600
     gap: 1em
     justify-content: space-between
-    line-height: 1.25
 
     span
       @include typography.single-line

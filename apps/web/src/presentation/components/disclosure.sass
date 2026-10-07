@@ -1,7 +1,7 @@
 @layer components
   .disclosure-panel > *
     opacity: 0
-    transition: opacity var(--transition-base) var(--ease-out), translate var(--transition-base) var(--ease-out)
+    transition: opacity var(--transition-base, 0s) var(--ease-out), translate var(--transition-base, 0s) var(--ease-out)
     translate: 0 calc(-1 * var(--space-xs))
 
   .disclosure[data-expanded] .disclosure-panel > *

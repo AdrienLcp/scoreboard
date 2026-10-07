@@ -1,5 +1,7 @@
+@use '@adrienlcp/styles/accessibility'
 @use '@adrienlcp/styles/reduced-motion.css'
 @use '@adrienlcp/styles/reset.css'
+@use './focus'
 @use './fonts'
 @use './tokens'
 @use './typography'
@@ -28,8 +30,8 @@
     min-height: 100dvh
 
   a
-    text-decoration-thickness: var(--outline-thin)
-    text-underline-offset: 0.22em
+    text-decoration-thickness: var(--stroke-hair)
+    text-underline-offset: var(--underline-offset)
 
   ::selection
     background: var(--live)
@@ -44,17 +46,11 @@
 
   ::-webkit-scrollbar-thumb
     background: var(--surface-high)
-    border: var(--outline-medium) solid var(--field)
+    border: var(--stroke-bold) solid var(--field)
     border-radius: var(--radius-xs)
 
-  :focus-visible
-    outline: var(--outline-thick) solid var(--focus)
-    outline-offset: var(--outline-thick)
+  *
+    @include focus.ring
 
   .visually-hidden
-    clip-path: inset(50%)
-    height: 1px
-    overflow: hidden
-    position: absolute
-    white-space: nowrap
-    width: 1px
+    @include accessibility.visually-hidden

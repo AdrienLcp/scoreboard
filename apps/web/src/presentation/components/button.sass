@@ -1,26 +1,26 @@
 @use '../styles/focus'
 @use '../styles/typography'
+@use '../styles/motion'
 
 @layer components
   .button
     @include focus.ring
+    @include motion.press-transition
+    @include typography.control
 
     align-items: center
     border-radius: var(--radius-m)
-    box-shadow: var(--edge)
+    box-shadow: var(--inset-hairline)
     cursor: pointer
     display: inline-flex
     flex: none
     font-size: var(--text-m)
-    font-weight: 600
     gap: var(--space-xs)
     justify-content: center
-    line-height: 1.15
     min-height: var(--control-m)
     padding: var(--space-s) var(--space-m)
     text-align: center
     text-decoration: none
-    transition: background-color var(--transition-fast), color var(--transition-fast), scale var(--transition-fast) var(--ease-out)
 
     .icon
       font-size: var(--icon-m)
@@ -36,11 +36,12 @@
       cursor: not-allowed
 
     &.primary
+      @include typography.strong
+
       background: var(--ink)
       box-shadow: none
       color: var(--on-ink)
       font-size: var(--text-l)
-      font-weight: 700
       min-height: var(--control-l)
 
       &[data-hovered]:not([data-disabled])
@@ -62,10 +63,11 @@
         color: var(--ink)
 
     &.stop
+      @include typography.strong
+
       background: var(--ink)
       box-shadow: none
       color: var(--on-ink)
-      font-weight: 700
 
       &[data-hovered]:not([data-disabled])
         background: var(--ink)

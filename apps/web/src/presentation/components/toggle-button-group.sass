@@ -1,4 +1,6 @@
 @use '../styles/focus'
+@use '../styles/motion'
+@use '../styles/typography'
 
 @layer components
   .toggle-button-group
@@ -8,15 +10,15 @@
 
   .toggle-button
     @include focus.ring
+    @include motion.press-transition
+    @include typography.emphasis
 
     background: var(--surface-raised)
     border-radius: var(--radius-s)
     cursor: pointer
     font-size: var(--text-m)
-    font-weight: 600
     min-height: var(--control-touch)
     padding: var(--space-s) var(--space-m)
-    transition: background-color var(--transition-fast), color var(--transition-fast), scale var(--transition-fast) var(--ease-out)
 
     &[data-hovered]:not([data-selected])
       background: var(--surface-high)

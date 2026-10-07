@@ -12,34 +12,35 @@
     align-items: baseline
     display: flex
     flex: 1
-    gap: calc(var(--cu) * 1.8)
+    gap: var(--display-space)
     min-width: 0
 
     h1
+      @include typography.display-title
+
       font-size: calc(var(--cu) * 3)
-      font-weight: 700
-      line-height: 1.1
       white-space: nowrap
 
     p
       @include typography.single-line
 
       color: var(--ink-muted)
-      font-size: calc(var(--cu) * 2.2)
+      font-size: var(--display-text-l)
       min-width: 0
 
   .display-scope
+    @include typography.emphasis
+
     align-items: flex-end
     display: flex
     flex-direction: column
-    font-size: calc(var(--cu) * 2.2)
-    font-weight: 600
+    font-size: var(--display-text-l)
     gap: calc(var(--cu) * 0.7)
     white-space: nowrap
 
   .page-bar
     background: var(--surface-raised)
-    border-radius: var(--outline-medium)
+    border-radius: var(--stroke-bold)
     display: block
     height: var(--outline-thick)
     min-width: calc(var(--cu) * 18)
@@ -53,9 +54,6 @@
       height: 100%
       transform-origin: 0 50%
 
-      @media (prefers-reduced-motion: reduce)
-        animation: none
-
   @keyframes page-fill
     from
       scale: 0 1
@@ -63,22 +61,23 @@
   .display-when
     align-items: center
     display: flex
-    gap: calc(var(--cu) * 1.8)
+    gap: var(--display-space)
 
   .display-offline
+    @include typography.strong
+
     align-items: center
     background: var(--ink)
     border-radius: var(--radius-full)
     color: var(--on-ink)
     display: inline-flex
-    font-size: calc(var(--cu) * 1.8)
-    font-weight: 700
+    font-size: var(--display-text-s)
     gap: 0.5em
     padding: 0.35em 0.9em
 
   .display-date
     color: var(--ink-muted)
-    font-size: calc(var(--cu) * 2.2)
+    font-size: var(--display-text-l)
     white-space: nowrap
 
   .display-clock

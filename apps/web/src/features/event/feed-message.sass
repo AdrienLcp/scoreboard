@@ -1,3 +1,5 @@
+@use '../../presentation/styles/typography'
+
 @layer components
   .feed-message
     align-items: center
@@ -12,12 +14,12 @@
     width: min(100%, var(--measure-form))
 
   .feed-message-text
+    @include typography.lead
+
     align-items: center
     display: flex
     font-size: var(--text-xl)
-    font-weight: 600
     gap: var(--space-s)
-    line-height: 1.3
 
     .icon
       color: var(--ink-muted)
@@ -25,9 +27,6 @@
 
   .feed-message-sync
     animation: feed-spin 1.2s linear infinite
-
-    @media (prefers-reduced-motion: reduce)
-      animation: none
 
   @keyframes feed-spin
     to

@@ -12,7 +12,7 @@
     min-width: 0
     overflow: hidden
     position: relative
-    transition: opacity var(--transition-slow) var(--ease-out), scale var(--transition-slow) var(--ease-out)
+    transition: opacity var(--transition-slow, 0s) var(--ease-out), scale var(--transition-slow, 0s) var(--ease-out)
 
     @starting-style
       opacity: 0
@@ -71,10 +71,9 @@
 
   .side-name
     @include typography.single-line
+    @include typography.tile-name
 
     font-size: calc(var(--unit) * 10)
-    font-weight: 600
-    line-height: 1.15
     min-width: 0
     padding-right: calc(var(--unit) * 3)
 
@@ -82,13 +81,12 @@
       font-size: calc(var(--unit) * 8)
 
   .games-won
-    @include typography.figure
+    @include typography.figure-secondary
 
     background: var(--surface-raised)
     border-radius: calc(var(--unit) * 2.2)
     display: grid
     font-size: calc(var(--unit) * 15)
-    font-weight: 600
     height: calc(var(--unit) * 21)
     place-items: center
 
@@ -96,22 +94,19 @@
       background: none
 
   .side-score
-    @include typography.figure
+    @include typography.display-score
 
     display: grid
     font-size: calc(var(--unit) * 37)
     justify-items: end
-    letter-spacing: -0.01em
-    line-height: 0.86
 
   .tile-foot
-    @include typography.figure
+    @include typography.figure-secondary
 
     align-items: center
     color: var(--ink-dim)
     display: flex
     font-size: calc(var(--unit) * 6.2)
-    font-weight: 600
     gap: calc(var(--unit) * 4)
     min-width: 0
     overflow: hidden
@@ -122,8 +117,9 @@
       color: var(--ink-muted)
 
   .tile-time
+    @include typography.plain
+
     color: var(--ink-muted)
     font-family: var(--font-text)
     font-size: calc(var(--unit) * 5.2)
-    font-weight: 500
     margin-left: auto

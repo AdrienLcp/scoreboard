@@ -1,13 +1,93 @@
-/// Trims a one-line label to its capitals and baseline, so equal padding
-/// centres it optically.
-@mixin cap-box
-  text-box: trim-both cap alphabetic
+/// Every voice the app speaks in. A component includes one and never writes a
+/// weight, a leading or a tracking of its own; a new variation is a new mixin.
 
 @mixin body
   font-family: var(--font-text)
   font-size: var(--text-base)
   font-weight: 500
   line-height: 1.45
+
+/// Running text that steps back: notes, empty states, secondary lines.
+@mixin hint
+  color: var(--ink-muted)
+  font-size: var(--text-m)
+  line-height: 1.45
+
+/// Back to the body's weight inside a bolder parent: a placeholder, a detail.
+@mixin plain
+  font-weight: 500
+
+/// A name, a value or a control label that stands out from running text.
+@mixin emphasis
+  font-weight: 600
+
+/// A title, an alert, a primary action: the boldest text voice.
+@mixin strong
+  font-weight: 700
+
+/// A section's quiet heading or a field's label: sentence case, muted, never
+/// shouting.
+@mixin label
+  color: var(--ink-muted)
+  font-size: var(--text-s)
+  font-weight: 600
+  line-height: 1.2
+
+/// One line of control text, sized by the control around it.
+@mixin control
+  font-weight: 600
+  line-height: 1.15
+
+/// A heading sized by its place: a console's table, a player's name on a target.
+@mixin heading
+  font-weight: 700
+  line-height: 1.15
+
+@mixin page-title
+  @include heading
+
+  font-size: var(--text-3xl)
+
+/// The home page's statement, the one headline that grows with the screen.
+@mixin hero
+  font-size: var(--text-hero)
+  font-weight: 700
+  letter-spacing: var(--tracking-display)
+  line-height: 1.05
+
+/// The display's club name, read across the hall.
+@mixin display-title
+  font-weight: 700
+  line-height: 1.1
+
+/// A player or a team on a line of its own.
+@mixin name
+  font-weight: 600
+  line-height: 1.25
+
+/// A player's name in a live tile, scaled with the tile.
+@mixin tile-name
+  font-weight: 600
+  line-height: 1.15
+
+/// A short message standing alone: a feed notice, a pairing, a team.
+@mixin lead
+  font-weight: 600
+  line-height: 1.3
+
+/// The detail line under a name.
+@mixin caption
+  line-height: 1.3
+
+/// The call to scan a QR code.
+@mixin prompt
+  font-weight: 600
+  line-height: 1.2
+
+/// A state pill's words, sized in em by the surface around it.
+@mixin pill
+  font-weight: 700
+  line-height: 1.05
 
 /// Every figure the room reads: scores, games, table numbers, times.
 @mixin figure
@@ -16,22 +96,60 @@
   font-weight: 700
   line-height: 1
 
-/// A section's quiet heading: sentence case, muted, never shouting.
-@mixin section-heading
-  color: var(--ink-muted)
-  font-size: var(--text-s)
+/// A figure beside the score that matters less: games won, a game's points.
+@mixin figure-secondary
+  @include figure
+
   font-weight: 600
-  line-height: 1.2
 
-@mixin page-title
-  font-size: var(--text-3xl)
-  font-weight: 700
-  line-height: 1.15
+/// A finished game's points in the umpire's strip.
+@mixin figure-chip
+  @include figure-secondary
 
-@mixin hint
-  color: var(--ink-muted)
-  font-size: var(--text-m)
-  line-height: 1.45
+  line-height: 1.1
+
+/// A start time above the names it introduces.
+@mixin figure-time
+  @include figure
+
+  line-height: 1.1
+
+/// An upcoming match's time, set as large as the names beside it.
+@mixin figure-compact
+  @include figure
+
+  line-height: 1.05
+
+/// The point score: the largest figure on any surface that shows one.
+@mixin score
+  @include figure
+
+  line-height: 0.86
+
+/// The point score in a live tile, drawn close at the size the hall reads it.
+@mixin display-score
+  @include score
+
+  letter-spacing: var(--tracking-display)
+
+/// A literal code read aloud or copied by hand: a table's umpire code, the
+/// organiser's.
+@mixin code
+  @include figure
+
+  letter-spacing: var(--tracking-code)
+
+/// A code typed into its field, in the figure face so each character stands apart.
+@mixin code-entry
+  font-family: var(--font-figure)
+  letter-spacing: var(--tracking-code)
+
+/// The umpire's code typed on the entry screen, spaced wide enough to check
+/// character by character.
+@mixin code-entry-wide
+  @include figure
+
+  letter-spacing: var(--tracking-code-entry)
 
 /// One line that gives up with an ellipsis rather than wrapping.
 @mixin single-line

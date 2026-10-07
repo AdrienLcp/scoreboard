@@ -9,10 +9,10 @@
       grid-area: 1 / 1
 
     .leaving
-      animation: roll-out var(--transition-base) var(--ease-out) forwards
+      animation: roll-out var(--transition-base, 0s) var(--ease-out) forwards
 
     .arriving
-      animation: roll-in var(--transition-base) var(--ease-out) both
+      animation: roll-in var(--transition-base, 0s) var(--ease-out) both
 
     &[data-direction='down']
       .leaving

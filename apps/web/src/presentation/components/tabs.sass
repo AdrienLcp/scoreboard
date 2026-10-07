@@ -1,5 +1,6 @@
 @use '../styles/focus'
 @use '../styles/typography'
+@use '../styles/motion'
 
 @layer components
   .tab-list
@@ -13,6 +14,8 @@
 
   .tab
     @include focus.ring-inset
+    @include motion.press-transition
+    @include typography.emphasis
 
     align-items: center
     border-radius: var(--radius-s)
@@ -20,13 +23,11 @@
     cursor: pointer
     display: flex
     font-size: var(--text-m)
-    font-weight: 600
     gap: var(--space-xs)
     justify-content: center
     min-height: var(--control-touch)
     padding-inline: var(--space-xs)
     text-align: center
-    transition: background-color var(--transition-fast), color var(--transition-fast), scale var(--transition-fast) var(--ease-out)
 
     &[data-hovered]:not([data-selected])
       color: var(--ink)

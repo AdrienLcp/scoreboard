@@ -18,18 +18,16 @@
     padding-top: var(--space-2xl)
 
     h1
-      font-size: clamp(2rem, 5vw, 3.25rem)
-      font-weight: 700
-      letter-spacing: -0.01em
-      line-height: 1.05
-      max-width: 18ch
+      @include typography.hero
+
+      max-width: var(--measure-hero)
 
     p
       @include typography.hint
 
       font-size: var(--text-l)
       margin-top: var(--space-s)
-      max-width: 52ch
+      max-width: var(--measure-intro)
 
   .home-forms
     align-items: start
@@ -48,8 +46,9 @@
     padding: var(--space-xl)
 
     h2
+      @include typography.strong
+
       font-size: var(--text-2xl)
-      font-weight: 700
 
   .home-pair
     display: grid
@@ -62,15 +61,16 @@
     font-size: var(--text-s)
 
   .home-error
+    @include typography.emphasis
+
     align-items: center
     display: flex
-    font-weight: 600
     gap: var(--space-xs)
 
   .field-input.home-join-input
-    font-family: var(--font-figure)
+    @include typography.code-entry
+
     font-size: var(--text-2xl)
-    letter-spacing: 0.06em
 
   .home-join-actions
     display: grid

@@ -13,13 +13,13 @@
     padding: calc(var(--cu) * 2.2) calc(var(--cu) * 2.4)
 
     h2
-      @include typography.section-heading
+      @include typography.label
 
-      font-size: calc(var(--cu) * 1.8)
+      font-size: var(--display-text-s)
       margin-bottom: calc(var(--cu) * 0.8)
 
     .encounter-score
-      font-size: calc(var(--cu) * 2.05)
+      font-size: var(--display-text-m)
 
       + .encounter-score
         margin-top: calc(var(--cu) * 1.3)
@@ -73,19 +73,19 @@
     @include typography.single-line
 
   .result-winner, .next-names
-    font-size: calc(var(--cu) * 2.05)
-    font-weight: 600
+    @include typography.name
+
+    font-size: var(--display-text-m)
     grid-column: 2
-    line-height: 1.25
     min-width: 0
 
   .result-detail, .next-detail
     @include typography.single-line
+    @include typography.caption
 
     color: var(--ink-muted)
     font-size: calc(var(--cu) * 1.6)
     grid-column: 2
-    line-height: 1.3
     min-width: 0
 
   .result-score
@@ -96,18 +96,18 @@
     grid-row: 1 / span 2
 
   .result-concession
+    @include typography.emphasis
+
     color: var(--ink-muted)
     font-size: calc(var(--cu) * 1.7)
-    font-weight: 600
     grid-column: 3
     grid-row: 1 / span 2
 
   .next-time
-    @include typography.figure
+    @include typography.figure-time
 
     color: var(--ink-muted)
-    font-size: calc(var(--cu) * 1.8)
-    line-height: 1.1
+    font-size: var(--display-text-s)
     white-space: nowrap
 
   .free-tables
@@ -116,15 +116,17 @@
     gap: calc(var(--cu) * 0.6) calc(var(--cu) * 2.4)
 
     li
+      @include typography.strong
+
       align-items: center
       display: flex
-      font-size: calc(var(--cu) * 2.05)
-      font-weight: 700
+      font-size: var(--display-text-m)
       gap: calc(var(--cu) * 0.9)
 
       &[data-waiting]
+        @include typography.plain
+
         color: var(--ink-muted)
-        font-weight: 500
 
     .table-number
       font-size: calc(var(--cu) * 2.1)
@@ -133,7 +135,7 @@
     align-items: center
     display: grid
     flex: none
-    gap: calc(var(--cu) * 1.8)
+    gap: var(--display-space)
     grid-template-columns: auto minmax(0, 1fr)
     margin-top: auto
     padding-top: calc(var(--cu) * 1.6)
@@ -142,9 +144,9 @@
       width: calc(var(--cu) * 13)
 
     p
-      font-size: calc(var(--cu) * 2.05)
-      font-weight: 600
-      line-height: 1.2
+      @include typography.prompt
+
+      font-size: var(--display-text-m)
       text-wrap: balance
 
     small
