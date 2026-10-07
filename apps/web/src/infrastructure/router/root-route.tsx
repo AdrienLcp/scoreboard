@@ -23,6 +23,9 @@ const useRouterHref = (href: string): string => {
   return ABSOLUTE_URL.test(href) ? href : routeHref
 }
 
+/** Handed to `RouterProvider` from module scope: the React Compiler skips a component that passes a hook as a value. */
+const hrefResolution = { useHref: useRouterHref }
+
 /** A navigation superseded by the next one rejects with `AbortError`: expected, not a failure. */
 const ignoreSupersededNavigation = (error: unknown): void => {
   if (error instanceof Error && error.name === 'AbortError') {
@@ -37,12 +40,12 @@ export const RootRoute: React.FC = () => {
 
   return (
     <RouterProvider
+      {...hrefResolution}
       navigate={(path, options) => {
         void Promise.resolve(navigate(path, options)).catch(
           ignoreSupersededNavigation
         )
       }}
-      useHref={useRouterHref}
     >
       <Outlet />
       <ScrollRestoration />
