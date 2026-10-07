@@ -26,3 +26,6 @@ export const copyText = async (
     return Result.failure('refused')
   }
 }
+
+/** The reader's languages in order of preference, which numbers and numeric dates take their shape from. */
+export const preferredLanguages = (): readonly string[] => navigator.languages

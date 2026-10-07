@@ -1,6 +1,8 @@
 import type React from 'react'
 import { I18nProvider as ReactAriaI18nProvider } from 'react-aria-components'
 
+import { preferredLanguages } from '@/infrastructure/browser'
+
 import { i18n } from './i18n'
 import { I18nContext } from './i18n-context'
 import { DEFAULT_LOCALE, REGIONAL_LOCALES } from './regional-locales'
@@ -9,9 +11,14 @@ type I18nProviderProps = {
   children: React.ReactNode
 }
 
-/** One locale for now; the provider is where a second one would be chosen. */
+/**
+ * One locale for now; the provider is where a second one would be chosen.
+ * Numbers and numeric dates follow the browser's languages, worded dates stay French.
+ */
 export const I18nProvider: React.FC<I18nProviderProps> = ({ children }) => (
-  <I18nContext value={{ translate: i18n.translator(DEFAULT_LOCALE) }}>
+  <I18nContext
+    value={{ translate: i18n.translator(DEFAULT_LOCALE, preferredLanguages()) }}
+  >
     <ReactAriaI18nProvider locale={REGIONAL_LOCALES[DEFAULT_LOCALE]}>
       {children}
     </ReactAriaI18nProvider>
