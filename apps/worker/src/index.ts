@@ -1,8 +1,5 @@
-import type { Env } from './env'
-import { handleRequest } from './infrastructure/http/handle-request'
+import { createApp } from './app'
 
 export { EventRoom } from './infrastructure/durable-objects/event-room'
 
-export default {
-  fetch: handleRequest
-} satisfies ExportedHandler<Env>
+export default createApp()

@@ -1,7 +1,7 @@
 import { PAGE_ROUTES } from '@scoreboard/protocol/page-routes'
 import { SITE_ORIGIN } from '@scoreboard/protocol/site'
 
-type AssetFetcher = Pick<Fetcher, 'fetch'>
+import type { AssetFetcher } from './worker-app'
 
 const PAGE_PATTERNS = Object.values(PAGE_ROUTES).map(
   (pathname) => new URLPattern({ pathname })

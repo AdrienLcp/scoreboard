@@ -5,7 +5,8 @@
     "node_modules",
     "pnpm-lock.yaml",
     ".wrangler",
-    ".impeccable"
+    ".impeccable",
+    "worker-configuration.d.ts"
   ],
   "import": ["@cspell/dict-fr-fr/cspell-ext.json"],
   "language": "en,en-GB",

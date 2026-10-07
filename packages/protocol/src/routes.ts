@@ -47,7 +47,8 @@ export type CreatedEvent = z.infer<typeof createdEventSchema>
 export const apiErrorCodes = [
   'invalid_input',
   'not_found',
-  'internal_error'
+  'internal_error',
+  'no_free_event_id'
 ] as const
 export const apiErrorResponseSchema = z.object({
   code: z.enum(apiErrorCodes),

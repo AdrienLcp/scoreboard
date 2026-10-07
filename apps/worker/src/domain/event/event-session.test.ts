@@ -16,13 +16,13 @@ import type { Admission } from './admission'
 import { openEvent } from './event-service'
 import { handleFrame } from './event-session'
 import type { EventStore } from './event-store'
-import { createMemoryEventStore } from './memory-event-store'
+import { createNodeEventStore } from './testing/node-event-store'
 
 const ORGANISER_CODE = 'PQRSTUVWXYZ2'
 
 /** Opens a two-table event whose umpire codes, drawn by {@link countingCode}, are `ABCDEF` for table 1 and `GHJKLM` for table 2. */
 const openedStore = (): EventStore => {
-  const store = createMemoryEventStore()
+  const store = createNodeEventStore()
 
   openEvent({
     drawCode: countingCode(),
@@ -130,7 +130,7 @@ describe('handleFrame', () => {
 
   it('[session] turns away a socket on an event never opened', () => {
     const outcome = send(
-      createMemoryEventStore(),
+      createNodeEventStore(),
       null,
       hello({ role: 'display' })
     )

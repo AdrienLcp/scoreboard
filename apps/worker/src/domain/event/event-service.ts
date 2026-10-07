@@ -8,7 +8,10 @@ import type {
 } from '@scoreboard/protocol/error-code'
 import type { EventSetup } from '@scoreboard/protocol/event-setup'
 import type { MatchId, OrganiserCode } from '@scoreboard/protocol/identifiers'
-import type { CreateEventInput } from '@scoreboard/protocol/routes'
+import type {
+  CreatedEvent,
+  CreateEventInput
+} from '@scoreboard/protocol/routes'
 import type {
   InstantMs,
   ScoringEvent
@@ -16,12 +19,15 @@ import type {
 
 import {
   type DrawCode,
+  newEventId,
+  newOrganiserCode,
   tableAccessesFor
 } from '@scoreboard/core/access/access-codes'
 import { checkEventSetup } from '@scoreboard/core/event/event-setup-check'
 import { recordScoringEvent } from '@scoreboard/core/match/match-log'
 
 import type { Admission } from './admission'
+import type { EventRooms } from './event-rooms'
 import type { EventStore } from './event-store'
 
 /** Opens a new event with an empty programme, once. */
@@ -183,4 +189,30 @@ export const saveSetup = ({
   )
 
   return Result.success()
+}
+
+/** An event id is drawn at random; a clash is retried rather than overwritten. */
+const OPEN_ATTEMPTS = 3
+
+/** Opens an event under a fresh id and hands back its organiser's code. */
+export const createEvent = async ({
+  drawCode,
+  input,
+  rooms
+}: {
+  drawCode: DrawCode
+  input: CreateEventInput
+  rooms: EventRooms
+}): Promise<Result<CreatedEvent, 'no_free_event_id'>> => {
+  for (let attempt = 0; attempt < OPEN_ATTEMPTS; attempt++) {
+    const eventId = newEventId(drawCode)
+    const organiserCode = newOrganiserCode(drawCode)
+    const opened = await rooms.open(eventId, input, organiserCode)
+
+    if (opened.status === 'success') {
+      return Result.success({ eventId, organiserCode })
+    }
+  }
+
+  return Result.failure('no_free_event_id')
 }

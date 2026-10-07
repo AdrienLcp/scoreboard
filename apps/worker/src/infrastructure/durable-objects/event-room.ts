@@ -1,5 +1,6 @@
 import { DurableObject } from 'cloudflare:workers'
 import type { Result } from '@adrienlcp/result'
+import { Hono } from 'hono'
 
 import { encodeChecked } from '@scoreboard/protocol/codec'
 import type { OrganiserCode } from '@scoreboard/protocol/identifiers'
@@ -12,15 +13,22 @@ import {
 import { type Admission, admissionSchema } from '@/domain/event/admission'
 import { openEvent } from '@/domain/event/event-service'
 import { handleFrame } from '@/domain/event/event-session'
-import type { EventStore } from '@/domain/event/event-store'
+import { createEventStore, type EventStore } from '@/domain/event/event-store'
 import { snapshotMessageFor } from '@/domain/event/event-view'
-import type { Env } from '@/env'
 import { nowMs } from '@/infrastructure/clock'
 import { drawSecureCode } from '@/infrastructure/ids'
 
-import { createSqlEventStore } from './sql-event-store'
+import { EVENT_ROOM_MIGRATIONS } from './event-room-schema'
+import { migrateSchema } from './schema-migrations'
+import type { SqlDatabase } from './sql-database'
 
 const POLICY_VIOLATION = 1008
+
+const sqlDatabaseOf = (storage: DurableObjectStorage): SqlDatabase => ({
+  run: (statement, ...bindings) =>
+    storage.sql.exec(statement, ...bindings).toArray(),
+  transaction: (work) => storage.transactionSync(work)
+})
 
 const admissionOf = (socket: WebSocket): Admission | null => {
   const parsed = admissionSchema.safeParse(socket.deserializeAttachment())
@@ -38,10 +46,23 @@ const send = (socket: WebSocket, message: ServerMessage): void => {
  */
 export class EventRoom extends DurableObject<Env> {
   private readonly store: EventStore
+  private readonly app = new Hono().get('*', (context) => {
+    if (context.req.header('Upgrade') !== 'websocket') {
+      return context.text('Expected a WebSocket', 426)
+    }
+
+    const { 0: client, 1: server } = new WebSocketPair()
+
+    this.ctx.acceptWebSocket(server)
+
+    return new Response(null, { status: 101, webSocket: client })
+  })
 
   constructor(ctx: DurableObjectState, env: Env) {
     super(ctx, env)
-    this.store = createSqlEventStore(ctx.storage.sql)
+    const database = sqlDatabaseOf(ctx.storage)
+    migrateSchema(database, EVENT_ROOM_MIGRATIONS)
+    this.store = createEventStore(database)
   }
 
   open(
@@ -56,16 +77,8 @@ export class EventRoom extends DurableObject<Env> {
     })
   }
 
-  override fetch(request: Request): Response {
-    if (request.headers.get('Upgrade') !== 'websocket') {
-      return new Response('Expected a WebSocket', { status: 426 })
-    }
-
-    const { 0: client, 1: server } = new WebSocketPair()
-
-    this.ctx.acceptWebSocket(server)
-
-    return new Response(null, { status: 101, webSocket: client })
+  override fetch(request: Request): Response | Promise<Response> {
+    return this.app.fetch(request)
   }
 
   override webSocketMessage(
