@@ -1,3 +1,5 @@
+@use './stacked'
+
 /// The big screen draws on `--cu`, a hundredth of the screen's height capped
 /// by its width at 16:9, so a TV, a projector and a laptop show the same
 /// composition at their own size. Its own geometry, the one surface sized by
@@ -20,7 +22,7 @@
     min-height: 0
     padding: calc(var(--cu) * 1.6) calc(var(--cu) * 1.8)
 
-  @media (width <= 720px)
+  @include stacked.stacked
     .display-page
       --cu: 0.4375rem
       --display-gap: 0.625rem

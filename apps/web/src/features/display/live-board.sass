@@ -1,4 +1,5 @@
 @use '../../presentation/styles/typography'
+@use './stacked'
 
 @layer components
   .live-board
@@ -25,7 +26,7 @@
     justify-self: center
     text-align: center
 
-  @media (width <= 720px)
+  @include stacked.stacked
     .live-board
       grid-template-columns: minmax(0, 1fr)
       grid-template-rows: auto

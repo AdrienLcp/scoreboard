@@ -1,0 +1,7 @@
+@use '../../presentation/styles/layout'
+
+/// Below a TV's width the display stops drawing on the viewport and stacks
+/// into one scrolling column: a phone held by someone in the hall.
+@mixin stacked
+  @include layout.container-narrow(45rem, page)
+    @content

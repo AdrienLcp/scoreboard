@@ -8,6 +8,7 @@
     background: var(--surface)
     border-radius: var(--radius-xl)
     box-shadow: var(--inset-hairline)
+    container-type: size
     cursor: pointer
     display: grid
     gap: var(--space-2xs)
@@ -43,7 +44,7 @@
     @include typography.heading
 
     flex: 1
-    font-size: clamp(1.25rem, 5vw, 1.75rem)
+    font-size: var(--text-player)
     min-width: 0
 
   .point-target-serve
@@ -59,11 +60,13 @@
     .icon
       font-size: var(--icon-xs)
 
+  /// The score fits the target, never the other way round: on a short phone
+  /// the figure shrinks instead of pushing the pinned undo button over it.
   .point-target-score
     @include typography.score
 
     display: grid
-    font-size: clamp(6rem, min(21vh, 42vw), 18.75rem)
+    font-size: clamp(4rem, min(52cqi, 116cqh - 5rem), 20.625rem)
     place-items: center
 
   .point-target-foot

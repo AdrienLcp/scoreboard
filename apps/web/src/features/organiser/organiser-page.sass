@@ -96,7 +96,7 @@
     display: grid
     gap: var(--space-2xl)
 
-    @media (width >= 960px)
+    @include layout.container-wide(60rem)
       grid-template-columns: minmax(0, 3fr) minmax(0, 2fr)
 
   .organiser-subheading
@@ -274,7 +274,7 @@
     flex-wrap: wrap
     gap: var(--space-xs)
 
-    @media (width >= 700px)
+    @include layout.container-wide(43.75rem)
       padding-top: var(--space-xl)
 
   .correction-walkover

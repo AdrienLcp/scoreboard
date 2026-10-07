@@ -1,4 +1,5 @@
 @use '@adrienlcp/styles/tokens'
+@use '@adrienlcp/styles/sizes'
 
 @layer tokens
   \:root
@@ -36,7 +37,8 @@
     --text-title: 1.75rem
     --text-code: 1.75rem
     --text-figure: 2.25rem
-    --text-hero: clamp(2rem, 5vw, 3.25rem)
+    --text-hero: #{sizes.fluid(2rem, 3.25rem)}
+    --text-player: #{sizes.fluid(1.25rem, 2rem)}
 
     --space-4xs: 0.125rem
     --space-3xs: 0.25rem
