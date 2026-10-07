@@ -74,11 +74,17 @@
     display: grid
     height: var(--control-s)
     place-items: center
+    transition: background-color var(--transition-fast), color var(--transition-fast), scale var(--transition-fast) var(--ease-out)
     width: var(--control-s)
 
     &[data-hovered]
       background: var(--surface-high)
       color: var(--ink)
+
+    &[data-pressed]
+      background: var(--surface-high)
+      color: var(--ink)
+      scale: 0.9
 
     .icon
       font-size: var(--icon-s)

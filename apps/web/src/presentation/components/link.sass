@@ -11,7 +11,10 @@
     text-decoration-color: var(--ink-dim)
     text-decoration-thickness: var(--outline-thin)
     text-underline-offset: 0.22em
-    transition: text-decoration-color var(--transition-fast)
+    transition: color var(--transition-fast), text-decoration-color var(--transition-fast)
 
     &[data-hovered]
       text-decoration-color: var(--live)
+
+    &[data-pressed]
+      color: var(--ink-muted)

@@ -217,10 +217,14 @@
     gap: var(--space-2xs)
     min-height: var(--control-m)
     padding-inline: var(--space-s)
+    transition: background-color var(--transition-fast), color var(--transition-fast), scale var(--transition-fast) var(--ease-out)
 
     &[data-hovered]
       background: var(--surface-raised)
       color: var(--ink)
+
+    &[data-pressed]
+      scale: 0.97
 
     &[data-focus-visible]
       outline: var(--outline-thick) solid var(--focus)

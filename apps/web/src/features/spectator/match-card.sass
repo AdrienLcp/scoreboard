@@ -16,10 +16,14 @@
     display: block
     padding: var(--space-s) var(--space-m) var(--space-xs)
     text-align: start
+    transition: background-color var(--transition-fast)
     width: 100%
 
     &[data-hovered]
       background: var(--surface-raised)
+
+    &[data-pressed]
+      background: var(--surface-high)
 
   .match-card-top
     align-items: center

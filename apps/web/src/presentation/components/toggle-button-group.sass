@@ -16,10 +16,13 @@
     font-weight: 600
     min-height: var(--control-touch)
     padding: var(--space-s) var(--space-m)
-    transition: background-color var(--transition-fast), color var(--transition-fast)
+    transition: background-color var(--transition-fast), color var(--transition-fast), scale var(--transition-fast) var(--ease-out)
 
     &[data-hovered]:not([data-selected])
       background: var(--surface-high)
+
+    &[data-pressed]
+      scale: 0.97
 
     &[data-selected]
       background: var(--ink)

@@ -26,10 +26,13 @@
     min-height: var(--control-touch)
     padding-inline: var(--space-xs)
     text-align: center
-    transition: background-color var(--transition-fast), color var(--transition-fast)
+    transition: background-color var(--transition-fast), color var(--transition-fast), scale var(--transition-fast) var(--ease-out)
 
     &[data-hovered]:not([data-selected])
       color: var(--ink)
+
+    &[data-pressed]
+      scale: 0.97
 
     &[data-selected]
       background: var(--surface-high)
