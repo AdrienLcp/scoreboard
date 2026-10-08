@@ -2,6 +2,7 @@ import { globSync, readFileSync } from 'node:fs'
 import { join } from 'node:path'
 import { fileURLToPath } from 'node:url'
 
+import { REACT_ARIA_TOKENS } from '@adrienlcp/react-aria'
 import {
   findTokenFailures,
   findTypeLiterals,
@@ -15,12 +16,6 @@ const STYLESHEETS = globSync('**/*.{sass,css}', { cwd: SOURCE })
 const SOURCES = globSync('**/*.{sass,css,ts,tsx}', { cwd: SOURCE }).map(
   (path) => readFileSync(join(SOURCE, path), 'utf8')
 )
-
-/**
- * Set at runtime by react-aria on a popover's style, so no app source declares
- * it: `findTokenFailures` cannot tell it from a typo.
- */
-const SET_BY_REACT_ARIA = new Set(['--trigger-width'])
 
 describe.each(STYLESHEETS)('%s', (path) => {
   const stylesheet = readFileSync(join(SOURCE, path), 'utf8')
@@ -42,9 +37,7 @@ describe.each(STYLESHEETS)('%s', (path) => {
 })
 
 it('reads only custom properties that exist, under their one shared name', () => {
-  const failures = findTokenFailures(SOURCES).filter(
-    ({ name }) => !SET_BY_REACT_ARIA.has(name)
+  expect(findTokenFailures(SOURCES, { provided: REACT_ARIA_TOKENS })).toEqual(
+    []
   )
-
-  expect(failures).toEqual([])
 })

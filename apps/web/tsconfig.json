@@ -11,6 +11,7 @@
   "extends": "../../tsconfig.json",
   "include": [
     "src",
+    "metric-twin-fallbacks.ts",
     "search-engine-plugin.ts",
     "vite.config.ts",
     "vitest.config.ts"

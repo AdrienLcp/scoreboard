@@ -6,7 +6,7 @@
 /// the viewport rather than a container.
 @layer components
   .display-page
-    --cu: min(1vh, 0.5625vw)
+    --cu: min(1dvh, 0.5625vw)
     --display-gap: calc(var(--cu) * 1.2)
     --display-radius: calc(var(--cu) * 1.2)
     --display-space: calc(var(--cu) * 1.8)
@@ -18,7 +18,7 @@
     flex: none
     gap: var(--display-gap)
     grid-template-rows: auto minmax(0, 1fr)
-    height: 100dvh
+    height: calc(100dvh - var(--safe-area-top) - var(--safe-area-bottom))
     min-height: 0
     padding: calc(var(--cu) * 1.6) calc(var(--cu) * 1.8)
 
@@ -30,7 +30,7 @@
 
       grid-template-rows: auto auto
       height: auto
-      min-height: 100dvh
+      min-height: calc(100dvh - var(--safe-area-top) - var(--safe-area-bottom))
       padding: var(--space-s) var(--gutter) var(--space-3xl)
 
       .display-header
@@ -64,7 +64,7 @@
         font-size: var(--text-m)
 
       .display-clock
-        font-size: 1.875rem
+        font-size: var(--text-title)
 
       .summary-column
         padding: var(--space-l) var(--space-m)
@@ -74,6 +74,9 @@
 
         .encounter-score
           font-size: var(--text-m)
+
+        .encounter-team b
+          font-size: var(--text-2xl)
 
       .summary-list
         flex-wrap: nowrap
@@ -85,7 +88,7 @@
         font-size: var(--text-xs)
 
       .result-score
-        font-size: 1.5rem
+        font-size: var(--text-3xl)
 
       .next-time
         font-size: var(--text-s)

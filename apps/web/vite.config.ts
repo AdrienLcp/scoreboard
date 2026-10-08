@@ -5,9 +5,13 @@ import react from '@vitejs/plugin-react'
 import fontaine from 'fontaine/postcss'
 import { defineConfig } from 'vite'
 
-import { API_PREFIX, SOCKET_PREFIX } from '../../packages/protocol/src/routes'
-import { searchEnginePlugin } from './search-engine-plugin'
-import { REGIONAL_LOCALES } from './src/presentation/i18n/regional-locales'
+import {
+  API_PREFIX,
+  SOCKET_PREFIX
+} from '../../packages/protocol/src/routes.ts'
+import { metricTwinFallbacks } from './metric-twin-fallbacks.ts'
+import { searchEnginePlugin } from './search-engine-plugin.ts'
+import { REGIONAL_LOCALES } from './src/presentation/i18n/regional-locales.ts'
 
 const WORKER_ORIGIN = 'http://127.0.0.1:8788'
 
@@ -23,7 +27,7 @@ const metricMatchedFallbackFaces = fontaine({
 
 export default defineConfig({
   css: {
-    postcss: { plugins: [metricMatchedFallbackFaces] }
+    postcss: { plugins: [metricMatchedFallbackFaces, metricTwinFallbacks()] }
   },
   plugins: [
     react({ compiler: { logDiagnostics: true } }),

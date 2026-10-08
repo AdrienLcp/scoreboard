@@ -1,7 +1,7 @@
 import { z } from 'zod'
 
-import { eventIdSchema, MAX_TABLES, organiserCodeSchema } from './identifiers'
-import { matchFormatSchema } from './match-format'
+import { eventIdSchema, MAX_TABLES, organiserCodeSchema } from './identifiers.ts'
+import { matchFormatSchema } from './match-format.ts'
 
 export const API_PREFIX = '/api'
 export const SOCKET_PREFIX = '/ws'

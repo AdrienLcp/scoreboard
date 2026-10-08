@@ -24,7 +24,7 @@
     min-width: 0
 
     .table-number
-      font-size: 1.875rem
+      font-size: var(--text-title)
 
     > div
       min-width: 0
@@ -173,7 +173,7 @@
     display: grid
     gap: var(--space-s)
     grid-template-rows: 1fr 1fr
-    min-height: clamp(20rem, calc(100dvh - 19rem), 38.75rem)
+    min-height: clamp(20rem, calc(100svh - 19rem), 38.75rem)
 
   /// Pinned to the bottom of the screen: on a short phone the targets would
   /// otherwise push it out of sight, and an umpire who cannot see it believes
@@ -183,7 +183,7 @@
 
     background: var(--surface-raised)
     border-radius: var(--radius-l)
-    bottom: var(--space-s)
+    bottom: max(var(--space-s), var(--safe-area-bottom))
     font-size: var(--text-l)
     min-height: 4rem
     position: sticky
@@ -288,23 +288,23 @@
     .umpire-targets
       grid-template-columns: 1fr 1fr
       grid-template-rows: none
-      min-height: min(56dvh, 38.75rem)
+      min-height: min(56svh, 38.75rem)
 
   @include layout.container-wide(68.75rem, page)
     .umpire-main
       grid-template-columns: minmax(0, 1fr) 22.5rem
 
     .umpire-targets
-      min-height: calc(100dvh - 20.625rem)
+      min-height: calc(100svh - 20.625rem)
 
     .umpire-log, .umpire-keys
       display: block
 
     .umpire-aside
-      max-height: calc(100dvh - var(--space-xl))
+      max-height: calc(100svh - var(--space-xl) - var(--safe-area-top))
       overflow-y: auto
       position: sticky
-      top: var(--space-m)
+      top: max(var(--space-m), var(--safe-area-top))
 
     .umpire-aside:has(.end-match-panel)
       .umpire-log, .umpire-keys

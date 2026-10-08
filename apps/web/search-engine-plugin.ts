@@ -1,13 +1,13 @@
 import type { HtmlTagDescriptor, Plugin } from 'vite'
 
-import { PAGE_ROUTES } from '../../packages/protocol/src/page-routes'
-import { SITE_ORIGIN } from '../../packages/protocol/src/site'
-import { homeDocumentTitle } from './src/features/home/home-document-title'
-import { i18n } from './src/presentation/i18n/i18n'
+import { PAGE_ROUTES } from '../../packages/protocol/src/page-routes.ts'
+import { SITE_ORIGIN } from '../../packages/protocol/src/site.ts'
+import { homeDocumentTitle } from './src/features/home/home-document-title.ts'
+import { i18n } from './src/presentation/i18n/i18n.ts'
 import {
   DEFAULT_LOCALE,
   REGIONAL_LOCALES
-} from './src/presentation/i18n/regional-locales'
+} from './src/presentation/i18n/regional-locales.ts'
 
 const HOME_URL = new URL(PAGE_ROUTES.home, SITE_ORIGIN).href
 
