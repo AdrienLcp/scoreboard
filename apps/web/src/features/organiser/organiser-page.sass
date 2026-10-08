@@ -10,7 +10,8 @@
     @include layout.page-column
 
     gap: var(--space-l)
-    padding-bottom: var(--space-4xl)
+    padding-bottom: max(var(--space-4xl), var(--safe-area-bottom))
+    padding-top: var(--safe-area-top)
 
   .organiser-bar
     align-items: center
@@ -72,9 +73,9 @@
 
   .organiser-tab-bar
     background: var(--field)
-    margin-inline: calc(-1 * var(--gutter))
+    margin-inline: calc(-1 * var(--gutter-inline-start)) calc(-1 * var(--gutter-inline-end))
     overflow-x: auto
-    padding: var(--space-xs) var(--gutter)
+    padding: var(--space-xs) var(--gutter-inline-end) var(--space-xs) var(--gutter-inline-start)
     position: sticky
     top: var(--safe-area-top)
     z-index: 2
@@ -384,7 +385,7 @@
   .organiser-gate
     align-items: center
     justify-content: center
-    padding: var(--space-xl) var(--gutter) var(--space-4xl)
+    padding: max(var(--space-xl), var(--safe-area-top)) var(--gutter-inline-end) max(var(--space-4xl), var(--safe-area-bottom)) var(--gutter-inline-start)
 
   .organiser-gate-form
     display: flex

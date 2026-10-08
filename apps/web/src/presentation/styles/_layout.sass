@@ -1,10 +1,10 @@
 @forward '@adrienlcp/styles/containers'
 @forward '@adrienlcp/styles/breakpoints'
 
-/// A tool page's column: one width cap, the gutter on both sides.
+/// A tool page's column: one width cap, the gutter on both sides, widened to the safe area.
 @mixin page-column
   margin-inline: auto
-  padding-inline: var(--gutter)
+  padding-inline: var(--gutter-inline-start) var(--gutter-inline-end)
   width: min(100%, var(--measure-page))
 
 /// Wraps whole items into a column hidden past the edge, so a list cut by its

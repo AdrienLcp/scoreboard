@@ -1,6 +1,10 @@
 import { z } from 'zod'
 
-import { eventIdSchema, MAX_TABLES, organiserCodeSchema } from './identifiers.ts'
+import {
+  eventIdSchema,
+  MAX_TABLES,
+  organiserCodeSchema
+} from './identifiers.ts'
 import { matchFormatSchema } from './match-format.ts'
 
 export const API_PREFIX = '/api'

@@ -18,9 +18,9 @@
     flex: none
     gap: var(--display-gap)
     grid-template-rows: auto minmax(0, 1fr)
-    height: calc(100dvh - var(--safe-area-top) - var(--safe-area-bottom))
+    height: 100dvh
     min-height: 0
-    padding: calc(var(--cu) * 1.6) calc(var(--cu) * 1.8)
+    padding: max(calc(var(--cu) * 1.6), var(--safe-area-top)) max(calc(var(--cu) * 1.8), var(--safe-area-right)) max(calc(var(--cu) * 1.6), var(--safe-area-bottom)) max(calc(var(--cu) * 1.8), var(--safe-area-left))
 
   @include stacked.stacked
     .display-page
@@ -30,8 +30,8 @@
 
       grid-template-rows: auto auto
       height: auto
-      min-height: calc(100dvh - var(--safe-area-top) - var(--safe-area-bottom))
-      padding: var(--space-s) var(--gutter) var(--space-3xl)
+      min-height: 100dvh
+      padding: max(var(--space-s), var(--safe-area-top)) var(--gutter-inline-end) max(var(--space-3xl), var(--safe-area-bottom)) var(--gutter-inline-start)
 
       .display-header
         align-items: flex-start

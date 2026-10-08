@@ -1,7 +1,9 @@
+@use '../styles/focus'
 @use '../styles/typography'
 
 @layer components
   .time-field-input
+    @include focus.ring-within
     @include typography.figure
 
     align-items: center
