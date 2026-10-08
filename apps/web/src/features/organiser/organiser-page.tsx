@@ -1,5 +1,5 @@
 import type React from 'react'
-import { useState } from 'react'
+import { useRef, useState } from 'react'
 
 import type { EventId, OrganiserCode } from '@scoreboard/protocol/identifiers'
 import { organiserCodeSchema } from '@scoreboard/protocol/identifiers'
@@ -68,11 +68,24 @@ const storedCodeOrNull = (eventId: EventId): OrganiserCode | null => {
   return stored.status === 'success' ? stored.data : null
 }
 
+/**
+ * On a phone the tab bar scrolls sideways: a tab picked half under its edge
+ * slides fully into view once react-aria has marked it selected.
+ */
+const keepSelectedTabInView = (tabBar: HTMLElement | null) => {
+  requestAnimationFrame(() => {
+    tabBar
+      ?.querySelector('[role="tab"][aria-selected="true"]')
+      ?.scrollIntoView({ block: 'nearest', inline: 'nearest' })
+  })
+}
+
 const OrganiserConsole: React.FC<{ code: OrganiserCode; eventId: EventId }> = ({
   code,
   eventId
 }) => {
   const translate = useTranslate()
+  const tabBar = useRef<HTMLDivElement>(null)
   const organiser = useOrganiserConsole({ code, eventId })
   const { snapshot } = organiser
   const { snapshot: event } = useCurrentSnapshot(snapshot?.event ?? null)
@@ -144,8 +157,12 @@ const OrganiserConsole: React.FC<{ code: OrganiserCode; eventId: EventId }> = ({
           {refusal}
         </p>
       )}
-      <Tabs className='organiser-tabs' defaultSelectedKey='live'>
-        <div className='organiser-tab-bar'>
+      <Tabs
+        className='organiser-tabs'
+        defaultSelectedKey='live'
+        onSelectionChange={() => keepSelectedTabInView(tabBar.current)}
+      >
+        <div className='organiser-tab-bar' ref={tabBar}>
           <TabList aria-label={translate('organiser.title')}>
             {TABS.map((tab) => (
               <Tab id={tab} key={tab}>

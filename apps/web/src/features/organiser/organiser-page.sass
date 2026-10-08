@@ -71,17 +71,87 @@
     gap: var(--space-xs)
     padding: var(--space-s) var(--space-m)
 
+  // Scrolls sideways on a phone with no scrollbar chrome: a shade of the
+  // field covers each edge that still hides tabs, faded in by the scroll
+  // position itself.
   .organiser-tab-bar
+    --tab-shade-start: calc(var(--gutter-inline-start) + var(--space-2xl))
+    --tab-shade-end: calc(var(--gutter-inline-end) + var(--space-2xl))
+
     background: var(--field)
+    display: flex
     margin-inline: calc(-1 * var(--gutter-inline-start)) calc(-1 * var(--gutter-inline-end))
     overflow-x: auto
+    overscroll-behavior-x: contain
     padding: var(--space-xs) var(--gutter-inline-end) var(--space-xs) var(--gutter-inline-start)
     position: sticky
+    scroll-padding-inline: var(--tab-shade-start) var(--tab-shade-end)
+    scrollbar-width: none
     top: var(--safe-area-top)
     z-index: 2
 
+    &::-webkit-scrollbar
+      display: none
+
+    &::before, &::after
+      content: ''
+      flex: none
+      opacity: 0
+      pointer-events: none
+      position: sticky
+      z-index: 1
+
+    &::before
+      background: linear-gradient(to right, var(--field) var(--gutter-inline-start), transparent)
+      // A sticky child sticks to the scroller's content edge: out over the gutter.
+      inset-inline-start: calc(-1 * var(--gutter-inline-start))
+      margin-inline-end: calc(-1 * var(--tab-shade-start))
+      width: var(--tab-shade-start)
+
+    &::after
+      background: linear-gradient(to left, var(--field) var(--gutter-inline-end), transparent)
+      inset-inline-end: calc(-1 * var(--gutter-inline-end))
+      margin-inline-start: calc(-1 * var(--tab-shade-end))
+      width: var(--tab-shade-end)
+
+    @supports (animation-timeline: scroll())
+      &::before, &::after
+        animation-fill-mode: both
+        animation-timeline: scroll(nearest inline)
+        animation-timing-function: linear
+        // reduced-motion.css zeroes every animation's duration, which pins a
+        // scroll-driven one to its last frame; this one moves nothing.
+        animation-duration: auto !important
+
+      &::before
+        animation-name: tab-shade-start
+
+      &::after
+        animation-name: tab-shade-end
+
+    // Equal tabs while they fit, each held to its label once they do not.
     .tab-list
-      min-width: 40rem
+      display: flex
+      flex: 1 0 auto
+
+    .tab
+      flex: 1 1 0
+      min-width: max-content
+      padding-inline: var(--space-m)
+
+  @keyframes tab-shade-start
+    from
+      opacity: 0
+
+    8%, to
+      opacity: 1
+
+  @keyframes tab-shade-end
+    from, 92%
+      opacity: 1
+
+    to
+      opacity: 0
 
   .organiser-tabs .tab-panel
     padding-top: var(--space-m)
