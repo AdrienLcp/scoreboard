@@ -113,6 +113,8 @@ export const FR_DICTIONARY = defineDictionary({
     lead: 'Les arbitres comptent les points depuis leur téléphone, la salle lit les scores de loin, et l’organisateur garde la main sur toute la journée.',
     name: 'Nom de la rencontre',
     namePlaceholder: 'Tournoi interne d’automne',
+    shareImageAlt:
+      'Le logo Scoreboard au-dessus d’un score de 10 à 8, le côté à 10 en vert vif, au service.',
     tableCount: 'Nombre de tables',
     title: 'Nouvelle rencontre'
   },

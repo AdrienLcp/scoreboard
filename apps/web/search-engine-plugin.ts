@@ -3,6 +3,7 @@ import type { HtmlTagDescriptor, Plugin } from 'vite'
 import { PAGE_ROUTES } from '../../packages/protocol/src/page-routes'
 import { SITE_ORIGIN } from '../../packages/protocol/src/site'
 import { homeDocumentTitle } from './src/features/home/home-document-title'
+import { SHARE_IMAGE } from './src/features/home/share-image'
 import { i18n } from './src/presentation/i18n/i18n'
 import {
   DEFAULT_LOCALE,
@@ -10,6 +11,7 @@ import {
 } from './src/presentation/i18n/regional-locales'
 
 const HOME_URL = new URL(PAGE_ROUTES.home, SITE_ORIGIN).href
+const SHARE_IMAGE_URL = new URL(SHARE_IMAGE.pathname, SITE_ORIGIN).href
 
 /** Event pages are private to their event: the home page is the only one listed. */
 const SITEMAP = `<?xml version="1.0" encoding="UTF-8"?>
@@ -35,6 +37,7 @@ const headTags = (): HtmlTagDescriptor[] => {
   const siteName = translate('app.name')
   const title = homeDocumentTitle(translate)
   const description = translate('home.lead')
+  const imageAlt = translate('home.shareImageAlt')
 
   return [
     { children: title, injectTo: 'head', tag: 'title' },
@@ -53,9 +56,16 @@ const headTags = (): HtmlTagDescriptor[] => {
       content: REGIONAL_LOCALES[DEFAULT_LOCALE].replace('-', '_'),
       property: 'og:locale'
     }),
-    meta({ content: 'summary', name: 'twitter:card' }),
+    meta({ content: SHARE_IMAGE_URL, property: 'og:image' }),
+    meta({ content: 'image/png', property: 'og:image:type' }),
+    meta({ content: String(SHARE_IMAGE.width), property: 'og:image:width' }),
+    meta({ content: String(SHARE_IMAGE.height), property: 'og:image:height' }),
+    meta({ content: imageAlt, property: 'og:image:alt' }),
+    meta({ content: 'summary_large_image', name: 'twitter:card' }),
     meta({ content: title, name: 'twitter:title' }),
-    meta({ content: description, name: 'twitter:description' })
+    meta({ content: description, name: 'twitter:description' }),
+    meta({ content: SHARE_IMAGE_URL, name: 'twitter:image' }),
+    meta({ content: imageAlt, name: 'twitter:image:alt' })
   ]
 }
 
