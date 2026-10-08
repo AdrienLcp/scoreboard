@@ -17,7 +17,7 @@
     font-size: var(--text-m)
     gap: var(--space-xs)
     justify-content: center
-    min-height: var(--control-m)
+    min-height: var(--control-height)
     padding: var(--space-s) var(--space-m)
     text-align: center
     text-decoration: none
@@ -42,7 +42,7 @@
       box-shadow: none
       color: var(--on-ink)
       font-size: var(--text-l)
-      min-height: var(--control-l)
+      min-height: calc(var(--control-height) + var(--space-s))
 
       &[data-hovered]:not([data-disabled])
         background: var(--ink)

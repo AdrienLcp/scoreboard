@@ -59,9 +59,7 @@
     --measure-form: 28rem
     --measure-page: 92.5rem
 
-    --control-s: 2.5rem
-    --control-m: 3rem
-    --control-l: 3.875rem
+    --control-height: max(var(--target), 3rem)
     --icon-xs: 0.8125rem
     --icon-s: 0.875rem
     --icon-m: 1.125rem
@@ -73,6 +71,7 @@
     --radius-l: 18px
     --radius-xl: 22px
     --radius-full: 999px
+    --radius-figure: 0.2em
     --outline-thick: 3px
     --underline-offset: 0.22em
     --inset-live: inset 0 0 0 var(--stroke-bold) var(--live)
@@ -84,9 +83,8 @@
     --tracking-code: 0.08em
     --tracking-code-entry: 0.22em
 
-    --transition-fast: 150ms
     --transition-base: 340ms
     --transition-slow: 640ms
-    --ease-out: cubic-bezier(0.16, 1, 0.3, 1)
+    --transition-spin: calc(var(--transition-slow) * 1.75)
     --ease-move: cubic-bezier(0.22, 0.8, 0.18, 1)
     --ease-leave: cubic-bezier(0.4, 0, 1, 1)

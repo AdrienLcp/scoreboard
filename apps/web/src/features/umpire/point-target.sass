@@ -23,7 +23,7 @@
       background: var(--surface-raised)
 
     &[data-pressed]
-      animation: target-hit 550ms ease-out
+      animation: target-hit calc(var(--transition-base) * 1.6) ease-out
       scale: 0.988
 
     &[data-hot] .point-target-score

@@ -49,8 +49,7 @@
     border: var(--stroke-bold) solid var(--field)
     border-radius: var(--radius-xs)
 
-  :where(a[href], button, input, select, textarea, summary, [tabindex])
-    @include focus.ring
+  @include focus.ring-focusables
 
   .visually-hidden
     @include accessibility.visually-hidden
