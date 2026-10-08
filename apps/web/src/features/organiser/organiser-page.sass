@@ -75,15 +75,15 @@
   // field covers each edge that still hides tabs, faded in by the scroll
   // position itself.
   .organiser-tab-bar
-    --tab-shade-start: calc(var(--gutter-inline-start) + var(--space-2xl))
-    --tab-shade-end: calc(var(--gutter-inline-end) + var(--space-2xl))
+    --tab-shade-start: calc(var(--gutter-left) + var(--space-2xl))
+    --tab-shade-end: calc(var(--gutter-right) + var(--space-2xl))
 
     background: var(--field)
     display: flex
-    margin-inline: calc(-1 * var(--gutter-inline-start)) calc(-1 * var(--gutter-inline-end))
+    margin-inline: calc(-1 * var(--gutter-left)) calc(-1 * var(--gutter-right))
     overflow-x: auto
     overscroll-behavior-x: contain
-    padding: var(--space-xs) var(--gutter-inline-end) var(--space-xs) var(--gutter-inline-start)
+    padding: var(--space-xs) var(--gutter-right) var(--space-xs) var(--gutter-left)
     position: sticky
     scroll-padding-inline: var(--tab-shade-start) var(--tab-shade-end)
     scrollbar-width: none
@@ -102,15 +102,15 @@
       z-index: 1
 
     &::before
-      background: linear-gradient(to right, var(--field) var(--gutter-inline-start), transparent)
+      background: linear-gradient(to right, var(--field) var(--gutter-left), transparent)
       // A sticky child sticks to the scroller's content edge: out over the gutter.
-      inset-inline-start: calc(-1 * var(--gutter-inline-start))
+      inset-inline-start: calc(-1 * var(--gutter-left))
       margin-inline-end: calc(-1 * var(--tab-shade-start))
       width: var(--tab-shade-start)
 
     &::after
-      background: linear-gradient(to left, var(--field) var(--gutter-inline-end), transparent)
-      inset-inline-end: calc(-1 * var(--gutter-inline-end))
+      background: linear-gradient(to left, var(--field) var(--gutter-right), transparent)
+      inset-inline-end: calc(-1 * var(--gutter-right))
       margin-inline-start: calc(-1 * var(--tab-shade-end))
       width: var(--tab-shade-end)
 
@@ -119,9 +119,7 @@
         animation-fill-mode: both
         animation-timeline: scroll(nearest inline)
         animation-timing-function: linear
-        // reduced-motion.css zeroes every animation's duration, which pins a
-        // scroll-driven one to its last frame; this one moves nothing.
-        animation-duration: auto !important
+        --reduced-motion-duration: auto
 
       &::before
         animation-name: tab-shade-start
@@ -455,7 +453,7 @@
   .organiser-gate
     align-items: center
     justify-content: center
-    padding: max(var(--space-xl), var(--safe-area-top)) var(--gutter-inline-end) max(var(--space-4xl), var(--safe-area-bottom)) var(--gutter-inline-start)
+    padding: max(var(--space-xl), var(--safe-area-top)) var(--gutter-right) max(var(--space-4xl), var(--safe-area-bottom)) var(--gutter-left)
 
   .organiser-gate-form
     display: flex

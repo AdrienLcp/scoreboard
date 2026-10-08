@@ -15,14 +15,22 @@ import { REGIONAL_LOCALES } from './src/presentation/i18n/regional-locales.ts'
 
 const WORKER_ORIGIN = 'http://127.0.0.1:8788'
 
+/** Written per weight band by `fonts.fallback-faces` in `_fonts.sass`. */
+const FALLBACK_FACES_WRITTEN_BY_HAND = new Set([
+  'Barlow fallback',
+  'Barlow Condensed fallback'
+])
+
 /**
  * Each face gets a fallback face of its own, a local font scaled to the same
- * metrics: text paints at once in it and keeps its place when the real face
- * swaps in.
+ * metrics: a page that misses the web face keeps the fallback, and lays its
+ * text out where the web face would have.
  */
 const metricMatchedFallbackFaces = fontaine({
   fallbacks: ['Arial'],
-  resolvePath: (path) => resolve(import.meta.dirname, 'public', `.${path}`)
+  resolvePath: (path) => resolve(import.meta.dirname, 'public', `.${path}`),
+  skipFontFaceGeneration: (fallbackName) =>
+    FALLBACK_FACES_WRITTEN_BY_HAND.has(fallbackName)
 })
 
 export default defineConfig({

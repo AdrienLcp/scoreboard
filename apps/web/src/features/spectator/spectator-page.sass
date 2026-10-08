@@ -3,7 +3,7 @@
 @layer components
   .spectator-page
     margin-inline: auto
-    padding: var(--safe-area-top) var(--gutter-inline-end) max(var(--space-4xl), var(--safe-area-bottom)) var(--gutter-inline-start)
+    padding: var(--safe-area-top) var(--gutter-right) max(var(--space-4xl), var(--safe-area-bottom)) var(--gutter-left)
     width: min(100%, 37.5rem)
 
   .spectator-top
@@ -60,10 +60,10 @@
   .spectator-encounters
     display: flex
     gap: var(--space-xs)
-    margin-inline: calc(-1 * var(--gutter-inline-start)) calc(-1 * var(--gutter-inline-end))
+    margin-inline: calc(-1 * var(--gutter-left)) calc(-1 * var(--gutter-right))
     overflow-x: auto
-    padding: 0 var(--gutter-inline-end) var(--space-2xs) var(--gutter-inline-start)
-    scroll-padding-inline: var(--gutter-inline-start) var(--gutter-inline-end)
+    padding: 0 var(--gutter-right) var(--space-2xs) var(--gutter-left)
+    scroll-padding-inline: var(--gutter-left) var(--gutter-right)
     scroll-snap-type: x mandatory
 
   .spectator-encounter
