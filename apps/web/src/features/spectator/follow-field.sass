@@ -4,6 +4,8 @@
 
 @layer components
   .follow-field-box
+    @include focus.ring-within
+
     align-items: center
     background: var(--surface)
     border-radius: var(--radius-m)
@@ -13,9 +15,6 @@
     gap: var(--space-xs)
     height: var(--control-m)
     padding-inline: var(--space-s)
-
-    &:focus-within
-      box-shadow: var(--inset-live)
 
     .icon
       font-size: var(--icon-m)

@@ -211,14 +211,14 @@ A near-monochrome navy ramp with white ink and one saturated lime voice. All tok
 **Character:** a condensed athletic numeral for everything counted and a plain humanist sans for everything named. The pair reads like a hall scoreboard, not a magazine.
 
 ### Hierarchy
-- **Display** (Barlow Condensed 700, 37% of a tile's unit, line-height 0.86, -0.01em): the point score inside a live tile; the umpire's point target uses the same face fitted to its target, `clamp(4rem, min(52cqi, 116cqh - 5rem), 20.625rem)`. Always the largest element on the surface.
+- **Display** (Barlow Condensed 700, 37% of a tile's unit, line-height 0.86, -0.01em): the point score inside a live tile; the umpire's point target uses the same face fitted to its target, `clamp(var(--text-score), min(52cqi, 116cqh - 5rem), 20.625rem)`, never below `--text-score` (4rem). Always the largest element on the surface.
 - **Headline** (Barlow 700, 1.75rem, 1.15): page titles on tool pages; on the display, the club name at 3cu.
 - **Title** (Barlow 600, 1.0625rem, 1.25): player and team names in cards and lists. In tiles, names scale with the tile (10 units, 8 when long) and truncate with an ellipsis.
 - **Body** (Barlow 500, 1rem, 1.45): running text; measure capped at 65ch, forms at 28rem.
 - **Label** (Barlow 600, 0.875rem, 1.2, muted): section headings and field labels, sentence case.
 - **Figure** (Barlow Condensed 700, tabular and lining numerals, line-height 1): table numbers, games won, game scores, clock, times, counts. Body text also enables tabular numerals globally.
 
-UI and body text take the steps `--text-2xs` to `--text-2xl` (0.75rem to 1.3125rem), `--text-m` (1rem) being the body. A display size takes a role name: `--text-title` (1.75rem), `--text-code` (1.75rem), `--text-figure` (2.25rem), and two that grow with the screen through `sizes.fluid`, `--text-hero` (2rem to 3.25rem, the home title) and `--text-player` (1.25rem to 2rem, a name on a point target). The big numbers do not come from this scale but from container-relative units. Weight, leading and tracking live only in the `_typography.sass` mixins, tracking through `--tracking-*`.
+UI and body text take the steps `--text-2xs` to `--text-2xl` (0.75rem to 1.3125rem), `--text-m` (1rem) being the body. A display size takes a role name: `--text-title` (1.75rem), `--text-code` (1.75rem), `--text-figure` (2.25rem), `--text-score` (4rem, the floor of the umpire's fitted score), and two that grow with the screen through `sizes.fluid`, `--text-hero` (2rem to 3.25rem, the home title) and `--text-player` (1.25rem to 2rem, a name on a point target). The big numbers do not come from this scale but from container-relative units. Weight, leading and tracking live only in the `_typography.sass` mixins, tracking through `--tracking-*`.
 
 ### Named Rules
 **The Every Number Is A Figure Rule.** Any number the room reads (score, games, table, time, clock, count) uses the figure style: Barlow Condensed with tabular lining numerals, so digits never shift width as they change.
@@ -257,7 +257,7 @@ Plain and confident; one obvious action per screen.
 - **Shape:** gently rounded (14px).
 - **Secondary (default):** transparent with a 1px inset rule edge, ink text, 600 weight, 3rem minimum height; hover fills surface; pressed scales to 0.985.
 - **Primary:** lime fill with on-live text, 700 weight, larger type (1.0625rem) and taller (3.875rem); hover brightens slightly; disabled drops to raised navy with dim text. One per screen.
-- **Quiet:** no edge, muted text, 2.75rem touch height; hover fills raised navy and brightens the text.
+- **Quiet:** no edge, muted text, `--control-height` (2.75rem, never below the 44px target); hover fills raised navy and brightens the text.
 - **Stop:** white fill with on-live text, for ending or irreversible actions (end match).
 - **Focus:** 3px lime outline at 3px offset, shared by every focusable control.
 
@@ -278,7 +278,7 @@ Plain and confident; one obvious action per screen.
 - **Code inputs:** figure face, large, centered, uppercase with wide tracking (literal codes only).
 
 ### Navigation
-- **Tabs:** a surface track with 0.25rem padding; tabs are muted text at 2.75rem touch height, the selected tab fills high navy with white text. Counts inside tabs use the figure style.
+- **Tabs:** a surface track with 0.25rem padding; tabs are muted text at `--control-height` (2.75rem, never below the 44px target), the selected tab fills high navy with white text. Counts inside tabs use the figure style.
 - **Toggle groups:** raised navy chips; the selected one inverts to a white fill.
 - **Links:** white text with a dim underline that turns lime on hover.
 

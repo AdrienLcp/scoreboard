@@ -209,8 +209,8 @@ importers:
         specifier: ^0.4.0
         version: 0.4.0(react@19.3.0)
       '@adrienlcp/react-aria':
-        specifier: ^0.1.1
-        version: 0.1.1(react-aria-components@1.21.1(react-dom@19.3.0(react@19.3.0))(react@19.3.0))(react@19.3.0)(sass@1.105.1)
+        specifier: ^0.2.0
+        version: 0.2.0(react-aria-components@1.21.1(react-dom@19.3.0(react@19.3.0))(react@19.3.0))(react@19.3.0)(sass@1.105.1)
       '@adrienlcp/result':
         specifier: ^0.1.1
         version: 0.1.1
@@ -218,8 +218,8 @@ importers:
         specifier: ^0.1.1
         version: 0.1.1
       '@adrienlcp/styles':
-        specifier: ^0.9.0
-        version: 0.9.0(sass@1.105.1)
+        specifier: ^0.10.0
+        version: 0.10.0(sass@1.105.1)
       '@internationalized/date':
         specifier: 3.12.4
         version: 3.12.4
@@ -354,8 +354,8 @@ packages:
   '@adrienlcp/i18n@0.5.1':
     resolution: {integrity: sha512-V/tZYT41FjLIk00d2BGO2DiQ9WSGwqHvH9uVv3hFp7NIvtgcf4Tog7QD1hzz0SDy73yuWu9hi2Jd2H1cDW4IRA==}
 
-  '@adrienlcp/react-aria@0.1.1':
-    resolution: {integrity: sha512-oxzhLPO/YrlDcZH1ouMLAV0SX4sopQltToGIQNQixe2R0Nd1k8SKrjv3NgdvhcIPjtWgEFft3DGIqR763bVhXA==}
+  '@adrienlcp/react-aria@0.2.0':
+    resolution: {integrity: sha512-mKOBVsx6aNIp3WPNk0pUeX5bb2MH85OFUBSp1ZlKFyy42P4yLa86wyFwbfloPevRktAPxlnpM2Ok7si2Zo7qPw==}
     peerDependencies:
       react: '>=19'
       react-aria-components: '>=1.21.0'
@@ -375,8 +375,8 @@ packages:
   '@adrienlcp/safe-storage@0.1.1':
     resolution: {integrity: sha512-zDhZcQi2OVy3EijNi0hvZG0tnM2zRAP3oZpqy7RbAqn4dozFfltzImN8CN/Ntjkhx02QgO+PJ6m3abrSGG4qxQ==}
 
-  '@adrienlcp/styles@0.9.0':
-    resolution: {integrity: sha512-k4cINPtgkGj6w8OpA1KdAqPR1xk84yig8mLrTyat5XZnus3AKTcRnogktDo5gOVZoeqbSgFmUpmw6R24o6JyAw==}
+  '@adrienlcp/styles@0.10.0':
+    resolution: {integrity: sha512-D8/9aO0t8nTad6/XCQ0DHZb1QjIVvR+025KSDCREq+FMkb/ksF0msccIbOzQPIhUULFxK5o4FwuNruw6xY7hjg==}
     peerDependencies:
       sass: '>=1.80.0'
     peerDependenciesMeta:
@@ -2399,7 +2399,7 @@ snapshots:
 
   '@adrienlcp/i18n@0.5.1': {}
 
-  '@adrienlcp/react-aria@0.1.1(react-aria-components@1.21.1(react-dom@19.3.0(react@19.3.0))(react@19.3.0))(react@19.3.0)(sass@1.105.1)':
+  '@adrienlcp/react-aria@0.2.0(react-aria-components@1.21.1(react-dom@19.3.0(react@19.3.0))(react@19.3.0))(react@19.3.0)(sass@1.105.1)':
     dependencies:
       '@adrienlcp/react': 0.4.0(react@19.3.0)
       react: 19.3.0
@@ -2417,7 +2417,7 @@ snapshots:
     dependencies:
       '@adrienlcp/result': 0.1.1
 
-  '@adrienlcp/styles@0.9.0(sass@1.105.1)':
+  '@adrienlcp/styles@0.10.0(sass@1.105.1)':
     dependencies:
       '@adrienlcp/result': 0.1.1
       culori: 4.0.2

@@ -1,7 +1,5 @@
 import { type RefObject, useLayoutEffect, useRef } from 'react'
 
-const RESIZED_FADE_MS = 420
-const RESIZED_FADE_DELAY_MS = 160
 const MOVED_PX = 0.5
 
 /** A CSS `<time>` in milliseconds: `640ms`, `0.64s`; anything else is no motion. */
@@ -15,8 +13,9 @@ const millisecondsOf = (time: string): number => {
  * Slides each tile from where it stood to where the new layout puts it (FLIP)
  * when a match starts or ends; a tile that changed size fades its content back
  * in rather than stretching it. A window resize moves nothing. The slide
- * takes the stylesheet's `--transition-slow` and `--ease-move`, so reduced
- * motion, which zeroes the duration, stills it.
+ * takes the stylesheet's `--transition-slow` and `--ease-move`, the fade its
+ * `--transition-base` after `--transition-fast`, so reduced motion, which
+ * zeroes the durations, stills both.
  */
 export const useTileReflow = (
   gridRef: RefObject<HTMLElement | null>,
@@ -35,6 +34,10 @@ export const useTileReflow = (
     const style = getComputedStyle(grid)
     const reflowMs = millisecondsOf(style.getPropertyValue('--transition-slow'))
     const reflowEasing = style.getPropertyValue('--ease-move').trim()
+    const fadeMs = millisecondsOf(style.getPropertyValue('--transition-base'))
+    const fadeDelayMs = millisecondsOf(
+      style.getPropertyValue('--transition-fast')
+    )
     const isNewLayout = lastKey.current !== layoutKey
     const shouldMove = isNewLayout && reflowMs > 0
     const rects = new Map<string, DOMRect>()
@@ -72,8 +75,8 @@ export const useTileReflow = (
 
       if (isResized) {
         tile.firstElementChild?.animate([{ opacity: 0.25 }, { opacity: 1 }], {
-          delay: RESIZED_FADE_DELAY_MS,
-          duration: RESIZED_FADE_MS,
+          delay: fadeDelayMs,
+          duration: fadeMs,
           easing: 'ease-out',
           fill: 'backwards'
         })
