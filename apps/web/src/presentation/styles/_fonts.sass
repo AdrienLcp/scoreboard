@@ -12,8 +12,7 @@ $barlow-metrics: (ascent: 1, descent: 0.2, cap-height: 0.7)
     @include fonts.font-face('Barlow Condensed', '/fonts/barlow-condensed-latin-#{$weight}-normal.woff2', fonts.$latin, $weight: $weight)
     @include fonts.font-face('Barlow Condensed', '/fonts/barlow-condensed-latin-ext-#{$weight}-normal.woff2', fonts.$latin-ext, $weight: $weight)
 
-  // fontaine's size-adjust, from the average character width of the first
-  // file it reads per family; each width ratio is Arial's over the cut's,
-  // measured over the dictionary's text.
-  @include fonts.fallback-faces('Barlow', $barlow-metrics, 0.9668, (500: 1.0715, 600: 1.0043, 700: 1.0764))
-  @include fonts.fallback-faces('Barlow Condensed', $barlow-metrics, 0.764916, (600: 0.9650, 700: 1.0107))
+  // Each face's size-adjust and width ratio, from `measure-font` over every
+  // file of the family and the French dictionary's text.
+  @include fonts.fallback-faces('Barlow', $barlow-metrics, 0.978015, (500: 1.0124, 600: 1.0036, 700: 1.0661))
+  @include fonts.fallback-faces('Barlow Condensed', $barlow-metrics, 0.798563, (600: 1.0036, 700: 1.0517))
