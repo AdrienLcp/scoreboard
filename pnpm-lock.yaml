@@ -218,8 +218,8 @@ importers:
         specifier: ^0.1.1
         version: 0.1.1
       '@adrienlcp/styles':
-        specifier: ^0.16.0
-        version: 0.16.0(sass@1.105.1)
+        specifier: ^0.17.0
+        version: 0.17.0(sass@1.105.1)
       '@internationalized/date':
         specifier: 3.12.4
         version: 3.12.4
@@ -375,8 +375,8 @@ packages:
   '@adrienlcp/safe-storage@0.1.1':
     resolution: {integrity: sha512-zDhZcQi2OVy3EijNi0hvZG0tnM2zRAP3oZpqy7RbAqn4dozFfltzImN8CN/Ntjkhx02QgO+PJ6m3abrSGG4qxQ==}
 
-  '@adrienlcp/styles@0.16.0':
-    resolution: {integrity: sha512-py0Ae+3RjIKkyY++T4DT/Fxo33eQeQFQgWf647fDv5NusKocyAODzfQdLG/nhC11MdPof8P+EeLylvVwxj/Enw==}
+  '@adrienlcp/styles@0.17.0':
+    resolution: {integrity: sha512-yV9cSPoq7mrHs3vrp8FhQAvTCiI04EYEL+5ZaCamWBkZlSmfABCYeXMaOzSfYt77Ewji4578swjtOa1RJ26AQQ==}
     hasBin: true
     peerDependencies:
       sass: '>=1.80.0'
@@ -2459,7 +2459,7 @@ snapshots:
     dependencies:
       '@adrienlcp/result': 0.1.1
 
-  '@adrienlcp/styles@0.16.0(sass@1.105.1)':
+  '@adrienlcp/styles@0.17.0(sass@1.105.1)':
     dependencies:
       '@adrienlcp/result': 0.1.1
       '@capsizecss/unpack': 4.0.1

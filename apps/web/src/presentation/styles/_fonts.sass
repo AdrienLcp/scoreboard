@@ -13,6 +13,8 @@ $barlow-metrics: (ascent: 1, descent: 0.2, cap-height: 0.7)
     @include fonts.font-face('Barlow Condensed', '/fonts/barlow-condensed-latin-ext-#{$weight}-normal.woff2', fonts.$latin-ext, $weight: $weight)
 
   // Each face's size-adjust and width ratio, from `measure-font` over every
-  // file of the family and the French dictionary's text.
-  @include fonts.fallback-faces('Barlow', $barlow-metrics, 0.978015, (500: 1.0124, 600: 1.0036, 700: 1.0661))
-  @include fonts.fallback-faces('Barlow Condensed', $barlow-metrics, 0.798563, (600: 1.0036, 700: 1.0517))
+  // file of the family and the French dictionary's text; the digits' own
+  // ratio with `--figures --figure-feature tnum --figure-feature lnum`, as
+  // the body and every figure set them.
+  @include fonts.fallback-faces('Barlow', $barlow-metrics, 0.978015, (500: 1.0124, 600: 1.0036, 700: 1.0661), $figures: (500: 1.0205, 600: 1.011, 700: 0.9999))
+  @include fonts.fallback-faces('Barlow Condensed', $barlow-metrics, 0.798563, (600: 1.0036, 700: 1.0517), $figures: (600: 0.935, 700: 0.8918))

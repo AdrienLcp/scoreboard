@@ -6,7 +6,7 @@
     "@adrienlcp/react-aria": "^0.4.1",
     "@adrienlcp/result": "^0.1.1",
     "@adrienlcp/safe-storage": "^0.1.1",
-    "@adrienlcp/styles": "^0.16.0",
+    "@adrienlcp/styles": "^0.17.0",
     "@internationalized/date": "3.12.4",
     "@scoreboard/core": "workspace:*",
     "@scoreboard/protocol": "workspace:*",
