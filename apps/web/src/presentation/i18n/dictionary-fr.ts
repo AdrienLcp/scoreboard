@@ -114,7 +114,7 @@ export const FR_DICTIONARY = defineDictionary({
     name: 'Nom de la rencontre',
     namePlaceholder: 'Tournoi interne d’automne',
     shareImageAlt:
-      'Le logo Scoreboard au-dessus d’un score de 10 à 8, le côté à 10 en vert vif, au service.',
+      'Le logo Scoreboard à côté de son nom, en blanc sur fond nuit.',
     tableCount: 'Nombre de tables',
     title: 'Nouvelle rencontre'
   },
