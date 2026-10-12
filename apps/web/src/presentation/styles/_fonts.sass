@@ -4,17 +4,21 @@
 $barlow-metrics: (ascent: 1, descent: 0.2, cap-height: 0.7)
 
 @layer base
-  @each $weight in 500, 600, 700
-    @include fonts.font-face('Barlow', '/fonts/barlow-latin-#{$weight}-normal.woff2', fonts.$latin, $weight: $weight)
-    @include fonts.font-face('Barlow', '/fonts/barlow-latin-ext-#{$weight}-normal.woff2', fonts.$latin-ext, $weight: $weight)
+  @include fonts.font-face('Barlow', '/fonts/barlow-latin-500-normal.woff2', fonts.$latin, $weight: 500)
+  @include fonts.font-face('Barlow', '/fonts/barlow-latin-ext-500-normal.woff2', fonts.$latin-ext, $weight: 500)
+  @include fonts.font-face('Barlow', '/fonts/barlow-latin-600-normal.woff2', fonts.$latin, $weight: 600)
+  @include fonts.font-face('Barlow', '/fonts/barlow-latin-ext-600-normal.woff2', fonts.$latin-ext, $weight: 600)
+  @include fonts.font-face('Barlow', '/fonts/barlow-latin-700-normal.woff2', fonts.$latin, $weight: 700)
+  @include fonts.font-face('Barlow', '/fonts/barlow-latin-ext-700-normal.woff2', fonts.$latin-ext, $weight: 700)
 
-  @each $weight in 600, 700
-    @include fonts.font-face('Barlow Condensed', '/fonts/barlow-condensed-latin-#{$weight}-normal.woff2', fonts.$latin, $weight: $weight)
-    @include fonts.font-face('Barlow Condensed', '/fonts/barlow-condensed-latin-ext-#{$weight}-normal.woff2', fonts.$latin-ext, $weight: $weight)
+  @include fonts.font-face('Barlow Condensed', '/fonts/barlow-condensed-latin-600-normal.woff2', fonts.$latin, $weight: 600)
+  @include fonts.font-face('Barlow Condensed', '/fonts/barlow-condensed-latin-ext-600-normal.woff2', fonts.$latin-ext, $weight: 600)
+  @include fonts.font-face('Barlow Condensed', '/fonts/barlow-condensed-latin-700-normal.woff2', fonts.$latin, $weight: 700)
+  @include fonts.font-face('Barlow Condensed', '/fonts/barlow-condensed-latin-ext-700-normal.woff2', fonts.$latin-ext, $weight: 700)
 
-  // Each face's size-adjust and width ratio, from `measure-font` over every
-  // file of the family and the French dictionary's text; the digits' own
-  // ratio with `--figures --figure-feature tnum --figure-feature lnum`, as
-  // the body and every figure set them.
-  @include fonts.fallback-faces('Barlow', $barlow-metrics, 0.978015, (500: 1.0124, 600: 1.0036, 700: 1.0661), $figures: (500: 1.0205, 600: 1.011, 700: 0.9999))
-  @include fonts.fallback-faces('Barlow Condensed', $barlow-metrics, 0.798563, (600: 1.0036, 700: 1.0517), $figures: (600: 0.935, 700: 0.8918))
+  // Each face's size-adjust and width ratio, from `measure-font`
+  // (`@adrienlcp/measure-font`) over every file of the family and the French
+  // dictionary's text; the digits' own ratio with `--figures --figure-feature
+  // tnum --figure-feature lnum`, as the body and every figure set them.
+  @include fonts.fallback-faces('Barlow', $barlow-metrics, 0.978015, $widths: (500: 1.0124, 600: 1.0036, 700: 1.0661), $figures: (500: 1.0205, 600: 1.011, 700: 0.9999))
+  @include fonts.fallback-faces('Barlow Condensed', $barlow-metrics, 0.798563, $widths: (600: 1.0036, 700: 1.0517), $figures: (600: 0.935, 700: 0.8918))

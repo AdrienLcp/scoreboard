@@ -7,6 +7,21 @@
 @use './typography'
 @use './layout'
 
+@property --transition-fast
+  syntax: '<time>'
+  inherits: true
+  initial-value: 0s
+
+@property --transition-base
+  syntax: '<time>'
+  inherits: true
+  initial-value: 0s
+
+@property --transition-slow
+  syntax: '<time>'
+  inherits: true
+  initial-value: 0s
+
 @layer base
   html
     background: var(--field)

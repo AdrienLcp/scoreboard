@@ -1,13 +1,11 @@
+import { readDurationSeconds } from '@adrienlcp/browser'
 import { type RefObject, useLayoutEffect, useRef } from 'react'
 
 const MOVED_PX = 0.5
+const MS_PER_SECOND = 1000
 
-/** A CSS `<time>` in milliseconds: `640ms`, `0.64s`; anything else is no motion. */
-const millisecondsOf = (time: string): number => {
-  const [, amount, unit] = /^\s*([\d.]+)(ms|s)\s*$/.exec(time) ?? []
-
-  return amount === undefined ? 0 : Number(amount) * (unit === 's' ? 1000 : 1)
-}
+const readDurationMs = (element: Element, property: `--${string}`): number =>
+  readDurationSeconds(element, property) * MS_PER_SECOND
 
 /**
  * Slides each tile from where it stood to where the new layout puts it (FLIP)
@@ -31,13 +29,12 @@ export const useTileReflow = (
       return
     }
 
-    const style = getComputedStyle(grid)
-    const reflowMs = millisecondsOf(style.getPropertyValue('--transition-slow'))
-    const reflowEasing = style.getPropertyValue('--ease-move').trim()
-    const fadeMs = millisecondsOf(style.getPropertyValue('--transition-base'))
-    const fadeDelayMs = millisecondsOf(
-      style.getPropertyValue('--transition-fast')
-    )
+    const reflowMs = readDurationMs(grid, '--transition-slow')
+    const reflowEasing = getComputedStyle(grid)
+      .getPropertyValue('--ease-move')
+      .trim()
+    const fadeMs = readDurationMs(grid, '--transition-base')
+    const fadeDelayMs = readDurationMs(grid, '--transition-fast')
     const isNewLayout = lastKey.current !== layoutKey
     const shouldMove = isNewLayout && reflowMs > 0
     const rects = new Map<string, DOMRect>()

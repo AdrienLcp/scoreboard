@@ -49,6 +49,7 @@ pnpm dev
 
 ```sh
 pnpm validate   # lint, spell check, build and tests, as CI runs them
+pnpm lighthouse # accessibility, best practices, SEO and JS size of the built app, run alone after validate
 pnpm lint       # Biome, fixing what it can
 pnpm test:watch
 ```

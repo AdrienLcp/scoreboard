@@ -13,3 +13,6 @@
 # Review screenshots from the design passes: evidence, not source.
 .impeccable/review/
 .playwright-mcp/
+
+# Lighthouse reports of the last gate run.
+lighthouse-reports/

@@ -40,6 +40,19 @@ jobs:
       - name: Test
         run: pnpm test
 
+      - name: Install the Lighthouse browser
+        run: pnpm --filter @scoreboard/web exec playwright install --with-deps chromium
+
+      - name: Lighthouse
+        run: pnpm lighthouse
+
+      - if: failure()
+        uses: actions/upload-artifact@v5
+        with:
+          name: lighthouse-reports
+          path: apps/web/lighthouse-reports
+          if-no-files-found: ignore
+
   deploy:
     if: github.event_name == 'push' && github.ref == 'refs/heads/main'
     needs: [validate, actionlint]

@@ -10,6 +10,7 @@
   },
   "extends": "../../tsconfig.json",
   "include": [
+    "scripts",
     "src",
     "search-engine-plugin.ts",
     "vite.config.ts",

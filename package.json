@@ -24,6 +24,7 @@
     "build": "pnpm --filter \"./packages/**\" build && pnpm --filter @scoreboard/web build && pnpm --filter @scoreboard/worker build",
     "deps:upgrade": "corepack use pnpm@latest && pnpm -r up -L && biome migrate --write",
     "dev": "concurrently --names worker,web --kill-others-on-fail \"pnpm --filter @scoreboard/worker dev\" \"pnpm --filter @scoreboard/web dev\"",
+    "lighthouse": "pnpm --filter @scoreboard/web lighthouse",
     "lint": "biome check --write",
     "lint:ci": "biome ci",
     "spell": "cspell --no-progress --gitignore \"**\"",

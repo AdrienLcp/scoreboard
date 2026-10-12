@@ -1,12 +1,12 @@
 {
   "dependencies": {
-    "@adrienlcp/browser": "^0.2.1",
-    "@adrienlcp/i18n": "^0.5.2",
+    "@adrienlcp/browser": "^0.3.0",
+    "@adrienlcp/i18n": "^0.6.0",
     "@adrienlcp/react": "^0.4.0",
     "@adrienlcp/react-aria": "^0.4.1",
     "@adrienlcp/result": "^0.1.1",
     "@adrienlcp/safe-storage": "^0.1.1",
-    "@adrienlcp/styles": "^0.17.0",
+    "@adrienlcp/styles": "^0.18.0",
     "@internationalized/date": "3.12.4",
     "@scoreboard/core": "workspace:*",
     "@scoreboard/protocol": "workspace:*",
@@ -20,11 +20,14 @@
     "zod": "^4.6.5"
   },
   "devDependencies": {
+    "@adrienlcp/measure-font": "^0.1.0",
+    "@playwright/test": "~1.63.0",
     "@react-aria/optimize-locales-plugin": "^2.0.2",
     "@types/react": "19.3.0",
     "@types/react-dom": "19.3.0",
     "@vitejs/plugin-react": "^6.1.1",
     "fontaine": "^1.0.0",
+    "lighthouse": "^13.5.0",
     "oxc-transform-react": "^0.145.0",
     "sass": "^1.105.0",
     "vite": "~8.3.1",
@@ -35,6 +38,7 @@
   "scripts": {
     "build": "tsc --noEmit && vite build",
     "dev": "vite",
+    "lighthouse": "node scripts/lighthouse.ts",
     "preview": "vite preview",
     "test": "vitest run",
     "test:watch": "vitest"

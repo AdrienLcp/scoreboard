@@ -10,7 +10,7 @@
     @include layout.page-column
 
     gap: var(--space-l)
-    padding-bottom: max(var(--space-4xl), var(--safe-area-bottom))
+    padding-bottom: var(--page-padding-block-end)
     padding-top: var(--safe-area-top)
 
   .organiser-bar
@@ -453,7 +453,7 @@
   .organiser-gate
     align-items: center
     justify-content: center
-    padding: max(var(--space-xl), var(--safe-area-top)) var(--gutter-right) max(var(--space-4xl), var(--safe-area-bottom)) var(--gutter-left)
+    padding: var(--page-padding-block-start) var(--gutter-right) var(--page-padding-block-end) var(--gutter-left)
 
   .organiser-gate-form
     display: flex
