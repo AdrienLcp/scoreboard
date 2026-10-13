@@ -200,17 +200,17 @@ importers:
   apps/web:
     dependencies:
       '@adrienlcp/browser':
-        specifier: ^0.3.0
-        version: 0.3.0(react@19.3.0)
-      '@adrienlcp/i18n':
-        specifier: ^0.6.0
-        version: 0.6.0
-      '@adrienlcp/react':
         specifier: ^0.4.0
         version: 0.4.0(react@19.3.0)
+      '@adrienlcp/i18n':
+        specifier: ^0.7.0
+        version: 0.7.0
+      '@adrienlcp/react':
+        specifier: ^0.5.0
+        version: 0.5.0(react@19.3.0)
       '@adrienlcp/react-aria':
-        specifier: ^0.4.1
-        version: 0.4.1(react-aria-components@1.21.1(react-dom@19.3.0(react@19.3.0))(react@19.3.0))(react@19.3.0)(sass@1.105.1)
+        specifier: ^0.4.2
+        version: 0.4.2(react-aria-components@1.21.1(react-dom@19.3.0(react@19.3.0))(react@19.3.0))(react@19.3.0)(sass@1.105.1)
       '@adrienlcp/result':
         specifier: ^0.1.1
         version: 0.1.1
@@ -218,8 +218,8 @@ importers:
         specifier: ^0.1.1
         version: 0.1.1
       '@adrienlcp/styles':
-        specifier: ^0.18.0
-        version: 0.18.0(sass@1.105.1)
+        specifier: ^0.19.0
+        version: 0.19.0(sass@1.105.1)
       '@internationalized/date':
         specifier: 3.12.4
         version: 3.12.4
@@ -255,8 +255,8 @@ importers:
         version: 4.6.5
     devDependencies:
       '@adrienlcp/measure-font':
-        specifier: ^0.1.0
-        version: 0.1.0
+        specifier: ^0.2.0
+        version: 0.2.0
       '@playwright/test':
         specifier: ~1.63.0
         version: 1.63.0
@@ -317,7 +317,7 @@ importers:
     devDependencies:
       vitest:
         specifier: ^5.0.2
-        version: 5.0.3(@types/node@26.6.4)(@vitest/coverage-v8@5.0.3)(vite@8.3.2(@types/node@26.6.4)(esbuild@0.28.1)(sass@1.105.1)(yaml@2.9.1))
+        version: 5.0.3(@opentelemetry/api@1.9.1)(@types/node@26.6.4)(@vitest/coverage-v8@5.0.3)(vite@8.3.2(@types/node@26.6.4)(esbuild@0.28.1)(sass@1.105.1)(yaml@2.9.1))
       wrangler:
         specifier: ^4.140.0
         version: 4.147.0(@cloudflare/workers-types@5.20261002.1)(@types/node@26.6.4)
@@ -333,7 +333,7 @@ importers:
     devDependencies:
       vitest:
         specifier: ^5.0.2
-        version: 5.0.3(@types/node@26.6.4)(@vitest/coverage-v8@5.0.3)(vite@8.3.2(@types/node@26.6.4)(esbuild@0.28.1)(sass@1.105.1)(yaml@2.9.1))
+        version: 5.0.3(@opentelemetry/api@1.9.1)(@types/node@26.6.4)(@vitest/coverage-v8@5.0.3)(vite@8.3.2(@types/node@26.6.4)(esbuild@0.28.1)(sass@1.105.1)(yaml@2.9.1))
 
   packages/protocol:
     dependencies:
@@ -343,7 +343,7 @@ importers:
     devDependencies:
       vitest:
         specifier: ^5.0.2
-        version: 5.0.3(@types/node@26.6.4)(@vitest/coverage-v8@5.0.3)(vite@8.3.2(@types/node@26.6.4)(esbuild@0.28.1)(sass@1.105.1)(yaml@2.9.1))
+        version: 5.0.3(@opentelemetry/api@1.9.1)(@types/node@26.6.4)(@vitest/coverage-v8@5.0.3)(vite@8.3.2(@types/node@26.6.4)(esbuild@0.28.1)(sass@1.105.1)(yaml@2.9.1))
 
 packages:
 
@@ -352,23 +352,23 @@ packages:
     peerDependencies:
       '@biomejs/biome': '>=2.5.0'
 
-  '@adrienlcp/browser@0.3.0':
-    resolution: {integrity: sha512-9AB0JUUF9K+Ygsm2TmgdxkCP2Nx5nbPJILO18Ayl9AQGyj6W7zswazZmyoTixZrQvJUWqhmx0XFubmMOXXUujA==}
+  '@adrienlcp/browser@0.4.0':
+    resolution: {integrity: sha512-gTW19YTHlEXQ6Q8qKUz0cPyZjxClVzP9nrA26zl9oRZPUTjpEghu8kwMT0ZcY69sAC1I3Mg0M9Nhlmf1pRjd2g==}
     peerDependencies:
       react: '>=18'
     peerDependenciesMeta:
       react:
         optional: true
 
-  '@adrienlcp/i18n@0.6.0':
-    resolution: {integrity: sha512-VUTCGrYuQ/3FWdsOG/M/Zuk0cXzARcCdatOtOrp+Q9rX9lpwc40jLbU2toE3aXFIYqlo6SZVHu9weI6Omg0Sng==}
+  '@adrienlcp/i18n@0.7.0':
+    resolution: {integrity: sha512-iCeD9GBmOibTnAESIfJzkWZIpekmzOYeL7f+VzgL3tmpqfXIPzlzi6O4KiNXvBGYX1AWdIChGqxp51GyuF1oBg==}
 
-  '@adrienlcp/measure-font@0.1.0':
-    resolution: {integrity: sha512-QjiO65QXLxdt6496bUACaj4FgDgB3GVhrhiowAadqo1gqn83hulO3RDiE/7rHMRXDWA6fwqcxfkoAUdeiStnGg==}
+  '@adrienlcp/measure-font@0.2.0':
+    resolution: {integrity: sha512-jFaI+VgY5pSORhgZo9o9VrWehH+TqDPnmQvTjiOSzfDkGT0dXFGkD8WBECkeW+4UHzim9LRBcUgovmIbCogVwg==}
     hasBin: true
 
-  '@adrienlcp/react-aria@0.4.1':
-    resolution: {integrity: sha512-PgSK2vIRFT7IOTBtjLXrQ5ANIpI9MQVReTSs0Gbu/yp6V+qZXwG52p524metL9Cls6O5tx05P5WsghmYK7Ia/w==}
+  '@adrienlcp/react-aria@0.4.2':
+    resolution: {integrity: sha512-ooVtZbWpwRrnyr48hBemkZA7Kq6jLWj/Ew085YRXEASqI8bTw9t+i/GeWOVypqpq9U8PkSxDwAlK6ejL+cytUQ==}
     peerDependencies:
       react: '>=19'
       react-aria-components: '>=1.21.0'
@@ -377,8 +377,8 @@ packages:
       sass:
         optional: true
 
-  '@adrienlcp/react@0.4.0':
-    resolution: {integrity: sha512-q/0pR48+tEqXPBr7wy1iqLpjnuwbNJ57dDgmj5EHlhPe4vXXWAjHFFPgioHNgSEEpoI3VTrm3//FXR7BWIUITg==}
+  '@adrienlcp/react@0.5.0':
+    resolution: {integrity: sha512-MBRHGs4QPmFO3dbulZsPDXAUibmYMgq86f3mL6+3VLM4Xr/j4tmQe/m1kIW5PPisb4X/Up9eKEgWrXbGvIxDDA==}
     peerDependencies:
       react: '>=19.2'
 
@@ -388,8 +388,8 @@ packages:
   '@adrienlcp/safe-storage@0.1.1':
     resolution: {integrity: sha512-zDhZcQi2OVy3EijNi0hvZG0tnM2zRAP3oZpqy7RbAqn4dozFfltzImN8CN/Ntjkhx02QgO+PJ6m3abrSGG4qxQ==}
 
-  '@adrienlcp/styles@0.18.0':
-    resolution: {integrity: sha512-5HBb0Kfa8LFtkWsvEpEX081+aq9OiNBePGV1Hrq8pzAvO6U5M7E9vwSY8kRXmsm+Ho/23paV00JwBCwgTB3hSw==}
+  '@adrienlcp/styles@0.19.0':
+    resolution: {integrity: sha512-XJN2gHbpKoL6x5cR1rdoboOnGqNp/BDljMvwI2B/JJtzcHXCPoO0r049JmBLTRpjjJDVQqVSKPJGEfRsDXAcUw==}
     peerDependencies:
       sass: '>=1.80.0'
     peerDependenciesMeta:
@@ -2935,15 +2935,15 @@ snapshots:
     dependencies:
       '@biomejs/biome': 2.5.14
 
-  '@adrienlcp/browser@0.3.0(react@19.3.0)':
+  '@adrienlcp/browser@0.4.0(react@19.3.0)':
     dependencies:
       '@adrienlcp/result': 0.1.1
     optionalDependencies:
       react: 19.3.0
 
-  '@adrienlcp/i18n@0.6.0': {}
+  '@adrienlcp/i18n@0.7.0': {}
 
-  '@adrienlcp/measure-font@0.1.0':
+  '@adrienlcp/measure-font@0.2.0':
     dependencies:
       '@adrienlcp/result': 0.1.1
       '@capsizecss/unpack': 4.0.1
@@ -2955,15 +2955,15 @@ snapshots:
     transitivePeerDependencies:
       - canvas
 
-  '@adrienlcp/react-aria@0.4.1(react-aria-components@1.21.1(react-dom@19.3.0(react@19.3.0))(react@19.3.0))(react@19.3.0)(sass@1.105.1)':
+  '@adrienlcp/react-aria@0.4.2(react-aria-components@1.21.1(react-dom@19.3.0(react@19.3.0))(react@19.3.0))(react@19.3.0)(sass@1.105.1)':
     dependencies:
-      '@adrienlcp/react': 0.4.0(react@19.3.0)
+      '@adrienlcp/react': 0.5.0(react@19.3.0)
       react: 19.3.0
       react-aria-components: 1.21.1(react-dom@19.3.0(react@19.3.0))(react@19.3.0)
     optionalDependencies:
       sass: 1.105.1
 
-  '@adrienlcp/react@0.4.0(react@19.3.0)':
+  '@adrienlcp/react@0.5.0(react@19.3.0)':
     dependencies:
       react: 19.3.0
 
@@ -2973,7 +2973,7 @@ snapshots:
     dependencies:
       '@adrienlcp/result': 0.1.1
 
-  '@adrienlcp/styles@0.18.0(sass@1.105.1)':
+  '@adrienlcp/styles@0.19.0(sass@1.105.1)':
     dependencies:
       '@adrienlcp/result': 0.1.1
       culori: 4.0.2
@@ -5013,28 +5013,6 @@ snapshots:
       why-is-node-running: 3.2.1
     optionalDependencies:
       '@opentelemetry/api': 1.9.1
-      '@types/node': 26.6.4
-      '@vitest/coverage-v8': 5.0.3(vitest@5.0.3)
-    transitivePeerDependencies:
-      - msw
-
-  vitest@5.0.3(@types/node@26.6.4)(@vitest/coverage-v8@5.0.3)(vite@8.3.2(@types/node@26.6.4)(esbuild@0.28.1)(sass@1.105.1)(yaml@2.9.1)):
-    dependencies:
-      '@types/chai': 5.2.3
-      '@vitest/mocker': 5.0.3(vite@8.3.2(@types/node@26.6.4)(esbuild@0.28.1)(sass@1.105.1)(yaml@2.9.1))
-      chai: 6.3.0
-      es-module-lexer: 2.3.2
-      expect-type: 1.4.0
-      magic-string: 1.4.2
-      obug: 2.2.1
-      picomatch: 4.0.7
-      std-env: 4.3.0
-      tinybench: 6.2.0
-      tinyexec: 1.3.1
-      tinyglobby: 0.2.17
-      vite: 8.3.2(@types/node@26.6.4)(esbuild@0.28.1)(sass@1.105.1)(yaml@2.9.1)
-      why-is-node-running: 3.2.1
-    optionalDependencies:
       '@types/node': 26.6.4
       '@vitest/coverage-v8': 5.0.3(vitest@5.0.3)
     transitivePeerDependencies:
