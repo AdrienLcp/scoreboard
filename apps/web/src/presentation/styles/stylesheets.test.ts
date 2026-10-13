@@ -62,7 +62,9 @@ describe.each(STYLESHEETS)('%s', (path) => {
 
 describe.each(MARKUP)('%s', (path) => {
   it('[fonts] sets text in a font token, never a family by name', () => {
-    expect(findFontAttributeFailures(readSourceFile(path))).toEqual([])
+    expect(
+      findFontAttributeFailures(readSourceFile(path), STYLESHEET_SOURCES)
+    ).toEqual([])
   })
 })
 

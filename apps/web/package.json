@@ -1,12 +1,12 @@
 {
   "dependencies": {
-    "@adrienlcp/browser": "^0.3.0",
-    "@adrienlcp/i18n": "^0.6.0",
-    "@adrienlcp/react": "^0.4.0",
-    "@adrienlcp/react-aria": "^0.4.1",
+    "@adrienlcp/browser": "^0.4.0",
+    "@adrienlcp/i18n": "^0.7.0",
+    "@adrienlcp/react": "^0.5.0",
+    "@adrienlcp/react-aria": "^0.4.2",
     "@adrienlcp/result": "^0.1.1",
     "@adrienlcp/safe-storage": "^0.1.1",
-    "@adrienlcp/styles": "^0.18.0",
+    "@adrienlcp/styles": "^0.19.0",
     "@internationalized/date": "3.12.4",
     "@scoreboard/core": "workspace:*",
     "@scoreboard/protocol": "workspace:*",
@@ -20,7 +20,7 @@
     "zod": "^4.6.5"
   },
   "devDependencies": {
-    "@adrienlcp/measure-font": "^0.1.0",
+    "@adrienlcp/measure-font": "^0.2.0",
     "@playwright/test": "~1.63.0",
     "@react-aria/optimize-locales-plugin": "^2.0.2",
     "@types/react": "19.3.0",
