@@ -2,6 +2,8 @@ import { z } from 'zod'
 
 export const protocolErrorCodes = [
   'event_not_found',
+  /** The organiser deleted the event, or its retention ran out: nothing is left of it. */
+  'event_deleted',
   'wrong_code',
   'hello_expected',
   'not_allowed',

@@ -16,7 +16,7 @@ import type { ScoringEvent } from '@scoreboard/protocol/scoring-event'
 
 import { useEventSocket } from '@/infrastructure/messaging/use-event-socket'
 
-/** The organiser's live view of the event, and the two ways they change it. */
+/** The organiser's live view of the event, the ways they change it, and the way they erase it. */
 export const useOrganiserConsole = ({
   code,
   eventId
@@ -50,6 +50,7 @@ export const useOrganiserConsole = ({
   })
 
   return {
+    deleteEvent: (): boolean => socket.send({ type: 'event.delete' }),
     error: socket.error,
     record: (matchId: MatchId, event: ScoringEvent): boolean => {
       setRecordRefusal(null)

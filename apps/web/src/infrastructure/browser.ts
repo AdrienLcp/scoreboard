@@ -10,3 +10,10 @@ export const pageOrigin = (): string => location.origin
 
 /** The reader's languages in order of preference, which numbers and numeric dates take their shape from. */
 export const preferredLanguages = (): readonly string[] => navigator.languages
+
+/**
+ * The browser sends Global Privacy Control: the visitor refused measurement
+ * once, for every site. Not in TypeScript's DOM types yet.
+ */
+export const sendsGlobalPrivacyControl = (): boolean =>
+  'globalPrivacyControl' in navigator && navigator.globalPrivacyControl === true

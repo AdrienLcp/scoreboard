@@ -191,6 +191,23 @@ export const saveSetup = ({
   return Result.success()
 }
 
+/** Erases the event on the organiser's word, ahead of its retention. */
+export const deleteEvent = ({
+  admission,
+  store
+}: {
+  admission: Admission
+  store: EventStore
+}): Result<void, 'not_allowed'> => {
+  if (admission.role !== 'organiser') {
+    return Result.failure('not_allowed')
+  }
+
+  store.erase()
+
+  return Result.success()
+}
+
 /** An event id is drawn at random; a clash is retried rather than overwritten. */
 const OPEN_ATTEMPTS = 3
 

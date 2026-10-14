@@ -297,4 +297,46 @@ describe('handleFrame', () => {
       ])
     })
   })
+  describe('deleting the event', () => {
+    it('[retention] erases the event on the organiser’s word and turns every screen away after', () => {
+      const store = openedStore()
+      store.appendScoringEvent(randomUUID(), {
+        event: started(),
+        recordedAtMs: 0
+      })
+      const outcome = send(
+        store,
+        { role: 'organiser' },
+        { type: 'event.delete' }
+      )
+
+      expect(outcome).toMatchObject({ isEventErased: true, replies: [] })
+      expect(store.readSetup()).toBeNull()
+      expect(store.readOrganiserCode()).toBeNull()
+      expect(store.readTableAccesses()).toEqual([])
+      expect(store.readLogs().size).toBe(0)
+      expect(
+        send(store, null, hello({ role: 'display' })).replies
+      ).toMatchObject([{ code: 'event_not_found', fatal: true }])
+    })
+
+    it('[retention] keeps an umpire, a display and a spectator from deleting the event', () => {
+      const store = openedStore()
+
+      for (const admission of [
+        { role: 'umpire', table: 1 },
+        { role: 'display' },
+        { role: 'spectator' }
+      ] as const) {
+        const outcome = send(store, admission, { type: 'event.delete' })
+
+        expect(outcome).toMatchObject({
+          isEventErased: false,
+          replies: [{ code: 'not_allowed', fatal: false }]
+        })
+      }
+
+      expect(store.readSetup()).not.toBeNull()
+    })
+  })
 })

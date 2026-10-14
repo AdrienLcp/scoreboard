@@ -12,6 +12,7 @@ import type { Side } from '@scoreboard/protocol/side'
 
 import { describeMatch } from '@scoreboard/core/match/match-log'
 
+import { isEventGone } from '@/features/event/event-gone'
 import { warnOnFailure } from '@/infrastructure/diagnostics'
 import { newScoringEventId } from '@/infrastructure/ids'
 import {
@@ -82,6 +83,14 @@ export const useUmpireConsole = ({ code, eventId }: Seat) => {
       }
     }
   })
+
+  const isGone = isEventGone(socket.error)
+
+  useEffect(() => {
+    if (isGone) {
+      setOutbox([])
+    }
+  }, [isGone])
 
   const matchId =
     snapshot?.event.tables.find((table) => table.number === snapshot.table)

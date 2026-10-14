@@ -1,0 +1,20 @@
+@use '../../presentation/styles/typography'
+
+@layer components
+  .measurement-switch
+    background: var(--surface)
+    border-radius: var(--radius-l)
+    display: grid
+    gap: var(--space-2xs)
+    margin-top: var(--space-xs)
+    padding: var(--space-xs) var(--space-l) var(--space-m)
+
+    .measurement-note
+      @include typography.hint
+
+      font-size: var(--text-s)
+
+      &.failed
+        @include typography.emphasis
+
+        color: var(--ink)

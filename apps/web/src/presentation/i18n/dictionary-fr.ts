@@ -1,5 +1,9 @@
 import { defineDictionary, defineTranslation } from '@adrienlcp/i18n'
 
+const DAYS_PLURAL = {
+  plural: { days: { one: '{?} jour', other: '{?} jours' } }
+} as const
+
 /** The reference dictionary: its keys are the type every other locale is checked against. */
 export const FR_DICTIONARY = defineDictionary({
   app: {
@@ -78,6 +82,7 @@ export const FR_DICTIONARY = defineDictionary({
       network: 'Impossible de joindre le serveur. Vérifiez la connexion.',
       refused: 'Le serveur a refusé la demande.'
     },
+    event_deleted: 'Cette rencontre a été effacée.',
     event_not_found: 'Cette rencontre n’existe pas.',
     hello_expected: 'La connexion a été mal ouverte. Rechargez la page.',
     internal_error: 'Une erreur est survenue sur le serveur.',
@@ -117,6 +122,79 @@ export const FR_DICTIONARY = defineDictionary({
       'Le logo Scoreboard à côté de son nom, en blanc sur fond nuit.',
     tableCount: 'Nombre de tables',
     title: 'Nouvelle rencontre'
+  },
+  legal: {
+    device: {
+      analyticsOptOut:
+        'Votre refus de la mesure d’audience, si vous la désactivez plus bas.',
+      body: 'Scoreboard ne dépose aucun cookie. Ce qu’il retient reste dans votre navigateur, pour ce seul site, jusqu’à ce que vous l’effaciez :',
+      eventPart: 'rencontre',
+      followed: 'Les joueurs que vous suivez dans la vue spectateur.',
+      heading: 'Ce que votre navigateur garde',
+      organiser:
+        'Le code organisateur d’une rencontre, pour rouvrir son organisation sans le retaper. Il est oublié dès que la rencontre est effacée.',
+      outbox:
+        'Les points marqués par un arbitre que le serveur n’a pas encore confirmés, pour n’en perdre aucun quand le réseau tombe.',
+      outboxPart: 'rencontre:code'
+    },
+    event: {
+      body: 'Chaque rencontre garde sur le serveur ce que son organisateur y saisit : son nom, celui du club, les noms des joueurs et des équipes, le programme, ainsi que chaque point marqué et son heure.',
+      deletion:
+        'Son organisateur peut aussi l’effacer tout de suite, depuis l’onglet Réglages de l’organisation.',
+      heading: 'Ce que le serveur garde d’une rencontre',
+      logs: defineTranslation(
+        'Pour diagnostiquer les pannes, l’hébergeur journalise chaque requête : son adresse, son heure et l’adresse IP d’où elle vient. Ces journaux ne contiennent aucun nom et sont effacés au bout de {days:plural}.',
+        DAYS_PLURAL
+      ),
+      retention: defineTranslation(
+        'Une rencontre est effacée en entier, automatiquement, {days:plural} après sa dernière modification.',
+        DAYS_PLURAL
+      ),
+      yourName:
+        'Votre nom figure dans une rencontre et vous voulez qu’il disparaisse ? Demandez-le à son organisateur, ou écrivez-moi depuis <contact>ma page de contact</contact> : je l’efface sous un mois.'
+    },
+    host: {
+      body: 'Le site et ses données sont hébergés par :',
+      heading: 'Hébergeur'
+    },
+    intro:
+      'Qui édite Scoreboard, ce qu’il garde d’une rencontre et pour combien de temps, et comment l’effacer.',
+    measurement: {
+      body: 'Les visites sont comptées par un outil que j’ai construit, sans cookie. Une page vue enregistre l’adresse de la page, le site d’où vous venez, la langue et le thème de votre navigateur, la largeur de sa fenêtre et la vitesse d’affichage de la page. Elle n’enregistre ni adresse IP, ni rien qui distingue un visiteur d’un autre.',
+      counted: 'Vos visites sont comptées, anonymement.',
+      exemption:
+        'Cette mesure est dispensée de consentement selon les lignes directrices de la CNIL, et vous pouvez tout de même la refuser pour ce navigateur.',
+      heading: 'Mesure d’audience',
+      refused: 'Vos visites ne sont pas comptées dans ce navigateur.',
+      refusedByBrowser:
+        'Votre navigateur envoie le signal Global Privacy Control : vos visites ne sont jamais comptées.',
+      retention: defineTranslation(
+        'Chaque enregistrement est conservé {months:plural} au plus.',
+        { plural: { months: { one: '{?} mois', other: '{?} mois' } } }
+      ),
+      saveFailed:
+        'Votre navigateur n’a pas conservé ce choix. Réessayez, ou activez Global Privacy Control.',
+      storageBlocked:
+        'Ce navigateur bloque le stockage des sites : un refus ne peut pas y être conservé. Activer Global Privacy Control dans votre navigateur refuse la mesure sur tous les sites.',
+      switch: 'Compter mes visites'
+    },
+    publisher: {
+      address:
+        'Éditeur non professionnel, je donne l’identité de l’hébergeur à la place d’une adresse postale (LCEN, article 6-III-2).',
+      body: 'Scoreboard est édité par {name}, à titre de particulier et non de professionnel. Vous pouvez m’écrire depuis <contact>ma page de contact</contact>.',
+      heading: 'Éditeur'
+    },
+    rights: {
+      body: 'Le RGPD vous permet d’accéder à ce qui vous concerne, de le rectifier ou de l’effacer, et de vous opposer à son utilisation. Demandez-le depuis <contact>ma page de contact</contact> ; je réponds sous un mois.',
+      complaint:
+        'Si vous estimez que vos droits ne sont pas respectés, vous pouvez adresser une réclamation à la <authority>CNIL</authority>.',
+      heading: 'Vos droits'
+    },
+    thirdParties: {
+      body: 'Votre navigateur ne communique qu’avec ce site et avec l’outil de mesure d’audience, analytics.adrienlcp.com, que j’héberge aussi chez Cloudflare. Cloudflare reçoit votre adresse IP à chaque requête, pour servir la page et protéger le site des abus. Les polices et les QR codes sont servis par le site lui-même.',
+      heading: 'Qui d’autre reçoit vos données'
+    },
+    title: 'Mentions légales et confidentialité'
   },
   match: {
     call: {
@@ -192,6 +270,15 @@ export const FR_DICTIONARY = defineDictionary({
       },
       walkoverExplain:
         'Ce match n’a pas commencé. Un joueur absent ou blessé peut être déclaré forfait.'
+    },
+    deletion: {
+      confirm: 'Effacer la rencontre définitivement',
+      explain: defineTranslation(
+        'La rencontre, ses joueurs et ses scores sont effacés automatiquement {days:plural} après la dernière modification. Vous pouvez l’effacer dès maintenant : les écrans, les arbitres et les spectateurs la perdent aussitôt, et rien ne pourra être récupéré.',
+        DAYS_PLURAL
+      ),
+      label: 'Effacer la rencontre',
+      title: 'Effacement de la rencontre'
     },
     displays: {
       add: 'Ajouter l’écran',
@@ -299,6 +386,11 @@ export const FR_DICTIONARY = defineDictionary({
       unknown_encounter: 'Un match renvoie à une rencontre inconnue.',
       unknown_player: 'Un match renvoie à un joueur inconnu.',
       unknown_team: 'Un joueur renvoie à une équipe inconnue.'
+    }
+  },
+  shell: {
+    footer: {
+      legal: 'Mentions légales et confidentialité'
     }
   },
   spectator: {

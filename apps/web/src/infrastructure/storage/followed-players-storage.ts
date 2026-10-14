@@ -18,7 +18,11 @@ const followedSchema = z.array(playerIdSchema).max(50)
 const isFollowed = (value: unknown): value is PlayerId[] =>
   followedSchema.safeParse(value).success
 
-const keyFor = (eventId: EventId): string => `scoreboard:followed:${eventId}`
+/** Followed by the event's id. */
+export const FOLLOWED_PLAYERS_KEY_PREFIX = 'scoreboard:followed:'
+
+const keyFor = (eventId: EventId): string =>
+  `${FOLLOWED_PLAYERS_KEY_PREFIX}${eventId}`
 
 /** The players a visitor pinned on this device for the event, kept across visits. */
 export const readFollowedPlayers = (

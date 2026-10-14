@@ -18,6 +18,9 @@ const pageFor = {
   [paths.home]: async () => ({
     Component: (await import('@/features/home/home-page')).HomePage
   }),
+  [paths.legal]: async () => ({
+    Component: (await import('@/features/legal/legal-page')).LegalPage
+  }),
   [paths.organiser]: async () => ({
     Component: (await import('@/features/organiser/organiser-page'))
       .OrganiserPage

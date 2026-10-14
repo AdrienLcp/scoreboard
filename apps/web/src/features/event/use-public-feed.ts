@@ -6,6 +6,8 @@ import type { EventId } from '@scoreboard/protocol/identifiers'
 
 import { useEventSocket } from '@/infrastructure/messaging/use-event-socket'
 
+import { isEventGone } from './event-gone'
+
 type ReadOnlyRole = 'display' | 'spectator'
 
 const CREDENTIALS_FOR = {
@@ -13,7 +15,7 @@ const CREDENTIALS_FOR = {
   spectator: { role: 'spectator' }
 } as const satisfies Record<ReadOnlyRole, Credentials>
 
-/** The event as the room sees it, kept live, for a screen that only watches. */
+/** The event as the room sees it, kept live, for a screen that only watches; gone the moment it is erased. */
 export const usePublicFeed = ({
   eventId,
   role
@@ -36,5 +38,9 @@ export const usePublicFeed = ({
     }
   })
 
-  return { error: socket.error, snapshot, status: socket.status }
+  return {
+    error: socket.error,
+    snapshot: isEventGone(socket.error) ? null : snapshot,
+    status: socket.status
+  }
 }
