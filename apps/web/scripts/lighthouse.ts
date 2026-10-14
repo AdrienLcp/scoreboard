@@ -47,8 +47,12 @@ const BUDGETS_WITH_HEADROOM = {
   'resource-summary:script:size': 240_000
 }
 
-/** A failing audit is measured twice more and judged on the median. */
-const RUNS_BEFORE_JUDGING_THE_MEDIAN = 3
+/**
+ * Every page is measured three times and judged on the median, the way
+ * Lighthouse CI does: one simulated run swings between two runs of one build,
+ * so a single run that passes proves as little as one that fails.
+ */
+const RUNS_PER_AUDIT = 3
 
 type FormFactor = 'desktop' | 'mobile'
 
@@ -206,16 +210,13 @@ const auditEveryPage = async (origin: string): Promise<string[]> => {
           const label = `${path} ${formFactor} ${colorScheme}`
           const readings: Measure[] = []
 
-          do {
+          while (readings.length < RUNS_PER_AUDIT) {
             const reading = await measure(`${origin}${path}`, formFactor)
             readings.push(reading)
             console.info(
               `     ${label.padEnd(24)} run ${readings.length}: ${timingsOf(reading)}`
             )
-          } while (
-            readings.length < RUNS_BEFORE_JUDGING_THE_MEDIAN &&
-            failuresOf(medianOf(readings)).length > 0
-          )
+          }
 
           const reading = medianOf(readings)
           const broken = failuresOf(reading)
