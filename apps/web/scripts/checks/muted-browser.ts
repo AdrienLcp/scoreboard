@@ -55,13 +55,18 @@ const silenceThePage = () => {
 
 /**
  * A tab in a context of its own: no audio API, notifications granted and shown
- * to nobody, motion reduced so a measure never lands mid-transition.
+ * to nobody, motion reduced so a measure never lands mid-transition, and the
+ * scheme the browser was launched with. `colorScheme: null` lets that scheme
+ * through: left out, Playwright emulates `light` in every context it opens.
  */
 export const openCheckPage = async (
   browser: Browser,
   { blockWebFonts = false }: CheckPageOptions = {}
 ): Promise<Page> => {
-  const context = await browser.newContext({ reducedMotion: 'reduce' })
+  const context = await browser.newContext({
+    colorScheme: null,
+    reducedMotion: 'reduce'
+  })
 
   await context.addInitScript(silenceThePage)
 
