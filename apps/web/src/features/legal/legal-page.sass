@@ -1,0 +1,90 @@
+@use '../../presentation/styles/layout'
+@use '../../presentation/styles/typography'
+
+/// A tool page read once, carefully: one column at reading measure, sections
+/// cut by hairlines, and the retention of an event set apart as the one fact
+/// most visitors come for.
+@layer components
+  .legal-page
+    @include layout.page-column
+
+    padding-bottom: var(--page-padding-block-end)
+    padding-top: var(--safe-area-top)
+
+  .legal-bar
+    align-items: center
+    display: flex
+    height: var(--top-bar-height)
+
+  .legal-home
+    border-radius: var(--radius-s)
+    color: var(--ink)
+    text-decoration: none
+
+  .legal-document
+    max-width: var(--measure)
+    padding-top: var(--space-2xl)
+
+    p
+      text-wrap: pretty
+
+  .legal-title
+    @include typography.page-title
+
+    text-wrap: balance
+
+  .legal-intro
+    @include typography.hint
+
+    font-size: var(--text-l)
+    margin-top: var(--space-s)
+
+  .legal-section
+    border-top: var(--hairline)
+    display: grid
+    gap: var(--space-s)
+    margin-top: var(--space-2xl)
+    padding-top: var(--space-l)
+
+  .legal-heading
+    @include typography.strong
+
+    font-size: var(--text-l)
+
+  .legal-aside
+    @include typography.hint
+
+    font-size: var(--text-s)
+
+  .legal-retention
+    @include typography.emphasis
+
+    background: var(--surface)
+    border-radius: var(--radius-m)
+    box-shadow: var(--inset-hairline)
+    padding: var(--space-s) var(--space-m)
+
+  .host-address
+    color: var(--ink-muted)
+    display: grid
+    font-style: normal
+
+  .stored-keys
+    display: grid
+    gap: var(--space-m)
+
+    dd
+      @include typography.hint
+
+      margin: var(--space-3xs) 0 0
+
+    code
+      @include typography.code-entry
+
+      color: var(--ink)
+      font-size: var(--text-l)
+      overflow-wrap: anywhere
+
+    var
+      color: var(--ink-muted)
+      font-style: normal

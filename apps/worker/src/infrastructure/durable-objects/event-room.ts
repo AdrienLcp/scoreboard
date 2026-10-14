@@ -3,6 +3,7 @@ import type { Result } from '@adrienlcp/result'
 import { Hono } from 'hono'
 
 import { encodeChecked } from '@scoreboard/protocol/codec'
+import { eventErasureAtMs } from '@scoreboard/protocol/event-retention'
 import type { OrganiserCode } from '@scoreboard/protocol/identifiers'
 import type { CreateEventInput } from '@scoreboard/protocol/routes'
 import {
@@ -12,7 +13,7 @@ import {
 
 import { type Admission, admissionSchema } from '@/domain/event/admission'
 import { openEvent } from '@/domain/event/event-service'
-import { handleFrame } from '@/domain/event/event-session'
+import { ERASED_EVENT_NOTICE, handleFrame } from '@/domain/event/event-session'
 import { createEventStore, type EventStore } from '@/domain/event/event-store'
 import { snapshotMessageFor } from '@/domain/event/event-view'
 import { nowMs } from '@/infrastructure/clock'
@@ -22,6 +23,7 @@ import { EVENT_ROOM_MIGRATIONS } from './event-room-schema'
 import { migrateSchema } from './schema-migrations'
 import type { SqlDatabase } from './sql-database'
 
+const NORMAL_CLOSURE = 1000
 const POLICY_VIOLATION = 1008
 
 const sqlDatabaseOf = (storage: DurableObjectStorage): SqlDatabase => ({
@@ -43,6 +45,7 @@ const send = (socket: WebSocket, message: ServerMessage): void => {
 /**
  * One event: its setup, its scores and every screen watching it. Sockets go
  * through the hibernation API, so an idle hall costs nothing between points.
+ * Its alarm erases the event once it has gone unchanged for its retention.
  */
 export class EventRoom extends DurableObject<Env> {
   private readonly store: EventStore
@@ -63,28 +66,42 @@ export class EventRoom extends DurableObject<Env> {
     const database = sqlDatabaseOf(ctx.storage)
     migrateSchema(database, EVENT_ROOM_MIGRATIONS)
     this.store = createEventStore(database)
+    void ctx.blockConcurrencyWhile(() =>
+      this.scheduleErasureOfUnscheduledEvent()
+    )
   }
 
-  open(
+  async open(
     input: CreateEventInput,
     organiserCode: OrganiserCode
-  ): Result<void, 'already_open'> {
-    return openEvent({
+  ): Promise<Result<void, 'already_open'>> {
+    const opened = openEvent({
       drawCode: drawSecureCode,
       input,
       organiserCode,
       store: this.store
     })
+
+    if (opened.status === 'success') {
+      await this.postponeErasure()
+    }
+
+    return opened
+  }
+
+  override alarm(): void {
+    this.store.erase()
+    this.closeEverySocket()
   }
 
   override fetch(request: Request): Response | Promise<Response> {
     return this.app.fetch(request)
   }
 
-  override webSocketMessage(
+  override async webSocketMessage(
     socket: WebSocket,
     message: string | ArrayBuffer
-  ): void {
+  ): Promise<void> {
     if (typeof message !== 'string') {
       return
     }
@@ -109,8 +126,38 @@ export class EventRoom extends DurableObject<Env> {
       return
     }
 
+    if (outcome.isEventErased) {
+      this.closeEverySocket()
+      await this.ctx.storage.deleteAlarm()
+
+      return
+    }
+
     if (outcome.isEventChanged) {
       this.broadcastSnapshots()
+      await this.postponeErasure()
+    }
+  }
+
+  /** Every change pushes the erasure back: the retention runs from the last one. */
+  private async postponeErasure(): Promise<void> {
+    await this.ctx.storage.setAlarm(eventErasureAtMs(nowMs()))
+  }
+
+  /** Events opened before the retention existed get theirs the first time they wake. */
+  private async scheduleErasureOfUnscheduledEvent(): Promise<void> {
+    if (
+      this.store.readSetup() !== null &&
+      (await this.ctx.storage.getAlarm()) === null
+    ) {
+      await this.postponeErasure()
+    }
+  }
+
+  private closeEverySocket(): void {
+    for (const socket of this.ctx.getWebSockets()) {
+      send(socket, ERASED_EVENT_NOTICE)
+      socket.close(NORMAL_CLOSURE, 'event deleted')
     }
   }
 

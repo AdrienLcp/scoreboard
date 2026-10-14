@@ -49,9 +49,16 @@ export const setupSaveMessageSchema = z.object({
 })
 export type SetupSaveMessage = z.infer<typeof setupSaveMessageSchema>
 
+/** The organiser erasing the event and everything it holds, before its retention runs out. */
+export const eventDeleteMessageSchema = z.object({
+  type: z.literal('event.delete')
+})
+export type EventDeleteMessage = z.infer<typeof eventDeleteMessageSchema>
+
 export const clientMessageSchema = z.discriminatedUnion('type', [
   helloMessageSchema,
   recordMessageSchema,
-  setupSaveMessageSchema
+  setupSaveMessageSchema,
+  eventDeleteMessageSchema
 ])
 export type ClientMessage = z.infer<typeof clientMessageSchema>

@@ -8,6 +8,7 @@ import {
 } from 'react-router'
 
 import { RouterProvider } from '@/presentation/components/router-provider'
+import { SiteFooter } from '@/presentation/components/site-footer'
 
 declare module 'react-aria-components' {
   interface RouterConfig {
@@ -48,6 +49,7 @@ export const RootRoute: React.FC = () => {
       }}
     >
       <Outlet />
+      <SiteFooter />
       <ScrollRestoration />
     </RouterProvider>
   )

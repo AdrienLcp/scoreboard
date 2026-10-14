@@ -8,7 +8,7 @@ import { PROTOCOL_VERSION } from '@scoreboard/protocol/version'
 import type { DrawCode } from '@scoreboard/core/access/access-codes'
 
 import type { Admission } from './admission'
-import { admit, recordEvent, saveSetup } from './event-service'
+import { admit, deleteEvent, recordEvent, saveSetup } from './event-service'
 import type { EventStore } from './event-store'
 import { snapshotMessageFor } from './event-view'
 
@@ -17,12 +17,15 @@ export type FrameOutcome = {
   admission: Admission | null
   /** Every admitted socket gets a fresh snapshot of its role. */
   isEventChanged: boolean
+  /** The event is gone: every socket is told so and closed. */
+  isEventErased: boolean
   replies: ServerMessage[]
   /** A fatal error was answered: the socket is closed after the replies. */
   shouldClose: boolean
 }
 
 const ERROR_LOG_MESSAGE = {
+  event_deleted: 'The event was deleted',
   event_not_found: 'No event behind this address',
   hello_expected: 'The first frame must be a hello',
   internal_error: 'Unexpected failure',
@@ -33,6 +36,14 @@ const ERROR_LOG_MESSAGE = {
   wrong_code: 'No table or organiser holds this code'
 } as const satisfies Record<ProtocolErrorCode, string>
 
+/** What every screen hears as its event is erased, before its socket closes. */
+export const ERASED_EVENT_NOTICE: ServerMessage = {
+  code: 'event_deleted',
+  fatal: true,
+  message: ERROR_LOG_MESSAGE.event_deleted,
+  type: 'error'
+}
+
 const refused = (
   admission: Admission | null,
   code: ProtocolErrorCode,
@@ -40,6 +51,7 @@ const refused = (
 ): FrameOutcome => ({
   admission,
   isEventChanged: false,
+  isEventErased: false,
   replies: [
     { code, fatal: isFatal, message: ERROR_LOG_MESSAGE[code], type: 'error' }
   ],
@@ -50,7 +62,13 @@ const answered = (
   admission: Admission | null,
   replies: ServerMessage[],
   isEventChanged = false
-): FrameOutcome => ({ admission, isEventChanged, replies, shouldClose: false })
+): FrameOutcome => ({
+  admission,
+  isEventChanged,
+  isEventErased: false,
+  replies,
+  shouldClose: false
+})
 
 /** Handles one inbound frame from a socket, given who that socket already is. */
 export const handleFrame = ({
@@ -150,6 +168,21 @@ export const handleFrame = ({
       return answered(admission, [
         { reason: saved.error, type: 'setup.refused' }
       ])
+    }
+    case 'event.delete': {
+      const deleted = deleteEvent({ admission, store })
+
+      if (deleted.status === 'failure') {
+        return refused(admission, 'not_allowed', { isFatal: false })
+      }
+
+      return {
+        admission,
+        isEventChanged: false,
+        isEventErased: true,
+        replies: [],
+        shouldClose: false
+      }
     }
   }
 }

@@ -1,6 +1,7 @@
 import type { Result } from '@adrienlcp/result'
 import {
   readRecognizedText,
+  removeStored,
   type StorageReadError,
   type StorageWriteError,
   writeStoredText
@@ -12,7 +13,11 @@ import {
   organiserCodeSchema
 } from '@scoreboard/protocol/identifiers'
 
-const keyFor = (eventId: EventId): string => `scoreboard:organiser:${eventId}`
+/** Followed by the event's id. */
+export const ORGANISER_CODE_KEY_PREFIX = 'scoreboard:organiser:'
+
+const keyFor = (eventId: EventId): string =>
+  `${ORGANISER_CODE_KEY_PREFIX}${eventId}`
 
 const isOrganiserCode = (stored: string): stored is OrganiserCode =>
   organiserCodeSchema.safeParse(stored).success
@@ -31,3 +36,8 @@ export const writeOrganiserCode = ({
   eventId: EventId
 }): Result<void, StorageWriteError> =>
   writeStoredText({ key: keyFor(eventId), text: code })
+
+/** Forgets the code once its event is gone. */
+export const forgetOrganiserCode = (
+  eventId: EventId
+): Result<void, StorageWriteError> => removeStored(keyFor(eventId))

@@ -3,6 +3,7 @@ export const PAGE_ROUTES = {
   display: '/e/:eventId/display',
   displayOf: '/e/:eventId/display/:displayId',
   home: '/',
+  legal: '/legal',
   organiser: '/e/:eventId/organiser',
   spectator: '/e/:eventId',
   umpire: '/e/:eventId/umpire/:umpireCode',

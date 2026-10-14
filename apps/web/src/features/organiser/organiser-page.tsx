@@ -1,11 +1,12 @@
 import type React from 'react'
-import { useRef, useState } from 'react'
+import { useEffect, useRef, useState } from 'react'
 
 import type { EventId, OrganiserCode } from '@scoreboard/protocol/identifiers'
 import { organiserCodeSchema } from '@scoreboard/protocol/identifiers'
 
 import { encounterLinesFor } from '@/features/event/encounter-lines'
 import { EncounterScore } from '@/features/event/encounter-score'
+import { isEventGone } from '@/features/event/event-gone'
 import { FeedMessage } from '@/features/event/feed-message'
 import { useCurrentSnapshot } from '@/features/event/use-current-snapshot'
 import {
@@ -14,6 +15,7 @@ import {
   useEventIdParam
 } from '@/infrastructure/router/navigation'
 import {
+  forgetOrganiserCode,
   readOrganiserCode,
   writeOrganiserCode
 } from '@/infrastructure/storage/organiser-code-storage'
@@ -35,6 +37,7 @@ import {
 
 import { DisplaysEditor } from './displays-editor'
 import { EncounterForm } from './encounter-form'
+import { EventDeletion } from './event-deletion'
 import { EventSettingsForm } from './event-settings-form'
 import { LiveTables } from './live-tables'
 import { MatchesEditor } from './matches-editor'
@@ -89,8 +92,15 @@ const OrganiserConsole: React.FC<{ code: OrganiserCode; eventId: EventId }> = ({
   const organiser = useOrganiserConsole({ code, eventId })
   const { snapshot } = organiser
   const { snapshot: event } = useCurrentSnapshot(snapshot?.event ?? null)
+  const isGone = isEventGone(organiser.error)
 
-  if (snapshot === null || event === null) {
+  useEffect(() => {
+    if (isGone) {
+      forgetOrganiserCode(eventId)
+    }
+  }, [eventId, isGone])
+
+  if (snapshot === null || event === null || isGone) {
     return (
       <FeedMessage
         error={organiser.error}
@@ -232,6 +242,7 @@ const OrganiserConsole: React.FC<{ code: OrganiserCode; eventId: EventId }> = ({
             onSave={organiser.saveSetup}
             setup={setup}
           />
+          <EventDeletion onDelete={organiser.deleteEvent} />
         </TabPanel>
       </Tabs>
     </Main>

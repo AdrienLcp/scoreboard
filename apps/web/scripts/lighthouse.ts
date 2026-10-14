@@ -32,7 +32,7 @@ const ROOT = join(import.meta.dirname, '..')
 const REPORT_DIR = join(ROOT, 'lighthouse-reports')
 
 /** A public site reads its pages from its sitemap instead. */
-const AUDITED_PATHS = ['/']
+const AUDITED_PATHS = ['/', '/legal']
 
 const GATED_CATEGORIES = ['accessibility', 'best-practices', 'seo']
 const MIN_SCORE = 100

@@ -1,0 +1,16 @@
+@use '../styles/layout'
+
+@layer components
+  .site-footer
+    @include layout.page-column
+
+    border-top: var(--hairline)
+    color: var(--ink-muted)
+    font-size: var(--text-s)
+    padding-block: var(--space-l) max(var(--space-l), var(--safe-area-bottom))
+
+    .text-link
+      color: var(--ink-muted)
+
+      &[data-hovered]
+        color: var(--ink)

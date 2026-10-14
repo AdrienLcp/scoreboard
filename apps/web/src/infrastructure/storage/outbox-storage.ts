@@ -17,13 +17,16 @@ const outboxSchema = z.array(recordMessageSchema.omit({ type: true }))
 const isOutbox = (value: unknown): value is Outbox =>
   outboxSchema.safeParse(value).success
 
+/** Followed by the event's id and the table's umpire code. */
+export const OUTBOX_KEY_PREFIX = 'scoreboard:outbox:'
+
 const keyFor = ({
   code,
   eventId
 }: {
   code: UmpireCode
   eventId: EventId
-}): string => `scoreboard:outbox:${eventId}:${code}`
+}): string => `${OUTBOX_KEY_PREFIX}${eventId}:${code}`
 
 /**
  * The points this console scored and the server has not confirmed yet. Kept

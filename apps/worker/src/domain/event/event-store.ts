@@ -27,6 +27,8 @@ import type { SqlDatabase } from '@/infrastructure/durable-objects/sql-database'
 /** What the event's Durable Object keeps. Synchronous: the object's SQLite storage is. */
 export type EventStore = {
   appendScoringEvent: (matchId: MatchId, stamped: StampedEvent) => void
+  /** Forgets the event: its setup, its codes and every scoring event. */
+  erase: () => void
   readLogs: () => MatchLogs
   readOrganiserCode: () => OrganiserCode | null
   readSetup: () => EventSetup | null
@@ -87,6 +89,12 @@ export const createEventStore = (database: SqlDatabase): EventStore => {
         recordedAtMs,
         JSON.stringify(event)
       )
+    },
+    erase: () => {
+      database.transaction(() => {
+        database.run('DELETE FROM scoring_events')
+        database.run('DELETE FROM event_meta')
+      })
     },
     readLogs: () => {
       const logs = new Map<MatchId, StampedEvent[]>()
