@@ -1,7 +1,8 @@
 import type { HtmlTagDescriptor, Plugin } from 'vite'
 
-import { PAGE_ROUTES } from '../../packages/protocol/src/page-routes.ts'
-import { SITE_ORIGIN } from '../../packages/protocol/src/site.ts'
+import { PAGE_ROUTES } from '@scoreboard/protocol/page-routes'
+import { SITE_ORIGIN } from '@scoreboard/protocol/site'
+
 import { homeDocumentTitle } from './src/features/home/home-document-title.ts'
 import { SHARE_IMAGE } from './src/features/home/share-image.ts'
 import { i18n } from './src/presentation/i18n/i18n.ts'
