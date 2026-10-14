@@ -6,10 +6,8 @@ import react from '@vitejs/plugin-react'
 import fontaine from 'fontaine/postcss'
 import { defineConfig } from 'vite'
 
-import {
-  API_PREFIX,
-  SOCKET_PREFIX
-} from '../../packages/protocol/src/routes.ts'
+import { API_PREFIX, SOCKET_PREFIX } from '@scoreboard/protocol/routes'
+
 import { searchEnginePlugin } from './search-engine-plugin.ts'
 import { REGIONAL_LOCALES } from './src/presentation/i18n/regional-locales.ts'
 
