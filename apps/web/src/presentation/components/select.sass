@@ -54,8 +54,10 @@
     background: var(--surface-raised)
     border-radius: var(--radius-m)
     box-shadow: var(--shadow-overlay)
+    display: flex
+    flex-direction: column
     max-height: min(22rem, 60svh)
-    overflow: auto
+    overflow: clip
     width: var(--trigger-width)
     padding: var(--space-2xs)
     transition: opacity var(--transition-fast, 0s), translate var(--transition-fast, 0s) var(--ease-out)
@@ -67,7 +69,9 @@
   .list-box
     display: flex
     flex-direction: column
+    min-block-size: 0
     outline: none
+    overflow-y: auto
 
   // The detail sits under its option so the list never outgrows its trigger.
   .list-box-item
