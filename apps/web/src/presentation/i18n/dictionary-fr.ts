@@ -487,25 +487,6 @@ export const FR_DICTIONARY = defineDictionary({
     })
   },
   umpire: {
-    connection: {
-      offline: defineTranslation('{count:plural}', {
-        plural: {
-          count: {
-            one: 'Hors ligne — {?} point en attente',
-            other: 'Hors ligne — {?} points en attente'
-          }
-        }
-      }),
-      online: 'Connecté',
-      sending: defineTranslation('{count:plural}', {
-        plural: {
-          count: {
-            one: 'Envoi de {?} point…',
-            other: 'Envoi de {?} points…'
-          }
-        }
-      })
-    },
     awaiting: {
       match: '{name} gagne le match, {score}',
       period: '{name} gagne la manche, {score}'
@@ -524,6 +505,25 @@ export const FR_DICTIONARY = defineDictionary({
     confirm: {
       match: 'Valider le match',
       period: 'Valider la manche'
+    },
+    connection: {
+      offline: defineTranslation('{count:plural}', {
+        plural: {
+          count: {
+            one: 'Hors ligne — {?} point en attente',
+            other: 'Hors ligne — {?} points en attente'
+          }
+        }
+      }),
+      online: 'Connecté',
+      sending: defineTranslation('{count:plural}', {
+        plural: {
+          count: {
+            one: 'Envoi de {?} point…',
+            other: 'Envoi de {?} points…'
+          }
+        }
+      })
     },
     deuce: 'Égalité — deux points d’écart',
     discipline: {
