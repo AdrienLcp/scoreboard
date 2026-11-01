@@ -17,7 +17,6 @@ export const BrandMark: React.FC = () => {
         <rect
           className='frame'
           height='15'
-          rx='3.5'
           width='19'
           x='2.5'
           y='4.5'
