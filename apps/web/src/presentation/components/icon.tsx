@@ -1,5 +1,6 @@
 import {
   ArrowLeft,
+  ArrowLeftRight,
   ArrowRight,
   Check,
   ChevronDown,
@@ -15,6 +16,7 @@ import {
   Move,
   Play,
   Plus,
+  Pencil,
   Printer,
   QrCode,
   RectangleVertical,
@@ -47,6 +49,7 @@ const OUTLINED = {
   flag: Flag,
   image: ImagePlus,
   keyboard: Keyboard,
+  edit: Pencil,
   minus: Minus,
   move: Move,
   open: ExternalLink,
@@ -61,6 +64,7 @@ const OUTLINED = {
   timer: Timer,
   undo: Undo2,
   unpair: Unplug,
+  swap: ArrowLeftRight,
   wifiOff: WifiOff
 } satisfies Record<string, LucideIcon>
 

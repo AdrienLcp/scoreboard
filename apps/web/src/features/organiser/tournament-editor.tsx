@@ -10,8 +10,19 @@ import { tableTennisBestOfs } from '@scoreboard/protocol/match-format'
 import { DEFAULT_OPPONENT_COLOUR } from '@scoreboard/core/club/team-colours'
 import { tablesPerPool } from '@scoreboard/core/tournament/tournament-setup'
 
+import { addOpponentClub, addTypedPlayer } from '@/features/club/club-edits'
+import {
+  byLastPlayed,
+  latestPlayed,
+  splitTypedName
+} from '@/features/club/directory-search'
+import { PickField } from '@/features/club/pick-field'
 import { useClub } from '@/features/club/use-club'
-import { newMatchId } from '@/infrastructure/ids'
+import {
+  newDirectoryClubId,
+  newMatchId,
+  newPlayerId
+} from '@/infrastructure/ids'
 import { paths } from '@/infrastructure/router/navigation'
 import { Button } from '@/presentation/components/button'
 import { Icon } from '@/presentation/components/icon'
@@ -45,6 +56,23 @@ import {
 } from './tournament-edits'
 
 import './tournament-editor.sass'
+
+/** How many clubs and players stand as chips before the search takes over: a Top 12 brings six clubs. */
+const CHIPS_SHOWN = 8
+
+/** The picked ones first, then the best suggestions, up to `CHIPS_SHOWN`. */
+const chipsOf = <T extends { id: string }>(
+  entries: readonly T[],
+  pickedIds: readonly string[]
+): T[] => {
+  const picked = entries.filter((entry) => pickedIds.includes(entry.id))
+  const others = entries.filter((entry) => !pickedIds.includes(entry.id))
+
+  return [
+    ...picked,
+    ...others.slice(0, Math.max(0, CHIPS_SHOWN - picked.length))
+  ]
+}
 
 const WIN_POINTS = [1, 2, 3] as const
 const LOSS_POINTS = [0, 1] as const
@@ -169,16 +197,35 @@ export const TournamentEditor: React.FC<TournamentEditorProps> = ({
   setup
 }) => {
   const translate = useTranslate()
-  const { state } = useClub()
+  const club = useClub()
+  const { state } = club
+  const record = state.status === 'ready' ? state.record : null
   const [draft, setDraft] = useState<TournamentDraft>(() =>
     tournamentDraftFor(setup)
   )
   const [previous, setPrevious] = useState<EventSetup | null>(null)
   const [swapping, setSwapping] = useState<PlayerId | null>(null)
-  const clubs = tournamentClubsFor({
-    record: state.status === 'ready' ? state.record : null,
-    setup
-  })
+  const clubs = tournamentClubsFor({ record, setup })
+  const directoryClubs =
+    record === null ? [] : [record.own, ...record.opponents]
+  const lastPlayedOf = (clubId: TeamId) => {
+    const entry = directoryClubs.find((candidate) => candidate.id === clubId)
+
+    return {
+      lastPlayedOn:
+        entry === undefined
+          ? undefined
+          : latestPlayed([...entry.teams, ...entry.players])
+    }
+  }
+  /** The club's own first, then those met most recently. */
+  const suggestedClubs = clubs.toSorted((one, other) =>
+    one.id === record?.own.id
+      ? -1
+      : other.id === record?.own.id
+        ? 1
+        : byLastPlayed(lastPlayedOf(one.id), lastPlayedOf(other.id))
+  )
   const teams = tournamentTeamsFor({ clubs, draft, setup })
   const colourOf = (teamId: TeamId | null): string =>
     teams.find((team: Team) => team.id === teamId)?.colour ??
@@ -364,30 +411,81 @@ export const TournamentEditor: React.FC<TournamentEditorProps> = ({
               {translate('organiser.tournament.clubsHint')}
             </p>
             <ul className='tournament-chips'>
-              {clubs.map((club: TournamentClub) => {
-                const isPicked = draft.clubIds.includes(club.id)
+              {chipsOf(suggestedClubs, draft.clubIds).map(
+                (entry: TournamentClub) => {
+                  const isPicked = draft.clubIds.includes(entry.id)
 
-                return (
-                  <li key={club.id}>
-                    <AriaButton
-                      aria-pressed={isPicked}
-                      className='tournament-chip'
-                      onPress={() => edit(toggleClub({ club, draft }))}
-                    >
-                      <Swatch
-                        colour={
-                          isPicked
-                            ? colourOf(club.id)
-                            : (club.colour ?? DEFAULT_OPPONENT_COLOUR)
-                        }
-                      />
-                      <span className='tournament-chip-name'>{club.name}</span>
-                      {isPicked ? <Icon name='check' /> : null}
-                    </AriaButton>
-                  </li>
-                )
-              })}
+                  return (
+                    <li key={entry.id}>
+                      <AriaButton
+                        aria-pressed={isPicked}
+                        className='tournament-chip'
+                        onPress={() => edit(toggleClub({ club: entry, draft }))}
+                      >
+                        <Swatch
+                          colour={
+                            isPicked
+                              ? colourOf(entry.id)
+                              : (entry.colour ?? DEFAULT_OPPONENT_COLOUR)
+                          }
+                        />
+                        <span className='tournament-chip-name'>
+                          {entry.name}
+                        </span>
+                        {isPicked ? <Icon name='check' /> : null}
+                      </AriaButton>
+                    </li>
+                  )
+                }
+              )}
             </ul>
+            {record === null ? null : (
+              <PickField
+                addLabel={(typed) =>
+                  translate('organiser.pick.addClub', { name: typed.trim() })
+                }
+                emptyLabel={(typed) =>
+                  translate('organiser.pick.none', { typed })
+                }
+                label={translate('organiser.tournament.otherClub')}
+                onAdd={(typed) => {
+                  const clubId = newDirectoryClubId()
+                  const name = typed.trim()
+
+                  club.change(
+                    addOpponentClub({ name, newClubId: () => clubId, record })
+                  )
+                  edit(
+                    toggleClub({
+                      club: {
+                        colour: null,
+                        id: clubId,
+                        logoUrl: null,
+                        name,
+                        players: []
+                      },
+                      draft
+                    })
+                  )
+
+                  return null
+                }}
+                onChange={(clubId) => {
+                  const entry = clubs.find(
+                    (candidate) => candidate.id === clubId
+                  )
+
+                  if (entry !== undefined) {
+                    edit(toggleClub({ club: entry, draft }))
+                  }
+                }}
+                picks={suggestedClubs
+                  .filter((entry) => !draft.clubIds.includes(entry.id))
+                  .map((entry) => ({ id: entry.id, label: entry.name }))}
+                placeholder={translate('organiser.pick.clubPlaceholder')}
+                selectedId={null}
+              />
+            )}
           </>
         )}
       </section>
@@ -402,42 +500,110 @@ export const TournamentEditor: React.FC<TournamentEditorProps> = ({
           </p>
           <div className='tournament-clubs'>
             {draft.clubIds.flatMap((clubId) => {
-              const club = clubs.find((candidate) => candidate.id === clubId)
+              const entry = clubs.find((candidate) => candidate.id === clubId)
 
-              return club === undefined
-                ? []
-                : [
-                    <div className='tournament-club' key={club.id}>
-                      <h3>
-                        <Swatch colour={colourOf(club.id)} />
-                        {club.name}
-                      </h3>
-                      <ul className='tournament-chips'>
-                        {club.players.map((player) => (
-                          <li key={player.id}>
-                            <AriaButton
-                              aria-pressed={draft.playerIds.includes(player.id)}
-                              className='tournament-chip'
-                              onPress={() =>
+              if (entry === undefined) {
+                return []
+              }
+
+              const unpicked = entry.players.filter(
+                (player) => !draft.playerIds.includes(player.id)
+              )
+              const canAdd =
+                record !== null &&
+                directoryClubs.some((candidate) => candidate.id === entry.id)
+
+              return [
+                <div className='tournament-club' key={entry.id}>
+                  <h3>
+                    <Swatch colour={colourOf(entry.id)} />
+                    {entry.name}
+                  </h3>
+                  <ul className='tournament-chips'>
+                    {chipsOf(entry.players, draft.playerIds).map((player) => (
+                      <li key={player.id}>
+                        <AriaButton
+                          aria-pressed={draft.playerIds.includes(player.id)}
+                          className='tournament-chip'
+                          onPress={() =>
+                            edit(togglePlayer({ draft, playerId: player.id }))
+                          }
+                        >
+                          <span className='tournament-chip-name'>
+                            {player.name}
+                          </span>
+                          {player.points === null ? null : (
+                            <small className='tournament-points'>
+                              {player.points}
+                            </small>
+                          )}
+                        </AriaButton>
+                      </li>
+                    ))}
+                  </ul>
+                  {!canAdd && unpicked.length <= CHIPS_SHOWN ? null : (
+                    <PickField
+                      addLabel={(typed) =>
+                        splitTypedName(typed) === null
+                          ? null
+                          : translate('organiser.pick.addPlayer', {
+                              name: typed.trim()
+                            })
+                      }
+                      emptyLabel={(typed) =>
+                        translate(
+                          canAdd
+                            ? 'organiser.pick.fullName'
+                            : 'organiser.pick.none',
+                          { typed }
+                        )
+                      }
+                      label={translate('organiser.tournament.otherPlayer')}
+                      onAdd={
+                        record === null || !canAdd
+                          ? undefined
+                          : (typed) => {
+                              const added = addTypedPlayer({
+                                clubId: entry.id,
+                                newPlayerId,
+                                record,
+                                typed
+                              })
+
+                              if (added !== null) {
+                                club.change(added.record)
                                 edit(
-                                  togglePlayer({ draft, playerId: player.id })
+                                  togglePlayer({
+                                    draft,
+                                    playerId: added.playerId
+                                  })
                                 )
                               }
-                            >
-                              <span className='tournament-chip-name'>
-                                {player.name}
-                              </span>
-                              {player.points === null ? null : (
-                                <small className='tournament-points'>
-                                  {player.points}
-                                </small>
-                              )}
-                            </AriaButton>
-                          </li>
-                        ))}
-                      </ul>
-                    </div>
-                  ]
+
+                              return null
+                            }
+                      }
+                      onChange={(playerId) => {
+                        if (playerId !== null) {
+                          edit(togglePlayer({ draft, playerId }))
+                        }
+                      }}
+                      picks={unpicked.map((player) => ({
+                        detail:
+                          player.points === null
+                            ? undefined
+                            : String(player.points),
+                        id: player.id,
+                        label: player.name
+                      }))}
+                      placeholder={translate(
+                        'organiser.pick.playerPlaceholder'
+                      )}
+                      selectedId={null}
+                    />
+                  )}
+                </div>
+              ]
             })}
           </div>
         </section>

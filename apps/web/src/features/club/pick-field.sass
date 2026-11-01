@@ -1,0 +1,88 @@
+@use '../../presentation/styles/focus'
+@use '../../presentation/styles/typography'
+
+/// A search box that reads as a field: the white box and slate edge of every
+/// input, a muted search glass inside it, the quick chips under it.
+@layer components
+  .pick-field
+    align-content: start
+    display: grid
+    gap: var(--space-xs)
+    min-width: 0
+
+  .pick-field-box
+    @include focus.ring-within
+
+    align-items: center
+    background: var(--surface)
+    border: var(--stroke-bold) solid var(--edge)
+    color: var(--ink-muted)
+    display: flex
+    gap: var(--space-xs)
+    min-height: var(--control-height)
+    padding-inline: var(--space-s)
+
+    transition: border-color var(--transition-fast, 0s)
+
+    &:hover
+      border-color: var(--ink)
+
+    &:focus-within
+      border-color: var(--focus)
+
+    > .icon
+      flex: none
+      font-size: var(--icon-m)
+
+  .field-input.pick-field-input
+    background: none
+    border: 0
+    flex: 1
+    height: 100%
+    min-height: 0
+    min-width: 0
+    padding: 0
+
+    &[data-focused]
+      outline: none
+
+  .popover.pick-field-popover
+    min-width: min(18rem, 100%)
+
+    .list-box-item
+      grid-template-columns: minmax(0, 1fr) auto auto
+
+      &[data-selected]::after
+        grid-column: 3
+
+    small
+      @include typography.plain
+
+      color: var(--ink-muted)
+      font-size: var(--text-xs)
+      white-space: nowrap
+
+  .pick-field-name
+    overflow: hidden
+    text-overflow: ellipsis
+    white-space: nowrap
+
+  .popover.pick-field-popover .list-box-item.pick-field-addition
+    color: var(--ink)
+    grid-template-columns: auto minmax(0, 1fr)
+
+    > .icon
+      font-size: var(--icon-m)
+
+    > span
+      justify-self: start
+
+  .pick-field-empty
+    @include typography.hint
+
+    color: var(--ink-muted)
+    padding: var(--space-s)
+
+  .toggle-button.pick-field-chip
+    font-size: var(--text-s)
+    padding: var(--space-xs) var(--space-s)

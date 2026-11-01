@@ -303,6 +303,7 @@ Plain and confident, one obvious action per screen.
 - **Select:** same box as a field, chevron rotates on open; the popover is mist grey with the overlay shadow, scrolling inside its list; options hover silver, the selected one carries a neutral ink check.
 - **Switch:** paper track with a 2px slate inset and a muted thumb; on, the track fills ink and the thumb turns white.
 - **Code inputs:** figure voice, large, centred, uppercase with wide tracking (literal codes only).
+- **Pick field** (`features/club/pick-field.tsx`): a field's box with a muted search glass, suggesting as soon as it is touched (the select's popover, each entry's detail in muted small text on its right) and narrowing on the first letters of any word; "Ajouter …" with a plus icon is the last entry, and only when nothing matches. A handful of entries stand as toggle chips under it, one tap away; when the chips hold every entry, they are the whole field.
 
 ### Navigation
 - **Tabs:** a white track with 0.25rem padding; tabs are muted text at 3rem, the selected tab fills ink with white text. Counts inside tabs use the figure voice. A bar whose tabs no longer fit (organiser, spectator) scrolls sideways out over the gutters with no scrollbar, a shade of the paper fading in over each edge that still hides tabs, the selected tab kept in view (`tab-bar.scrolling`).

@@ -11,9 +11,24 @@ import {
 } from '@scoreboard/core/club/club-encounter'
 import { encounterFormatFor } from '@scoreboard/core/encounter/encounter-formats'
 
-import { keepLineup } from '@/features/club/club-edits'
+import {
+  addTypedOpponentTeam,
+  addTypedPlayer,
+  keepLineup,
+  markPlayed
+} from '@/features/club/club-edits'
+import { byRecentThenName } from '@/features/club/directory-search'
+import { PickField } from '@/features/club/pick-field'
 import { useClub } from '@/features/club/use-club'
-import { newEncounterId, newMatchId } from '@/infrastructure/ids'
+import { nowMs } from '@/infrastructure/clock'
+import { toLocalDay } from '@/infrastructure/dates'
+import {
+  newDirectoryClubId,
+  newEncounterId,
+  newMatchId,
+  newPlayerId,
+  newTeamId
+} from '@/infrastructure/ids'
 import { paths } from '@/infrastructure/router/navigation'
 import { Button } from '@/presentation/components/button'
 import {
@@ -61,6 +76,19 @@ type DayLineups = {
 
 const NO_CHANGE: DayLineups = { away: null, home: null }
 
+/** The opposing teams a Sunday picks from: those met most recently first. */
+const RECENT_OPPONENTS = 4
+
+/** Our club's teams fit as chips: a club fields a handful, Angles seven. */
+const OWN_TEAMS_AS_CHIPS = 8
+
+const teamPicksOf = (sides: readonly ClubSide[]) =>
+  sides.map((side) => ({
+    detail: side.team.division ?? undefined,
+    id: side.team.id,
+    label: side.team.name
+  }))
+
 const isSameLineup = (one: SeatedLineup, other: SeatedLineup): boolean =>
   JSON.stringify(one) === JSON.stringify(other)
 
@@ -100,8 +128,11 @@ export const ClubEncounterForm: React.FC<ClubEncounterFormProps> = ({
     )
   }
 
-  const own = sidesOf(state.record, true)
-  const opponents = sidesOf(state.record, false)
+  const { record } = state
+  const own = sidesOf(record, true)
+  const opponents = sidesOf(record, false).toSorted(
+    byRecentThenName((side: ClubSide) => side.team)
+  )
   const pickedHomeId = homeId ?? firstFreeTeamId(own, setup)
   const home = own.find((side) => side.team.id === pickedHomeId) ?? null
   const away = opponents.find((side) => side.team.id === awayId) ?? null
@@ -121,6 +152,22 @@ export const ClubEncounterForm: React.FC<ClubEncounterFormProps> = ({
         ).filter((table) => table <= setup.tableCount)
   const homeLineup = dayLineups.home ?? home?.team.lineup ?? []
   const awayLineup = dayLineups.away ?? away?.team.lineup ?? []
+  const addPlayerTo = (side: ClubSide, typed: string) => {
+    const added = addTypedPlayer({
+      clubId: side.club.id,
+      newPlayerId,
+      record,
+      typed
+    })
+
+    if (added === null) {
+      return null
+    }
+
+    club.change(added.record)
+
+    return added.playerId
+  }
   const tablesLabel = (run: readonly number[]) =>
     translate('club.team.tablesChoice', {
       count: run.length,
@@ -149,25 +196,35 @@ export const ClubEncounterForm: React.FC<ClubEncounterFormProps> = ({
           })
         )
 
-        if (
+        const keeps =
           keepsLineup &&
           !(
             isSameLineup(homeLineup, home.team.lineup) &&
             isSameLineup(awayLineup, away.team.lineup)
           )
-        ) {
-          club.edit((record) =>
-            keepLineup({
-              lineup: awayLineup,
-              record: keepLineup({
-                lineup: homeLineup,
-                record,
-                teamId: home.team.id
-              }),
-              teamId: away.team.id
-            })
-          )
-        }
+
+        club.edit((current) => {
+          const played = markPlayed({
+            on: toLocalDay(nowMs()),
+            playerIds: [...homeLineup, ...awayLineup].filter(
+              (playerId) => playerId !== null
+            ),
+            record: current,
+            teamIds: [home.team.id, away.team.id]
+          })
+
+          return keeps
+            ? keepLineup({
+                lineup: awayLineup,
+                record: keepLineup({
+                  lineup: homeLineup,
+                  record: played,
+                  teamId: home.team.id
+                }),
+                teamId: away.team.id
+              })
+            : played
+        })
 
         setHomeId(null)
         setAwayId(null)
@@ -176,35 +233,44 @@ export const ClubEncounterForm: React.FC<ClubEncounterFormProps> = ({
       }}
     >
       <h3>{translate('organiser.clubEncounter.title')}</h3>
-      <ChoiceField
-        choices={own.map((side) => ({
-          id: side.team.id,
-          label: side.team.name
-        }))}
+      <PickField
+        emptyLabel={(typed) => translate('organiser.pick.none', { typed })}
         label={translate('organiser.clubEncounter.home')}
         onChange={(id) => {
           setHomeId(id)
           setFirstTable(null)
           setDayLineups((current) => ({ ...current, home: null }))
         }}
+        picks={teamPicksOf(own)}
         placeholder={translate('organiser.chooseTeam')}
+        quickPicks={OWN_TEAMS_AS_CHIPS}
         selectedId={pickedHomeId}
       />
-      <ChoiceField
-        choices={opponents.map((side) => ({
-          id: side.team.id,
-          label: side.team.name
-        }))}
+      <PickField
+        addLabel={(typed) =>
+          translate('organiser.pick.addTeam', { name: typed.trim() })
+        }
+        emptyLabel={(typed) => translate('organiser.pick.none', { typed })}
         label={translate('organiser.clubEncounter.away')}
+        onAdd={(typed) => {
+          const added = addTypedOpponentTeam({
+            newClubId: newDirectoryClubId,
+            newTeamId,
+            record,
+            typed
+          })
+
+          club.change(added.record)
+
+          return added.teamId
+        }}
         onChange={(id) => {
           setAwayId(id)
           setDayLineups((current) => ({ ...current, away: null }))
         }}
-        placeholder={translate(
-          opponents.length === 0
-            ? 'organiser.clubEncounter.noOpponent'
-            : 'organiser.chooseTeam'
-        )}
+        picks={teamPicksOf(opponents)}
+        placeholder={translate('organiser.pick.teamPlaceholder')}
+        quickPicks={RECENT_OPPONENTS}
         selectedId={awayId}
       />
       <ChoiceField
@@ -245,16 +311,20 @@ export const ClubEncounterForm: React.FC<ClubEncounterFormProps> = ({
           <DisclosurePanel>
             <div className='club-encounter-lineup-body'>
               <ClubLineup
+                groupCount={format.groupCount}
                 letters={format.homeLetters}
                 lineup={homeLineup}
+                onAddPlayer={(typed) => addPlayerTo(home, typed)}
                 onChange={(lineup) =>
                   setDayLineups((current) => ({ ...current, home: lineup }))
                 }
                 side={home}
               />
               <ClubLineup
+                groupCount={format.groupCount}
                 letters={format.awayLetters}
                 lineup={awayLineup}
+                onAddPlayer={(typed) => addPlayerTo(away, typed)}
                 onChange={(lineup) =>
                   setDayLineups((current) => ({ ...current, away: lineup }))
                 }

@@ -220,6 +220,7 @@ const OrganiserConsole: React.FC<{ code: OrganiserCode; eventId: EventId }> = ({
             onSave={organiser.saveSetup}
             setup={setup}
           />
+            onRecord={organiser.record}
         </TabPanel>
         <TabPanel id='matches'>
           <MatchesEditor

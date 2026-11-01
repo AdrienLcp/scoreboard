@@ -29,6 +29,9 @@ export type DirectoryClubId = z.infer<typeof directoryClubIdSchema>
 
 const nameSchema = z.string().trim().min(1).max(80)
 
+/** The day a team or a licensee last came to an encounter: the pickers offer the most recent first. Absent until then. */
+const lastPlayedOnSchema = z.iso.date().optional()
+
 /** Where a directory entry comes from: the FFTT's data lives under its own cache rule, apart from what the club entered. */
 export const directorySourceSchema = z.enum(['typed', 'fftt'])
 export type DirectorySource = z.infer<typeof directorySourceSchema>
@@ -38,6 +41,7 @@ export const directoryPlayerSchema = z.object({
   firstName: nameSchema,
   id: playerIdSchema,
   lastName: nameSchema,
+  lastPlayedOn: lastPlayedOnSchema,
   licence: licenceSchema.nullable(),
   points: rankingPointsSchema.nullable(),
   source: directorySourceSchema
@@ -53,6 +57,7 @@ export const directoryTeamSchema = z.object({
   division: z.string().trim().max(40).nullable(),
   formatId: encounterFormatIdSchema,
   id: teamIdSchema,
+  lastPlayedOn: lastPlayedOnSchema,
   /** The last composition, letter by letter (`null` for a letter nobody holds): the next encounter starts from it. */
   lineup: z.array(playerIdSchema.nullable()).max(MAX_LINEUP),
   matchPoints: matchPointsRuleIdSchema.default(DEFAULT_MATCH_POINTS_RULE),

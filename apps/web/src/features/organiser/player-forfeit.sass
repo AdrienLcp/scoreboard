@@ -1,11 +1,42 @@
-/// The absent player's choice and its confirmation, on one line under the encounter.
+@use '../../presentation/styles/typography'
+
+/// The absent player's choice and its confirmation on one line under the
+/// encounter, then each forfeit given, a flag and its one-tap undo.
 @layer components
   .player-forfeit
+    display: grid
+    gap: var(--space-xs)
+    padding-top: var(--space-s)
+
+  .player-forfeit-declare
     align-items: end
     display: flex
     flex-wrap: wrap
     gap: var(--space-s)
-    padding-top: var(--space-s)
 
     > .field, > .select
       flex: 1 1 14rem
+
+  .player-forfeit-given
+    display: grid
+    gap: var(--space-3xs)
+    list-style: none
+    margin: 0
+    padding: 0
+
+    > li
+      @include typography.emphasis
+
+      align-items: center
+      background: var(--surface-raised)
+      display: flex
+      flex-wrap: wrap
+      gap: var(--space-xs)
+      padding-inline-start: var(--space-s)
+
+      > .icon
+        flex: none
+        font-size: var(--icon-m)
+
+      > span
+        flex: 1 1 12rem

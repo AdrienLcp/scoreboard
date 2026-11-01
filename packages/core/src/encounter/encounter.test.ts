@@ -13,7 +13,11 @@ import { encounterFormatFor } from './encounter-formats'
 import { scoreEncounter } from './encounter-score'
 import { sheetMatchesFor } from './encounter-sheet'
 import { matchPointsFor } from './match-points'
-import { forfeitedMatchesOf } from './player-forfeit'
+import {
+  forfeitedMatchesOf,
+  vacantLettersOf,
+  walkoversOf
+} from './player-forfeit'
 
 const ONE_PER_WIN = matchPointsFor('one-per-win')
 const TWO_PER_WIN = matchPointsFor('two-per-win')
@@ -203,9 +207,57 @@ describe('forfeitedMatchesOf', () => {
   }))
 
   it('[encounter] gives up every match still waiting for the absent player, on his side', () => {
-    expect(forfeitedMatchesOf({ matches: views, playerId: absent })).toEqual([
+    expect(
+      forfeitedMatchesOf({
+        matches: views,
+        seat: { kind: 'player', playerId: absent }
+      })
+    ).toEqual([
       { by: 'away', matchId: sheet[3]?.id },
       { by: 'away', matchId: sheet[8]?.id }
     ])
+  })
+
+  it('[encounter] gives up the matches of a letter nobody holds, the doubles aside', () => {
+    expect(vacantLettersOf({ matches: views, side: 'home' })).toEqual([
+      'A',
+      'B',
+      'C'
+    ])
+    expect(vacantLettersOf({ matches: views, side: 'away' })).toEqual([
+      'Y',
+      'Z'
+    ])
+    expect(
+      forfeitedMatchesOf({
+        matches: views,
+        seat: { kind: 'letter', letter: 'Z', side: 'away' }
+      }).map((forfeit) => forfeit.matchId)
+    ).toEqual([sheet[2]?.id, sheet[4]?.id, sheet[7]?.id])
+  })
+
+  it('[encounter] takes back only the walkovers the seat side gave', () => {
+    const walkover = {
+      ...finished('home', { by: 'away', reason: 'walkover' }),
+      canUndo: true
+    }
+    const given = sheet.map((match, index) => ({
+      ...match,
+      state: [3, 8].includes(index)
+        ? walkover
+        : index === 1
+          ? {
+              ...walkover,
+              concession: { by: 'away' as const, reason: 'retirement' as const }
+            }
+          : scheduledMatchState
+    }))
+
+    expect(
+      walkoversOf({
+        matches: given,
+        seat: { kind: 'player', playerId: absent }
+      })
+    ).toEqual([sheet[3]?.id, sheet[8]?.id])
   })
 })

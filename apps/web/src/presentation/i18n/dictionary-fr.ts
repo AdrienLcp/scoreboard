@@ -271,6 +271,7 @@ export const FR_DICTIONARY = defineDictionary({
       deletion:
         'Son organisateur peut aussi l’effacer tout de suite, depuis l’onglet Réglages de l’organisation.',
       heading: 'Ce que le serveur garde d’une rencontre',
+      umpire: 'Arbitre : <b>{name}</b>',
       logs: defineTranslation(
         'Pour diagnostiquer les pannes, l’hébergeur journalise chaque requête\u00a0: son adresse, son heure et l’adresse IP d’où elle vient. Ces journaux ne contiennent aucun nom et sont effacés au bout de {days:plural}.',
         DAYS_PLURAL
@@ -386,6 +387,9 @@ export const FR_DICTIONARY = defineDictionary({
     chooseTeam: 'Choisir une équipe',
     club: 'Mon club',
     clubEncounter: {
+      absentHint:
+        '{empty} vide : un joueur absent toute la journée se met en {later}.',
+      absentMove: 'Décaler',
       add: 'Ajouter la rencontre',
       away: 'Adversaire',
       edit: 'Équipes du club',
@@ -411,9 +415,12 @@ export const FR_DICTIONARY = defineDictionary({
         'Votre code organisateur, à garder pour ouvrir cette page ailleurs\u00a0:'
     },
     correction: {
-      hint: 'Les manches dans l’ordre, la dernière peut être en cours.',
-      invalid: 'Écrivez les manches ainsi\u00a0: 11-7 6-4',
-      label: 'Score, manche par manche',
+      addGame: 'Ajouter une manche',
+      corrected: 'Score corrigé.',
+      game: 'Manche {game:number}',
+      impossible: 'Score impossible ici',
+      less: 'Un point de moins pour {name}',
+      more: 'Un point de plus pour {name}',
       open: 'Corriger',
       submit: 'Enregistrer le score',
       undo: 'Annuler la dernière action',
@@ -426,7 +433,8 @@ export const FR_DICTIONARY = defineDictionary({
         home: 'Confirmer le forfait du domicile'
       },
       walkoverExplain:
-        'Ce match n’a pas commencé. Un joueur absent ou blessé peut être déclaré forfait.'
+        'Ce match n’a pas commencé. Un joueur absent ou blessé peut être déclaré forfait.',
+      won: 'Gagnée par {name}'
     },
     deletion: {
       confirm: 'Effacer la rencontre définitivement',
@@ -435,6 +443,7 @@ export const FR_DICTIONARY = defineDictionary({
         DAYS_PLURAL
       ),
       label: 'Effacer la rencontre',
+    umpire: 'Arbitre : {name}',
       title: 'Effacement de la rencontre'
     },
     displays: {
@@ -488,8 +497,13 @@ export const FR_DICTIONARY = defineDictionary({
       declare: defineTranslation('Déclarer forfait ({count:plural})', {
         plural: { count: { one: '{?} match', other: '{?} matchs' } }
       }),
+      given: defineTranslation('{name} : forfait sur {count:plural}', {
+        plural: { count: { one: '{?} match', other: '{?} matchs' } }
+      }),
       none: 'Plus aucun match ne l’attend.',
-      player: 'Joueur absent'
+      player: 'Joueur absent',
+      undo: 'Annuler le forfait',
+      vacant: '{letter} (place vide)'
     },
     hall: {
       cancel: 'Annuler',
@@ -497,7 +511,13 @@ export const FR_DICTIONARY = defineDictionary({
       emptyPlace: 'Mettre la table ici',
       encounters: 'Rencontres',
       free: 'Libre',
+      openScore: 'Corriger le score',
+      playing: 'En cours',
+      points: 'Manche {game:number}, points de {name}',
+      removeGame: 'Retirer la dernière manche',
+      rule: 'Une manche se gagne à {points:number} points avec 2 points d’écart, seule la dernière peut être en cours, et le match s’arrête dès qu’il est gagné.',
       freeLong: 'Aucune rencontre sur cette table.',
+      swap: 'Inverser les points de la manche {game:number}',
       hidden: 'Rangée',
       hintEncounter:
         'Touchez la table où installer {encounter}\u00a0: elle prend aussi sa voisine.',
@@ -542,6 +562,19 @@ export const FR_DICTIONARY = defineDictionary({
       remove: 'Retirer',
       removeConfirm: 'Retirer ce match',
       table: 'Table'
+    },
+    pick: {
+      addClub: 'Ajouter le club {name}',
+      addPlayer: 'Ajouter {name}',
+      addTeam: 'Ajouter l’équipe {name}',
+      clubPlaceholder: 'Nom du club',
+      fullName:
+        'Personne ne s’appelle « {typed} » : tapez prénom et nom pour l’ajouter.',
+      none: 'Rien ne commence par « {typed} ».',
+      nothing: 'Rien à choisir.',
+      playerPlaceholder: 'Nom ou premières lettres',
+      teamPlaceholder: 'Équipe ou club',
+      typeToAdd: 'Tapez un nom pour l’ajouter.'
     },
     players: {
       add: 'Ajouter le joueur',
@@ -607,6 +640,8 @@ export const FR_DICTIONARY = defineDictionary({
       needPlayers: 'Il faut au moins 4 joueurs, 2 par poule.',
       noClub:
         'Aucun club avec des joueurs\u00a0: ajoutez-les dans la fiche du club, ou dans l’onglet Joueurs.',
+      otherClub: 'Autre club',
+      otherPlayer: 'Autre joueur',
       players: 'Joueurs',
       playersHint:
         'Touchez un joueur pour l’ajouter ou le retirer, rangés par points.',
@@ -668,6 +703,11 @@ export const FR_DICTIONARY = defineDictionary({
     }
   },
   setup: {
+    tableMatch: {
+      closeCorrection: 'Fermer la correction',
+      correctPrevious: 'Corriger le score de {call}',
+      undoCorrection: 'Annuler la correction'
+    },
     refused: {
       duplicate_id: 'Un élément apparaît deux fois.',
       player_twice_in_match: 'Un joueur est des deux côtés d’un match.',
@@ -753,6 +793,13 @@ export const FR_DICTIONARY = defineDictionary({
     },
     section: {
       encounters: 'Rencontres',
+    },
+    umpireChoice: {
+      candidate: '{name} · {team}',
+      label: 'Arbitre',
+      nobody: 'Pas d’arbitre',
+      sheet: '{name}, à son tour',
+      sheetNobody: 'À tour de rôle, personne de libre'
       finished: 'Résultats',
       hall: 'Salle',
       live: 'En cours',

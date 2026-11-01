@@ -14,6 +14,8 @@ import { DEFAULT_MATCH_POINTS_RULE } from '@scoreboard/protocol/match-points-rul
 import { nextTeamColour } from '@scoreboard/core/club/team-colours'
 import { encounterFormatFor } from '@scoreboard/core/encounter/encounter-formats'
 
+import { clubNameOfTeam, isSameName, splitTypedName } from './directory-search'
+
 const clubsOf = (record: ClubRecord): DirectoryClub[] => [
   record.own,
   ...record.opponents
@@ -237,3 +239,145 @@ export const keepHallPlan = (
   ...record,
   hall: { tables: plan.tables.map((table) => ({ ...table, isHidden: false })) }
 })
+
+/**
+ * A licensee typed where the search found nobody: kept in his club as typed,
+ * so he is picked next time. `null` when the name is not a first and a family
+ * name.
+ */
+export const addTypedPlayer = ({
+  clubId,
+  newPlayerId,
+  record,
+  typed
+}: {
+  clubId: DirectoryClubId
+  newPlayerId: () => PlayerId
+  record: ClubRecord
+  typed: string
+}): { playerId: PlayerId; record: ClubRecord } | null => {
+  const name = splitTypedName(typed)
+
+  if (name === null) {
+    return null
+  }
+
+  const player: DirectoryPlayer = {
+    ...name,
+    id: newPlayerId(),
+    licence: null,
+    points: null,
+    source: 'typed'
+  }
+
+  return {
+    playerId: player.id,
+    record: addLicensee({ clubId, player, record })
+  }
+}
+
+/**
+ * An opposing team typed where the search found none ("Rivals 4"): it joins
+ * the club its name starts with, which is created when the club is new, in
+ * the opponents' colour and the club's own format.
+ */
+export const addTypedOpponentTeam = ({
+  newClubId,
+  newTeamId,
+  record,
+  typed
+}: {
+  newClubId: () => DirectoryClubId
+  newTeamId: () => TeamId
+  record: ClubRecord
+  typed: string
+}): { record: ClubRecord; teamId: TeamId } => {
+  const name = typed.trim()
+  const clubName = clubNameOfTeam(name)
+  const known = record.opponents.find((club) => isSameName(club.name, clubName))
+  const clubId = known?.id ?? newClubId()
+  const withClub =
+    known === undefined
+      ? addOpponentClub({ name: clubName, newClubId: () => clubId, record })
+      : record
+  const team: DirectoryTeam = {
+    colour: record.opponentColour,
+    division: null,
+    formatId: record.own.teams.at(0)?.formatId ?? encounterFormatIds[0],
+    id: newTeamId(),
+    lineup: [],
+    matchPoints: DEFAULT_MATCH_POINTS_RULE,
+    name,
+    tables: []
+  }
+
+  return {
+    record: editClub(withClub, clubId, (club) => ({
+      ...club,
+      teams: [...club.teams, team]
+    })),
+    teamId: team.id
+  }
+}
+
+/** Stamps the day on the teams and licensees an encounter brings: the pickers offer them first next time. */
+export const markPlayed = ({
+  on,
+  playerIds,
+  record,
+  teamIds
+}: {
+  on: string
+  playerIds: readonly PlayerId[]
+  record: ClubRecord
+  teamIds: readonly TeamId[]
+}): ClubRecord => {
+  const stamp = (club: DirectoryClub): DirectoryClub => ({
+    ...club,
+    players: club.players.map((player) =>
+      playerIds.includes(player.id) ? { ...player, lastPlayedOn: on } : player
+    ),
+    teams: club.teams.map((team) =>
+      teamIds.includes(team.id) ? { ...team, lastPlayedOn: on } : team
+    )
+  })
+
+  return {
+    ...record,
+    opponents: record.opponents.map(stamp),
+    own: stamp(record.own)
+  }
+}
+
+/**
+ * A player away for the whole day goes in the second group (D–F, R–T), as the
+ * club always does. `null` while no seat of the first group is empty ahead of
+ * a seated player of the second; otherwise the same players in the same
+ * order, moved up, with the empty seats last.
+ */
+export const absentSeatsLast = ({
+  groupSize,
+  letterCount,
+  lineup
+}: {
+  groupSize: number
+  letterCount: number
+  lineup: readonly (PlayerId | null)[]
+}): (PlayerId | null)[] | null => {
+  const seats = Array.from(
+    { length: letterCount },
+    (_, index) => lineup.at(index) ?? null
+  )
+  const hasEmptyFirstSeat = seats.slice(0, groupSize).includes(null)
+  const hasSecondGroupPlayer = seats
+    .slice(groupSize)
+    .some((seat) => seat !== null)
+
+  if (groupSize >= letterCount || !hasEmptyFirstSeat || !hasSecondGroupPlayer) {
+    return null
+  }
+
+  const seated = seats.filter((seat) => seat !== null)
+
+  return seats.map((_, index) => seated.at(index) ?? null)
+}

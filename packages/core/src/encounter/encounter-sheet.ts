@@ -26,6 +26,17 @@ const DOUBLES_LABEL_PREFIX = 'Double'
 export const isDoublesLabel = (label: string | null): boolean =>
   label?.startsWith(`${DOUBLES_LABEL_PREFIX} `) === true
 
+/** The two letters a singles line's label names ("DR": D for home, R for away); `null` for a doubles. */
+export const sheetLettersOf = (
+  label: string | null
+): { away: string; home: string } | null => {
+  const [home, away, ...rest] = [...(label ?? '')]
+
+  return home === undefined || away === undefined || rest.length > 0
+    ? null
+    : { away, home }
+}
+
 const labelFor = (line: SheetLine): string =>
   line.kind === 'singles'
     ? `${line.home}${line.away}`

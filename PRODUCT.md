@@ -87,7 +87,11 @@ another sport can adopt it.
     numbers (2k−1, 2k host one encounter), the club's 8-table hall numbering
     the stacked pair 1–2 then rows 3–4, 5–6, 7–8;
   - a forfeit gives a walkover on every match of the absent player not yet
-    started;
+    started, or of a letter nobody holds when a team comes one short, and
+    one tap takes the whole forfeit back;
+  - a player away for the whole day goes in the second group (D–F, R–T):
+    an empty seat of the first group is offered behind the second, the
+    players kept in their order, in one tap;
   - a penalty point that wins a game drops the rest of the penalty;
   - opponents' teams are white unless set otherwise.
 - The yearly Top 12 is an individual tournament: two pools seeded without
@@ -111,6 +115,11 @@ another sport can adopt it.
   - an encounter created from the club starts from each team's last
     composition, and the day's composition becomes the new last one
     ("Garder cette composition", on);
+  - players, teams and clubs are picked, never typed: the search reads the
+    first letters of any word of a name, accents aside, the club's own
+    first, then the most recently played; a name it does not find is added
+    once, as typed, to the club's directory (a typed team joins the club its
+    name starts with, a typed player needs a first and a family name);
   - a logo is resized on the device to a 256-pixel square and kept with the
     club, erased with it; a replaced logo stays reachable for the 30 days an
     event may still show it.
