@@ -1,0 +1,86 @@
+@use '../styles/typography'
+
+/// Drawn on `cqi` of its own width: the code and the QR keep their share at
+/// any size, from a TV to a sheet of paper.
+@layer components
+  .code-and-qr
+    container-type: inline-size
+    width: 100%
+
+  .code-and-qr-body
+    --cq: 1cqi
+
+    align-items: center
+    display: grid
+    gap: calc(var(--cq) * 6)
+    grid-template-columns: minmax(0, 1fr) calc(var(--cq) * 38)
+
+  .code-and-qr-code
+    display: flex
+    flex-direction: column
+    gap: calc(var(--cq) * 2.4)
+
+    p
+      @include typography.prompt
+
+      color: var(--ink-muted)
+      font-size: calc(var(--cq) * 2.4)
+      text-wrap: balance
+
+    strong
+      @include typography.code
+
+      font-size: calc(var(--cq) * 14)
+      white-space: nowrap
+
+  .code-and-qr-square
+    align-items: center
+    background: var(--surface)
+    display: flex
+    flex-direction: column
+    gap: calc(var(--cq) * 1.6)
+    padding: calc(var(--cq) * 3.2)
+    text-align: center
+
+    .qr-code
+      width: 100%
+
+    p
+      @include typography.prompt
+
+      font-size: calc(var(--cq) * 2.2)
+      margin-top: calc(var(--cq) * 0.8)
+      text-wrap: balance
+
+    small
+      color: var(--ink-muted)
+      font-size: calc(var(--cq) * 1.9)
+
+  @container (width < 30rem)
+    .code-and-qr-body
+      gap: var(--space-xl)
+      grid-template-columns: minmax(0, 1fr)
+
+    .code-and-qr-code
+      gap: var(--space-xs)
+      text-align: center
+
+      p
+        font-size: var(--text-m)
+
+      strong
+        font-size: var(--text-code-entry)
+
+    .code-and-qr-square
+      gap: var(--space-s)
+      padding: var(--space-xl)
+
+      .qr-code
+        width: min(100%, 15rem)
+
+      p
+        font-size: var(--text-l)
+        margin-top: var(--space-2xs)
+
+      small
+        font-size: var(--text-s)

@@ -292,6 +292,23 @@ export const FR_DICTIONARY = defineDictionary({
       name: 'Nom de l’écran',
       namePlaceholder: 'Salle B',
       open: 'Ouvrir',
+      pair: {
+        code: 'Code affiché sur l’écran',
+        done: '{name} est branché.',
+        error: {
+          expired:
+            'Ce code n’est plus valable. L’écran en affiche un nouveau : tapez-le.',
+          network: 'Pas de connexion. Réessayez.',
+          refused: 'L’écran n’a pas pu être branché. Réessayez.',
+          unknown_display: 'Cet écran a été retiré de la rencontre.',
+          wrong_code: 'Votre code organisateur n’est plus le bon.'
+        },
+        explain:
+          'Sur l’ordinateur branché au téléviseur, ouvrez <link>{url}</link>. Il affiche un code : tapez-le ici, ou scannez son QR code avec ce téléphone.',
+        submit: 'Brancher l’écran',
+        title: 'Brancher un écran',
+        which: 'Ce que montre l’écran'
+      },
       remove: 'Retirer {name}',
       title: 'Écrans'
     },
@@ -538,5 +555,20 @@ export const FR_DICTIONARY = defineDictionary({
     swap: 'Changer de côté',
     title: 'Arbitrage',
     undo: 'Annuler le dernier point'
+  },
+  wall: {
+    codeHint:
+      'Tapez ce code dans l’organisation de la rencontre, onglet Tables',
+    offline: 'Pas de connexion. Nouvel essai dans un instant…',
+    opening: 'Préparation du code…',
+    qrLabel: 'QR code pour brancher cet écran',
+    scanHint: 'Ou scannez-le avec le téléphone de l’organisateur',
+    title: 'Cet écran attend sa rencontre'
+  },
+  wallPairing: {
+    choose: 'Sur quelle rencontre brancher l’écran {code} ?',
+    invalid: 'Ce lien ne contient pas de code d’écran valable.',
+    none: 'Ce téléphone n’organise aucune rencontre. Ouvrez l’organisation sur l’appareil qui l’a créée, onglet Tables, et tapez le code {code}.',
+    title: 'Brancher un écran'
   }
 })

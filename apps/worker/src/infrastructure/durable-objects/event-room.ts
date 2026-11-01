@@ -16,6 +16,11 @@ import { openEvent } from '@/domain/event/event-service'
 import { ERASED_EVENT_NOTICE, handleFrame } from '@/domain/event/event-session'
 import { createEventStore, type EventStore } from '@/domain/event/event-store'
 import { snapshotMessageFor } from '@/domain/event/event-view'
+import {
+  vouchForWall,
+  type WallVouch,
+  type WallVouchRefusal
+} from '@/domain/event/wall-vouching'
 import { nowMs } from '@/infrastructure/clock'
 import { drawSecureCode } from '@/infrastructure/ids'
 
@@ -87,6 +92,10 @@ export class EventRoom extends DurableObject<Env> {
     }
 
     return opened
+  }
+
+  vouchForWall(vouch: WallVouch): Result<void, WallVouchRefusal> {
+    return vouchForWall(this.store, vouch)
   }
 
   override alarm(): void {

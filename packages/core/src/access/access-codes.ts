@@ -9,7 +9,10 @@ import {
   type TableNumber,
   UMPIRE_CODE_LENGTH,
   type UmpireCode,
-  umpireCodeSchema
+  umpireCodeSchema,
+  WALL_PAIRING_CODE_LENGTH,
+  type WallPairingCode,
+  wallPairingCodeSchema
 } from '@scoreboard/protocol/identifiers'
 
 import { tableNumbers } from '../event/table-queue'
@@ -26,13 +29,24 @@ export const newOrganiserCode = (drawCode: DrawCode): OrganiserCode =>
 const newUmpireCode = (drawCode: DrawCode): UmpireCode =>
   drawCode(ACCESS_CODE_ALPHABET, UMPIRE_CODE_LENGTH)
 
+export const newWallPairingCode = (drawCode: DrawCode): WallPairingCode =>
+  drawCode(ACCESS_CODE_ALPHABET, WALL_PAIRING_CODE_LENGTH)
+
 const CODE_SEPARATORS = /[\s-]/g
+
+const typedCode = (typed: string): string =>
+  typed.replace(CODE_SEPARATORS, '').toUpperCase()
 
 /** What a person typed, read as an umpire code: case and spacing forgiven. */
 export const parseUmpireCode = (typed: string): UmpireCode | null => {
-  const parsed = umpireCodeSchema.safeParse(
-    typed.replace(CODE_SEPARATORS, '').toUpperCase()
-  )
+  const parsed = umpireCodeSchema.safeParse(typedCode(typed))
+
+  return parsed.success ? parsed.data : null
+}
+
+/** What a person typed or a scanned link held, read as a screen's pairing code. */
+export const parseWallPairingCode = (typed: string): WallPairingCode | null => {
+  const parsed = wallPairingCodeSchema.safeParse(typedCode(typed))
 
   return parsed.success ? parsed.data : null
 }

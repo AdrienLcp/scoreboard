@@ -1,6 +1,7 @@
 import type React from 'react'
 
 import { type QrModules, qrModulesFor } from '@/infrastructure/qr/qr-code'
+import { scannedUrlOf } from '@/infrastructure/qr/scanned-url'
 
 import './qr-code.sass'
 
@@ -43,7 +44,7 @@ type QrCodeProps = {
 
 /** A scannable code on its own white tile, whatever the screen around it. */
 export const QrCode: React.FC<QrCodeProps> = ({ label, url }) => {
-  const modules = qrModulesFor(url)
+  const modules = qrModulesFor(scannedUrlOf(url))
 
   if (modules.status === 'failure') {
     return null

@@ -35,6 +35,13 @@ const pageFor = {
   [paths.umpireEntry]: async () => ({
     Component: (await import('@/features/umpire/umpire-entry-page'))
       .UmpireEntryPage
+  }),
+  [paths.wall]: async () => ({
+    Component: (await import('@/features/wall/wall-page')).WallPage
+  }),
+  [paths.wallPairing]: async () => ({
+    Component: (await import('@/features/wall/wall-pairing-page'))
+      .WallPairingPage
   })
 } satisfies Record<RoutedPath, RouteObject['lazy']>
 

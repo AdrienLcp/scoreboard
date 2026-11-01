@@ -4,6 +4,7 @@ import type { InstantMs } from '@scoreboard/protocol/scoring-event'
 
 import type { EncounterLine } from '@/features/event/encounter-lines'
 import { toDate } from '@/infrastructure/dates'
+import { LinkText } from '@/presentation/components/link-text'
 import { QrCode } from '@/presentation/components/qr-code'
 import { useTranslate } from '@/presentation/i18n/i18n-context'
 import { RichText } from '@/presentation/i18n/rich-text'
@@ -80,7 +81,9 @@ export const WaitingStage: React.FC<WaitingStageProps> = ({
       <aside className='waiting-qr'>
         <QrCode label={translate('display.qrLabel')} url={spectatorUrl} />
         <p>{translate('display.follow')}</p>
-        <small>{spectatorUrl.replace(/^https?:\/\//, '')}</small>
+        <small>
+          <LinkText url={spectatorUrl} />
+        </small>
       </aside>
     </div>
   )

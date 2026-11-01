@@ -1,3 +1,4 @@
+import { useCallback } from 'react'
 import {
   generatePath,
   isRouteErrorResponse,
@@ -5,7 +6,8 @@ import {
   useLocation,
   useNavigate,
   useParams,
-  useRouteError
+  useRouteError,
+  useSearchParams
 } from 'react-router'
 
 import {
@@ -13,11 +15,15 @@ import {
   displayIdSchema,
   type EventId,
   eventIdSchema,
-  type UmpireCode
+  type UmpireCode,
+  type WallPairingCode
 } from '@scoreboard/protocol/identifiers'
 import { PAGE_ROUTES } from '@scoreboard/protocol/page-routes'
 
-import { parseUmpireCode } from '@scoreboard/core/access/access-codes'
+import {
+  parseUmpireCode,
+  parseWallPairingCode
+} from '@scoreboard/core/access/access-codes'
 
 export const paths = PAGE_ROUTES
 
@@ -54,9 +60,38 @@ export const umpirePathFor = ({
   eventId: EventId
 }): string => pathFor(paths.umpire, { eventId, umpireCode: code })
 
+export const wallPairingPathFor = (pairingCode: WallPairingCode): string =>
+  pathFor(paths.wallPairing, { pairingCode })
+
+/** The organiser console, opened on the form that puts a waiting screen on the event. */
+export const organiserPairingPathFor = ({
+  eventId,
+  pairingCode
+}: {
+  eventId: EventId
+  pairingCode: WallPairingCode
+}): string =>
+  `${organiserPathFor(eventId)}?${PAIRING_SEARCH_PARAM}=${pairingCode}`
+
+const PAIRING_SEARCH_PARAM = 'pair'
+
+export const usePairingSearchParam = (): WallPairingCode | null => {
+  const [search] = useSearchParams()
+  const typed = search.get(PAIRING_SEARCH_PARAM)
+
+  return typed === null ? null : parseWallPairingCode(typed)
+}
+
+export const useWallPairingCodeParam = (): WallPairingCode | null => {
+  const { pairingCode } = useParams<PathParam<typeof paths.wallPairing>>()
+
+  return pairingCode === undefined ? null : parseWallPairingCode(pairingCode)
+}
+
+/** Parameters are read case-blind: a scanned link arrives in capitals. */
 export const useEventIdParam = (): EventId | null => {
   const { eventId } = useParams<PathParam<typeof paths.display>>()
-  const parsed = eventIdSchema.safeParse(eventId)
+  const parsed = eventIdSchema.safeParse(eventId?.toLowerCase())
 
   return parsed.success ? parsed.data : null
 }
@@ -69,7 +104,7 @@ export const useDisplayIdParam = (): DisplayId | 'unknown' | null => {
     return null
   }
 
-  const parsed = displayIdSchema.safeParse(displayId)
+  const parsed = displayIdSchema.safeParse(displayId.toLowerCase())
 
   return parsed.success ? parsed.data : 'unknown'
 }
@@ -89,6 +124,18 @@ export const useNavigateTo = (): ((path: string) => void) => {
   return (path) => {
     void navigate(path)
   }
+}
+
+/** Moves to a page in place of this one, like a paired screen leaving its waiting page. */
+export const useReplaceWith = (): ((path: string) => void) => {
+  const navigate = useNavigate()
+
+  return useCallback(
+    (path: string) => {
+      void navigate(path, { replace: true })
+    },
+    [navigate]
+  )
 }
 
 /** The error that broke the route, flattened to one line for the error screen. */

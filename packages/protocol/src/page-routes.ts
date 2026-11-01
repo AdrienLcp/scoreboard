@@ -7,5 +7,7 @@ export const PAGE_ROUTES = {
   organiser: '/e/:eventId/organiser',
   spectator: '/e/:eventId',
   umpire: '/e/:eventId/umpire/:umpireCode',
-  umpireEntry: '/e/:eventId/umpire'
+  umpireEntry: '/e/:eventId/umpire',
+  wall: '/wall',
+  wallPairing: '/pair/:pairingCode'
 } as const

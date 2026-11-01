@@ -4,6 +4,7 @@ import { z } from 'zod'
 export const ACCESS_CODE_ALPHABET = 'ABCDEFGHJKLMNPQRSTUVWXYZ23456789'
 export const UMPIRE_CODE_LENGTH = 6
 export const ORGANISER_CODE_LENGTH = 12
+export const WALL_PAIRING_CODE_LENGTH = 6
 
 export const EVENT_ID_ALPHABET = 'abcdefghjkmnpqrstuvwxyz23456789'
 export const EVENT_ID_LENGTH = 10
@@ -25,6 +26,12 @@ export const organiserCodeSchema = z
   .string()
   .regex(codeOf(ACCESS_CODE_ALPHABET, ORGANISER_CODE_LENGTH))
 export type OrganiserCode = z.infer<typeof organiserCodeSchema>
+
+/** Shown by a screen waiting for its event, typed or scanned on the organiser's device. */
+export const wallPairingCodeSchema = z
+  .string()
+  .regex(codeOf(ACCESS_CODE_ALPHABET, WALL_PAIRING_CODE_LENGTH))
+export type WallPairingCode = z.infer<typeof wallPairingCodeSchema>
 
 export const playerIdSchema = z.uuid()
 export type PlayerId = z.infer<typeof playerIdSchema>

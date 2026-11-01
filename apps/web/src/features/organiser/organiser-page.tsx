@@ -12,8 +12,13 @@ import { useCurrentSnapshot } from '@/features/event/use-current-snapshot'
 import {
   displayPathFor,
   spectatorPathFor,
-  useEventIdParam
+  useEventIdParam,
+  usePairingSearchParam
 } from '@/infrastructure/router/navigation'
+import {
+  forgetOrganisedEvent,
+  rememberOrganisedEvent
+} from '@/infrastructure/storage/organised-events-storage'
 import {
   forgetOrganiserCode,
   readOrganiserCode,
@@ -44,6 +49,7 @@ import { MatchesEditor } from './matches-editor'
 import { PlayersEditor } from './players-editor'
 import { TableAccesses } from './table-accesses'
 import { useOrganiserConsole } from './use-organiser-console'
+import { WallPairingForm } from './wall-pairing-form'
 
 import './organiser-page.sass'
 
@@ -93,12 +99,27 @@ const OrganiserConsole: React.FC<{ code: OrganiserCode; eventId: EventId }> = ({
   const { snapshot } = organiser
   const { snapshot: event } = useCurrentSnapshot(snapshot?.event ?? null)
   const isGone = isEventGone(organiser.error)
+  const scannedPairingCode = usePairingSearchParam()
+  const eventName = snapshot?.setup.name ?? null
 
   useEffect(() => {
     if (isGone) {
       forgetOrganiserCode(eventId)
+      forgetOrganisedEvent(eventId)
     }
   }, [eventId, isGone])
+
+  useEffect(() => {
+    if (eventName !== null && scannedPairingCode !== null) {
+      keepSelectedTabInView(tabBar.current)
+    }
+  }, [eventName, scannedPairingCode])
+
+  useEffect(() => {
+    if (eventName !== null) {
+      rememberOrganisedEvent({ eventId, name: eventName })
+    }
+  }, [eventId, eventName])
 
   if (snapshot === null || event === null || isGone) {
     return (
@@ -169,7 +190,7 @@ const OrganiserConsole: React.FC<{ code: OrganiserCode; eventId: EventId }> = ({
       )}
       <Tabs
         className='organiser-tabs'
-        defaultSelectedKey='live'
+        defaultSelectedKey={scannedPairingCode === null ? 'live' : 'tables'}
         onSelectionChange={() => keepSelectedTabInView(tabBar.current)}
       >
         <div className='organiser-tab-bar' ref={tabBar}>
@@ -215,6 +236,12 @@ const OrganiserConsole: React.FC<{ code: OrganiserCode; eventId: EventId }> = ({
         </TabPanel>
         <TabPanel id='tables'>
           <div className='organiser-stack'>
+            <WallPairingForm
+              code={code}
+              eventId={eventId}
+              scannedCode={scannedPairingCode}
+              setup={setup}
+            />
             <h2 className='organiser-subheading'>
               {translate('organiser.access.title')}
             </h2>

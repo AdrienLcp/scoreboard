@@ -13,6 +13,7 @@ import { sideName } from '@/features/event/participant-names'
 import { scoreText, versusText } from '@/features/event/score-text'
 import { startLabel } from '@/features/event/start-label'
 import { toDate } from '@/infrastructure/dates'
+import { LinkText } from '@/presentation/components/link-text'
 import { QrCode } from '@/presentation/components/qr-code'
 import { TableNumber } from '@/presentation/components/table-number'
 import { useTranslate } from '@/presentation/i18n/i18n-context'
@@ -156,7 +157,9 @@ export const SummaryColumn: React.FC<SummaryColumnProps> = ({
         <QrCode label={translate('display.qrLabel')} url={spectatorUrl} />
         <div>
           <p>{translate('display.follow')}</p>
-          <small>{spectatorUrl.replace(/^https?:\/\//, '')}</small>
+          <small>
+            <LinkText url={spectatorUrl} />
+          </small>
         </div>
       </section>
     </aside>

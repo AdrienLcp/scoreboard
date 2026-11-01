@@ -4,6 +4,7 @@ import { countingCode } from '../testing/counting-code'
 import {
   newOrganiserCode,
   parseUmpireCode,
+  parseWallPairingCode,
   tableAccessesFor
 } from './access-codes'
 
@@ -14,6 +15,16 @@ describe('parseUmpireCode', () => {
 
   it('[access] refuses letters a code never holds', () => {
     expect(parseUmpireCode('ABCDE0')).toBeNull()
+  })
+})
+
+describe('parseWallPairingCode', () => {
+  it('[access] reads the code out of what a scan or a person typed', () => {
+    expect(parseWallPairingCode('k7m-q2x')).toBe('K7MQ2X')
+  })
+
+  it('[access] refuses a code of the wrong length', () => {
+    expect(parseWallPairingCode('K7MQ2')).toBeNull()
   })
 })
 

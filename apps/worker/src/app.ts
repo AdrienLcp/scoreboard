@@ -3,12 +3,14 @@ import { Hono } from 'hono'
 import { API_PREFIX, SOCKET_PREFIX } from '@scoreboard/protocol/routes'
 
 import { eventRoomsOf } from '@/infrastructure/durable-objects/event-room-namespace'
+import { wallPairingsOf } from '@/infrastructure/durable-objects/wall-pairing-namespace'
 import {
   answerNotFound,
   answerUnexpected
 } from '@/infrastructure/http/error-handling'
 import { registerEventRoutes } from '@/infrastructure/http/event-routes'
 import { serveWebApp } from '@/infrastructure/http/serve-web-app'
+import { registerWallPairingRoutes } from '@/infrastructure/http/wall-pairing-routes'
 import type { WorkerApp } from '@/infrastructure/http/worker-app'
 
 /** The worker's front door: the API and the event sockets; every other address is the web app. */
@@ -18,10 +20,12 @@ export const createApp = (): WorkerApp => {
   app.use(async (context, next) => {
     context.set('assets', context.env.ASSETS)
     context.set('eventRooms', eventRoomsOf(context.env.EVENT_ROOMS))
+    context.set('wallPairings', wallPairingsOf(context.env.WALL_PAIRINGS))
     await next()
   })
 
   registerEventRoutes(app)
+  registerWallPairingRoutes(app)
 
   app.all(`${API_PREFIX}/*`, answerNotFound)
   app.all(`${SOCKET_PREFIX}/*`, answerNotFound)

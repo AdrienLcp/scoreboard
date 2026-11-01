@@ -1,0 +1,53 @@
+@use '../../presentation/styles/layout'
+@use '../../presentation/styles/typography'
+
+/// Drawn on `--cu` like the display it turns into, so the code reads from
+/// across the hall on any TV.
+@layer components
+  .wall-page
+    --cu: min(1dvh, 0.5625vw)
+    --wall-width: min(100%, calc(var(--cu) * 150))
+    --gutter-left: max(calc(var(--cu) * 4), var(--safe-area-left))
+    --gutter-right: max(calc(var(--cu) * 4), var(--safe-area-right))
+
+    display: grid
+    grid-template-rows: auto minmax(0, 1fr)
+    min-height: 100dvh
+    padding: max(calc(var(--cu) * 3), var(--safe-area-top)) var(--gutter-right) max(calc(var(--cu) * 3), var(--safe-area-bottom)) var(--gutter-left)
+
+  .wall-header
+    justify-self: center
+    width: var(--wall-width)
+
+  .wall-body
+    align-content: center
+    display: grid
+    gap: calc(var(--cu) * 6)
+    justify-self: center
+    width: var(--wall-width)
+
+    h1
+      @include typography.display-title
+
+      font-size: calc(var(--cu) * 6)
+      text-wrap: balance
+
+  .wall-status
+    @include typography.emphasis
+
+    color: var(--ink-muted)
+    font-size: calc(var(--cu) * 3)
+
+  @include layout.container-narrow(45rem, page)
+    .wall-page
+      --cu: 0.4375rem
+      --gutter-left: inherit
+      --gutter-right: inherit
+
+    .wall-body
+      align-content: start
+      gap: var(--space-2xl)
+      padding-top: var(--space-2xl)
+
+      h1
+        font-size: var(--text-title)

@@ -3,8 +3,9 @@ import { SITE_ORIGIN } from '@scoreboard/protocol/site'
 
 import type { AssetFetcher } from './worker-app'
 
+/** Case-blind: a QR code writes its link in capitals to stay small. */
 const PAGE_PATTERNS = Object.values(PAGE_ROUTES).map(
-  (pathname) => new URLPattern({ pathname })
+  (pathname) => new URLPattern({ pathname }, { ignoreCase: true })
 )
 
 const withoutTrailingSlash = (pathname: string): string =>

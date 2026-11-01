@@ -9,7 +9,9 @@ import {
   apiErrorResponseSchema,
   createdEventSchema,
   EVENT_SOCKET_ROUTE,
-  fillRoute
+  fillRoute,
+  openedWallPairingSchema,
+  wallPairingStatusSchema
 } from '@scoreboard/protocol/routes'
 import { serverMessageSchema } from '@scoreboard/protocol/server-message'
 import { BEST_OF_3 } from '@scoreboard/protocol/testing/match-formats'
@@ -126,5 +128,92 @@ describe('the worker', () => {
       'snapshot.organiser'
     )
     socket.close()
+  })
+})
+
+describe('the wall pairing', () => {
+  const openEvent = async () =>
+    createdEventSchema.parse(
+      await (
+        await postEvent(
+          JSON.stringify({ format: BEST_OF_3, name: 'Club day', tableCount: 2 })
+        )
+      ).json()
+    )
+
+  const openPairing = async () =>
+    openedWallPairingSchema.parse(
+      await (
+        await server.fetch(API_ROUTES.wallPairings, { method: 'POST' })
+      ).json()
+    ).code
+
+  const statusOf = (pairingCode: string) =>
+    server.fetch(fillRoute(API_ROUTES.wallPairing, { pairingCode }))
+
+  const claim = (pairingCode: string, body: object) =>
+    server.fetch(fillRoute(API_ROUTES.wallPairingClaim, { pairingCode }), {
+      body: JSON.stringify(body),
+      headers: { 'Content-Type': 'application/json' },
+      method: 'POST'
+    })
+
+  it('hands the screen its event once the organiser claims it, then forgets the code', async () => {
+    const { eventId, organiserCode } = await openEvent()
+    const pairingCode = await openPairing()
+
+    expect(
+      wallPairingStatusSchema.parse(await (await statusOf(pairingCode)).json())
+    ).toEqual({ status: 'waiting' })
+
+    const claimed = await claim(pairingCode, {
+      displayId: null,
+      eventId,
+      organiserCode
+    })
+
+    expect(claimed.status).toBe(204)
+    expect(
+      wallPairingStatusSchema.parse(await (await statusOf(pairingCode)).json())
+    ).toEqual({ displayId: null, eventId, status: 'paired' })
+    expect((await statusOf(pairingCode)).status).toBe(404)
+  })
+
+  it('refuses a claim without the organiser code', async () => {
+    const { eventId } = await openEvent()
+    const pairingCode = await openPairing()
+    const claimed = await claim(pairingCode, {
+      displayId: null,
+      eventId,
+      organiserCode: 'ABCDEFGHJKLM'
+    })
+
+    expect(claimed.status).toBe(403)
+    expect(await errorCodeOf(claimed)).toBe('wrong_code')
+  })
+
+  it('refuses a display the event does not have', async () => {
+    const { eventId, organiserCode } = await openEvent()
+    const pairingCode = await openPairing()
+    const claimed = await claim(pairingCode, {
+      displayId: crypto.randomUUID(),
+      eventId,
+      organiserCode
+    })
+
+    expect(claimed.status).toBe(422)
+    expect(await errorCodeOf(claimed)).toBe('unknown_display')
+  })
+
+  it('answers 404 on a code no screen drew', async () => {
+    const { eventId, organiserCode } = await openEvent()
+    const claimed = await claim('ABCDEF', {
+      displayId: null,
+      eventId,
+      organiserCode
+    })
+
+    expect(claimed.status).toBe(404)
+    expect((await statusOf('ABCDEF')).status).toBe(404)
   })
 })

@@ -21,11 +21,17 @@
     "port": 8788
   },
   "durable_objects": {
-    "bindings": [{ "class_name": "EventRoom", "name": "EVENT_ROOMS" }]
+    "bindings": [
+      { "class_name": "EventRoom", "name": "EVENT_ROOMS" },
+      { "class_name": "WallPairingRoom", "name": "WALL_PAIRINGS" }
+    ]
   },
   "main": "src/index.ts",
   // The free plan only offers Durable Objects backed by SQLite.
-  "migrations": [{ "new_sqlite_classes": ["EventRoom"], "tag": "v1" }],
+  "migrations": [
+    { "new_sqlite_classes": ["EventRoom"], "tag": "v1" },
+    { "new_sqlite_classes": ["WallPairingRoom"], "tag": "v2" }
+  ],
   "name": "scoreboard",
   "observability": { "enabled": true },
   "routes": [{ "custom_domain": true, "pattern": "scoreboard.adrienlcp.com" }],
