@@ -2,6 +2,7 @@ import { z } from 'zod'
 
 import { eventSetupSchema, matchSetupSchema } from './event-setup'
 import {
+  displayIdSchema,
   encounterIdSchema,
   matchIdSchema,
   tableNumberSchema,
@@ -86,7 +87,16 @@ export const tableAccessSchema = z.object({
 })
 export type TableAccess = z.infer<typeof tableAccessSchema>
 
+/** A screen at least one TV shows right now. */
+export const connectedScreenSchema = z.object({
+  /** `null` for the screen showing every table. */
+  displayId: displayIdSchema.nullable(),
+  tvCount: z.number().int().min(1)
+})
+export type ConnectedScreen = z.infer<typeof connectedScreenSchema>
+
 export const organiserSnapshotSchema = z.object({
+  connectedScreens: z.array(connectedScreenSchema).default([]),
   event: publicSnapshotSchema,
   setup: eventSetupSchema,
   tableAccesses: z.array(tableAccessSchema)

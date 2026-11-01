@@ -7,7 +7,11 @@ import type { MatchSetup } from '@scoreboard/protocol/event-setup'
 import type { ServerMessage } from '@scoreboard/protocol/server-message'
 import { matchOn, setupWith } from '@scoreboard/protocol/testing/event-setups'
 import { BEST_OF_3 } from '@scoreboard/protocol/testing/match-formats'
-import { point, started } from '@scoreboard/protocol/testing/scoring-events'
+import {
+  point,
+  retirement,
+  started
+} from '@scoreboard/protocol/testing/scoring-events'
 import { PROTOCOL_VERSION } from '@scoreboard/protocol/version'
 
 import { countingCode } from '@scoreboard/core/testing/counting-code'
@@ -48,6 +52,7 @@ const send = (
 ) =>
   handleFrame({
     admission,
+    connectedScreens: [],
     drawCode: countingCode(),
     nowMs,
     raw: JSON.stringify(message),
@@ -301,6 +306,37 @@ describe('handleFrame', () => {
       expect(outcome.replies).toEqual([
         { reason: 'table_out_of_range', type: 'setup.refused' }
       ])
+    })
+
+    it('[put-away] resumes a match left waiting on the first table whose match ends', () => {
+      const store = programmedStore()
+      const waiting = matchOn(null)
+      const organiser: Admission = { role: 'organiser' }
+
+      send(store, organiser, {
+        setup: programme([tableOneMatch, tableTwoMatch, waiting]),
+        type: 'setup.save'
+      })
+      send(store, organiser, {
+        event: started(),
+        matchId: waiting.id,
+        type: 'match.record'
+      })
+      start(store)
+
+      const tableOf = () =>
+        store.readSetup()?.matches.find((match) => match.id === waiting.id)
+          ?.table
+
+      expect(tableOf()).toBeNull()
+
+      send(store, umpireAtTableOne, {
+        event: retirement('away'),
+        matchId: tableOneMatch.id,
+        type: 'match.record'
+      })
+
+      expect(tableOf()).toBe(1)
     })
   })
   describe('deleting the event', () => {

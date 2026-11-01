@@ -289,7 +289,11 @@ export const ClubEncounterForm: React.FC<ClubEncounterFormProps> = ({
         )}
         label={translate('organiser.clubEncounter.tables')}
         onChange={setFirstTable}
-        placeholder={translate('organiser.clubEncounter.noTables')}
+        placeholder={translate(
+          home === null
+            ? 'organiser.clubEncounter.tablesAfterTeam'
+            : 'organiser.clubEncounter.noTables'
+        )}
         selectedId={tables[0] === undefined ? null : String(tables[0])}
       />
       {home === null || away === null ? null : (

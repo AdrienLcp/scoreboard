@@ -1,5 +1,5 @@
 import type React from 'react'
-import { useRef, useState } from 'react'
+import { useEffect, useRef, useState } from 'react'
 
 import type { EventSetup } from '@scoreboard/protocol/event-setup'
 import type {
@@ -13,6 +13,7 @@ import type {
   MatchId,
   TableNumber
 } from '@scoreboard/protocol/identifiers'
+import type { MatchStatus } from '@scoreboard/protocol/match-state'
 import type { ScoringEvent } from '@scoreboard/protocol/scoring-event'
 
 import {
@@ -25,12 +26,19 @@ import {
   hallPlanOf,
   isInTouchingBlock,
   moveHallTables,
-  putAwayHallTables,
   putBackHallTable,
   swapHallBlocks,
   swapHallTables,
   turnHallTable
 } from '@scoreboard/core/hall/hall-plan'
+import {
+  freeTablesFor,
+  type MatchStatusOf,
+  matchesRunningOn,
+  type PutAwayDestination,
+  putAwayTables,
+  resumeWaitingMatchOn
+} from '@scoreboard/core/hall/table-put-away'
 
 import {
   type EncounterLine,
@@ -40,9 +48,11 @@ import { Button } from '@/presentation/components/button'
 import { Icon } from '@/presentation/components/icon'
 import { useTranslate } from '@/presentation/i18n/i18n-context'
 
+import { AwaySheet } from './away-sheet'
 import { BlockChooser, type ChoosableEncounter } from './block-chooser'
 import { HallTableSheet } from './hall-table-sheet'
-import { type BlockLabel, PlanFloor } from './plan-floor'
+import { blockLabelsOf, blockNameOf } from './plan-blocks'
+import { PlanFloor } from './plan-floor'
 import { SavedPlans } from './saved-plans'
 import {
   addTable,
@@ -58,6 +68,8 @@ import './hall-plan.sass'
 
 type HallPlanBoardProps = {
   accesses: readonly TableAccess[]
+  /** The side column's own panels, under the opened table's sheet. */
+  aside?: React.ReactNode
   event: PublicSnapshot
   eventId: EventId
   onRecord: (matchId: MatchId, event: ScoringEvent) => void
@@ -68,6 +80,23 @@ type HallPlanBoardProps = {
 /** The last change, said in words, with a way back. */
 type Notice = { previous: EventSetup | null; text: string }
 
+/**
+ * Tables about to be put away while matches run on them: where each match
+ * goes on, asked one match at a time, before anything changes.
+ */
+type PutAwayRequest = {
+  destinations: ReadonlyMap<MatchId, PutAwayDestination>
+  tables: readonly TableNumber[]
+}
+
+const statusOfIn = (event: PublicSnapshot): MatchStatusOf => {
+  const statuses = new Map<MatchId, MatchStatus>(
+    event.matches.map((match) => [match.id, match.state.status])
+  )
+
+  return (matchId) => statuses.get(matchId) ?? 'scheduled'
+}
+
 const colourOf = (event: PublicSnapshot, teamId: string) => {
   const colour =
     event.teams.find((team) => team.id === teamId)?.colour ??
@@ -75,11 +104,6 @@ const colourOf = (event: PublicSnapshot, teamId: string) => {
 
   return { background: colour, text: textColourOn(colour) }
 }
-
-const isWhite = (colour: string) =>
-  colour.toUpperCase() === DEFAULT_OPPONENT_COLOUR
-
-const blockName = (first: TableNumber) => `${first}–${first + 1}`
 
 /** The tables a match is being played on right now. */
 const playingTables = (event: PublicSnapshot): Set<TableNumber> =>
@@ -101,6 +125,7 @@ const playingTables = (event: PublicSnapshot): Set<TableNumber> =>
  */
 export const HallPlanBoard: React.FC<HallPlanBoardProps> = ({
   accesses,
+  aside,
   event,
   eventId,
   onRecord,
@@ -114,6 +139,9 @@ export const HallPlanBoard: React.FC<HallPlanBoardProps> = ({
     trigger: HTMLElement
   } | null>(null)
   const [notice, setNotice] = useState<Notice | null>(null)
+  const [putAwayRequest, setPutAwayRequest] = useState<PutAwayRequest | null>(
+    null
+  )
   const sheet = useRef<HTMLDivElement>(null)
   const plan = hallPlanOf(setup)
   const nextSpot = freeSpotOf(plan)
@@ -122,6 +150,24 @@ export const HallPlanBoard: React.FC<HallPlanBoardProps> = ({
   const hasBlocks = (setup.tournament ?? null) === null
   const selectedTable =
     selected !== null && selected <= setup.tableCount ? selected : null
+  const statusOf = statusOfIn(event)
+  const runningOn = (tables: readonly TableNumber[]) =>
+    matchesRunningOn({ matches: setup.matches, statusOf, tables })
+  const asked =
+    putAwayRequest === null
+      ? undefined
+      : runningOn(putAwayRequest.tables).find(
+          (running) => !putAwayRequest.destinations.has(running.id)
+        )
+  const askedView =
+    asked === undefined
+      ? undefined
+      : event.matches.find((match) => match.id === asked.id)
+
+  const revealSheet = () =>
+    requestAnimationFrame(() =>
+      sheet.current?.scrollIntoView({ behavior: 'smooth', block: 'nearest' })
+    )
 
   const save = (next: EventSetup, text: string) => {
     if (onSave(next)) {
@@ -144,26 +190,7 @@ export const HallPlanBoard: React.FC<HallPlanBoardProps> = ({
       line.tables.some((table) => blockOf(first).includes(table))
     )
 
-  const blocks = new Map<TableNumber, BlockLabel>(
-    Array.from({ length: Math.ceil(setup.tableCount / 2) }, (_, index) => {
-      const first = 2 * index + 1
-      const line = encounterOf(first)
-      const encounter = event.encounters.find(
-        (candidate) => candidate.id === line?.id
-      )
-      const colour =
-        encounter === undefined ? null : colourOf(event, encounter.home)
-
-      return [
-        first,
-        {
-          colour: colour === null || isWhite(colour.background) ? null : colour,
-          encounter:
-            line === undefined ? null : `${line.homeName} – ${line.awayName}`
-        }
-      ]
-    })
-  )
+  const blocks = blockLabelsOf({ event, tableCount: setup.tableCount })
 
   const choosable: ChoosableEncounter[] = lines.map((line) => {
     const encounter = event.encounters.find(
@@ -192,13 +219,52 @@ export const HallPlanBoard: React.FC<HallPlanBoardProps> = ({
     saveHall(
       turnHallTable(plan, table),
       isBlock
-        ? translate('organiser.plan.turnedBlock', { block: blockName(first) })
+        ? translate('organiser.plan.turnedBlock', { block: blockNameOf(first) })
         : translate('organiser.plan.turnedTable', { table }),
       isBlock
         ? translate('organiser.plan.noRoomToTurnBlock', {
-            block: blockName(first)
+            block: blockNameOf(first)
           })
         : translate('organiser.plan.noRoomToTurn', { table })
+    )
+  }
+
+  const finishPutAway = (
+    tables: readonly TableNumber[],
+    destinations: ReadonlyMap<MatchId, PutAwayDestination>
+  ) => {
+    setPutAwayRequest(null)
+
+    const moves = runningOn(tables).flatMap((running) => {
+      const destination = destinations.get(running.id)
+
+      if (destination === undefined) {
+        return []
+      }
+
+      return destination === 'waiting'
+        ? [
+            translate('organiser.plan.away.movedWaiting', {
+              from: running.table
+            })
+          ]
+        : [
+            translate('organiser.plan.away.movedOn', {
+              from: running.table,
+              to: destination
+            })
+          ]
+    })
+    const done =
+      tables.length > 1
+        ? translate('organiser.plan.putAwayBlock', {
+            block: blockNameOf(tables[0] ?? 1)
+          })
+        : translate('organiser.plan.putAwayDone', { table: tables[0] ?? 1 })
+
+    save(
+      putAwayTables({ destinations, setup, statusOf, tables }),
+      [done, ...moves].join(' ')
     )
   }
 
@@ -207,22 +273,66 @@ export const HallPlanBoard: React.FC<HallPlanBoardProps> = ({
       setSelected(null)
     }
 
-    save(
-      changeHall(setup, putAwayHallTables(plan, tables)),
-      tables.length > 1
-        ? translate('organiser.plan.putAwayBlock', {
-            block: blockName(tables[0] ?? 1)
-          })
-        : translate('organiser.plan.putAwayDone', { table: tables[0] ?? 1 })
-    )
+    if (runningOn(tables).length > 0) {
+      setPutAwayRequest({ destinations: new Map(), tables })
+      revealSheet()
+
+      return
+    }
+
+    finishPutAway(tables, new Map())
   }
 
-  const putBack = (table: TableNumber, at?: { x: number; y: number }) =>
-    saveHall(
-      putBackHallTable({ at, plan, table }),
-      translate('organiser.plan.putBackDone', { table }),
-      translate('organiser.plan.noRoomHere')
+  const chooseDestination = (destination: PutAwayDestination) => {
+    if (putAwayRequest === null || asked === undefined) {
+      return
+    }
+
+    const destinations = new Map(putAwayRequest.destinations).set(
+      asked.id,
+      destination
     )
+    const isEveryMatchPlaced = runningOn(putAwayRequest.tables).every(
+      (running) => destinations.has(running.id)
+    )
+
+    if (isEveryMatchPlaced) {
+      finishPutAway(putAwayRequest.tables, destinations)
+
+      return
+    }
+
+    setPutAwayRequest({ ...putAwayRequest, destinations })
+  }
+
+  useEffect(() => {
+    if (putAwayRequest !== null && asked === undefined) {
+      finishPutAway(putAwayRequest.tables, putAwayRequest.destinations)
+    }
+  })
+
+  const putBack = (table: TableNumber, at?: { x: number; y: number }) => {
+    const hall = putBackHallTable({ at, plan, table })
+
+    if (hall === null) {
+      setNotice({
+        previous: null,
+        text: translate('organiser.plan.noRoomHere')
+      })
+
+      return
+    }
+
+    const placed = changeHall(setup, hall)
+    const resumed = resumeWaitingMatchOn({ setup: placed, statusOf, table })
+
+    save(
+      resumed,
+      resumed === placed
+        ? translate('organiser.plan.putBackDone', { table })
+        : translate('organiser.plan.putBackResumed', { table })
+    )
+  }
 
   const swap = (target: DropTarget, tables: readonly TableNumber[]) => {
     const [first] = tables
@@ -246,8 +356,8 @@ export const HallPlanBoard: React.FC<HallPlanBoardProps> = ({
     save(
       changeHall(setup, swapHallBlocks(plan, first, target.first)),
       translate('organiser.plan.swappedBlocks', {
-        one: blockName(first),
-        other: blockName(target.first)
+        one: blockNameOf(first),
+        other: blockNameOf(target.first)
       })
     )
   }
@@ -259,7 +369,7 @@ export const HallPlanBoard: React.FC<HallPlanBoardProps> = ({
     if (id === null) {
       save(
         clearBlock(setup, block),
-        translate('organiser.plan.blockCleared', { block: blockName(first) })
+        translate('organiser.plan.blockCleared', { block: blockNameOf(first) })
       )
 
       return
@@ -270,7 +380,7 @@ export const HallPlanBoard: React.FC<HallPlanBoardProps> = ({
     save(
       seatEncounterOnBlock({ block, encounterId: id, setup }),
       translate('organiser.plan.blockSeated', {
-        block: blockName(first),
+        block: blockNameOf(first),
         encounter:
           line === undefined ? '' : `${line.homeName} – ${line.awayName}`
       })
@@ -331,7 +441,7 @@ export const HallPlanBoard: React.FC<HallPlanBoardProps> = ({
                 moveHallTables({ plan, shiftX, shiftY, tables }),
                 tables.length > 1
                   ? translate('organiser.plan.movedBlock', {
-                      block: blockName(tables[0] ?? 1)
+                      block: blockNameOf(tables[0] ?? 1)
                     })
                   : translate('organiser.plan.movedTable', {
                       table: tables[0] ?? 1
@@ -340,13 +450,9 @@ export const HallPlanBoard: React.FC<HallPlanBoardProps> = ({
               ),
             onPickBlock: (first, trigger) => setChoosing({ first, trigger }),
             onPickTable: (table) => {
+              setPutAwayRequest(null)
               setSelected((current) => (current === table ? null : table))
-              requestAnimationFrame(() =>
-                sheet.current?.scrollIntoView({
-                  behavior: 'smooth',
-                  block: 'nearest'
-                })
-              )
+              revealSheet()
             },
             onPutAway: putAway,
             onPutBack: putBack,
@@ -365,7 +471,7 @@ export const HallPlanBoard: React.FC<HallPlanBoardProps> = ({
           onTurn={turn}
           plan={drawn}
           playing={playingTables(event)}
-          selected={selectedTable}
+          selected={asked?.table ?? selectedTable}
         />
         {choosing === null ? null : (
           <BlockChooser
@@ -378,7 +484,26 @@ export const HallPlanBoard: React.FC<HallPlanBoardProps> = ({
         )}
       </section>
       <div className='hall-side' ref={sheet}>
-        {selectedTable === null ? null : (
+        {putAwayRequest === null ||
+        asked === undefined ||
+        askedView === undefined ? null : (
+          <AwaySheet
+            event={event}
+            free={freeTablesFor({
+              leaving: putAwayRequest.tables,
+              setup,
+              statusOf,
+              taken: [...putAwayRequest.destinations.values()].filter(
+                (destination) => destination !== 'waiting'
+              )
+            })}
+            key={asked.id}
+            match={{ ...askedView, table: asked.table }}
+            onCancel={() => setPutAwayRequest(null)}
+            onChoose={chooseDestination}
+          />
+        )}
+        {putAwayRequest !== null || selectedTable === null ? null : (
           <HallTableSheet
             access={accesses.find((access) => access.table === selectedTable)}
             canDelete={setup.tableCount > 1}
@@ -402,6 +527,7 @@ export const HallPlanBoard: React.FC<HallPlanBoardProps> = ({
             table={selectedTable}
           />
         )}
+        {aside}
       </div>
     </div>
   )

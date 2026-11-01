@@ -7,7 +7,6 @@ import type { TableNumber } from '@scoreboard/protocol/identifiers'
 import {
   areaOf,
   type HallArea,
-  hallTableOf,
   isInTouchingBlock,
   reservedTablesOf,
   standingPairsOf,
@@ -18,6 +17,9 @@ import { Icon } from '@/presentation/components/icon'
 import { TableTop } from '@/presentation/components/table-top'
 import { useTranslate } from '@/presentation/i18n/i18n-context'
 
+import { type BlockLabel, blockNameOf } from './plan-blocks'
+import { floorStyleOf, percentOf, placedOn } from './plan-geometry'
+import { PlanLinks } from './plan-links'
 import {
   type PlanDrag,
   type PlanGestures,
@@ -30,13 +32,6 @@ import './plan-floor.sass'
 /** A keyboard step moves a table half a metre, two and a half with Shift. */
 const KEY_STEP_M = 0.5
 const KEY_LEAP_M = 2.5
-
-/** What a block's handle shows: its encounter and the home team's colour. */
-export type BlockLabel = {
-  /** `null` wears ink: no encounter, or a white team. */
-  colour: { background: string; text: string } | null
-  encounter: string | null
-}
 
 type PlanFloorProps = {
   /** Each block by its first table. */
@@ -54,18 +49,6 @@ type PlanFloorProps = {
   playing: ReadonlySet<TableNumber>
   selected: TableNumber | null
 }
-
-const percentOf = (metres: number, total: number) =>
-  `${(metres / total) * 100}%`
-
-const placed = (area: HallArea, plan: HallPlan): React.CSSProperties => ({
-  height: percentOf(area.height, plan.depth),
-  left: percentOf(area.x, plan.width),
-  top: percentOf(area.y, plan.depth),
-  width: percentOf(area.width, plan.width)
-})
-
-const blockLabelOf = (first: TableNumber) => `${first}–${first + 1}`
 
 const isLifted = (drag: PlanDrag | null, table: TableNumber) =>
   drag?.kind === 'tables' && drag.tables.includes(table)
@@ -102,7 +85,7 @@ export const PlanFloor: React.FC<PlanFloorProps> = ({
     drag?.kind === 'tables'
       ? drag.isBlock
         ? translate('organiser.plan.theBlock', {
-            block: blockLabelOf(drag.tables[0] ?? 1)
+            block: blockNameOf(drag.tables[0] ?? 1)
           })
         : translate('organiser.plan.theTable', { table: drag.tables[0] ?? 1 })
       : ''
@@ -135,38 +118,9 @@ export const PlanFloor: React.FC<PlanFloorProps> = ({
         aria-label={translate('organiser.hall.label')}
         className='plan-floor'
         ref={floor}
-        style={{
-          '--hall-width': plan.width,
-          aspectRatio: `${plan.width} / ${plan.depth}`
-        }}
+        style={floorStyleOf(plan)}
       >
-        <svg
-          aria-hidden='true'
-          className='plan-links'
-          preserveAspectRatio='none'
-          viewBox={`0 0 ${plan.width} ${plan.depth}`}
-        >
-          {pairs
-            .filter((pair) => !pair.isAdjacent)
-            .map((pair) => {
-              const [one, other] = pair.tables.map((table) => {
-                const here = hallTableOf(shown, table)
-
-                return here === undefined ? pair.area : areaOf(here)
-              })
-
-              return one === undefined || other === undefined ? null : (
-                <line
-                  key={pair.tables[0]}
-                  vectorEffect='non-scaling-stroke'
-                  x1={one.x + one.width / 2}
-                  x2={other.x + other.width / 2}
-                  y1={one.y + one.height / 2}
-                  y2={other.y + other.height / 2}
-                />
-              )
-            })}
-        </svg>
+        <PlanLinks pairs={pairs} plan={shown} />
         {drag !== null && drag.guideX !== null ? (
           <span
             aria-hidden='true'
@@ -187,7 +141,7 @@ export const PlanFloor: React.FC<PlanFloorProps> = ({
           const { table } = hallTable
           const turnLabel = isInTouchingBlock(plan, table)
             ? translate('organiser.plan.turnBlock', {
-                block: blockLabelOf(table % 2 === 0 ? table - 1 : table)
+                block: blockNameOf(table % 2 === 0 ? table - 1 : table)
               })
             : translate('organiser.plan.turnTable', { table })
 
@@ -206,7 +160,7 @@ export const PlanFloor: React.FC<PlanFloorProps> = ({
               }
               data-turned={hallTable.isTurned || undefined}
               key={table}
-              style={placed(areaOf(hallTable), plan)}
+              style={placedOn(areaOf(hallTable), plan)}
             >
               <button
                 aria-label={translate('organiser.plan.tableLabel', { table })}
@@ -288,7 +242,7 @@ export const PlanFloor: React.FC<PlanFloorProps> = ({
                 data-wide={pair.area.width >= pair.area.height || undefined}
                 key={first}
                 style={{
-                  ...placed(pair.area, plan),
+                  ...placedOn(pair.area, plan),
                   '--block': colour?.background,
                   '--on-block': colour?.text
                 }}
@@ -296,7 +250,7 @@ export const PlanFloor: React.FC<PlanFloorProps> = ({
                 <button
                   aria-haspopup='dialog'
                   aria-label={translate('organiser.plan.blockLabel', {
-                    block: blockLabelOf(first),
+                    block: blockNameOf(first),
                     encounter: label ?? translate('organiser.plan.noEncounter')
                   })}
                   className='plan-handle'
@@ -310,7 +264,7 @@ export const PlanFloor: React.FC<PlanFloorProps> = ({
                   type='button'
                 >
                   <Icon className='plan-handle-grip' name='grip' />
-                  <b>{blockLabelOf(first)}</b>
+                  <b>{blockNameOf(first)}</b>
                   <span>
                     {label ?? translate('organiser.plan.noEncounter')}
                   </span>
@@ -324,7 +278,7 @@ export const PlanFloor: React.FC<PlanFloorProps> = ({
           data-plan-action='add'
           hidden={drag !== null}
           onClick={onAdd}
-          style={placed(nextSpot, plan)}
+          style={placedOn(nextSpot, plan)}
           type='button'
         >
           <Icon name='plus' />

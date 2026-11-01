@@ -1,3 +1,4 @@
+import type { ConnectedScreen } from '@scoreboard/protocol/event-snapshot'
 import type { InstantMs } from '@scoreboard/protocol/scoring-event'
 import type { ServerMessage } from '@scoreboard/protocol/server-message'
 
@@ -9,10 +10,13 @@ import type { EventStore } from './event-store'
 /** The snapshot a socket's role may see, or `null` for an event that was never opened. */
 export const snapshotMessageFor = ({
   admission,
+  connectedScreens,
   nowMs,
   store
 }: {
   admission: Admission
+  /** The screens a TV shows right now: the organiser's alone to see. */
+  connectedScreens: readonly ConnectedScreen[]
   nowMs: InstantMs
   store: EventStore
 }): ServerMessage | null => {
@@ -33,6 +37,7 @@ export const snapshotMessageFor = ({
     case 'organiser':
       return {
         snapshot: {
+          connectedScreens: [...connectedScreens],
           event,
           setup,
           tableAccesses: store.readTableAccesses()

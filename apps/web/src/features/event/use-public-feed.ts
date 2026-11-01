@@ -1,32 +1,38 @@
-import { useState } from 'react'
+import { useMemo, useState } from 'react'
 
 import type { Credentials } from '@scoreboard/protocol/client-message'
 import type { PublicSnapshot } from '@scoreboard/protocol/event-snapshot'
-import type { EventId } from '@scoreboard/protocol/identifiers'
+import type { DisplayId, EventId } from '@scoreboard/protocol/identifiers'
 
 import { useEventSocket } from '@/infrastructure/messaging/use-event-socket'
 
 import { isEventGone } from './event-gone'
 
-type ReadOnlyRole = 'display' | 'spectator'
+type ReadOnlyFeed =
+  /** A big screen, saying which of the event's screens it shows: `null` for every table. */
+  { displayId: DisplayId | null; role: 'display' } | { role: 'spectator' }
 
-const CREDENTIALS_FOR = {
-  display: { role: 'display' },
-  spectator: { role: 'spectator' }
-} as const satisfies Record<ReadOnlyRole, Credentials>
-
-/** The event as the room sees it, kept live, for a screen that only watches; gone the moment it is erased. */
+/**
+ * The event as the room sees it, kept live, for a screen that only watches;
+ * gone the moment it is erased. A big screen says which screen it shows, so
+ * the organiser sees it connected.
+ */
 export const usePublicFeed = ({
   eventId,
-  role
-}: {
-  eventId: EventId
-  role: ReadOnlyRole
-}) => {
+  ...feed
+}: ReadOnlyFeed & { eventId: EventId }) => {
   const [snapshot, setSnapshot] = useState<PublicSnapshot | null>(null)
+  const displayId = feed.role === 'display' ? feed.displayId : undefined
+  const credentials = useMemo<Credentials>(
+    () =>
+      displayId === undefined
+        ? { role: 'spectator' }
+        : { displayId, role: 'display' },
+    [displayId]
+  )
 
   const socket = useEventSocket({
-    credentials: CREDENTIALS_FOR[role],
+    credentials,
     eventId,
     onMessage: (message) => {
       if (

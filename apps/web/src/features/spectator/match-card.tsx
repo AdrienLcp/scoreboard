@@ -84,7 +84,9 @@ export const MatchCard: React.FC<MatchCardProps> = ({
     >
       <PlainButton className='match-card-head' slot='trigger'>
         <span className='match-card-top'>
-          <TableNumber number={match.table ?? 0} />
+          {match.table === null && !isLive ? null : (
+            <TableNumber number={match.table} />
+          )}
           <span className='match-card-label'>{label}</span>
           {isLive ? (
             call === null ? (

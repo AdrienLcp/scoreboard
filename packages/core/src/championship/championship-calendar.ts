@@ -128,7 +128,8 @@ export const fixtureTeamsOf = (
 /**
  * The round a match day prepares: the one dated that day, otherwise the
  * first one not yet past where one of our teams still has its encounter to
- * play; `null` once the pool is played out.
+ * play, already prepared in an event or not, until its result stands;
+ * `null` once the pool is played out.
  */
 export const roundIndexForDay = ({
   day,
@@ -151,7 +152,7 @@ export const roundIndexForDay = ({
       (teamId) => teamId !== null && ownTeamIds.includes(teamId)
     )
 
-    return isOurs && fixture.result === null && fixture.playedAs === null
+    return isOurs && fixture.result === null
   }
   const next = pool.rounds.findIndex(
     (round) =>

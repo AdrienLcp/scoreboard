@@ -165,6 +165,54 @@ describe('championship calendar', () => {
       roundIndexForDay({ day: '2027-01-10', ownTeamIds: [ourTeam], pool })
     ).toBeNull()
   })
+
+  it('keeps a round prepared ahead as the next one until its result stands', () => {
+    const pool = poolOf(8)
+    const ourTeam = pool.teams[0] ?? randomUUID()
+    const prepared = {
+      ...pool,
+      rounds: pool.rounds.map((round, index) =>
+        index === 0
+          ? {
+              ...round,
+              fixtures: round.fixtures.map((fixture) => ({
+                ...fixture,
+                playedAs: { encounterId: randomUUID(), eventId: 'abcdefghij' }
+              }))
+            }
+          : round
+      )
+    }
+    const finished = {
+      ...prepared,
+      rounds: prepared.rounds.map((round, index) =>
+        index === 0
+          ? {
+              ...round,
+              fixtures: round.fixtures.map((fixture) => ({
+                ...fixture,
+                result: played(10, 4)
+              }))
+            }
+          : round
+      )
+    }
+
+    expect(
+      roundIndexForDay({
+        day: '2026-10-01',
+        ownTeamIds: [ourTeam],
+        pool: prepared
+      })
+    ).toBe(0)
+    expect(
+      roundIndexForDay({
+        day: '2026-10-01',
+        ownTeamIds: [ourTeam],
+        pool: finished
+      })
+    ).toBe(1)
+  })
 })
 
 describe('championship results', () => {

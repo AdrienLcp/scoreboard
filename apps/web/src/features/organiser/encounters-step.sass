@@ -1,0 +1,126 @@
+@use '../../presentation/styles/layout'
+@use '../../presentation/styles/typography'
+
+/// The step's two columns once the console is wide: the encounters, then the
+/// hall beside them, kept in view while the list scrolls; one column below.
+@layer components
+  .encounters-step
+    display: grid
+    gap: var(--space-xl) var(--space-2xl)
+
+    @include layout.container-wide(60rem, page)
+      align-items: start
+      grid-template-columns: minmax(0, 1fr) 23rem
+
+  .encounters-step-main, .encounters-step-single
+    display: grid
+    gap: var(--space-s)
+    min-width: 0
+
+  .encounters-step-head
+    align-items: center
+    display: flex
+    flex-wrap: wrap
+    gap: var(--space-3xs) var(--space-m)
+    justify-content: space-between
+    min-height: var(--control-height)
+
+    > h2
+      @include typography.label
+
+      margin: 0
+
+  .encounters-step-notice
+    align-items: center
+    background: var(--surface)
+    display: flex
+    flex-wrap: wrap
+    gap: var(--space-3xs) var(--space-s)
+    padding: var(--space-3xs) var(--space-3xs) var(--space-3xs) var(--space-m)
+
+    > p
+      @include typography.emphasis
+
+      flex: 1 1 14rem
+      margin: 0
+      min-width: 0
+
+  .encounters-step-list
+    display: grid
+    gap: var(--space-xs)
+
+  .encounters-step-away
+    @include typography.hint
+
+    align-items: flex-start
+    display: flex
+    gap: var(--space-xs)
+    margin: var(--space-xs) 0 0
+
+    > .icon
+      flex: none
+      margin-top: var(--space-4xs)
+
+  .encounters-step-add
+    display: grid
+    gap: var(--space-m)
+    margin-top: var(--space-xl)
+
+  .encounters-step-more-trigger
+    > .icon:last-child
+      transition: rotate var(--transition-base, 0s) var(--ease-out)
+
+    .encounters-step-more[data-expanded] & > .icon:last-child
+      rotate: 180deg
+
+  .encounters-step-forms
+    display: grid
+    gap: var(--space-m)
+    padding-top: var(--space-xs)
+
+  .encounters-step-side
+    align-content: start
+    display: grid
+    gap: var(--space-m)
+
+    @include layout.container-wide(60rem, page)
+      position: sticky
+      top: var(--space-m)
+
+  .encounters-step-hall
+    background: var(--surface)
+    display: grid
+    gap: var(--space-s)
+    padding: var(--space-m)
+
+    > h2
+      @include typography.label
+
+      margin: 0
+
+  .encounters-step-hint
+    @include typography.hint
+
+    font-size: var(--text-s)
+    margin: 0
+
+  .encounters-step-next
+    justify-content: space-between
+    width: 100%
+
+  .encounters-step-single > .encounters-step-next
+    justify-self: end
+    margin-top: var(--space-m)
+    width: auto
+
+  .encounter-drag-ghost
+    background: var(--surface)
+    box-shadow: inset 0 0 0 var(--stroke-bold) var(--ink), var(--shadow-overlay)
+    padding: var(--space-2xs)
+    pointer-events: none
+    position: fixed
+    translate: -50% -50%
+    z-index: 60
+
+    .block-chooser-teams
+      flex-wrap: nowrap

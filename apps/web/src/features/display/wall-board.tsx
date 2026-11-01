@@ -3,14 +3,16 @@ import type React from 'react'
 import type { PublicSnapshot } from '@scoreboard/protocol/event-snapshot'
 import type { EventId } from '@scoreboard/protocol/identifiers'
 import type { InstantMs } from '@scoreboard/protocol/scoring-event'
+import type { WallView } from '@scoreboard/protocol/wall-view'
 
 import { hallPlanOf } from '@scoreboard/core/hall/hall-plan'
 
 import { WallEncounter } from './wall-encounter'
-import { type WallArea, wallHallFor } from './wall-hall'
+import type { WallArea } from './wall-hall'
 import { WallJoin } from './wall-join'
 import type { WallRow } from './wall-rows'
 import { WallTable } from './wall-table'
+import { wallHallOn } from './wall-view'
 
 import './wall-board.sass'
 
@@ -20,6 +22,8 @@ type WallBoardProps = {
   rows: readonly WallRow[]
   snapshot: PublicSnapshot
   spectatorUrl: string
+  /** The layout this screen asked for; `null` leaves it to the plan. */
+  view: WallView | null
 }
 
 const areaStyle = (area: WallArea): React.CSSProperties => ({
@@ -32,17 +36,19 @@ const areaStyle = (area: WallArea): React.CSSProperties => ({
 /**
  * The club's wall: each encounter with its teams then its tables, every
  * table always in its place, and the way onto the spectators' page. Laid out
- * as the hall when its plan holds every encounter, the QR in a free place;
- * one row per encounter otherwise, the QR in a column beside.
+ * as the hall when the screen does not ask for rows and its plan holds every
+ * encounter, the QR in a free place; one row per encounter otherwise, the QR
+ * in a column beside.
  */
 export const WallBoard: React.FC<WallBoardProps> = ({
   eventId,
   nowMs,
   rows,
   snapshot,
-  spectatorUrl
+  spectatorUrl,
+  view
 }) => {
-  const hall = wallHallFor({ plan: hallPlanOf(snapshot), rows })
+  const hall = wallHallOn({ plan: hallPlanOf(snapshot), rows, view })
 
   const tableOf = (row: WallRow, wallTable: WallRow['tables'][number]) => (
     <WallTable

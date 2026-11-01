@@ -1,8 +1,8 @@
 import { z } from 'zod'
 
-import { clubIdentitySchema, hexColourSchema } from './club'
-import { encounterFormatIdSchema } from './encounter-format-id'
-import { hallPlanSchema } from './hall-plan'
+import { clubIdentitySchema, hexColourSchema } from './club.ts'
+import { encounterFormatIdSchema } from './encounter-format-id.ts'
+import { hallPlanSchema } from './hall-plan.ts'
 import {
   displayIdSchema,
   encounterIdSchema,
@@ -11,16 +11,17 @@ import {
   playerIdSchema,
   tableNumberSchema,
   teamIdSchema
-} from './identifiers'
-import { licenceSchema, rankingPointsSchema } from './licensee'
-import { logoUrlSchema } from './logo'
-import { matchFormatSchema } from './match-format'
+} from './identifiers.ts'
+import { licenceSchema, rankingPointsSchema } from './licensee.ts'
+import { logoUrlSchema } from './logo.ts'
+import { matchFormatSchema } from './match-format.ts'
 import {
   DEFAULT_MATCH_POINTS_RULE,
   matchPointsRuleIdSchema
-} from './match-points-rule'
-import { instantMsSchema } from './scoring-event'
-import { matchStageSchema, tournamentSchema } from './tournament'
+} from './match-points-rule.ts'
+import { instantMsSchema } from './scoring-event.ts'
+import { matchStageSchema, tournamentSchema } from './tournament.ts'
+import { wallViewSchema } from './wall-view.ts'
 
 export const MAX_PLAYERS = 500
 export const MAX_MATCHES = 1000
@@ -94,7 +95,9 @@ export type Encounter = z.infer<typeof encounterSchema>
 export const displaySchema = z.object({
   id: displayIdSchema,
   name: nameSchema,
-  tables: z.array(tableNumberSchema).min(1).max(MAX_TABLES)
+  tables: z.array(tableNumberSchema).min(1).max(MAX_TABLES),
+  /** The wall's layout on this screen; absent or `null` lets the plan decide. */
+  view: wallViewSchema.nullable().optional()
 })
 export type Display = z.infer<typeof displaySchema>
 
@@ -117,6 +120,11 @@ export const eventSetupSchema = z.object({
   tableCount: z.number().int().min(1).max(MAX_TABLES),
   teams: z.array(teamSchema).max(100),
   /** Pools then a bracket, where each player's team is the club he stands for. */
-  tournament: tournamentSchema.nullable().optional()
+  tournament: tournamentSchema.nullable().optional(),
+  /**
+   * The wall's layout on a screen showing every table, which has no display
+   * of its own; absent or `null` lets the plan decide.
+   */
+  wallView: wallViewSchema.nullable().optional()
 })
 export type EventSetup = z.infer<typeof eventSetupSchema>

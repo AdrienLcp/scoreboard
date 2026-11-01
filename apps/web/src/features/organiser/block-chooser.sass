@@ -1,74 +1,61 @@
 @use '../../presentation/styles/typography'
 
-/// The encounter of a block, picked from a short list under its handle.
+/// The rows of both choosers: the teams in their colours or a block's
+/// tables on the left, where it plays or who plays there on the right.
 @layer components
-  .block-chooser
-    max-width: min(24rem, calc(100vw - 2rem))
-    min-width: 16rem
-
-  .block-chooser-dialog
-    display: grid
-    gap: var(--space-2xs)
-    outline: none
-    padding: var(--space-xs)
-
-  .block-chooser-title
-    @include typography.label
-
-    margin: 0
-    padding: var(--space-3xs) var(--space-xs)
-
-  .block-chooser-list
-    display: grid
-    list-style: none
-    margin: 0
-    padding: 0
-
-  .block-chooser-option
-    @include typography.emphasis
-
-    align-items: center
-    background: transparent
-    border: 0
-    color: var(--ink)
+  .block-chooser-teams
     display: flex
-    gap: var(--space-xs)
-    min-height: var(--control-height)
-    padding: var(--space-2xs) var(--space-xs)
-    text-align: start
-    width: 100%
-
-    &[data-hovered],
-    &[data-focus-visible]
-      background: var(--surface-high)
-
-    &[aria-current]
-      @include typography.strong
-
-    &[data-none] .block-chooser-names
-      color: var(--ink-muted)
-
-  .block-chooser-swatches
-    display: flex
-    flex: none
-
-    span
-      background: var(--team)
-      box-shadow: var(--inset-hairline)
-      height: 1.25rem
-      width: 0.625rem
-
-  .block-chooser-names
     flex: 1
-    font-stretch: var(--stretch-name)
+    flex-wrap: wrap
+    gap: var(--space-3xs)
     min-width: 0
-    overflow: hidden
-    text-overflow: ellipsis
-    white-space: nowrap
+
+    .team-chip
+      font-size: var(--text-s)
+
+  .block-chooser-none
+    flex: 1
 
   .block-chooser-where
     @include typography.figure-secondary
 
+    align-items: center
     color: var(--ink-muted)
     display: inline-flex
     flex: none
+    font-size: var(--text-l)
+
+    [aria-current] > &
+      color: var(--ink)
+
+  .block-chooser-block
+    display: grid
+    flex: none
+    gap: var(--space-4xs)
+    min-width: 6.5rem
+
+    b
+      @include typography.figure
+
+      font-size: var(--text-xl)
+
+    small
+      @include typography.caption
+
+      color: var(--ink-muted)
+      font-size: var(--text-xs)
+
+  .block-chooser-what
+    align-items: center
+    color: var(--ink-muted)
+    display: flex
+    flex: 1
+    gap: var(--space-2xs)
+    justify-content: flex-end
+    min-width: 0
+
+    [aria-current] > &
+      color: var(--ink)
+
+    .team-chip
+      font-size: var(--text-s)

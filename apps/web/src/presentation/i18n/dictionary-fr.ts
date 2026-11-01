@@ -308,29 +308,106 @@ export const FR_DICTIONARY = defineDictionary({
     wrong_code: 'Ce code ne correspond à aucune table.'
   },
   home: {
-    club: 'Mon club',
-    create: 'Créer la rencontre',
-    createNote:
-      'Vous recevrez un code organisateur\u00a0: il ouvre la préparation et les corrections.',
-    creating: 'Création…',
+    create: 'Créer',
     display: 'Grand écran',
-    headline: 'Chaque match en direct, sur grand écran et dans la poche.',
+    events: {
+      empty: 'Aucun événement ouvert sur cet appareil.',
+      name: 'Nom de l’événement',
+      namePlaceholder: 'Tournoi de Noël',
+      newEvent: 'Nouvel événement',
+      note: 'Le plan « {plan} », 3 manches gagnantes : tout se change ensuite.',
+      title: 'Vos événements'
+    },
+    firstRun: {
+      code: 'Code du club',
+      create: 'Continuer',
+      join: 'Ouvrir le club',
+      joinHelp:
+        'Sur l’autre appareil, la page du club montre son QR code : scannez-le, ou tapez le code ici.',
+      joinTitle: 'Ouvrez-le avec son code',
+      known: 'Le club existe déjà sur un autre appareil ?',
+      name: 'Le nom de votre club',
+      namePlaceholder: 'PPC Angles'
+    },
+    free: {
+      pools:
+        'Les journées du championnat s’affichent ici dès que les poules sont recopiées dans <link>Mon club</link>.',
+      poolsDone:
+        'Plus aucune journée à venir dans les poules de <link>Mon club</link> : la prochaine phase s’y recopie.',
+      summary:
+        'Une rencontre amicale, un tournoi interne, un Top 12 : donnez-lui un nom, le reste est déjà prêt.',
+      title: 'Votre prochain événement'
+    },
+    headline: 'Les scores de votre club, en direct sur grand écran',
     join: {
       code: 'Code de la rencontre',
       follow: 'Suivre les matchs',
       hint: 'Les dix caractères après /e/ dans le lien, ou le lien entier.',
-      invalid:
-        'Ce code ne correspond à aucune rencontre\u00a0: vérifiez le lien.',
+      invalid: 'Ce code ne correspond à aucune rencontre : vérifiez le lien.',
       title: 'Rejoindre une rencontre',
       umpire: 'Arbitrer une table'
     },
     lead: 'Les arbitres comptent les points depuis leur téléphone, la salle lit les scores de loin, et l’organisateur garde la main sur toute la journée.',
-    name: 'Nom de la rencontre',
-    namePlaceholder: 'Tournoi interne d’automne',
-    resume: 'Vos rencontres',
+    round: {
+      away: 'À l’extérieur : {fixtures}',
+      awayAt: '{team} à {host}',
+      awayOpen: '{team}, adversaire à choisir',
+      done: 'Toutes les rencontres sont jouées.',
+      noTables: 'Sans table',
+      prepare: 'Préparer la journée',
+      prepareNote:
+        'Le plan « {plan} » et les dernières compositions sont déjà remplis.',
+      progress: defineTranslation('{finished:plural} sur {total}.', {
+        plural: {
+          finished: {
+            one: '{?} rencontre terminée',
+            other: '{?} rencontres terminées'
+          }
+        }
+      }),
+      ready: 'Les rencontres sont en place, avec les dernières compositions.',
+      receives: 'reçoit',
+      resume: 'Reprendre la journée',
+      summaryAway: 'Toutes nos équipes jouent à l’extérieur.',
+      summaryHome: defineTranslation('{count:plural}, sur {tables:plural}.', {
+        plural: {
+          count: {
+            one: '{?} rencontre à la maison',
+            other: '{?} rencontres à la maison'
+          },
+          tables: { one: '{?} table', other: '{?} tables' }
+        }
+      }),
+      summaryMixed: 'Championnat par équipes.',
+      summaryPhase: 'Championnat par équipes, phase {phase}.',
+      title: defineTranslation('Journée {number}, {at:date}', {
+        date: { at: { day: 'numeric', month: 'long', weekday: 'long' } }
+      }),
+      titleNoDate: 'Journée {number}',
+      titleOn: defineTranslation('Championnat du {at:date}', {
+        date: { at: { day: 'numeric', month: 'long', weekday: 'long' } }
+      }),
+      titleOpen: 'Prochaines rencontres du championnat'
+    },
+    season: {
+      code: 'Code du club <b>{code}</b> : il ouvre le club sur un autre appareil.',
+      directory: 'Annuaire',
+      directoryDetail: 'Joueurs, équipes et clubs déjà rencontrés',
+      pools: 'Poules et classements',
+      poolsDetail: defineTranslation('Phase {phase} · {count:plural}', {
+        plural: { count: { one: '{?} poule', other: '{?} poules' } }
+      }),
+      poolsEmpty: 'À recopier du calendrier de la fédération',
+      poolsRank: defineTranslation(
+        'Phase {phase} · {team}, {rank:plural} de sa poule',
+        { plural: { rank: { one: '{?}ʳᵉ', other: '{?}ᵉ' } } }
+      ),
+      teams: 'Équipes',
+      teamsEmpty: 'Aucune équipe pour l’instant',
+      title: 'La saison du club'
+    },
     shareImageAlt:
-      'Le logo Scoreboard à côté de son nom, en blanc sur fond nuit.',
-    title: 'Nouvelle rencontre'
+      'Le logo Scoreboard à côté de son nom, en blanc sur fond nuit.'
   },
   legal: {
     device: {
@@ -469,6 +546,23 @@ export const FR_DICTIONARY = defineDictionary({
       title: 'Codes des tables'
     },
     choosePlayer: 'Choisir un joueur',
+    chooser: {
+      blockFreeHint: 'Libres, elles servent aux matchs hors rencontre.',
+      blockHint: '{encounter} prendra les tables de la rencontre choisie.',
+      close: 'Fermer',
+      free: 'Libres',
+      freeTables: 'Tables libres',
+      here: 'Ici',
+      noTables: 'Sans tables',
+      playsOn: '{encounter} joue sur',
+      playsThere: 'y joue',
+      singleTable: 'Une seule table montée',
+      table: 'Table {table:number}',
+      tables: 'Tables {tables}',
+      tablesHint: 'Une rencontre qui y joue déjà prend les tables {tables}.',
+      tablesUnseatedHint:
+        'Une rencontre qui y joue déjà se retrouve sans tables.'
+    },
     chooseTeam: 'Choisir une équipe',
     club: 'Mon club',
     clubEncounter: {
@@ -488,6 +582,7 @@ export const FR_DICTIONARY = defineDictionary({
       noTables: 'Pas assez de tables libres',
       prepare: 'Préparer les équipes du club',
       tables: 'Tables',
+      tablesAfterTeam: 'Choisies avec notre équipe',
       title: 'Depuis le club'
     },
     code: {
@@ -538,17 +633,23 @@ export const FR_DICTIONARY = defineDictionary({
     },
     displays: {
       add: 'Ajouter l’écran',
+      addScreen: 'Ajouter un écran',
       addTitle: 'Nouvel écran',
       all: 'Écran principal',
       allTables: 'toutes les tables',
+      connect: 'Connecter un grand écran',
+      connected: 'Connecté',
+      everyTable: 'Toutes les tables',
       explain:
         'Un écran montre les tables de la première à la dernière. Ouvrez son lien sur l’ordinateur branché au téléviseur.',
       first: 'Première table',
       last: 'Dernière table',
       name: 'Nom de l’écran',
       namePlaceholder: 'Salle B',
+      notConnected: 'Pas connecté',
       open: 'Ouvrir',
       pair: {
+        close: 'Fermer',
         code: 'Code affiché sur l’écran',
         done: '{name} est branché.',
         error: {
@@ -566,7 +667,19 @@ export const FR_DICTIONARY = defineDictionary({
         which: 'Ce que montre l’écran'
       },
       remove: 'Retirer {name}',
-      title: 'Écrans'
+      screenName: 'Écran {number:number}',
+      screens: 'Grands écrans',
+      see: 'Voir',
+      shareRun: 'Tables {first:number} à {last:number}',
+      tables: 'Tables affichées',
+      title: 'Écrans',
+      view: {
+        encounters: 'Par rencontre',
+        hall: 'Comme dans la salle',
+        label: 'Vue de {name}',
+        pools: 'Par poule',
+        unavailable: 'Le plan de la salle ne permet pas encore cette vue.'
+      }
     },
     encounter: {
       add: 'Créer la rencontre par équipes',
@@ -577,6 +690,61 @@ export const FR_DICTIONARY = defineDictionary({
       formatHelp:
         'Le type de rencontre fixe le nombre de joueurs par équipe et l’ordre des matchs, comme la feuille officielle FFTT.',
       home: 'Équipe à domicile'
+    },
+    encountersStep: {
+      addAnother: 'Ajouter une rencontre',
+      added: defineTranslation('{count:plural}', {
+        plural: {
+          count: {
+            one: 'Rencontre ajoutée.',
+            other: '{?} rencontres ajoutées.'
+          }
+        }
+      }),
+      away: 'À l’extérieur, hors de la salle : {encounters:list}.',
+      awayAt: '{team} à {at}',
+      changeFormat: 'Changer de format',
+      chooseTables: 'Choisir les tables',
+      empty:
+        'Aucune rencontre pour l’instant : ajoutez celles de la journée ci-dessous.',
+      firstTable: '1ʳᵉ table',
+      grip: 'Glisser sur un bloc du plan',
+      hall: 'Dans la salle',
+      hallHint:
+        'Glissez une rencontre sur un bloc, ou touchez le bandeau d’un bloc pour choisir qui y joue.',
+      lineupChanged: 'Composition de {team} changée.',
+      orderOneTable:
+        'La feuille de {count:number} parties suit l’ordre officiel, {first} en premier.',
+      orderTwoTables:
+        'La feuille de {count:number} parties suit l’ordre officiel : {first} sur {firstTable}, {second} sur {secondTable}, puis en alternance.',
+      receives: 'reçoit',
+      roundTitle: defineTranslation(
+        'Journée {number:number} · {count:plural}',
+        {
+          plural: {
+            count: {
+              one: '{?} rencontre à la maison',
+              other: '{?} rencontres à la maison'
+            }
+          }
+        }
+      ),
+      seated: '{seated:number}/{total:number}',
+      secondTable: '2ᵉ table',
+      swapped: '{one} et {other} échangent leurs tables.',
+      tablesOf: 'Tables de {encounter} : {tables}',
+      theFirstTable: 'la 1ʳᵉ table',
+      theSecondTable: 'la 2ᵉ table',
+      theTable: 'la table {table:number}',
+      title: defineTranslation('{count:plural}', {
+        plural: {
+          count: {
+            one: '{?} rencontre à la maison',
+            other: '{?} rencontres à la maison'
+          }
+        }
+      }),
+      toChoose: 'à choisir'
     },
     forfeit: {
       confirm: defineTranslation('Forfait de {name}\u00a0: {count:plural}', {
@@ -595,6 +763,15 @@ export const FR_DICTIONARY = defineDictionary({
       undo: 'Annuler le forfait',
       vacant: '{letter} (place vide)'
     },
+    format: {
+      championship:
+        'Une rencontre sur deux tables, la feuille de 20 parties dans l’ordre officiel.',
+      free: 'Des matchs un par un, sur la table de votre choix.',
+      pools:
+        'Tout le monde se rencontre dans sa poule, puis demi-finales et finale.',
+      title: 'Quel format, aujourd’hui ?',
+      top12: 'Le Top 12 du club en est un réglage tout prêt.'
+    },
     hall: {
       cancel: 'Annuler',
       close: 'Fermer la table',
@@ -603,9 +780,44 @@ export const FR_DICTIONARY = defineDictionary({
       noTable: 'Sans table',
       stands: 'Gradins'
     },
+    hallStep: {
+      print: defineTranslation('{count:plural}', {
+        plural: {
+          count: {
+            one: 'Imprimer le QR de la table',
+            other: 'Imprimer les QR des {?} tables'
+          }
+        }
+      }),
+      qrHint:
+        'Une feuille par table, posée dessus : l’arbitre la scanne et compte les points.',
+      qrTitle: 'QR des tables'
+    },
     keep: 'Garder',
     live: {
-      free: 'Libre, rien de prévu'
+      blockLabel: 'Tables {block} : {encounter}. Choisir la rencontre.',
+      byTable: 'Par table',
+      closeTable: 'Fermer la table {table:number}',
+      empty: {
+        explain:
+          'Chaque match démarre au premier point compté par son arbitre, depuis le QR de sa table. Ses scores s’afficheront ici, et sur le grand écran.',
+        title: 'Rien n’a commencé',
+        wall: 'Voir le grand écran'
+      },
+      free: 'Libre, rien de prévu',
+      freeTable: 'Table libre',
+      next: 'Puis {call}',
+      pill: {
+        deuce: 'Égalité',
+        'game-won': 'Manche gagnée',
+        'match-won': 'Match gagné'
+      },
+      tableFree: 'Table {table:number}, libre',
+      tableLive:
+        'Table {table:number}, {call} : {home} {homeScore:number}, {away} {awayScore:number}',
+      tableNext: 'Table {table:number}, libre, puis {call}',
+      title: 'Les tables, en direct',
+      waiting: 'En attente d’une table'
     },
     matches: {
       add: 'Ajouter le match',
@@ -645,6 +857,21 @@ export const FR_DICTIONARY = defineDictionary({
     plan: {
       add: 'Ajouter une table',
       added: 'Table {table:number} ajoutée.',
+      away: {
+        free: 'Libre',
+        freeBefore: 'Libre · son prochain match, {call}, attendra',
+        keep: 'Garder la table {table:number} montée',
+        movedOn:
+          'Le match de la table {from:number} continue sur la table {to:number}.',
+        movedWaiting:
+          'Le match de la table {from:number} attend une table libre.',
+        onTable: 'Sur la table {table:number}',
+        options: 'Où continuer le match de la table {table:number}',
+        question: 'Un match s’y joue. Où le continuer ?',
+        suite: 'Le score et l’arbitre suivent le match.',
+        wait: 'En attente',
+        waitHint: 'Il reprendra sur la première table libérée.'
+      },
       blockCleared: 'Plus de rencontre sur les tables {block}.',
       blockLabel:
         'Tables {block} : {encounter}. Choisir la rencontre, ou glisser pour déplacer le bloc.',
@@ -685,6 +912,8 @@ export const FR_DICTIONARY = defineDictionary({
         'Ranger la table {table:number} dans la réserve pour la journée',
       putBackDone: 'Table {table:number} remise sur le plan.',
       putBackHint: 'Toucher pour la remettre, ou la glisser sur le plan',
+      putBackResumed:
+        'Table {table:number} remise sur le plan : le match en attente y reprend.',
       putBackTable: 'Table {table:number}, rangée : la remettre sur le plan',
       reserve: 'Réserve',
       reserveEmpty: 'Glissez ici une table à ranger pour la journée',
@@ -732,7 +961,6 @@ export const FR_DICTIONARY = defineDictionary({
         }
       }),
       added: 'Ajoutée',
-      away: 'À l’extérieur, chez',
       help: 'Chaque équipe du club arrive avec sa dernière composition, sur ses tables.',
       home: 'À domicile, contre',
       title: 'Journée {number} du championnat',
@@ -747,6 +975,70 @@ export const FR_DICTIONARY = defineDictionary({
       startsAtHelp:
         'Sert à annoncer l’heure des premiers matchs et à estimer celle des suivants.',
       tableCount: 'Nombre de tables'
+    },
+    steps: {
+      back: 'Retour à la journée',
+      encounters: 'Rencontres',
+      format: {
+        championship: 'Championnat par équipes',
+        free: 'Matchs libres',
+        pools: 'Poules puis tableau'
+      },
+      hall: 'Salle',
+      home: 'Accueil',
+      label: 'Étapes de la journée',
+      live: 'En direct',
+      next: {
+        encounters: 'Suivant : les rencontres',
+        live: 'Suivant : en direct'
+      },
+      settings: 'Réglages',
+      status: {
+        encountersReady: defineTranslation('{count:plural}', {
+          plural: {
+            count: {
+              one: '{?} rencontre prête',
+              other: '{?} rencontres prêtes'
+            }
+          }
+        }),
+        formatToChoose: 'Format à choisir',
+        freeMatches: defineTranslation('{count:plural}', {
+          plural: { count: { one: '{?} match', other: '{?} matchs' } }
+        }),
+        lineupsToDo: defineTranslation('{count:plural}', {
+          plural: {
+            count: { one: '{?} compo à faire', other: '{?} compos à faire' }
+          }
+        }),
+        noEncounter: 'Rencontres à ajouter',
+        noScreen: 'pas d’écran',
+        nothingRunning: 'Rien en cours',
+        pools: defineTranslation('{count:plural}', {
+          plural: {
+            count: { one: 'Poules · {?} joueur', other: 'Poules · {?} joueurs' }
+          }
+        }),
+        running: defineTranslation('{count:plural}', {
+          plural: {
+            count: { one: '{?} match en cours', other: '{?} matchs en cours' }
+          }
+        }),
+        screens: defineTranslation('{count:plural}', {
+          plural: { count: { one: '{?} écran', other: '{?} écrans' } }
+        }),
+        tables: defineTranslation('{count:plural}', {
+          plural: { count: { one: '{?} table', other: '{?} tables' } }
+        }),
+        unseated: defineTranslation('{count:plural}', {
+          plural: {
+            count: {
+              one: '{?} rencontre sans tables',
+              other: '{?} rencontres sans tables'
+            }
+          }
+        })
+      }
     },
     summary: '{tables:number} tables · {matches:number} matchs',
     tableMatch: {
@@ -978,12 +1270,14 @@ export const FR_DICTIONARY = defineDictionary({
     }),
     whereLive: 'Table {table:number} · en cours',
     whereUnplaced: 'Pas encore dans un match',
+    whereWaiting: 'Son match attend une table libre',
     yourPlayers: 'Vos joueurs'
   },
   table: {
     free: 'Aucun match',
     name: 'Table {number:number}',
-    prefix: 'Table '
+    prefix: 'Table ',
+    waiting: 'En attente d’une table'
   },
   time: {
     hoursMinutes: '{hours:number} h {minutes}',
@@ -1095,6 +1389,11 @@ export const FR_DICTIONARY = defineDictionary({
     noPoints: 'Aucun point marqué depuis l’ouverture.',
     point: 'Point pour {name}, {score:number} actuellement',
     pointFor: 'Point {name}',
+    putAway: {
+      explain:
+        'Ses matchs continuent sur d’autres tables\u00a0: scannez le QR de celle où vous arbitrez.',
+      title: 'Table rangée pour la journée'
+    },
     recent: 'Derniers points',
     serve: 'Service',
     serveTurn: {

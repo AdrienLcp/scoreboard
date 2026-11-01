@@ -7,7 +7,11 @@ import type {
   SetupRefusal
 } from '@scoreboard/protocol/error-code'
 import type { EventSetup } from '@scoreboard/protocol/event-setup'
-import type { MatchId, OrganiserCode } from '@scoreboard/protocol/identifiers'
+import type {
+  MatchId,
+  OrganiserCode,
+  TableNumber
+} from '@scoreboard/protocol/identifiers'
 import type {
   CreatedEvent,
   CreateEventInput
@@ -27,13 +31,18 @@ import {
   checkEventSetup,
   checkSetupChange
 } from '@scoreboard/core/event/event-setup-check'
-import { recordScoringEvent } from '@scoreboard/core/match/match-log'
+import { initialSetupOf } from '@scoreboard/core/event/initial-setup'
+import { resumeWaitingMatchOn } from '@scoreboard/core/hall/table-put-away'
+import {
+  describeMatch,
+  recordScoringEvent
+} from '@scoreboard/core/match/match-log'
 
 import type { Admission } from './admission'
 import type { EventRooms } from './event-rooms'
 import type { EventStore } from './event-store'
 
-/** Opens a new event with an empty programme, once. */
+/** Opens a new event, empty or with the programme prepared for it, once. */
 export const openEvent = ({
   input,
   organiserCode,
@@ -49,19 +58,7 @@ export const openEvent = ({
     return Result.failure('already_open')
   }
 
-  store.writeSetup({
-    club: input.club,
-    defaultFormat: input.format,
-    displays: [],
-    encounters: [],
-    hall: input.hall,
-    matches: [],
-    name: input.name,
-    players: [],
-    startsAtMs: null,
-    tableCount: input.tableCount,
-    teams: []
-  })
+  store.writeSetup(initialSetupOf(input))
   store.writeOrganiserCode(organiserCode)
   store.writeTableAccesses(
     tableAccessesFor({
@@ -88,7 +85,11 @@ export const admit = (
 
   switch (credentials.role) {
     case 'display':
-      return Result.success({ role: 'display' })
+      return Result.success(
+        credentials.displayId === undefined
+          ? { role: 'display' }
+          : { displayId: credentials.displayId, role: 'display' }
+      )
     case 'spectator':
       return Result.success({ role: 'spectator' })
     case 'organiser':
@@ -130,11 +131,10 @@ export const recordEvent = ({
     return Result.failure('not_allowed')
   }
 
-  const match = store
-    .readSetup()
-    ?.matches.find((candidate) => candidate.id === matchId)
+  const setup = store.readSetup()
+  const match = setup?.matches.find((candidate) => candidate.id === matchId)
 
-  if (match === undefined) {
+  if (setup === null || match === undefined) {
     return Result.failure('match_not_found')
   }
 
@@ -142,11 +142,10 @@ export const recordEvent = ({
     return Result.failure('match_not_on_table')
   }
 
-  const recorded = recordScoringEvent({
-    event,
-    format: match.format,
-    log: (store.readLogs().get(matchId) ?? []).map((stamped) => stamped.event)
-  })
+  const log = (store.readLogs().get(matchId) ?? []).map(
+    (stamped) => stamped.event
+  )
+  const recorded = recordScoringEvent({ event, format: match.format, log })
 
   if (recorded.status === 'failure') {
     const refusal = recorded.error
@@ -158,7 +157,47 @@ export const recordEvent = ({
 
   store.appendScoringEvent(matchId, { event, recordedAtMs: nowMs })
 
+  const hasEndedNow =
+    describeMatch(match.format, log).status === 'live' &&
+    describeMatch(match.format, recorded.data).status === 'finished'
+
+  if (hasEndedNow && match.table !== null) {
+    resumeWaitingMatchOnFreedTable({ setup, store, table: match.table })
+  }
+
   return Result.success('recorded')
+}
+
+/** A table whose match just ended takes the first match left waiting for one. */
+const resumeWaitingMatchOnFreedTable = ({
+  setup,
+  store,
+  table
+}: {
+  setup: EventSetup
+  store: EventStore
+  table: TableNumber
+}): void => {
+  const logs = store.readLogs()
+  const resumed = resumeWaitingMatchOn({
+    setup,
+    statusOf: (matchId) => {
+      const match = setup.matches.find((candidate) => candidate.id === matchId)
+      const log = logs.get(matchId)
+
+      return match === undefined || log === undefined
+        ? 'scheduled'
+        : describeMatch(
+            match.format,
+            log.map((stamped) => stamped.event)
+          ).status
+    },
+    table
+  })
+
+  if (resumed !== setup) {
+    store.writeSetup(resumed)
+  }
 }
 
 /** Replaces the organiser's setup, keeping each remaining table's umpire code. */
@@ -238,7 +277,11 @@ export const createEvent = async ({
   drawCode: DrawCode
   input: CreateEventInput
   rooms: EventRooms
-}): Promise<Result<CreatedEvent, 'no_free_event_id'>> => {
+}): Promise<Result<CreatedEvent, 'invalid_programme' | 'no_free_event_id'>> => {
+  if (checkEventSetup(initialSetupOf(input)).status === 'failure') {
+    return Result.failure('invalid_programme')
+  }
+
   for (let attempt = 0; attempt < OPEN_ATTEMPTS; attempt++) {
     const eventId = newEventId(drawCode)
     const organiserCode = newOrganiserCode(drawCode)

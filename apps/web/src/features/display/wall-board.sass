@@ -71,6 +71,7 @@
 
     .wall-join
       align-items: center
+      container-type: size
       gap: calc(var(--cu) * 1.6)
       grid-template-columns: auto minmax(0, 1fr)
       grid-template-rows: minmax(0, 1fr)
@@ -79,10 +80,12 @@
       text-align: start
 
       .qr-code
+        --qr-side: min(100cqh, 55cqw)
+
         aspect-ratio: 1
-        height: 100%
+        height: auto
         min-height: 0
-        width: auto
+        width: var(--qr-side)
 
       h2
         font-size: calc(var(--cu) * 2.6)
@@ -197,6 +200,7 @@
         height: calc(var(--cu) * 30)
 
     .wall-board[data-hall] .wall-join
+      container-type: normal
       grid-template-columns: minmax(0, 1fr)
       justify-items: center
       text-align: center

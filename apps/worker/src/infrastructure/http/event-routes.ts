@@ -15,9 +15,16 @@ import { drawSecureCode } from '@/infrastructure/ids'
 import { answerNotFound, invalidInput } from './error-handling'
 import type { WorkerApp } from './worker-app'
 
-const createEventErrorStatus = {
-  no_free_event_id: 503
-} as const satisfies Record<'no_free_event_id', ContentfulStatusCode>
+const createEventError = {
+  invalid_programme: {
+    message: 'The programme does not hold together',
+    status: 400
+  },
+  no_free_event_id: { message: 'Could not draw a free event id', status: 503 }
+} as const satisfies Record<
+  'invalid_programme' | 'no_free_event_id',
+  { message: string; status: ContentfulStatusCode }
+>
 
 export const registerEventRoutes = (app: WorkerApp): void => {
   app.post(
@@ -31,12 +38,10 @@ export const registerEventRoutes = (app: WorkerApp): void => {
       })
 
       if (created.status === 'failure') {
-        const body: ApiErrorResponse = {
-          code: created.error,
-          message: 'Could not draw a free event id'
-        }
+        const { message, status } = createEventError[created.error]
+        const body: ApiErrorResponse = { code: created.error, message }
 
-        return context.json(body, createEventErrorStatus[created.error])
+        return context.json(body, status)
       }
 
       return context.json(created.data, 201)

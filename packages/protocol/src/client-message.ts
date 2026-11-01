@@ -2,6 +2,7 @@ import { z } from 'zod'
 
 import { eventSetupSchema } from './event-setup'
 import {
+  displayIdSchema,
   matchIdSchema,
   organiserCodeSchema,
   umpireCodeSchema
@@ -18,7 +19,14 @@ export const connectionRoleSchema = z.enum(connectionRoles)
 export type ConnectionRole = z.infer<typeof connectionRoleSchema>
 
 export const credentialsSchema = z.discriminatedUnion('role', [
-  z.object({ role: z.literal('display') }),
+  z.object({
+    /**
+     * The screen it shows, `null` for every table; absent from a display
+     * that does not say, which no screen counts as connected.
+     */
+    displayId: displayIdSchema.nullable().optional(),
+    role: z.literal('display')
+  }),
   /** A visitor's phone: read-only, like the display. */
   z.object({ role: z.literal('spectator') }),
   z.object({ code: umpireCodeSchema, role: z.literal('umpire') }),

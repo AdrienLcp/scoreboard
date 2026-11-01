@@ -1,0 +1,31 @@
+/// A screen's wall in small: white ground and head, the band, the frames
+/// edged in rule, the tables in their blue and the QR on its sky.
+@layer components
+  .wall-thumbnail
+    display: block
+    height: auto
+    outline: var(--stroke-hair) solid var(--rule)
+    width: 100%
+
+  .wall-thumbnail-ground,
+  .wall-thumbnail-frame,
+  .wall-thumbnail-qr
+    fill: var(--surface)
+
+  .wall-thumbnail-mark
+    fill: var(--ink)
+
+  .wall-thumbnail-band,
+  .wall-thumbnail-table
+    fill: var(--table)
+
+  .wall-thumbnail-frame,
+  .wall-thumbnail-team
+    stroke: var(--rule)
+    stroke-width: 0.6
+
+  .wall-thumbnail-away
+    fill: var(--surface)
+
+  .wall-thumbnail-join
+    fill: var(--sky)

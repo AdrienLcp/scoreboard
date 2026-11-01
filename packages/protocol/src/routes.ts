@@ -1,6 +1,7 @@
 import { z } from 'zod'
 
 import { clubIdentitySchema } from './club.ts'
+import { eventSetupSchema } from './event-setup.ts'
 import { hallPlanSchema } from './hall-plan.ts'
 import {
   displayIdSchema,
@@ -47,6 +48,15 @@ export const fillRoute = <TRoute extends string>(
   )
 }
 
+/** The encounters a match day opens with, prepared from the club's calendar: their teams, players and matches on their tables. */
+export const eventProgrammeSchema = eventSetupSchema.pick({
+  encounters: true,
+  matches: true,
+  players: true,
+  teams: true
+})
+export type EventProgramme = z.infer<typeof eventProgrammeSchema>
+
 export const createEventInputSchema = z.object({
   /** The club the device prepares days for: its name and logo on the wall from the start. */
   club: clubIdentitySchema.nullable().default(null),
@@ -54,6 +64,8 @@ export const createEventInputSchema = z.object({
   /** The club's own hall plan, when it kept one. */
   hall: hallPlanSchema.nullable().default(null),
   name: z.string().trim().min(1).max(80),
+  /** Absent for an event that starts empty. */
+  programme: eventProgrammeSchema.optional(),
   tableCount: z.number().int().min(1).max(MAX_TABLES)
 })
 export type CreateEventInput = z.infer<typeof createEventInputSchema>
@@ -95,6 +107,7 @@ export const apiErrorCodes = [
   'not_found',
   'internal_error',
   'no_free_event_id',
+  'invalid_programme',
   'no_free_pairing_code',
   'no_free_club_code',
   'wrong_code',

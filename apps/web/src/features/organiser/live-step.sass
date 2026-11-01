@@ -1,0 +1,90 @@
+@use '../../presentation/styles/layout'
+@use '../../presentation/styles/typography'
+
+/// The live step: the plan on the left, a white column of the opened table
+/// and the rows on the right on a wide screen, under the plan otherwise.
+/// Before the first point, the idle table drawn centred over what to do.
+@layer components
+  .live-step
+    display: grid
+    gap: var(--space-xl) var(--space-2xl)
+
+    @include layout.container-wide(60rem)
+      align-items: start
+      grid-template-columns: minmax(0, 1fr) 23rem
+
+  .live-main
+    display: grid
+    gap: var(--space-xs)
+    min-width: 0
+
+  .live-heading
+    @include typography.label
+
+    margin: 0
+
+  .live-side
+    align-content: start
+    display: grid
+    gap: var(--space-m)
+    min-width: 0
+
+  .live-sheet,
+  .live-panel
+    background: var(--surface)
+    display: grid
+    gap: var(--space-s)
+    padding: var(--space-m)
+
+  .live-sheet
+    box-shadow: inset 0 var(--outline-thick) 0 var(--ink)
+    scroll-margin-block: 6rem var(--space-m)
+
+  .live-sheet-head
+    align-items: center
+    display: flex
+    gap: var(--space-s)
+    justify-content: space-between
+
+  .live-sheet-title
+    @include typography.wall-plate
+
+    background: var(--ink)
+    color: var(--on-ink)
+    font-size: var(--text-xl)
+    margin: 0
+    padding: var(--space-2xs) var(--space-xs)
+
+  .live-sheet-note
+    @include typography.hint
+
+    margin: 0
+
+  .live-empty
+    display: grid
+    gap: var(--space-m)
+    justify-items: center
+    margin: var(--space-3xl) auto 0
+    max-width: 34rem
+    text-align: center
+
+  .live-empty-drawing
+    display: block
+    width: 11rem
+
+  .live-empty-title
+    @include typography.page-title
+
+    margin: 0
+
+  .live-empty-explain
+    @include typography.hint
+
+    margin: 0
+
+  .live-empty-actions
+    display: flex
+    flex-wrap: wrap
+    gap: var(--space-xs)
+    justify-content: center
+    margin-top: var(--space-xs)

@@ -1,7 +1,7 @@
 import { z } from 'zod'
 
-import { playerIdSchema, scoringEventIdSchema } from './identifiers'
-import { scoreSchema, sideSchema } from './side'
+import { playerIdSchema, scoringEventIdSchema } from './identifiers.ts'
+import { scoreSchema, sideSchema } from './side.ts'
 
 export const matchStartedSchema = z.object({
   firstServer: sideSchema,

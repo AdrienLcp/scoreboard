@@ -170,6 +170,7 @@ export const publicSnapshotFor = ({
       number
     })),
     teams: setup.teams,
-    tournament: setup.tournament ?? null
+    tournament: setup.tournament ?? null,
+    wallView: setup.wallView ?? null
   }
 }

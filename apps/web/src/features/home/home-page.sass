@@ -1,87 +1,196 @@
 @use '../../presentation/styles/layout'
+@use '../../presentation/styles/motion'
 @use '../../presentation/styles/typography'
 
+/// Home is the club: its header over the hall's seven stripes, the next round
+/// on the left, the club's events and season in a column on the right that
+/// falls under it on a phone.
 @layer components
   .home-page
-    @include layout.page-column
-
-    gap: var(--space-2xl)
-    max-width: 62rem
     padding-bottom: var(--page-padding-block-end)
-    padding-top: var(--safe-area-top)
 
   .home-bar
+    --band-height: 0.5rem
+
+    padding-top: var(--safe-area-top)
+
+    &[data-club]
+      background: var(--surface)
+      padding-bottom: var(--band-height)
+      position: relative
+
+      &::after
+        background: var(--band)
+        bottom: 0
+        content: ''
+        height: var(--band-height)
+        inset-inline: 0
+        position: absolute
+
+  .home-bar-in
+    @include layout.page-column
+
     align-items: center
     display: flex
-    height: var(--top-bar-height)
+    gap: var(--space-s) var(--space-m)
     justify-content: space-between
+    min-height: 4.5rem
+    padding-block: var(--space-xs)
 
-  .home-bar-links
+  .home-club
+    align-items: center
     display: flex
-    flex-wrap: wrap
-    gap: var(--space-2xs)
-    justify-content: flex-end
+    gap: var(--space-s)
+    min-width: 0
 
-  .home-resume-list
+  .home-club-logo
+    flex: none
+    height: 2.75rem
+    object-fit: contain
+    width: 2.75rem
+
+  .home-club-name
+    @include typography.display-title
+    @include typography.single-line
+
+    font-size: var(--text-title)
+
+  .home-layout
+    @include layout.page-column
+
     display: grid
-    gap: var(--space-xs)
-    grid-template-columns: repeat(auto-fill, minmax(min(100%, 16rem), 1fr))
+    gap: var(--space-3xl) 3.5rem
+    padding-top: var(--space-3xl)
 
-    .button
-      justify-content: space-between
-      width: 100%
+    @include layout.container-wide(60rem)
+      align-items: start
+      grid-template-columns: minmax(0, 1.35fr) minmax(0, 1fr)
 
-  .home-resume-name
-    overflow: hidden
-    text-overflow: ellipsis
-    white-space: nowrap
+  .home-hero
+    @include typography.hero
 
-  .home-intro
-    padding-top: var(--space-2xl)
+    text-wrap: balance
 
-    h1
-      @include typography.hero
+  .home-summary
+    @include typography.hint
 
-      max-width: var(--measure-hero)
+    font-size: var(--text-l)
+    margin-top: var(--space-s)
+    max-width: 34em
 
-    p
-      @include typography.hint
-
-      font-size: var(--text-l)
-      margin-top: var(--space-s)
-      max-width: var(--measure-intro)
-
-  .home-forms
-    align-items: start
-    display: grid
-    gap: var(--space-m)
-
-    @include layout.container-wide(53.75rem)
-      grid-template-columns: minmax(0, 3fr) minmax(0, 2fr)
-
-  .home-card
-    background: var(--surface)
-    display: flex
-    flex-direction: column
-    gap: var(--space-m)
-    padding: var(--space-xl)
-
-    h2
-      @include typography.strong
-
-      font-size: var(--text-2xl)
-
-  .home-note
+  .home-hint
     @include typography.hint
 
     font-size: var(--text-s)
 
-  .home-error
+  .home-alert
     @include typography.emphasis
 
     align-items: center
     display: flex
     gap: var(--space-xs)
+
+  .home-code
+    @include typography.code
+
+  .home-side
+    display: grid
+    gap: var(--space-2xl)
+
+  .home-block
+    display: grid
+    gap: var(--space-s)
+
+    h2
+      @include typography.label
+
+  .home-block-action
+    justify-self: start
+
+  .home-rows
+    display: grid
+    gap: var(--space-4xs)
+
+  .home-row
+    @include motion.press-transition
+
+    align-items: center
+    background: var(--surface)
+    color: var(--ink)
+    display: flex
+    gap: var(--space-s)
+    min-height: 3.75rem
+    padding: var(--space-xs) var(--space-s) var(--space-xs) var(--space-m)
+    text-decoration: none
+
+    &[data-hovered]
+      background: var(--surface-raised)
+
+    > .icon
+      color: var(--ink-muted)
+      flex: none
+
+  .home-row-main
+    display: grid
+    flex: 1
+    gap: var(--space-4xs)
+    min-width: 0
+
+    b
+      @include typography.heading
+      @include typography.single-line
+
+      font-size: var(--text-l)
+
+    span
+      @include typography.hint
+
+      font-size: var(--text-s)
+
+  .home-row-count
+    @include typography.figure
+
+    color: var(--ink-muted)
+    font-size: var(--text-xl)
+
+  .home-swatches
+    display: flex
+    flex-wrap: wrap
+    gap: var(--space-4xs)
+    margin-top: var(--space-4xs)
+
+    i
+      height: 0.875rem
+      width: 0.875rem
+
+      &[data-white]
+        box-shadow: var(--inset-hairline)
+
+  .home-inline-field
+    align-items: end
+    display: flex
+    gap: var(--space-xs)
+
+    .field
+      flex: 1
+      min-width: 0
+
+  .home-new-event
+    display: grid
+    gap: var(--space-xs)
+
+    &[data-main]
+      gap: var(--space-s)
+      margin-top: var(--space-xl)
+      max-width: var(--measure-form)
+
+      .home-inline-field
+        align-items: stretch
+        flex-direction: column
+
+  .home-join
+    display: grid
+    gap: var(--space-s)
 
   .field-input.home-join-input
     @include typography.code-entry
@@ -91,3 +200,45 @@
   .home-join-actions
     display: grid
     gap: var(--space-xs)
+    grid-template-columns: repeat(auto-fit, minmax(min(100%, 11rem), 1fr))
+
+  .home-unreachable
+    display: grid
+    gap: var(--space-m)
+    max-width: var(--measure-form)
+
+  .home-unreachable-actions
+    display: flex
+    flex-wrap: wrap
+    gap: var(--space-xs)
+
+  .free-day > .home-hint
+    margin-top: var(--space-xl)
+
+  .first-run
+    display: grid
+    gap: var(--space-2xl)
+    max-width: 40rem
+
+  .first-run-form
+    display: grid
+    gap: var(--space-s)
+
+    .field-input
+      min-height: calc(var(--control-height) + var(--space-s))
+
+  .first-run-join
+    display: grid
+    gap: var(--space-2xs)
+    justify-items: start
+
+  .first-run-code
+    display: grid
+    gap: var(--space-s)
+    max-width: var(--measure-form)
+    padding-top: var(--space-xs)
+
+  .field-input.first-run-code-input
+    @include typography.code-entry
+
+    font-size: var(--text-2xl)

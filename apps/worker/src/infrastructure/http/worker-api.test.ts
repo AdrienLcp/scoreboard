@@ -82,6 +82,56 @@ const firstMessageToOrganiser = async ({
   return message
 }
 
+/** A socket on the event, said hello as `credentials`, and every message it hears. */
+const helloSocket = async (
+  eventId: string,
+  credentials: Record<string, unknown>
+) => {
+  const upgraded = await server.fetch(
+    fillRoute(EVENT_SOCKET_ROUTE, { eventId }),
+    { headers: { Upgrade: 'websocket' } }
+  )
+  const socket = upgraded.webSocket
+
+  if (upgraded.status !== 101 || socket === null) {
+    throw new Error('The upgrade carried no socket')
+  }
+
+  socket.accept()
+  const heard: unknown[] = []
+  const waiters: (() => void)[] = []
+  socket.addEventListener('message', (message) => {
+    heard.push(JSON.parse(String(message.data)))
+    for (const wake of waiters.splice(0)) {
+      wake()
+    }
+  })
+  socket.send(
+    JSON.stringify({
+      credentials,
+      protocolVersion: PROTOCOL_VERSION,
+      type: 'hello'
+    })
+  )
+
+  /** The first message heard, now or later, that `isWanted` accepts. */
+  const nextWhere = async (isWanted: (message: unknown) => boolean) => {
+    for (;;) {
+      const found = heard.find(isWanted)
+
+      if (found !== undefined) {
+        heard.splice(heard.indexOf(found), 1)
+
+        return found
+      }
+
+      await new Promise<void>((resolve) => waiters.push(resolve))
+    }
+  }
+
+  return { nextWhere, socket }
+}
+
 beforeAll(() => server.listen(), WORKERD_START_TIMEOUT_MS)
 beforeEach(() => server.reset(), WORKERD_START_TIMEOUT_MS)
 afterAll(() => server.close(), WORKERD_START_TIMEOUT_MS)
@@ -144,6 +194,44 @@ describe('the worker', () => {
     expect(
       serverMessageSchema.parse(await firstMessageToOrganiser(created)).type
     ).toBe('snapshot.organiser')
+  })
+
+  it('tells the organiser which screens a TV shows, as TVs come and go', async () => {
+    const created = createdEventSchema.parse(
+      await (
+        await postEvent(
+          JSON.stringify({ format: BEST_OF_3, name: 'Club day', tableCount: 2 })
+        )
+      ).json()
+    )
+    const organiser = await helloSocket(created.eventId, {
+      code: created.organiserCode,
+      role: 'organiser'
+    })
+    const screensHeard = (expected: unknown) => (message: unknown) => {
+      const parsed = organiserSnapshotMessageSchema.safeParse(message)
+
+      return (
+        parsed.success &&
+        JSON.stringify(parsed.data.snapshot.connectedScreens) ===
+          JSON.stringify(expected)
+      )
+    }
+
+    await organiser.nextWhere(screensHeard([]))
+    const tv = await helloSocket(created.eventId, {
+      displayId: null,
+      role: 'display'
+    })
+
+    await expect(
+      organiser.nextWhere(screensHeard([{ displayId: null, tvCount: 1 }]))
+    ).resolves.toBeDefined()
+
+    tv.socket.close()
+
+    await expect(organiser.nextWhere(screensHeard([]))).resolves.toBeDefined()
+    organiser.socket.close()
   })
 
   it("opens an event with the club's name, logo and hall the device sends", async () => {

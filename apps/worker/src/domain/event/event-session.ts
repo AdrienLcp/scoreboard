@@ -1,6 +1,7 @@
 import { clientMessageSchema } from '@scoreboard/protocol/client-message'
 import { decodeMessage } from '@scoreboard/protocol/codec'
 import type { ProtocolErrorCode } from '@scoreboard/protocol/error-code'
+import type { ConnectedScreen } from '@scoreboard/protocol/event-snapshot'
 import type { InstantMs } from '@scoreboard/protocol/scoring-event'
 import type { ServerMessage } from '@scoreboard/protocol/server-message'
 import { PROTOCOL_VERSION } from '@scoreboard/protocol/version'
@@ -73,12 +74,15 @@ const answered = (
 /** Handles one inbound frame from a socket, given who that socket already is. */
 export const handleFrame = ({
   admission,
+  connectedScreens,
   nowMs,
   drawCode,
   raw,
   store
 }: {
   admission: Admission | null
+  /** The screens a TV shows as the frame arrived, for an organiser's first snapshot. */
+  connectedScreens: readonly ConnectedScreen[]
   /** The server's clock as the frame arrived. */
   nowMs: InstantMs
   drawCode: DrawCode
@@ -110,6 +114,7 @@ export const handleFrame = ({
 
     const snapshot = snapshotMessageFor({
       admission: admitted.data,
+      connectedScreens,
       nowMs,
       store
     })

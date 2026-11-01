@@ -1,0 +1,19 @@
+@use '../../presentation/styles/typography'
+
+/// A team in its colour, as the hall plan's bands and the wall wear it.
+@layer components
+  .team-chip
+    @include typography.name
+
+    background: var(--team)
+    color: var(--team-ink)
+    display: inline-block
+    max-width: 100%
+    overflow: hidden
+    padding: var(--space-2xs) var(--space-xs)
+    text-overflow: ellipsis
+    vertical-align: middle
+    white-space: nowrap
+
+    &[data-white]
+      box-shadow: inset 0 0 0 var(--stroke-bold) var(--surface-high)

@@ -1,0 +1,27 @@
+@use '../../presentation/styles/typography'
+
+/// A won game or match awaiting the umpire's validation asks on orange, ink on
+/// it; a level score at the end of a game stands in an ink frame. Sized in em
+/// by where it sits.
+@layer components
+  .live-pill
+    @include typography.pill
+
+    align-items: center
+    color: var(--ink)
+    display: inline-flex
+    flex: none
+    gap: 0.3em
+    padding: 0.25em 0.45em
+    white-space: nowrap
+
+    .icon
+      stroke-width: 3
+
+    &[data-pill='match-won'],
+    &[data-pill='game-won']
+      background: var(--live)
+
+    &[data-pill='deuce']
+      background: var(--surface)
+      box-shadow: inset 0 0 0 var(--stroke-bold) var(--ink)

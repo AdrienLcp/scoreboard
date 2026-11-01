@@ -1,3 +1,5 @@
+@use '@adrienlcp/styles/accessibility'
+
 @use '../../presentation/styles/typography'
 
 /// The hall to set up, drawn to scale: a mist-grey floor in metres, each
@@ -296,6 +298,7 @@
     background: transparent
     border: 0
     color: var(--ink)
+    container-type: size
     display: grid
     font-size: clamp(0.6875rem, calc(var(--metre) * 0.7), 1rem)
     gap: var(--space-3xs)
@@ -309,9 +312,18 @@
     transition: left var(--transition-base) var(--ease-move), top var(--transition-base) var(--ease-move), background-color var(--transition-fast, 0s)
     z-index: 1
 
+    // A container of its own, so its metre is read off its short side, a play area's five metres.
+    > *
+      --metre: calc(min(100cqw, 100cqh) / 5)
+
     .icon
       height: clamp(1.125rem, calc(var(--metre) * 1.4), 2rem)
       width: clamp(1.125rem, calc(var(--metre) * 1.4), 2rem)
+
+    // On a plan drawn small the label cannot fit under the plus: the plus alone shows it, the label still names it.
+    @container (width < 7rem) or (height < 4.5rem)
+      span
+        @include accessibility.visually-hidden
 
     @media (hover: hover)
       &:hover

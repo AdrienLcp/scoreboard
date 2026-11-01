@@ -7,6 +7,7 @@ import type {
 import type { EventId } from '@scoreboard/protocol/identifiers'
 import type { InstantMs } from '@scoreboard/protocol/scoring-event'
 import { sides } from '@scoreboard/protocol/side'
+import type { WallView } from '@scoreboard/protocol/wall-view'
 
 import { hallPlanOf } from '@scoreboard/core/hall/hall-plan'
 
@@ -14,7 +15,6 @@ import { sideName } from '@/features/event/participant-names'
 import type { TeamPaint } from '@/features/event/team-paint'
 import { useTranslate } from '@/presentation/i18n/i18n-context'
 
-import { wallFloorFor } from './wall-hall'
 import { WallJoin } from './wall-join'
 import type { WallTable as WallTableModel } from './wall-rows'
 import { WallTable } from './wall-table'
@@ -24,6 +24,7 @@ import {
   type WallStanding,
   type WallTournamentRow
 } from './wall-tournament'
+import { wallFloorOn } from './wall-view'
 
 import './wall-board.sass'
 import './wall-tournament-board.sass'
@@ -164,10 +165,13 @@ type WallTournamentBoardProps = {
   rows: readonly WallTournamentRow[]
   snapshot: PublicSnapshot
   spectatorUrl: string
+  /** The layout this screen asked for; `null` leaves it to the plan. */
+  view: WallView | null
 }
 
 /**
- * The wall of a Top 12 day. As the hall when its plan holds the tables: the
+ * The wall of a Top 12 day. As the hall when the screen does not ask for
+ * rows and its plan holds the tables: the
  * pools down the left, each table where it stands with its pool in its call,
  * the QR in a free place or its own column. Otherwise one row per pool with
  * its table then its tables, four side by side at most, the final phase below
@@ -178,12 +182,14 @@ export const WallTournamentBoard: React.FC<WallTournamentBoardProps> = ({
   nowMs,
   rows,
   snapshot,
-  spectatorUrl
+  spectatorUrl,
+  view
 }) => {
   const translate = useTranslate()
-  const floor = wallFloorFor({
+  const floor = wallFloorOn({
     plan: hallPlanOf(snapshot),
-    tables: rows.flatMap((row) => row.tables.map(({ table }) => table))
+    tables: rows.flatMap((row) => row.tables.map(({ table }) => table)),
+    view
   })
 
   const tableOf = (

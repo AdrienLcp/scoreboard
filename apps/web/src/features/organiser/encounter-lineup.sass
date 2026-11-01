@@ -1,0 +1,79 @@
+@use '../../presentation/styles/layout'
+@use '../../presentation/styles/typography'
+
+/// The compositions table by table: a plate, then the home and away columns
+/// of the letters played there, each letter a square in its team's colour.
+@layer components
+  .encounter-lineup
+    @include layout.container
+
+    display: grid
+    gap: var(--space-m)
+
+  .encounter-lineup-tables
+    display: grid
+    gap: var(--space-m) var(--space-xl)
+
+    @include layout.container-wide(52rem)
+      grid-template-columns: 1fr 1fr
+
+  .encounter-lineup-table
+    align-content: start
+    display: grid
+    gap: var(--space-xs)
+
+  .encounter-lineup-plate
+    @include typography.figure
+
+    background: var(--ink)
+    color: var(--on-ink)
+    font-size: var(--text-l)
+    justify-self: start
+    padding: var(--space-3xs) var(--space-xs)
+
+  .encounter-lineup-columns
+    display: grid
+    gap: var(--space-xs)
+    grid-template-columns: repeat(2, minmax(0, 1fr))
+
+    @include layout.container-narrow(24rem)
+      grid-template-columns: minmax(0, 1fr)
+
+  .encounter-lineup-column
+    align-content: start
+    display: grid
+    gap: var(--space-2xs)
+    min-width: 0
+
+    .combo-box
+      align-items: center
+      column-gap: var(--space-2xs)
+      display: grid
+      grid-template-columns: 2rem minmax(0, 1fr)
+
+      > .field-label
+        @include typography.figure
+
+        align-items: center
+        align-self: stretch
+        background: var(--team)
+        color: var(--team-ink)
+        display: flex
+        font-size: var(--text-l)
+        justify-content: center
+
+    &[data-white] .combo-box > .field-label
+      box-shadow: inset 0 0 0 var(--stroke-bold) var(--surface-high)
+
+  .encounter-lineup-team
+    @include typography.label
+
+    overflow: hidden
+    text-overflow: ellipsis
+    white-space: nowrap
+
+  .encounter-lineup-hint
+    @include typography.hint
+
+    font-size: var(--text-s)
+    margin: 0

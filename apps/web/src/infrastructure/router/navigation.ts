@@ -83,6 +83,65 @@ export const usePairingSearchParam = (): WallPairingCode | null => {
   return typed === null ? null : parseWallPairingCode(typed)
 }
 
+const CONSOLE_STEP_SEARCH_PARAM = 'step'
+
+const CONSOLE_STEPS = ['hall', 'encounters', 'live', 'settings'] as const
+
+/** Where the organiser's console stands: the day's three steps, or its settings aside. */
+export type ConsoleStep = (typeof CONSOLE_STEPS)[number]
+
+const isConsoleStep = (value: string | null): value is ConsoleStep =>
+  CONSOLE_STEPS.some((step) => step === value)
+
+/** The console opened on one step, kept in the address so a reload reopens it. */
+export const organiserStepPathFor = ({
+  eventId,
+  step
+}: {
+  eventId: EventId
+  step: ConsoleStep
+}): string =>
+  `${organiserPathFor(eventId)}?${CONSOLE_STEP_SEARCH_PARAM}=${step}`
+
+export const useConsoleStepParam = (): ConsoleStep | null => {
+  const [search] = useSearchParams()
+  const typed = search.get(CONSOLE_STEP_SEARCH_PARAM)
+
+  return isConsoleStep(typed) ? typed : null
+}
+
+const SCREEN_CONNECT_SEARCH_PARAM = 'connect'
+
+/** The console's Salle step with the form that connects a big screen open. */
+export const organiserConnectPathFor = (eventId: EventId): string =>
+  `${organiserStepPathFor({ eventId, step: 'hall' })}&${SCREEN_CONNECT_SEARCH_PARAM}`
+
+/**
+ * Whether the address asks for the form that connects a big screen. Its
+ * `dismiss` takes that ask and a scanned TV's code out of the address, so the
+ * next ask opens the form again.
+ */
+export const useScreenConnectParam = (): {
+  dismiss: () => void
+  isAsked: boolean
+} => {
+  const [search, setSearch] = useSearchParams()
+  const dismiss = useCallback(() => {
+    setSearch(
+      (current) => {
+        const next = new URLSearchParams(current)
+        next.delete(SCREEN_CONNECT_SEARCH_PARAM)
+        next.delete(PAIRING_SEARCH_PARAM)
+
+        return next
+      },
+      { replace: true }
+    )
+  }, [setSearch])
+
+  return { dismiss, isAsked: search.has(SCREEN_CONNECT_SEARCH_PARAM) }
+}
+
 const CLUB_CODE_SEARCH_PARAM = 'code'
 
 /** `/club` as another device's QR code opens it: the club is joined there and its code kept. */

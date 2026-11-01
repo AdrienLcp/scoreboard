@@ -55,8 +55,18 @@ another sport can adopt it.
   computer behind it opens `/wall` (home's "Grand écran"), which shows a code
   and a QR; the organiser types or scans it from the console's "Grand écran"
   button.
-- Home lists the events this device organises, latest first, so leaving the
-  console never loses one; a new event asks only its name.
+- Home is the club. It leads with the next championship round (the one dated
+  today, else the next to come): our home encounters on the tables the
+  console would give them, the away ones in a line, and "Préparer la
+  journée", which opens the event with the club's default plan and those
+  encounters with each team's last composition in one tap, then reads
+  "Reprendre la journée" on the device that prepared it. Beside it, the
+  events this device organises, latest first, so leaving the console never
+  loses one, and a new event that asks only its name; then the season (teams,
+  pools, directory) leading to the club page, with the club code. With no
+  round to come, the new event is the main action; with no club on the
+  device, home asks the club's name or its code first. Anyone joins an event
+  by its code from home.
 - Both formats exist: individual tournaments and team fixtures (FFTT-style
   team encounters with singles and doubles).
 
@@ -71,8 +81,28 @@ another sport can adopt it.
   its handle, which also picks the encounter played on it. A table put away
   keeps its number; deleting a table numbers the others 1 to N again, whole
   blocks first so each pair keeps its encounter, and their QR sheets are
-  printed again. Nothing ever locks: every setting stays reachable and
+  printed again. The organiser's console walks the day in three steps,
+  Salle (the plan, the screens, the QR sheets), Rencontres (the format, each
+  encounter's tables and compositions) and En direct (the hall with live
+  scores), the settings, players, programme and table codes aside under
+  "Réglages"; it opens on En direct once a match has begun. Nothing ever locks: every setting stays reachable and
   changeable after its step, during the live day included.
+- Putting away a table whose match is running (its ×, its sheet, a drag onto
+  the reserve, a whole block) first asks, one running match at a time, where
+  that match goes on: a free standing table (nothing running on it; its own
+  next match then waits) or "En attente", on no table. Closing the question
+  keeps the tables standing; once every match has a place, the tables go and
+  the matches move as one change, undone in one tap. The score, the log and
+  the umpire travel with the match. A match still to come on a table put away
+  moves to another standing table of its encounter, else follows the running
+  match to its new table, else keeps the number and comes back with the
+  table; a finished match keeps the table it was played on. A match left
+  waiting resumes on the first table freed, the server handing it the table
+  whose match has just ended, or the organiser putting a table back from the
+  reserve, ahead of that table's own next match, the matches of its
+  encounter left on a table put away going there with it; until then no
+  umpire can score it and the wall leaves it out, while the spectator view
+  shows it with a pause mark in place of its table number.
 - Four surfaces: the display, the umpire console, the organiser console, and a
   spectator view on visitors' phones (reached from a QR code shown on the
   display) listing past, live and upcoming matches with their details, and,
@@ -84,7 +114,11 @@ another sport can adopt it.
   collapse into a compact summary. Tiles stay ordered by table number and only
   reflow when a match starts or ends. Paging is a last resort, used only when
   live matches exceed what stays legible, with a visible page indicator. An
-  organiser can split tables across several displays. A finished match keeps
+  organiser can split tables across several displays. On a team day each
+  screen's wall shows its encounters one row each, or the tables as they stand
+  in the hall plan, picked per screen from two pictures in the console; a
+  screen nobody set follows the plan, and the hall view falls back to rows
+  while the plan cannot hold it. A finished match keeps
   its final score for about four seconds before its table shows what comes
   next, on the open board and on the wall alike.
 - The server keeps the ordered list of scoring events; scores, games won and
@@ -127,8 +161,9 @@ another sport can adopt it.
 - A club's store (teams, players, opponents) is opened by its club code and
   erased two years after its last change; an event is kept 30 days after its
   last change or its start, whichever is later.
-- The club page is reached from home ("Mon club") and the organiser console;
-  opened from an event's console, its back button returns to that console.
+- The club page is reached from home (its season lines) and the organiser
+  console; opened from an event's console, its back button returns to that
+  console.
   The first visit asks only the club's name and the device keeps the code; a
   second device opens the club by scanning its QR code or typing the code.
   Defaults, each one changeable:

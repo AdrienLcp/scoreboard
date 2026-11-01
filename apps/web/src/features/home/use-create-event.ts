@@ -1,5 +1,6 @@
 import { useState } from 'react'
 
+import type { EventId } from '@scoreboard/protocol/identifiers'
 import type { CreateEventInput } from '@scoreboard/protocol/routes'
 
 import { type ApiError, createEvent } from '@/infrastructure/api/scoreboard-api'
@@ -15,12 +16,15 @@ type CreateEventState =
   | { status: 'creating' }
   | { error: ApiError; status: 'failed' }
 
-/** Opens an event, keeps its organiser code on this device and moves to its console. */
+/** Opens an event, keeps its organiser code on this device and moves to its console, once `onCreated` has run. */
 export const useCreateEvent = () => {
   const navigateTo = useNavigateTo()
   const [state, setState] = useState<CreateEventState>({ status: 'idle' })
 
-  const create = async (input: CreateEventInput): Promise<void> => {
+  const create = async (
+    input: CreateEventInput,
+    onCreated?: (eventId: EventId) => void
+  ): Promise<void> => {
     setState({ status: 'creating' })
 
     const created = await createEvent(input)
@@ -39,6 +43,7 @@ export const useCreateEvent = () => {
       'Organiser code not kept on this device'
     )
 
+    onCreated?.(created.data.eventId)
     navigateTo(organiserPathFor(created.data.eventId))
   }
 

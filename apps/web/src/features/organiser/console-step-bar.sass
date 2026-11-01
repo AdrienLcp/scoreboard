@@ -1,0 +1,71 @@
+@use '../../presentation/styles/layout'
+@use '../../presentation/styles/typography'
+
+/// The day's steps as one white track: the current step fills ink, each says
+/// its state under its name, and a phone keeps only icon and name.
+@layer components
+  .step-bar
+    background: var(--surface)
+    display: grid
+    gap: var(--space-3xs)
+    grid-template-columns: repeat(3, minmax(0, 1fr))
+    padding: var(--space-3xs)
+
+  .step-link
+    align-items: center
+    color: var(--ink-muted)
+    column-gap: var(--space-xs)
+    display: grid
+    grid-template-columns: auto minmax(0, 1fr)
+    justify-items: center
+    min-height: 3.75rem
+    min-width: 0
+    padding: var(--space-xs) var(--space-3xs)
+    row-gap: var(--space-4xs)
+    text-align: center
+    text-decoration: none
+    transition: background-color var(--transition-fast, 0s) var(--ease-out), color var(--transition-fast, 0s) var(--ease-out)
+
+    .icon
+      font-size: var(--icon-m)
+      grid-column: 1 / -1
+
+    b
+      @include typography.strong
+
+      font-size: var(--text-m)
+      grid-column: 1 / -1
+
+    small
+      @include typography.emphasis
+
+      display: none
+      font-size: var(--text-xs)
+      overflow: hidden
+      text-overflow: ellipsis
+      white-space: nowrap
+
+    &[data-hovered]
+      background: var(--surface-raised)
+      color: var(--ink)
+
+    &[aria-current='step']
+      background: var(--ink)
+      color: var(--on-ink)
+
+    @include layout.container-wide(43.75rem)
+      justify-items: start
+      padding-inline: var(--space-s)
+      text-align: start
+
+      .icon
+        font-size: var(--icon-l)
+        grid-column: 1
+        grid-row: span 2
+
+      b, small
+        grid-column: 2
+        justify-self: stretch
+
+      small
+        display: block

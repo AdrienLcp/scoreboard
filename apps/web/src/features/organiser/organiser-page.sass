@@ -16,9 +16,46 @@
 
   .organiser-bar
     align-items: center
-    display: flex
-    height: var(--top-bar-height)
-    justify-content: space-between
+    column-gap: var(--space-s)
+    display: grid
+    grid-template-columns: auto minmax(0, 1fr) auto
+    min-height: var(--top-bar-height)
+    padding-block: var(--space-xs)
+
+    .button
+      padding-inline: var(--space-s)
+
+    .button > span
+      display: none
+
+    @include layout.container-wide(53.75rem)
+      column-gap: var(--space-m)
+
+      .button > span
+        display: inline
+
+  .organiser-back
+    color: var(--ink)
+
+  .organiser-title
+    display: grid
+    min-width: 0
+
+    h1
+      @include typography.page-title
+
+      overflow: hidden
+      text-overflow: ellipsis
+      white-space: nowrap
+
+    p
+      @include typography.hint
+
+      align-items: center
+      column-gap: var(--space-s)
+      display: flex
+      flex-wrap: wrap
+      font-size: var(--text-s)
 
   .organiser-status
     @include typography.emphasis
@@ -26,32 +63,43 @@
     align-items: center
     color: var(--ink-muted)
     display: inline-flex
-    font-size: var(--text-s)
-    gap: var(--space-xs)
+    gap: var(--space-2xs)
 
     .icon
-      font-size: var(--icon-m)
+      font-size: var(--icon-s)
 
-  .organiser-dot
-    background: var(--live)
-    border-radius: 50%
-    height: 0.5rem
-    width: 0.5rem
+  .step-panel
+    background: var(--surface)
+    display: grid
+    gap: var(--space-s)
+    padding: var(--space-m)
 
-  .organiser-head
-    align-items: flex-end
+    h2
+      @include typography.strong
+
+      font-size: var(--text-l)
+
+    .organiser-note
+      margin: 0
+
+  .step-next
+    justify-content: space-between
+    width: 100%
+
+  .settings-step
+    display: grid
+    gap: var(--space-s)
+
+  .settings-back
+    justify-self: start
+
+  .settings-title
+    @include typography.page-title
+
+  .settings-links
     display: flex
     flex-wrap: wrap
-    gap: var(--space-m) var(--space-xl)
-    justify-content: space-between
-
-    h1
-      @include typography.page-title
-
-    p
-      @include typography.hint
-
-      margin-top: var(--space-3xs)
+    gap: var(--space-xs)
 
   .organiser-links
     display: flex
@@ -60,14 +108,6 @@
 
     .button
       padding-inline: var(--space-s)
-
-  .organiser-wall-pairing
-    display: flex
-    flex-direction: column
-    gap: var(--space-xs)
-
-    > .button
-      align-self: flex-start
 
   .organiser-alert
     @include typography.strong
@@ -271,29 +311,6 @@
 
     .field
       width: 13rem
-
-  .live-table
-    align-items: start
-    display: grid
-    gap: var(--space-m)
-    grid-template-columns: auto minmax(0, 1fr)
-
-    > .table-number
-      font-size: var(--text-2xl)
-      margin-top: var(--space-s)
-
-  .live-table-free
-    color: var(--ink-muted)
-    padding-block: var(--space-m)
-
-  .encounter-list
-    display: grid
-    gap: var(--space-s)
-    grid-template-columns: repeat(auto-fit, minmax(16rem, 1fr))
-
-    li
-      background: var(--surface)
-      padding: var(--space-m) var(--space-l)
 
   .encounter-form
     display: grid

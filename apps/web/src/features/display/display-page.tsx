@@ -32,6 +32,7 @@ import { WallBoard } from './wall-board'
 import { wallRowsFor } from './wall-rows'
 import { wallTournamentFor } from './wall-tournament'
 import { WallTournamentBoard } from './wall-tournament-board'
+import { wallViewOf } from './wall-view'
 
 import './display-page.sass'
 
@@ -41,6 +42,7 @@ const DisplayBoard: React.FC<{
 }> = ({ displayId, eventId }) => {
   const translate = useTranslate()
   const feed = usePublicFeed({
+    displayId,
     eventId,
     role: 'display'
   })
@@ -104,6 +106,7 @@ const DisplayBoard: React.FC<{
   const tournamentRows =
     wallRows === null ? wallTournamentFor({ nowMs, snapshot, tables }) : null
   const isWall = wallRows !== null || tournamentRows !== null
+  const view = wallViewOf({ display, wallView: snapshot.wallView })
   const header = (page: PageIndicator | null) => (
     <DisplayHeader
       eventName={snapshot.name}
@@ -132,6 +135,7 @@ const DisplayBoard: React.FC<{
             rows={wallRows}
             snapshot={snapshot}
             spectatorUrl={spectatorUrl}
+            view={view}
           />
         </>
       ) : tournamentRows !== null ? (
@@ -143,6 +147,7 @@ const DisplayBoard: React.FC<{
             rows={tournamentRows}
             snapshot={snapshot}
             spectatorUrl={spectatorUrl}
+            view={view}
           />
         </>
       ) : hasNotStarted(snapshot) ? (

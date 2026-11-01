@@ -1,0 +1,148 @@
+@use '../../presentation/styles/focus'
+@use '../../presentation/styles/motion'
+@use '../../presentation/styles/typography'
+
+/// The big screens beside the hall: per screen its head, two pictures of the
+/// wall to pick its view, the tables it shows; then a TV to connect.
+@layer components
+  .screens-panel
+    align-content: start
+    background: var(--surface)
+    display: grid
+    gap: var(--space-s)
+    min-width: 0
+    padding: var(--space-m)
+
+    > .button
+      justify-self: start
+
+  .screens-title
+    @include typography.label
+
+    margin: 0
+
+  .screens-list
+    display: grid
+    list-style: none
+    margin: 0
+    padding: 0
+
+  .screen
+    display: grid
+    gap: var(--space-xs)
+    min-width: 0
+
+    & + &
+      border-top: var(--stroke-hair) solid var(--surface-high)
+      margin-top: var(--space-s)
+      padding-top: var(--space-s)
+
+  .screen-head
+    align-items: center
+    display: flex
+    gap: var(--space-2xs)
+    min-height: var(--control-height)
+
+  .screen-name
+    @include typography.heading
+    @include typography.single-line
+
+    flex: 1
+    font-size: var(--text-m)
+    min-width: 0
+
+  .screen-link
+    @include typography.control
+
+    align-items: center
+    color: var(--ink-muted)
+    display: inline-flex
+    flex: none
+    font-size: var(--text-xs)
+    gap: var(--space-3xs)
+
+    &[data-connected]
+      color: var(--live-ink)
+
+  .screen-dot
+    background: var(--live)
+    border-radius: var(--radius-full)
+    flex: none
+    height: 0.625rem
+    width: 0.625rem
+
+  .screen-see
+    flex: none
+
+  .screen-views
+    display: grid
+    gap: var(--space-2xs)
+    grid-template-columns: repeat(2, minmax(0, 1fr))
+
+  .screen-view
+    @include focus.ring-inset
+    @include motion.press-transition
+
+    background: var(--surface-raised)
+    color: var(--ink)
+    cursor: pointer
+    display: grid
+    gap: var(--space-3xs)
+    padding: var(--space-3xs)
+
+    &[data-hovered]
+      background: var(--surface-high)
+
+    &[data-selected]
+      background: var(--ink)
+      color: var(--on-ink)
+
+    &[data-disabled]
+      color: var(--ink-dim)
+      cursor: not-allowed
+
+      .wall-thumbnail
+        opacity: 0.45
+
+  .screen-view-name
+    @include typography.control
+
+    align-items: center
+    display: flex
+    font-size: var(--text-s)
+    gap: var(--space-3xs)
+    min-height: 1.75rem
+    padding-inline: var(--space-3xs)
+
+    .icon
+      height: var(--icon-xs)
+      width: var(--icon-xs)
+
+  .screen-hint
+    @include typography.hint
+
+    margin: 0
+
+  .screen-tables
+    display: grid
+    gap: var(--space-3xs)
+    margin: 0
+
+    span
+      @include typography.label
+
+  .screen-removal
+    justify-self: start
+
+  .screens-pairing
+    display: grid
+    gap: var(--space-2xs)
+
+    > .organiser-panel
+      background: var(--surface-raised)
+      display: grid
+      gap: var(--space-s)
+      padding: var(--space-s)
+
+    > .button
+      justify-self: start

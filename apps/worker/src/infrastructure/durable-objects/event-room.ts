@@ -12,6 +12,7 @@ import {
 } from '@scoreboard/protocol/server-message'
 
 import { type Admission, admissionSchema } from '@/domain/event/admission'
+import { connectedScreensOf } from '@/domain/event/connected-screens'
 import { openEvent } from '@/domain/event/event-service'
 import { ERASED_EVENT_NOTICE, handleFrame } from '@/domain/event/event-session'
 import { createEventStore, type EventStore } from '@/domain/event/event-store'
@@ -115,8 +116,10 @@ export class EventRoom extends DurableObject<Env> {
       return
     }
 
+    const previous = admissionOf(socket)
     const outcome = handleFrame({
-      admission: admissionOf(socket),
+      admission: previous,
+      connectedScreens: this.connectedScreens(null),
       drawCode: drawSecureCode,
       nowMs: nowMs(),
       raw: message,
@@ -143,9 +146,44 @@ export class EventRoom extends DurableObject<Env> {
     }
 
     if (outcome.isEventChanged) {
-      this.broadcastSnapshots()
+      this.broadcastSnapshots({ gone: null, isForOrganisers: false })
       await this.postponeErasure()
+
+      return
     }
+
+    if (previous === null && outcome.admission?.role === 'display') {
+      this.broadcastSnapshots({ gone: null, isForOrganisers: true })
+    }
+  }
+
+  override webSocketClose(socket: WebSocket): void {
+    this.letOrganisersSeeLeave(socket)
+  }
+
+  override webSocketError(socket: WebSocket): void {
+    this.letOrganisersSeeLeave(socket)
+  }
+
+  /** A TV leaving its screen: the organisers see the screen's count drop. */
+  private letOrganisersSeeLeave(socket: WebSocket): void {
+    if (admissionOf(socket)?.role === 'display') {
+      this.broadcastSnapshots({ gone: socket, isForOrganisers: true })
+    }
+  }
+
+  /** The sockets still open, but for one that is leaving. */
+  private openSockets(gone: WebSocket | null): WebSocket[] {
+    return this.ctx
+      .getWebSockets()
+      .filter(
+        (socket) =>
+          socket !== gone && socket.readyState === WebSocket.READY_STATE_OPEN
+      )
+  }
+
+  private connectedScreens(gone: WebSocket | null) {
+    return connectedScreensOf(this.openSockets(gone).map(admissionOf))
   }
 
   /** Every change pushes the erasure back: the retention runs from the last one, or from the event's start. */
@@ -175,14 +213,26 @@ export class EventRoom extends DurableObject<Env> {
     }
   }
 
-  private broadcastSnapshots(): void {
+  /** Every admitted socket's fresh snapshot, or only the organisers' when only the screens changed. */
+  private broadcastSnapshots({
+    gone,
+    isForOrganisers
+  }: {
+    /** A socket leaving, neither counted nor told. */
+    gone: WebSocket | null
+    isForOrganisers: boolean
+  }): void {
     const snapshotsByAdmission = new Map<string, ServerMessage | null>()
     const broadcastAtMs = nowMs()
+    const connectedScreens = this.connectedScreens(gone)
 
-    for (const socket of this.ctx.getWebSockets()) {
+    for (const socket of this.openSockets(gone)) {
       const admission = admissionOf(socket)
 
-      if (admission === null) {
+      if (
+        admission === null ||
+        (isForOrganisers && admission.role !== 'organiser')
+      ) {
         continue
       }
 
@@ -191,6 +241,7 @@ export class EventRoom extends DurableObject<Env> {
         ? (snapshotsByAdmission.get(key) ?? null)
         : snapshotMessageFor({
             admission,
+            connectedScreens,
             nowMs: broadcastAtMs,
             store: this.store
           })

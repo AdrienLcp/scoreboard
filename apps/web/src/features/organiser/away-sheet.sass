@@ -1,0 +1,139 @@
+@use '../../presentation/styles/motion'
+@use '../../presentation/styles/typography'
+
+/// A table about to be put away while its match runs, beside the plan (below
+/// it on a phone): the match, then one row per place it can go on.
+@layer components
+  .away-sheet
+    background: var(--surface)
+    display: grid
+    gap: var(--space-m)
+    padding: var(--space-m)
+
+  .away-sheet-head
+    align-items: center
+    display: flex
+    justify-content: space-between
+
+    h3
+      @include typography.strong
+
+      font-size: var(--text-2xl)
+      margin: 0
+
+  .away-sheet-question
+    @include typography.emphasis
+
+    font-size: var(--text-l)
+    margin: calc(-1 * var(--space-xs)) 0 0
+
+  .away-match
+    align-items: center
+    background: var(--field)
+    display: flex
+    gap: var(--space-s)
+    padding: var(--space-xs) var(--space-s)
+
+  .away-match-live
+    aspect-ratio: 1
+    background: var(--live)
+    border-radius: 50%
+    flex: none
+    width: 0.625rem
+
+  .away-match-who
+    display: grid
+    flex: 1
+    gap: var(--space-4xs)
+    min-width: 0
+
+  .away-match-call
+    @include typography.label
+
+  .away-match-names
+    @include typography.name
+
+    font-size: var(--text-l)
+    overflow-wrap: anywhere
+
+  .away-match-score
+    @include typography.figure
+
+    align-items: baseline
+    display: flex
+    flex: none
+    font-size: var(--text-3xl)
+    gap: var(--space-2xs)
+
+    small
+      @include typography.figure-secondary
+
+      color: var(--ink-muted)
+      font-size: var(--text-m)
+
+  .away-options
+    border: 0
+    display: grid
+    gap: var(--space-4xs)
+    margin: 0
+    min-inline-size: 0
+    padding: 0
+
+  .away-option
+    @include motion.press-transition
+
+    align-items: center
+    background: var(--field)
+    border: 0
+    color: var(--ink)
+    cursor: pointer
+    display: flex
+    gap: var(--space-s)
+    min-height: calc(var(--control-height) + var(--space-xs))
+    padding: var(--space-xs) var(--space-s)
+    text-align: start
+
+    .table-number
+      font-size: var(--text-xl)
+      min-width: 2em
+
+      &:not([data-waiting])
+        background: var(--ink)
+        color: var(--on-ink)
+
+    > .icon
+      color: var(--ink-muted)
+      flex: none
+      font-size: var(--icon-m)
+
+    &[data-hovered]
+      background: var(--surface-raised)
+
+      > .icon
+        color: var(--ink)
+
+    &[data-pressed]
+      scale: 0.99
+
+  .away-option-text
+    display: grid
+    flex: 1
+    gap: var(--space-4xs)
+    min-width: 0
+
+  .away-option-title
+    @include typography.heading
+
+    font-size: var(--text-l)
+
+  .away-option-detail
+    @include typography.label
+
+  .away-sheet-hint
+    @include typography.hint
+
+    margin: 0
+
+  .away-sheet-keep
+    justify-self: start
+    margin-inline-start: calc(-1 * var(--space-s))

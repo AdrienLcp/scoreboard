@@ -5,6 +5,7 @@ import type { EventId, UmpireCode } from '@scoreboard/protocol/identifiers'
 import { type Side, sides } from '@scoreboard/protocol/side'
 
 import { nextCardPenalty } from '@scoreboard/core/discipline/card-penalty'
+import { hallPlanOf, isHiddenIn } from '@scoreboard/core/hall/hall-plan'
 import { opponentOf } from '@scoreboard/core/match/opponent'
 
 import { formatDuration } from '@/features/event/durations'
@@ -91,6 +92,7 @@ const UmpireConsole: React.FC<{ code: UmpireCode; eventId: EventId }> = ({
 
   const { players } = snapshot.event
   const tableTitle = translate('table.name', { number: snapshot.table })
+  const isPutAway = isHiddenIn(hallPlanOf(snapshot.event), snapshot.table)
   const nameIn = (shown: MatchView, side: Side): string =>
     sideName({ form: 'full', participant: shown[side], players }) ??
     translate('match.unnamedSide')
@@ -163,8 +165,16 @@ const UmpireConsole: React.FC<{ code: UmpireCode; eventId: EventId }> = ({
 
       {match === null || state === null ? (
         <section className='umpire-idle'>
-          <h2>{translate('umpire.idle.title')}</h2>
-          <p>{translate('umpire.idle.explain')}</p>
+          <h2>
+            {translate(
+              isPutAway ? 'umpire.putAway.title' : 'umpire.idle.title'
+            )}
+          </h2>
+          <p>
+            {translate(
+              isPutAway ? 'umpire.putAway.explain' : 'umpire.idle.explain'
+            )}
+          </p>
         </section>
       ) : null}
 

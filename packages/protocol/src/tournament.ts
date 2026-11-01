@@ -1,6 +1,6 @@
 import { z } from 'zod'
 
-import { playerIdSchema } from './identifiers'
+import { playerIdSchema } from './identifiers.ts'
 
 export const poolIdSchema = z.string().trim().min(1).max(40)
 export type PoolId = z.infer<typeof poolIdSchema>

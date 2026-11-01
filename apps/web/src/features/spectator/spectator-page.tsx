@@ -117,9 +117,9 @@ const SpectatorProgramme: React.FC<{ eventId: EventId }> = ({ eventId }) => {
 
     switch (whereabouts.status) {
       case 'live':
-        return translate('spectator.whereLive', {
-          table: whereabouts.table ?? 0
-        })
+        return whereabouts.table === null
+          ? translate('spectator.whereWaiting')
+          : translate('spectator.whereLive', { table: whereabouts.table })
       case 'unplaced':
         return translate('spectator.whereUnplaced')
       default:
