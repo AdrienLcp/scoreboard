@@ -14,39 +14,56 @@ export type ScoredPoint = {
 }
 
 /**
- * The points of a match, latest first, each with the score it left. An undo
- * strikes the latest point still standing, the one the ruleset cancelled.
+ * The events an undo may take back, oldest first: every one but the start and
+ * the undos themselves, each undo popping the latest still standing.
+ */
+const standingEventsOf = (events: readonly ScoringEvent[]): ScoringEvent[] => {
+  const standing: ScoringEvent[] = []
+
+  for (const event of events) {
+    if (event.type === 'score.undone') {
+      standing.pop()
+    } else if (event.type !== 'match.started') {
+      standing.push(event)
+    }
+  }
+
+  return standing
+}
+
+/**
+ * The points of a match, latest first, each with the score it left. A point
+ * an undo took back is struck through; an undo that took back a validation,
+ * a card or a time-out strikes no point.
  */
 export const pointHistoryOf = (
   format: MatchFormat,
   events: readonly ScoringEvent[]
 ): ScoredPoint[] => {
-  const points: ScoredPoint[] = []
+  const standingIds = new Set(standingEventsOf(events).map((event) => event.id))
 
-  events.forEach((event, position) => {
-    if (event.type === 'point.scored') {
-      points.push({
-        id: event.id,
-        isUndone: false,
-        scoreAfter: describeMatch(format, events.slice(0, position + 1))
-          .current,
-        side: event.side
-      })
-    }
-
-    if (event.type === 'score.undone') {
-      const standing = points.findLastIndex((point) => !point.isUndone)
-      const undone = points[standing]
-
-      if (undone !== undefined) {
-        points[standing] = { ...undone, isUndone: true }
-      }
-    }
-  })
-
-  return points.toReversed()
+  return events
+    .flatMap((event, position) =>
+      event.type === 'point.scored'
+        ? [
+            {
+              id: event.id,
+              isUndone: !standingIds.has(event.id),
+              scoreAfter: describeMatch(format, events.slice(0, position + 1))
+                .current,
+              side: event.side
+            }
+          ]
+        : []
+    )
+    .toReversed()
 }
 
 /** The side whose point an undo would take back, if the last thing standing is a point. */
-export const lastPointSideOf = (history: readonly ScoredPoint[]): Side | null =>
-  history.find((point) => !point.isUndone)?.side ?? null
+export const undoTargetSideOf = (
+  events: readonly ScoringEvent[]
+): Side | null => {
+  const last = standingEventsOf(events).at(-1)
+
+  return last?.type === 'point.scored' ? last.side : null
+}

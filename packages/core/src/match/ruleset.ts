@@ -15,7 +15,10 @@ export type Ruling<TProgress, TRefusal> = Result<
 >
 
 /** What a sport's rules say about a match in progress; the engine adds status, undo and concessions. */
-export type RulesetView = Omit<MatchState, 'canUndo' | 'concession' | 'status'>
+export type RulesetView = Omit<
+  MatchState,
+  'canUndo' | 'cards' | 'concession' | 'status' | 'timeouts'
+>
 
 /**
  * A sport's scoring rules, as a fold over a match's events. `TProgress` is
@@ -26,8 +29,13 @@ export type RulesetView = Omit<MatchState, 'canUndo' | 'concession' | 'status'>
  */
 export type Ruleset<TFormat extends MatchFormat, TProgress> = {
   /** One more point, goal or rally for `side`. */
-  award: (progress: TProgress, side: Side) => Ruling<TProgress, 'match_over'>
+  award: (
+    progress: TProgress,
+    side: Side
+  ) => Ruling<TProgress, 'awaiting_confirmation' | 'match_over'>
   begin: (input: { firstServer: Side; format: TFormat }) => TProgress
+  /** The umpire closing the period the score has won, as `view(…).awaiting` reports it. */
+  confirm: (progress: TProgress) => Ruling<TProgress, 'nothing_to_confirm'>
   /** The organiser's rewrite of the score, every period so far. */
   correct: (
     progress: TProgress,
@@ -38,4 +46,6 @@ export type Ruleset<TFormat extends MatchFormat, TProgress> = {
   /** How long a match of this format usually lasts, before the event has finished any. */
   typicalDurationMs: (format: TFormat) => number
   view: (progress: TProgress) => RulesetView
+  /** The score a side wins by when its opponent never comes to play. */
+  walkover: (progress: TProgress, winner: Side) => TProgress
 }

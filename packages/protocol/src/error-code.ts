@@ -24,7 +24,13 @@ export const recordRefusals = [
   'match_over',
   'nothing_to_undo',
   'invalid_score',
-  'cannot_end'
+  'cannot_end',
+  /** A won period waits for the umpire's confirmation before the next point. */
+  'awaiting_confirmation',
+  'nothing_to_confirm',
+  'timeout_already_taken',
+  'no_timeout_to_withdraw',
+  'card_not_found'
 ] as const
 export const recordRefusalSchema = z.enum(recordRefusals)
 export type RecordRefusal = z.infer<typeof recordRefusalSchema>

@@ -7,7 +7,12 @@ import { BEST_OF_5 } from '@scoreboard/protocol/testing/match-formats'
 import { LOUIS } from '@scoreboard/protocol/testing/players'
 
 import { parsePeriodsText, periodsText } from './periods-text'
-import { changeTableCount, removePlayer, tableRange } from './setup-edits'
+import {
+  changeBestOf,
+  changeTableCount,
+  removePlayer,
+  tableRange
+} from './setup-edits'
 
 const setup = setupWith([matchOn(3, { format: BEST_OF_5 })], {
   defaultFormat: BEST_OF_5,
@@ -54,5 +59,22 @@ describe('setup edits', () => {
 
   it('[organiser] takes matches off the tables that are gone', () => {
     expect(changeTableCount(setup, 2).matches[0]?.table).toBeNull()
+  })
+})
+
+describe('changeBestOf', () => {
+  it('[organiser] plays one match of the sheet over seven games, leaving the others', () => {
+    const first = matchOn(1)
+    const second = matchOn(2)
+    const changed = changeBestOf({
+      bestOf: 7,
+      matchId: first.id,
+      setup: setupWith([first, second])
+    })
+
+    expect(changed.matches.map((match) => match.format.bestOf)).toEqual([
+      7,
+      second.format.bestOf
+    ])
   })
 })

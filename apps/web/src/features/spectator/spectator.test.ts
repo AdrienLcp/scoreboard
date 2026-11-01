@@ -20,6 +20,7 @@ const between = (home: string, away: string): MatchView => ({
     durationMs: null,
     estimatedStartMs: null,
     finishedAtMs: null,
+    lastTimeout: null,
     startedAtMs: null
   }
 })

@@ -1,6 +1,12 @@
 import { randomUUID } from 'node:crypto'
 
-import type { InstantMs, ScoringEvent, StampedEvent } from '../scoring-event'
+import type { PlayerId } from '../identifiers'
+import type {
+  CardPenalty,
+  InstantMs,
+  ScoringEvent,
+  StampedEvent
+} from '../scoring-event'
 import type { Score, Side } from '../side'
 
 export const started = (firstServer: Side = 'home'): ScoringEvent => ({
@@ -13,6 +19,46 @@ export const point = (side: Side): ScoringEvent => ({
   id: randomUUID(),
   side,
   type: 'point.scored'
+})
+
+/** The umpire closing the period the score has won. */
+export const confirmed = (): ScoringEvent => ({
+  id: randomUUID(),
+  type: 'period.confirmed'
+})
+
+export const timeout = (side: Side): ScoringEvent => ({
+  id: randomUUID(),
+  side,
+  type: 'timeout.called'
+})
+
+export const timeoutWithdrawn = (side: Side): ScoringEvent => ({
+  id: randomUUID(),
+  side,
+  type: 'timeout.withdrawn'
+})
+
+export const card = ({
+  penalty = 0,
+  playerId = null,
+  side
+}: {
+  penalty?: CardPenalty
+  playerId?: PlayerId | null
+  side: Side
+}): Extract<ScoringEvent, { type: 'card.shown' }> => ({
+  id: randomUUID(),
+  penalty,
+  playerId,
+  side,
+  type: 'card.shown'
+})
+
+export const cardWithdrawn = (cardId: string): ScoringEvent => ({
+  cardId,
+  id: randomUUID(),
+  type: 'card.withdrawn'
 })
 
 export const undo = (): ScoringEvent => ({

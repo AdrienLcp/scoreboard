@@ -13,6 +13,8 @@ type PointTargetProps = {
   gamesWon: number
   /** One point from the game or the match: the score lights up. */
   isHot: boolean
+  /** A won game waits for the umpire's confirmation: no point until then. */
+  isDisabled?: boolean
   isServing: boolean
   /** Which arrow key scores for this side on a keyboard. */
   keyHint: 'arrowLeft' | 'arrowRight'
@@ -41,6 +43,7 @@ const serveLabelKeyOf = (serveTurn: ServeTurn | null) => {
 export const PointTarget: React.FC<PointTargetProps> = ({
   gamesWon,
   isHot,
+  isDisabled = false,
   isServing,
   keyHint,
   name,
@@ -55,6 +58,7 @@ export const PointTarget: React.FC<PointTargetProps> = ({
       aria-label={translate('umpire.point', { name, score })}
       className='point-target'
       data-hot={isHot || undefined}
+      isDisabled={isDisabled}
       onPress={onPoint}
     >
       <span className='point-target-head'>

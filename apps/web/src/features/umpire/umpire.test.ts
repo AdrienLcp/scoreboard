@@ -2,13 +2,15 @@ import { describe, expect, it } from 'vitest'
 
 import { BEST_OF_3 } from '@scoreboard/protocol/testing/match-formats'
 import {
+  card,
+  confirmed,
   point,
   started,
   undo
 } from '@scoreboard/protocol/testing/scoring-events'
 
 import { connectionStateOf } from './connection-state'
-import { lastPointSideOf, pointHistoryOf } from './point-history'
+import { pointHistoryOf, undoTargetSideOf } from './point-history'
 
 describe('point history', () => {
   it('[umpire] lists points latest first with the score each one left', () => {
@@ -25,15 +27,31 @@ describe('point history', () => {
   })
 
   it('[umpire] strikes the point an undo took back, and offers the one before', () => {
-    const history = pointHistoryOf(BEST_OF_3, [
-      started(),
-      point('home'),
-      point('away'),
-      undo()
-    ])
+    const events = [started(), point('home'), point('away'), undo()]
 
-    expect(history.map((entry) => entry.isUndone)).toEqual([true, false])
-    expect(lastPointSideOf(history)).toBe('home')
+    expect(
+      pointHistoryOf(BEST_OF_3, events).map((entry) => entry.isUndone)
+    ).toEqual([true, false])
+    expect(undoTargetSideOf(events)).toBe('home')
+  })
+
+  it('[umpire] strikes no point when an undo takes back a validation', () => {
+    const events = [
+      started(),
+      ...Array.from({ length: 11 }, () => point('home')),
+      confirmed(),
+      undo()
+    ]
+
+    expect(
+      pointHistoryOf(BEST_OF_3, events).some((entry) => entry.isUndone)
+    ).toBe(false)
+  })
+
+  it('[umpire] names no point when the next undo takes back a card', () => {
+    expect(
+      undoTargetSideOf([started(), point('home'), card({ side: 'away' })])
+    ).toBeNull()
   })
 })
 

@@ -4,6 +4,10 @@ import { useState } from 'react'
 import type { EventSetup } from '@scoreboard/protocol/event-setup'
 import type { MatchView } from '@scoreboard/protocol/event-snapshot'
 import type { MatchId } from '@scoreboard/protocol/identifiers'
+import {
+  type TableTennisFormat,
+  tableTennisBestOfs
+} from '@scoreboard/protocol/match-format'
 import type { ScoringEvent } from '@scoreboard/protocol/scoring-event'
 
 import { tableNumbers } from '@scoreboard/core/event/table-queue'
@@ -21,6 +25,7 @@ import { MatchRow } from './match-row'
 import { PlannedTimeForm } from './planned-time-form'
 import {
   addMatch,
+  changeBestOf,
   moveMatchToTable,
   planMatch,
   removeMatch
@@ -34,6 +39,9 @@ type MatchesEditorProps = {
 }
 
 const NO_TABLE = 'none'
+
+const bestOfOf = (id: string | null): TableTennisFormat['bestOf'] | null =>
+  tableTennisBestOfs.find((bestOf) => String(bestOf) === id) ?? null
 
 /** The programme: matches in playing order, their tables and times, and corrections. */
 export const MatchesEditor: React.FC<MatchesEditorProps> = ({
@@ -50,6 +58,12 @@ export const MatchesEditor: React.FC<MatchesEditorProps> = ({
   const playerChoices = setup.players.map((player) => ({
     id: player.id,
     label: player.name
+  }))
+  const bestOfChoices = tableTennisBestOfs.map((bestOf) => ({
+    id: String(bestOf),
+    label: translate('organiser.matches.bestOfOption', {
+      count: Math.ceil(bestOf / 2)
+    })
   }))
   const tableChoices = [
     { id: NO_TABLE, label: translate('organiser.matches.noTable') },
@@ -154,6 +168,22 @@ export const MatchesEditor: React.FC<MatchesEditorProps> = ({
                     match.table === null ? NO_TABLE : String(match.table)
                   }
                 />
+                {match.state.status === 'scheduled' ? (
+                  <ChoiceField
+                    choices={bestOfChoices}
+                    label={translate('organiser.matches.bestOf')}
+                    onChange={(id) => {
+                      const bestOf = bestOfOf(id)
+
+                      if (bestOf !== null) {
+                        onSave(
+                          changeBestOf({ bestOf, matchId: match.id, setup })
+                        )
+                      }
+                    }}
+                    selectedId={String(match.format.bestOf)}
+                  />
+                ) : null}
                 <PlannedTimeForm
                   eventDay={setup.startsAtMs ?? match.plannedAtMs ?? nowMs()}
                   key={match.plannedAtMs}

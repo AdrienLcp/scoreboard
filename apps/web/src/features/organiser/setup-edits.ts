@@ -12,6 +12,7 @@ import type {
   PlayerId,
   TableNumber
 } from '@scoreboard/protocol/identifiers'
+import type { TableTennisFormat } from '@scoreboard/protocol/match-format'
 import type { InstantMs } from '@scoreboard/protocol/scoring-event'
 
 import { encounterFormatFor } from '@scoreboard/core/encounter/encounter-formats'
@@ -75,6 +76,24 @@ export const moveMatchToTable = ({
   ...setup,
   matches: setup.matches.map((match) =>
     match.id === matchId ? { ...match, table } : match
+  )
+})
+
+/** Each match of an encounter may be played over its own number of games, 5 or 7 in one sheet. */
+export const changeBestOf = ({
+  bestOf,
+  matchId,
+  setup
+}: {
+  bestOf: TableTennisFormat['bestOf']
+  matchId: MatchId
+  setup: EventSetup
+}): EventSetup => ({
+  ...setup,
+  matches: setup.matches.map((match) =>
+    match.id === matchId
+      ? { ...match, format: { ...match.format, bestOf } }
+      : match
   )
 })
 

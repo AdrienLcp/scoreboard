@@ -16,10 +16,18 @@ import { scoreSchema, sideSchema } from './side'
  * the server's stamps on the events that started and closed it;
  * `estimatedStartMs` is set for a match still to come on a table.
  */
+/** The time-out running or last taken, by the server's stamp of its call. */
+export const timeoutCallSchema = z.object({
+  calledAtMs: instantMsSchema,
+  side: sideSchema
+})
+export type TimeoutCall = z.infer<typeof timeoutCallSchema>
+
 export const matchTimingSchema = z.object({
   durationMs: z.number().int().nonnegative().nullable(),
   estimatedStartMs: instantMsSchema.nullable(),
   finishedAtMs: instantMsSchema.nullable(),
+  lastTimeout: timeoutCallSchema.nullable().default(null),
   startedAtMs: instantMsSchema.nullable()
 })
 export type MatchTiming = z.infer<typeof matchTimingSchema>

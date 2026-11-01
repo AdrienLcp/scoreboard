@@ -71,6 +71,7 @@ const view = (progress: TableTennisProgress): RulesetView => {
 
   if (winner !== null) {
     return {
+      awaiting: null,
       current: null,
       endsSwapped: endsSwappedIn(progress),
       periods,
@@ -82,11 +83,28 @@ const view = (progress: TableTennisProgress): RulesetView => {
     }
   }
 
+  const decides = (side: Side): 'match' | 'period' =>
+    periodsWon[side] + 1 >= gamesToWinMatch(bestOf) ? 'match' : 'period'
+  const wonBy = gameWinner(progress.currentGame, pointsPerGame)
+
+  if (wonBy !== null) {
+    return {
+      awaiting: { decides: decides(wonBy), side: wonBy },
+      current: progress.currentGame,
+      endsSwapped: endsSwappedIn(progress),
+      periods,
+      periodsWon,
+      serveTurn: null,
+      serving: null,
+      stake: null,
+      winner: null
+    }
+  }
+
   const holder = gamePointHolder(progress.currentGame, pointsPerGame)
-  const decidesMatch =
-    holder !== null && periodsWon[holder] + 1 >= gamesToWinMatch(bestOf)
 
   return {
+    awaiting: null,
     current: progress.currentGame,
     endsSwapped: endsSwappedIn(progress),
     periods,
@@ -98,38 +116,72 @@ const view = (progress: TableTennisProgress): RulesetView => {
       pointsPerGame,
       score: progress.currentGame
     }),
-    stake:
-      holder === null
-        ? null
-        : { decides: decidesMatch ? 'match' : 'period', side: holder },
+    stake: holder === null ? null : { decides: decides(holder), side: holder },
     winner: null
   }
 }
 
+/** A won game stays the current one until the umpire confirms it. */
 const award = (
   progress: TableTennisProgress,
   side: Side
-): Ruling<TableTennisProgress, 'match_over'> => {
-  if (view(progress).winner !== null) {
+): Ruling<TableTennisProgress, 'awaiting_confirmation' | 'match_over'> => {
+  const current = view(progress)
+
+  if (current.winner !== null) {
     return Result.failure('match_over')
   }
 
-  const scored = {
-    ...progress.currentGame,
-    [side]: progress.currentGame[side] + 1
-  }
-
-  if (gameWinner(scored, progress.format.pointsPerGame) === null) {
-    return Result.success({ progress: { ...progress, currentGame: scored } })
+  if (current.awaiting !== null) {
+    return Result.failure('awaiting_confirmation')
   }
 
   return Result.success({
     progress: {
       ...progress,
-      completedGames: [...progress.completedGames, scored],
+      currentGame: {
+        ...progress.currentGame,
+        [side]: progress.currentGame[side] + 1
+      }
+    }
+  })
+}
+
+const confirm = (
+  progress: TableTennisProgress
+): Ruling<TableTennisProgress, 'nothing_to_confirm'> => {
+  if (view(progress).awaiting === null) {
+    return Result.failure('nothing_to_confirm')
+  }
+
+  return Result.success({
+    progress: {
+      ...progress,
+      completedGames: [...progress.completedGames, progress.currentGame],
       currentGame: LOVE_ALL
     }
   })
+}
+
+/** A forfeit loses every game it takes to win the match, each to love. */
+const walkover = (
+  progress: TableTennisProgress,
+  winner: Side
+): TableTennisProgress => {
+  const { bestOf, pointsPerGame } = progress.format
+  const forfeitGame = {
+    away: winner === 'away' ? pointsPerGame : 0,
+    home: winner === 'home' ? pointsPerGame : 0
+  }
+
+  return {
+    ...progress,
+    completedGames: Array.from(
+      { length: gamesToWinMatch(bestOf) },
+      () => forfeitGame
+    ),
+    currentGame: LOVE_ALL
+  }
 }
 
 /** Whether the match was already won after one of `games`, before the last. */
@@ -204,8 +256,10 @@ export const tableTennisRuleset: Ruleset<
     firstServer,
     format
   }),
+  confirm,
   correct,
   end: () => Result.failure('cannot_end'),
   typicalDurationMs,
-  view
+  view,
+  walkover
 }

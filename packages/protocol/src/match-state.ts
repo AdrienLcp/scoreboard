@@ -1,6 +1,7 @@
 import { z } from 'zod'
 
-import { concessionReasonSchema } from './scoring-event'
+import { playerIdSchema, scoringEventIdSchema } from './identifiers'
+import { cardPenaltySchema, concessionReasonSchema } from './scoring-event'
 import { scoreSchema, sideSchema } from './side'
 
 export const matchStatuses = ['scheduled', 'live', 'finished'] as const
@@ -30,12 +31,34 @@ export const concessionSchema = z.object({
 })
 export type Concession = z.infer<typeof concessionSchema>
 
+/** A card still in effect in this match. `id` is the event that showed it. */
+export const matchCardSchema = z.object({
+  id: scoringEventIdSchema,
+  penalty: cardPenaltySchema,
+  playerId: playerIdSchema.nullable(),
+  side: sideSchema
+})
+export type MatchCard = z.infer<typeof matchCardSchema>
+
+/** Whether each side has used its time-out in this match. */
+export const timeoutsTakenSchema = z.object({
+  away: z.boolean(),
+  home: z.boolean()
+})
+export type TimeoutsTaken = z.infer<typeof timeoutsTakenSchema>
+
 /**
  * A match as every screen reads it, whatever the sport. A period is a game in
  * table tennis, a set in volleyball, a half in football.
  */
 export const matchStateSchema = z.object({
+  /**
+   * A period the score has won, still on screen until the umpire confirms
+   * it: `decides` says whether confirming it ends the match.
+   */
+  awaiting: stakeSchema.nullable().default(null),
   canUndo: z.boolean(),
+  cards: z.array(matchCardSchema).default([]),
   concession: concessionSchema.nullable(),
   /** The period being played; `null` before the start and once the match is over. */
   current: scoreSchema.nullable(),
@@ -47,13 +70,16 @@ export const matchStateSchema = z.object({
   serving: sideSchema.nullable(),
   stake: stakeSchema.nullable(),
   status: matchStatusSchema,
+  timeouts: timeoutsTakenSchema.default({ away: false, home: false }),
   winner: sideSchema.nullable()
 })
 export type MatchState = z.infer<typeof matchStateSchema>
 
 /** A match nobody has started: the state every match begins from. */
 export const scheduledMatchState: MatchState = {
+  awaiting: null,
   canUndo: false,
+  cards: [],
   concession: null,
   current: null,
   endsSwapped: false,
@@ -63,5 +89,6 @@ export const scheduledMatchState: MatchState = {
   serving: null,
   stake: null,
   status: 'scheduled',
+  timeouts: { away: false, home: false },
   winner: null
 }

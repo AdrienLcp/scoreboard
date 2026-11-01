@@ -6,10 +6,15 @@ import type { ScoringEvent } from '@scoreboard/protocol/scoring-event'
 import type { Side } from '@scoreboard/protocol/side'
 import { BEST_OF_5 } from '@scoreboard/protocol/testing/match-formats'
 import {
+  card,
+  cardWithdrawn,
+  confirmed,
   correction,
   point,
   retirement,
   started,
+  timeout,
+  timeoutWithdrawn,
   undo,
   walkover
 } from '@scoreboard/protocol/testing/scoring-events'
@@ -20,8 +25,8 @@ import { describeMatch, recordScoringEvent } from './match-log'
 const rally = (sequence: string): ScoringEvent[] =>
   [...sequence].map((letter) => point(letter === 'h' ? 'home' : 'away'))
 
-/** The points of a game won to `loserScore`, the winner scoring last. */
-const gameTo = (winner: Side, loserScore: number): ScoringEvent[] => {
+/** The points of a game won to `loserScore`, the winner scoring last, not yet confirmed by the umpire. */
+const pointsTo = (winner: Side, loserScore: number): ScoringEvent[] => {
   const loser = winner === 'home' ? 'a' : 'h'
   const win = winner === 'home' ? 'h' : 'a'
   const isPastDeuce = loserScore >= 10
@@ -32,6 +37,12 @@ const gameTo = (winner: Side, loserScore: number): ScoringEvent[] => {
       : loser.repeat(loserScore) + win.repeat(11)
   )
 }
+
+/** A game won to `loserScore` and confirmed by the umpire. */
+const gameTo = (winner: Side, loserScore: number): ScoringEvent[] => [
+  ...pointsTo(winner, loserScore),
+  confirmed()
+]
 
 const stateOf = (log: readonly ScoringEvent[]) => describeMatch(BEST_OF_5, log)
 
@@ -50,14 +61,170 @@ describe('describeMatch', () => {
     })
   })
 
-  it('[match-log] closes a game at 11-9 and opens the next at 0-0', () => {
+  it('[match-log] keeps a game won at 11-9 on screen until the umpire confirms it', () => {
+    const state = stateOf([started(), ...pointsTo('home', 9)])
+
+    expect(state).toMatchObject({
+      awaiting: { decides: 'period', side: 'home' },
+      current: { away: 9, home: 11 },
+      periods: [],
+      periodsWon: { away: 0, home: 0 },
+      serving: null,
+      stake: null,
+      status: 'live'
+    })
+  })
+
+  it('[match-log] opens the next game at 0-0 once the umpire confirms the won one', () => {
     const state = stateOf([started(), ...gameTo('home', 9)])
 
     expect(state).toMatchObject({
+      awaiting: null,
       current: { away: 0, home: 0 },
       periods: [{ away: 9, home: 11 }],
       periodsWon: { away: 0, home: 1 }
     })
+  })
+
+  it('[match-log] keeps a won match live until the umpire confirms its last game', () => {
+    const toMatchPoint = [
+      started(),
+      ...gameTo('home', 1),
+      ...gameTo('home', 1),
+      ...pointsTo('home', 1)
+    ]
+
+    expect([
+      stateOf(toMatchPoint),
+      stateOf([...toMatchPoint, confirmed()])
+    ]).toMatchObject([
+      {
+        awaiting: { decides: 'match', side: 'home' },
+        status: 'live',
+        winner: null
+      },
+      { awaiting: null, status: 'finished', winner: 'home' }
+    ])
+  })
+
+  it('[match-log] plays a long deuce through to 16-14', () => {
+    const state = stateOf([started(), ...pointsTo('away', 14)])
+
+    expect(state).toMatchObject({
+      awaiting: { decides: 'period', side: 'away' },
+      current: { away: 16, home: 14 }
+    })
+  })
+
+  it('[match-log] undoes a confirmation back to the won game, still waiting', () => {
+    const state = stateOf([started(), ...gameTo('home', 9), undo()])
+
+    expect(state).toMatchObject({
+      awaiting: { decides: 'period', side: 'home' },
+      current: { away: 9, home: 11 },
+      periods: []
+    })
+  })
+
+  it('[match-log] reopens only the won game, never the one before, when undone twice', () => {
+    const state = stateOf([
+      started(),
+      ...gameTo('away', 4),
+      ...gameTo('home', 9),
+      undo(),
+      undo()
+    ])
+
+    expect(state).toMatchObject({
+      awaiting: null,
+      current: { away: 9, home: 10 },
+      periods: [{ away: 11, home: 4 }]
+    })
+  })
+
+  it('[match-log] gives a forfeit every game it takes to win, each to love', () => {
+    expect(stateOf([walkover('away')])).toMatchObject({
+      current: null,
+      periods: [
+        { away: 0, home: 11 },
+        { away: 0, home: 11 },
+        { away: 0, home: 11 }
+      ],
+      periodsWon: { away: 0, home: 3 },
+      winner: 'home'
+    })
+  })
+
+  it('[match-log] records one time-out per side', () => {
+    const state = stateOf([started(), ...rally('hh'), timeout('away')])
+
+    expect(state.timeouts).toEqual({ away: true, home: false })
+  })
+
+  it('[match-log] takes back a time-out with undo or by withdrawing it later', () => {
+    const called = [started(), timeout('home')]
+    const withdrawnLater = stateOf([
+      ...called,
+      ...rally('aa'),
+      timeoutWithdrawn('home')
+    ])
+
+    expect([
+      stateOf([...called, undo()]).timeouts.home,
+      withdrawnLater.timeouts.home,
+      withdrawnLater.current
+    ]).toEqual([false, false, { away: 2, home: 0 }])
+  })
+
+  it('[match-log] shows a yellow card without touching the score', () => {
+    const yellow = card({ side: 'home' })
+    const state = stateOf([started(), ...rally('a'), yellow])
+
+    expect(state).toMatchObject({
+      cards: [{ id: yellow.id, penalty: 0, playerId: null, side: 'home' }],
+      current: { away: 1, home: 0 }
+    })
+  })
+
+  it('[match-log] gives the opponent the penalty points of a yellow and red card', () => {
+    const state = stateOf([started(), card({ penalty: 2, side: 'away' })])
+
+    expect(state.current).toEqual({ away: 0, home: 2 })
+  })
+
+  it('[match-log] stops the penalty at the point that wins the game', () => {
+    const state = stateOf([
+      started(),
+      ...rally('hhhhhhhhhh'),
+      card({ penalty: 2, side: 'away' })
+    ])
+
+    expect(state).toMatchObject({
+      awaiting: { decides: 'period', side: 'home' },
+      current: { away: 0, home: 11 }
+    })
+  })
+
+  it('[match-log] undoes a penalty card and its points in one step', () => {
+    const state = stateOf([
+      started(),
+      card({ penalty: 1, side: 'away' }),
+      undo()
+    ])
+
+    expect(state).toMatchObject({ cards: [], current: { away: 0, home: 0 } })
+  })
+
+  it('[match-log] withdraws a card later, leaving the score', () => {
+    const yellowRed = card({ penalty: 1, side: 'away' })
+    const state = stateOf([
+      started(),
+      yellowRed,
+      ...rally('a'),
+      cardWithdrawn(yellowRed.id)
+    ])
+
+    expect(state).toMatchObject({ cards: [], current: { away: 1, home: 1 } })
   })
 
   it('[match-log] gives the match to the first side to three games in a best of five', () => {
@@ -125,8 +292,8 @@ describe('describeMatch', () => {
     expect(state.current).toEqual({ away: 0, home: 2 })
   })
 
-  it('[match-log] undoes the point that closed a game, reopening it', () => {
-    const state = stateOf([started(), ...gameTo('home', 9), undo()])
+  it('[match-log] undoes the point that won a game, reopening it', () => {
+    const state = stateOf([started(), ...pointsTo('home', 9), undo()])
 
     expect(state).toMatchObject({
       current: { away: 9, home: 10 },
@@ -183,6 +350,20 @@ describe('describeMatch', () => {
     })
   })
 
+  it('[match-log] counts a corrected game as confirmed, with nothing left to validate', () => {
+    const state = stateOf([
+      started(),
+      ...pointsTo('home', 7),
+      correction([{ away: 7, home: 11 }])
+    ])
+
+    expect(state).toMatchObject({
+      awaiting: null,
+      current: { away: 0, home: 0 },
+      periodsWon: { away: 0, home: 1 }
+    })
+  })
+
   it('[match-log] undoes a correction like a point', () => {
     const corrected = correction([{ away: 4, home: 6 }])
 
@@ -224,6 +405,37 @@ describe('recordScoringEvent', () => {
     ['a point before the start', [], point('home'), 'not_started'],
     ['a second start', [started()], started(), 'already_started'],
     ['a point once the match is won', won, point('away'), 'match_over'],
+    [
+      'a point in a won game the umpire has not confirmed',
+      [started(), ...pointsTo('home', 3)],
+      point('away'),
+      'awaiting_confirmation'
+    ],
+    [
+      'a confirmation with no won game',
+      [started(), ...rally('hh')],
+      confirmed(),
+      'nothing_to_confirm'
+    ],
+    [
+      'a second time-out for the same side',
+      [started(), timeout('home'), ...rally('a')],
+      timeout('home'),
+      'timeout_already_taken'
+    ],
+    ['a time-out once the match is won', won, timeout('away'), 'match_over'],
+    [
+      'withdrawing a time-out never called',
+      [started()],
+      timeoutWithdrawn('away'),
+      'no_timeout_to_withdraw'
+    ],
+    [
+      'withdrawing a card never shown',
+      [started()],
+      cardWithdrawn(randomUUID()),
+      'card_not_found'
+    ],
     ['an undo with nothing to undo', [started()], undo(), 'nothing_to_undo'],
     [
       'an event it already holds',

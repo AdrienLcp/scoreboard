@@ -1,7 +1,6 @@
 import {
   ArrowLeft,
   ArrowRight,
-  ArrowRightLeft,
   Check,
   ChevronDown,
   CircleAlert,
@@ -13,9 +12,11 @@ import {
   Monitor,
   Play,
   Plus,
+  RectangleVertical,
   RefreshCw,
   Search,
   Star,
+  Timer,
   Undo2,
   WifiOff,
   X
@@ -39,14 +40,15 @@ const OUTLINED = {
   plus: Plus,
   search: Search,
   starOutline: Star,
-  swap: ArrowRightLeft,
   sync: RefreshCw,
+  timer: Timer,
   undo: Undo2,
   wifiOff: WifiOff
 } satisfies Record<string, LucideIcon>
 
-/** The serve mark and the star are filled: they read as a state, not an action. */
+/** The serve mark, the card and the star are filled: they read as a state, not an action. */
 const FILLED = {
+  card: RectangleVertical,
   serve: Play,
   star: Star
 } satisfies Record<string, LucideIcon>

@@ -174,6 +174,7 @@ describe('matchTimesOf', () => {
     expect(matchTimesOf(log, state({}))).toEqual({
       durationMs: 4_000,
       finishedAtMs: 5_000,
+      lastTimeout: null,
       startedAtMs: 1_000
     })
   })
@@ -195,6 +196,7 @@ describe('matchTimesOf', () => {
     expect(matchTimesOf(log, state({ status: 'live', winner: null }))).toEqual({
       durationMs: null,
       finishedAtMs: null,
+      lastTimeout: null,
       startedAtMs: 1_000
     })
   })

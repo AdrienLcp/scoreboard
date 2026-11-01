@@ -3,8 +3,13 @@ import { useEffect, useState } from 'react'
 import type { Credentials } from '@scoreboard/protocol/client-message'
 import type { RecordRefusal } from '@scoreboard/protocol/error-code'
 import type { UmpireSnapshot } from '@scoreboard/protocol/event-snapshot'
-import type { EventId, UmpireCode } from '@scoreboard/protocol/identifiers'
 import type {
+  EventId,
+  PlayerId,
+  UmpireCode
+} from '@scoreboard/protocol/identifiers'
+import type {
+  CardPenalty,
   ConcessionReason,
   ScoringEvent
 } from '@scoreboard/protocol/scoring-event'
@@ -115,8 +120,14 @@ export const useUmpireConsole = ({ code, eventId }: Seat) => {
   }
 
   return {
+    callTimeout: (side: Side) => {
+      record({ id: newScoringEventId(), side, type: 'timeout.called' })
+    },
     concede: ({ by, reason }: { by: Side; reason: ConcessionReason }) => {
       record({ by, id: newScoringEventId(), reason, type: 'match.conceded' })
+    },
+    confirmPeriod: () => {
+      record({ id: newScoringEventId(), type: 'period.confirmed' })
     },
     error: socket.error,
     events,
@@ -126,6 +137,13 @@ export const useUmpireConsole = ({ code, eventId }: Seat) => {
     score: (side: Side) => {
       record({ id: newScoringEventId(), side, type: 'point.scored' })
     },
+    showCard: (card: {
+      penalty: CardPenalty
+      playerId: PlayerId | null
+      side: Side
+    }) => {
+      record({ ...card, id: newScoringEventId(), type: 'card.shown' })
+    },
     snapshot,
     start: (firstServer: Side) => {
       record({ firstServer, id: newScoringEventId(), type: 'match.started' })
@@ -134,6 +152,12 @@ export const useUmpireConsole = ({ code, eventId }: Seat) => {
     status: socket.status,
     undo: () => {
       record({ id: newScoringEventId(), type: 'score.undone' })
+    },
+    withdrawCard: (cardId: string) => {
+      record({ cardId, id: newScoringEventId(), type: 'card.withdrawn' })
+    },
+    withdrawTimeout: (side: Side) => {
+      record({ id: newScoringEventId(), side, type: 'timeout.withdrawn' })
     }
   }
 }

@@ -1,10 +1,10 @@
 import type React from 'react'
-import { useState } from 'react'
 
 import type { MatchView } from '@scoreboard/protocol/event-snapshot'
 import type { EventId, UmpireCode } from '@scoreboard/protocol/identifiers'
 import { type Side, sides } from '@scoreboard/protocol/side'
 
+import { nextCardPenalty } from '@scoreboard/core/discipline/card-penalty'
 import { opponentOf } from '@scoreboard/core/match/opponent'
 
 import { formatDuration } from '@/features/event/durations'
@@ -34,8 +34,9 @@ import { useTranslate } from '@/presentation/i18n/i18n-context'
 import { recordRefusalKey } from '@/presentation/i18n/translation'
 
 import { ConnectionBadge } from './connection-badge'
+import { DisciplinePanel } from './discipline-panel'
 import { EndMatchPanel } from './end-match-panel'
-import { lastPointSideOf, pointHistoryOf } from './point-history'
+import { pointHistoryOf, undoTargetSideOf } from './point-history'
 import { PointTarget } from './point-target'
 import { useScoreShortcuts } from './use-score-shortcuts'
 import { useUmpireConsole } from './use-umpire-console'
@@ -56,18 +57,20 @@ const UmpireConsole: React.FC<{ code: UmpireCode; eventId: EventId }> = ({
   const umpire = useUmpireConsole({ code, eventId })
   const { events, match, snapshot, state } = umpire
   const nowMs = useServerNow(snapshot?.event.generatedAtMs ?? null)
-  const [isFlipped, setIsFlipped] = useState(false)
-
-  const isSwapped = (state?.endsSwapped ?? false) !== isFlipped
-  const order: readonly [Side, Side] = isSwapped
+  const order: readonly [Side, Side] = state?.endsSwapped
     ? ['away', 'home']
     : ['home', 'away']
   const isLive = state?.status === 'live'
+  const awaiting = state?.awaiting ?? null
   const history = match === null ? [] : pointHistoryOf(match.format, events)
 
   useScoreShortcuts({
     isEnabled: isLive,
-    onPoint: umpire.score,
+    onPoint: (side) => {
+      if (awaiting === null) {
+        umpire.score(side)
+      }
+    },
     onUndo: () => {
       if (state?.canUndo) {
         umpire.undo()
@@ -111,7 +114,7 @@ const UmpireConsole: React.FC<{ code: UmpireCode; eventId: EventId }> = ({
     match === null || state === null
       ? null
       : matchCallOf({ format: match.format, state })
-  const lastSide = lastPointSideOf(history)
+  const lastSide = undoTargetSideOf(events)
   const lastFinished = snapshot.event.matches.findLast(
     (candidate) =>
       candidate.table === snapshot.table &&
@@ -119,6 +122,21 @@ const UmpireConsole: React.FC<{ code: UmpireCode; eventId: EventId }> = ({
       candidate.id !== match?.id
   )
   const lastWinner = lastFinished?.state.winner ?? null
+  const playersOf = (side: Side) =>
+    (match?.[side].playerIds ?? []).map((id) => ({
+      id,
+      name:
+        sideName({ form: 'full', participant: { playerIds: [id] }, players }) ??
+        translate('match.unnamedSide')
+    }))
+  const earlierStates = snapshot.event.matches
+    .filter(
+      (candidate) =>
+        candidate.encounterId !== null &&
+        candidate.encounterId === match?.encounterId &&
+        candidate.id !== match.id
+    )
+    .map((candidate) => candidate.state)
 
   return (
     <Main className='umpire-console'>
@@ -222,6 +240,23 @@ const UmpireConsole: React.FC<{ code: UmpireCode; eventId: EventId }> = ({
             </div>
 
             <div aria-live='polite' className='umpire-call'>
+              {awaiting === null || state.current === null ? null : (
+                <div className='umpire-awaiting'>
+                  <p>
+                    {translate(`umpire.awaiting.${awaiting.decides}`, {
+                      name: shortName(nameOf(awaiting.side)),
+                      score: scoreText(
+                        state.current[awaiting.side],
+                        state.current[opponentOf(awaiting.side)]
+                      )
+                    })}
+                  </p>
+                  <Button onPress={umpire.confirmPeriod} variant='primary'>
+                    <Icon name='check' />
+                    {translate(`umpire.confirm.${awaiting.decides}`)}
+                  </Button>
+                </div>
+              )}
               {state.status === 'finished' ? (
                 <p className='umpire-finished'>
                   <Icon name='check' />
@@ -245,6 +280,7 @@ const UmpireConsole: React.FC<{ code: UmpireCode; eventId: EventId }> = ({
                 {order.map((side, position) => (
                   <PointTarget
                     gamesWon={state.periodsWon[side]}
+                    isDisabled={awaiting !== null}
                     isHot={hotSideOf(call) === side}
                     isServing={state.serving === side}
                     key={side}
@@ -271,6 +307,27 @@ const UmpireConsole: React.FC<{ code: UmpireCode; eventId: EventId }> = ({
                 )}
               </span>
             </Button>
+
+            <DisciplinePanel
+              lastTimeout={match.timing.lastTimeout}
+              nameOf={nameOf}
+              nowMs={nowMs}
+              onCallTimeout={umpire.callTimeout}
+              onShowCard={umpire.showCard}
+              onWithdrawCard={umpire.withdrawCard}
+              onWithdrawTimeout={umpire.withdrawTimeout}
+              order={order}
+              penaltyFor={({ playerId, side }) =>
+                nextCardPenalty({
+                  current: state,
+                  earlier: earlierStates,
+                  playerId,
+                  side
+                })
+              }
+              playersOf={playersOf}
+              state={state}
+            />
           </div>
 
           <aside className='umpire-aside'>
@@ -329,10 +386,6 @@ const UmpireConsole: React.FC<{ code: UmpireCode; eventId: EventId }> = ({
               aria-label={translate('umpire.end.section')}
               className='umpire-end'
             >
-              <Button onPress={() => setIsFlipped((current) => !current)}>
-                <Icon name='swap' />
-                {translate('umpire.swap')}
-              </Button>
               {isLive ? (
                 <EndMatchPanel nameOf={nameOf} onConcede={umpire.concede} />
               ) : null}

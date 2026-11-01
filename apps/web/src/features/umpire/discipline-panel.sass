@@ -1,0 +1,51 @@
+@use '../../presentation/styles/typography'
+
+@layer components
+  .discipline-panel
+    display: grid
+    gap: var(--space-s)
+    grid-template-columns: 1fr 1fr
+
+  .discipline-side
+    display: flex
+    flex-direction: column
+    gap: var(--space-xs)
+    min-width: 0
+
+    h2
+      @include typography.label
+
+      overflow: hidden
+      text-overflow: ellipsis
+      white-space: nowrap
+
+  .discipline-badge
+    align-items: center
+    background: var(--surface)
+    display: flex
+    flex-wrap: wrap
+    gap: var(--space-xs)
+    padding: var(--space-xs) var(--space-s)
+
+    &[data-running=true]
+      @include typography.strong
+
+  .button.discipline-withdraw
+    margin-inline-start: auto
+
+  .discipline-confirm
+    display: flex
+    flex-direction: column
+    gap: var(--space-xs)
+
+  .umpire-awaiting
+    align-items: center
+    display: flex
+    flex: 1
+    flex-wrap: wrap
+    gap: var(--space-s)
+
+    p
+      @include typography.emphasis
+
+      font-size: var(--text-l)

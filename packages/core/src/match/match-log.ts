@@ -4,8 +4,10 @@ import type { RecordRefusal } from '@scoreboard/protocol/error-code'
 import type { MatchFormat } from '@scoreboard/protocol/match-format'
 import {
   type Concession,
+  type MatchCard,
   type MatchState,
-  scheduledMatchState
+  scheduledMatchState,
+  type TimeoutsTaken
 } from '@scoreboard/protocol/match-state'
 import type { ScoringEvent } from '@scoreboard/protocol/scoring-event'
 
@@ -14,10 +16,24 @@ import { opponentOf } from './opponent'
 import type { Ruleset } from './ruleset'
 
 type Standing<TProgress> = {
+  cards: readonly MatchCard[]
   concession: Concession | null
   isEnded: boolean
   progress: TProgress
+  timeouts: TimeoutsTaken
 }
+
+const NO_TIMEOUTS: TimeoutsTaken = { away: false, home: false }
+
+const freshStanding = <TProgress>(
+  progress: TProgress
+): Standing<TProgress> => ({
+  cards: [],
+  concession: null,
+  isEnded: false,
+  progress,
+  timeouts: NO_TIMEOUTS
+})
 
 /**
  * The match folded so far. `undoStack` holds the standing before each event an
@@ -33,6 +49,67 @@ type ProgressingEvent = Exclude<
   ScoringEvent,
   { type: 'match.started' | 'score.undone' }
 >
+
+type CardShown = Extract<ScoringEvent, { type: 'card.shown' }>
+
+/**
+ * The card joins the match, then its penalty goes to the opponent point by
+ * point. A penalty point that wins the game drops the rest: the won game
+ * waits for the umpire like any other.
+ */
+const showCard = <TFormat extends MatchFormat, TProgress>(
+  ruleset: Ruleset<TFormat, TProgress>,
+  standing: Standing<TProgress>,
+  card: CardShown
+): Standing<TProgress> => {
+  const beneficiary = opponentOf(card.side)
+  let { progress } = standing
+
+  for (let point = 0; point < card.penalty; point += 1) {
+    const awarded = ruleset.award(progress, beneficiary)
+
+    if (awarded.status === 'failure') {
+      break
+    }
+
+    progress = awarded.data.progress
+  }
+
+  return {
+    ...standing,
+    cards: [
+      ...standing.cards,
+      {
+        id: card.id,
+        penalty: card.penalty,
+        playerId: card.playerId,
+        side: card.side
+      }
+    ],
+    progress
+  }
+}
+
+/** Takes back a mis-tap at any time, even once the match is over. */
+const withdraw = <TProgress>(
+  standing: Standing<TProgress>,
+  event: Extract<ScoringEvent, { type: 'card.withdrawn' | 'timeout.withdrawn' }>
+): Result<Standing<TProgress>, RecordRefusal> => {
+  if (event.type === 'timeout.withdrawn') {
+    return standing.timeouts[event.side]
+      ? Result.success({
+          ...standing,
+          timeouts: { ...standing.timeouts, [event.side]: false }
+        })
+      : Result.failure('no_timeout_to_withdraw')
+  }
+
+  const cards = standing.cards.filter((card) => card.id !== event.cardId)
+
+  return cards.length === standing.cards.length
+    ? Result.failure('card_not_found')
+    : Result.success({ ...standing, cards })
+}
 
 const isOver = <TFormat extends MatchFormat, TProgress>(
   ruleset: Ruleset<TFormat, TProgress>,
@@ -55,11 +132,31 @@ const advance = <TFormat extends MatchFormat, TProgress>(
       : Result.success({ ...standing, progress: corrected.data.progress })
   }
 
+  if (event.type === 'card.withdrawn' || event.type === 'timeout.withdrawn') {
+    return withdraw(standing, event)
+  }
+
   if (isOver(ruleset, standing)) {
     return Result.failure('match_over')
   }
 
   switch (event.type) {
+    case 'period.confirmed': {
+      const confirmed = ruleset.confirm(standing.progress)
+
+      return confirmed.status === 'failure'
+        ? confirmed
+        : Result.success({ ...standing, progress: confirmed.data.progress })
+    }
+    case 'timeout.called':
+      return standing.timeouts[event.side]
+        ? Result.failure('timeout_already_taken')
+        : Result.success({
+            ...standing,
+            timeouts: { ...standing.timeouts, [event.side]: true }
+          })
+    case 'card.shown':
+      return Result.success(showCard(ruleset, standing, event))
     case 'point.scored': {
       const awarded = ruleset.award(standing.progress, event.side)
 
@@ -70,7 +167,11 @@ const advance = <TFormat extends MatchFormat, TProgress>(
     case 'match.conceded':
       return Result.success({
         ...standing,
-        concession: { by: event.by, reason: event.reason }
+        concession: { by: event.by, reason: event.reason },
+        progress:
+          event.reason === 'walkover'
+            ? ruleset.walkover(standing.progress, opponentOf(event.by))
+            : standing.progress
       })
     case 'match.ended': {
       const ended = ruleset.end(standing.progress)
@@ -102,11 +203,9 @@ const step = <TFormat extends MatchFormat, TProgress>(
 
     return Result.success({
       seenIds,
-      standing: {
-        concession: null,
-        isEnded: false,
-        progress: ruleset.begin({ firstServer: event.firstServer, format })
-      },
+      standing: freshStanding(
+        ruleset.begin({ firstServer: event.firstServer, format })
+      ),
       undoStack: []
     })
   }
@@ -117,9 +216,13 @@ const step = <TFormat extends MatchFormat, TProgress>(
     return Result.success({
       seenIds,
       standing: {
-        concession: { by: event.by, reason: event.reason },
-        isEnded: false,
-        progress: ruleset.begin({ firstServer: event.by, format })
+        ...freshStanding(
+          ruleset.walkover(
+            ruleset.begin({ firstServer: event.by, format }),
+            opponentOf(event.by)
+          )
+        ),
+        concession: { by: event.by, reason: event.reason }
       },
       undoStack: [null]
     })
@@ -187,17 +290,21 @@ const stateOf = <TFormat extends MatchFormat, TProgress>(
 
   const view = ruleset.view(standing.progress)
   const canUndo = folded.undoStack.length > 0
+  const { cards, timeouts } = standing
 
   if (standing.concession !== null) {
     return {
       ...view,
+      awaiting: null,
       canUndo,
+      cards: [...cards],
       concession: standing.concession,
       current: standing.concession.reason === 'walkover' ? null : view.current,
       serveTurn: null,
       serving: null,
       stake: null,
       status: 'finished',
+      timeouts,
       winner: opponentOf(standing.concession.by)
     }
   }
@@ -206,12 +313,15 @@ const stateOf = <TFormat extends MatchFormat, TProgress>(
 
   return {
     ...view,
+    awaiting: isFinished ? null : view.awaiting,
     canUndo,
+    cards: [...cards],
     concession: null,
     serveTurn: isFinished ? null : view.serveTurn,
     serving: isFinished ? null : view.serving,
     stake: isFinished ? null : view.stake,
-    status: isFinished ? 'finished' : 'live'
+    status: isFinished ? 'finished' : 'live',
+    timeouts
   }
 }
 

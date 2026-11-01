@@ -330,6 +330,15 @@ export const FR_DICTIONARY = defineDictionary({
       add: 'Ajouter le match',
       addTitle: 'Nouveau match',
       away: 'Joueur extérieur',
+      bestOf: 'Manches',
+      bestOfOption: defineTranslation('{count:plural}', {
+        plural: {
+          count: {
+            one: '{?} manche gagnante',
+            other: '{?} manches gagnantes'
+          }
+        }
+      }),
       empty: 'Aucun match. Ajoutez des joueurs, puis leurs matchs.',
       home: 'Joueur à domicile',
       noTable: 'Sans table',
@@ -385,13 +394,18 @@ export const FR_DICTIONARY = defineDictionary({
   record: {
     refused: {
       already_started: 'Ce match a déjà commencé.',
+      awaiting_confirmation: 'Validez d’abord la manche gagnée.',
       cannot_end: 'Ce match se termine au score.',
+      card_not_found: 'Ce carton a déjà été retiré.',
       invalid_score: 'Ce score est impossible.',
       match_not_found: 'Ce match n’existe plus.',
       match_not_on_table: 'Ce match n’est pas sur votre table.',
       match_over: 'Ce match est terminé.',
+      no_timeout_to_withdraw: 'Ce temps mort a déjà été retiré.',
       not_started: 'Ce match n’a pas encore commencé.',
-      nothing_to_undo: 'Rien à annuler.'
+      nothing_to_confirm: 'Aucune manche à valider.',
+      nothing_to_undo: 'Rien à annuler.',
+      timeout_already_taken: 'Ce joueur a déjà pris son temps mort.'
     }
   },
   setup: {
@@ -492,7 +506,30 @@ export const FR_DICTIONARY = defineDictionary({
         }
       })
     },
+    awaiting: {
+      match: '{name} gagne le match, {score}',
+      period: '{name} gagne la manche, {score}'
+    },
+    card: {
+      cancel: 'Pas de carton',
+      confirmYellow: 'Carton jaune pour {name}',
+      confirmYellowRed: defineTranslation(
+        'Jaune et rouge pour {name} : {points:plural} à {opponent}',
+        { plural: { points: { one: '{?} point', other: '{?} points' } } }
+      ),
+      give: 'Carton…',
+      yellow: 'Carton jaune',
+      yellowRed: 'Jaune et rouge'
+    },
+    confirm: {
+      match: 'Valider le match',
+      period: 'Valider la manche'
+    },
     deuce: 'Égalité — deux points d’écart',
+    discipline: {
+      section: 'Temps morts et cartons',
+      withdraw: 'Retirer'
+    },
     encounter: 'Rencontre',
     end: {
       cancel: 'Revenir au match',
@@ -552,7 +589,11 @@ export const FR_DICTIONARY = defineDictionary({
     startedAt: defineTranslation('Commencé à {at:date} · {elapsed} de jeu', {
       date: { at: { timeStyle: 'short' } }
     }),
-    swap: 'Changer de côté',
+    timeout: {
+      call: 'Temps mort',
+      running: 'Temps mort · {seconds:number} s',
+      used: 'Temps mort pris'
+    },
     title: 'Arbitrage',
     undo: 'Annuler le dernier point'
   },
