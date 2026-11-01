@@ -256,6 +256,21 @@ describe('pool table', () => {
 
     expect(table.standings[0]?.playerId).toBe(three)
     expect(table.standings.every((standing) => standing.isDrawn)).toBe(true)
+    expect(table.drawnGroups).toEqual([[three, one, two]])
+  })
+
+  it('names no group to draw when the tie-break parts everyone', () => {
+    const table = poolTableFor({
+      matches: playedAs(poolMatches, [
+        [one, two, HOME_3_2],
+        [two, three, HOME_3_0],
+        [three, one, HOME_3_2]
+      ]),
+      pool,
+      tournament: RULES
+    })
+
+    expect(table.drawnGroups).toEqual([])
   })
 })
 

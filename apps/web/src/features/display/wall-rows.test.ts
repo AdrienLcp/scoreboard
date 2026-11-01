@@ -19,6 +19,7 @@ import { publicSnapshotFor } from '@scoreboard/core/event/public-snapshot'
 import { wallCallOf } from '@/features/event/sheet-call'
 import { wallSideOf } from '@/features/event/sheet-side'
 
+import { LINGER_MS } from './display-stage'
 import { wallRowsFor } from './wall-rows'
 
 const ANNA = aPlayer('Anna Morel')
@@ -90,6 +91,7 @@ const viewOf = (
 describe('wall rows', () => {
   it('[wall] puts an encounter on one row with its two tables, the opponent white by default', () => {
     const rows = wallRowsFor({
+      nowMs: 1000,
       snapshot: snapshotWith([[AX, [stampedAt(1, started())]]]),
       tables: [1, 2]
     })
@@ -105,10 +107,29 @@ describe('wall rows', () => {
   it('[wall] leaves a table with a match outside any encounter to the open board', () => {
     expect(
       wallRowsFor({
+        nowMs: 1000,
         snapshot: snapshotWith([], [AX, matchOn(2)]),
         tables: [1, 2]
       })
     ).toBeNull()
+  })
+
+  it('[wall] holds a finished match on its table until the room has read its final score', () => {
+    const snapshot = snapshotWith([
+      [AX, [stampedAt(1, started()), stampedAt(3, walkover())]]
+    ])
+    const tableOneAt = (nowMs: number) =>
+      wallRowsFor({ nowMs, snapshot, tables: [1, 2] })?.[0]?.tables[0]
+
+    expect(tableOneAt(3 + LINGER_MS - 1)).toMatchObject({
+      isOver: true,
+      live: { id: AX.id }
+    })
+    expect(tableOneAt(3 + LINGER_MS)).toMatchObject({
+      isOver: false,
+      live: null,
+      next: { id: AY.id }
+    })
   })
 
   it('[wall] calls a singles line by its letters and a double by its label', () => {
@@ -139,6 +160,11 @@ describe('wall rows', () => {
 
     expect(sideIn(AY)).toMatchObject({ card: 0, letters: 'A' })
     expect(sideIn(DOUBLE)).toMatchObject({ card: 0, letters: 'AB' })
+    expect(sideIn(DOUBLE).players.map((player) => player.card)).toEqual([
+      0,
+      null
+    ])
+    expect(sideIn(DOUBLE).sideCard).toBeNull()
     expect(
       wallSideOf({
         match: viewOf(snapshot, DOUBLE),

@@ -14,8 +14,8 @@ export const FR_DICTIONARY = defineDictionary({
     forget: 'Changer de club',
     hall: {
       empty:
-        'Dessinez la salle dans l’onglet Plan d’une journée, puis touchez « Garder ce plan pour le club » : chaque nouvelle journée partira de ce plan.',
-      help: 'Chaque nouvelle journée part de ce plan. Pour le changer : onglet Plan d’une journée, puis « Garder ce plan pour le club ».',
+        'Dessinez la salle dans l’onglet Plan d’une journée, puis touchez « Garder ce plan pour le club »\u00a0: chaque nouvelle journée partira de ce plan.',
+      help: 'Chaque nouvelle journée part de ce plan. Pour le changer\u00a0: onglet Plan d’une journée, puis « Garder ce plan pour le club ».',
       title: 'Salle'
     },
     home: 'Accueil',
@@ -62,7 +62,7 @@ export const FR_DICTIONARY = defineDictionary({
       qrLabel: 'QR code qui ouvre le club',
       scanHint: 'Ou scannez pour ouvrir le club',
       warning:
-        'Ce code ouvre et modifie le club : ne le donnez qu’à ceux qui préparent les journées.'
+        'Ce code ouvre et modifie le club\u00a0: ne le donnez qu’à ceux qui préparent les journées.'
     },
     team: {
       colour: 'Couleur',
@@ -91,14 +91,14 @@ export const FR_DICTIONARY = defineDictionary({
     title: 'Le club',
     undo: 'Annuler',
     unsaved:
-      'La dernière modification n’a pas atteint le serveur : elle reste sur cet appareil.',
+      'La dernière modification n’a pas atteint le serveur\u00a0: elle reste sur cet appareil.',
     welcome: {
       create: 'Ouvrir le club',
       createHelp:
-        'Ses équipes, leurs couleurs et ses joueurs sont gardés une fois pour toutes ; chaque dimanche se prépare en les choisissant.',
+        'Ses équipes, leurs couleurs et ses joueurs sont gardés une fois pour toutes\u00a0; chaque dimanche se prépare en les choisissant.',
       join: 'Ouvrir',
       joinHelp:
-        'Sur l’appareil où le club est déjà ouvert : « Mon club », puis « Ouvrir sur un autre appareil ». Scannez son QR code, ou tapez son code ici.',
+        'Sur l’appareil où le club est déjà ouvert\u00a0: « Mon club », puis « Ouvrir sur un autre appareil ». Scannez son QR code, ou tapez son code ici.',
       joinTitle: 'Le club est déjà ouvert ailleurs',
       name: 'Nom du club',
       namePlaceholder: 'PPC Angles',
@@ -167,6 +167,7 @@ export const FR_DICTIONARY = defineDictionary({
       cardPenalty: 'Carton jaune et rouge',
       decider: 'Belle',
       deuce: 'Égalité',
+      doubles: 'Double',
       finalPhase: 'Phase finale',
       follow: 'Tous les matchs sur votre téléphone',
       free: 'Table libre',
@@ -226,14 +227,15 @@ export const FR_DICTIONARY = defineDictionary({
     club: 'Mon club',
     create: 'Créer la rencontre',
     createNote:
-      'Vous recevrez un code organisateur : il ouvre la préparation et les corrections.',
+      'Vous recevrez un code organisateur\u00a0: il ouvre la préparation et les corrections.',
     creating: 'Création…',
     headline: 'Chaque match en direct, sur grand écran et dans la poche.',
     join: {
       code: 'Code de la rencontre',
       follow: 'Suivre les matchs',
       hint: 'Les dix caractères après /e/ dans le lien, ou le lien entier.',
-      invalid: 'Ce code ne correspond à aucune rencontre : vérifiez le lien.',
+      invalid:
+        'Ce code ne correspond à aucune rencontre\u00a0: vérifiez le lien.',
       title: 'Rejoindre une rencontre',
       umpire: 'Arbitrer une table'
     },
@@ -250,7 +252,7 @@ export const FR_DICTIONARY = defineDictionary({
     device: {
       analyticsOptOut:
         'Votre refus de la mesure d’audience, si vous la désactivez plus bas.',
-      body: 'Scoreboard ne dépose aucun cookie. Ce qu’il retient reste dans votre navigateur, pour ce seul site, jusqu’à ce que vous l’effaciez :',
+      body: 'Scoreboard ne dépose aucun cookie. Ce qu’il retient reste dans votre navigateur, pour ce seul site, jusqu’à ce que vous l’effaciez\u00a0:',
       eventPart: 'rencontre',
       followed: 'Les joueurs que vous suivez dans la vue spectateur.',
       heading: 'Ce que votre navigateur garde',
@@ -261,7 +263,7 @@ export const FR_DICTIONARY = defineDictionary({
       outboxPart: 'rencontre:code'
     },
     event: {
-      body: 'Chaque rencontre garde sur le serveur ce que son organisateur y saisit : son nom, celui du club, les noms des joueurs et des équipes, le programme, ainsi que chaque point marqué et son heure.',
+      body: 'Chaque rencontre garde sur le serveur ce que son organisateur y saisit\u00a0: son nom, celui du club, les noms des joueurs et des équipes, le programme, ainsi que chaque point marqué et son heure.',
       club: defineTranslation(
         'Les équipes, joueurs et clubs adverses qu’un club enregistre sont gardés tant qu’il s’en sert, et effacés {days:plural} après leur dernière modification.',
         DAYS_PLURAL
@@ -270,7 +272,7 @@ export const FR_DICTIONARY = defineDictionary({
         'Son organisateur peut aussi l’effacer tout de suite, depuis l’onglet Réglages de l’organisation.',
       heading: 'Ce que le serveur garde d’une rencontre',
       logs: defineTranslation(
-        'Pour diagnostiquer les pannes, l’hébergeur journalise chaque requête : son adresse, son heure et l’adresse IP d’où elle vient. Ces journaux ne contiennent aucun nom et sont effacés au bout de {days:plural}.',
+        'Pour diagnostiquer les pannes, l’hébergeur journalise chaque requête\u00a0: son adresse, son heure et l’adresse IP d’où elle vient. Ces journaux ne contiennent aucun nom et sont effacés au bout de {days:plural}.',
         DAYS_PLURAL
       ),
       retention: defineTranslation(
@@ -278,10 +280,10 @@ export const FR_DICTIONARY = defineDictionary({
         DAYS_PLURAL
       ),
       yourName:
-        'Votre nom figure dans une rencontre et vous voulez qu’il disparaisse ? Demandez-le à son organisateur, ou écrivez-moi depuis <contact>ma page de contact</contact> : je l’efface sous un mois.'
+        'Votre nom figure dans une rencontre et vous voulez qu’il disparaisse\u00a0? Demandez-le à son organisateur, ou écrivez-moi depuis <contact>ma page de contact</contact>\u00a0: je l’efface sous un mois.'
     },
     host: {
-      body: 'Le site et ses données sont hébergés par :',
+      body: 'Le site et ses données sont hébergés par\u00a0:',
       heading: 'Hébergeur'
     },
     intro:
@@ -294,7 +296,7 @@ export const FR_DICTIONARY = defineDictionary({
       heading: 'Mesure d’audience',
       refused: 'Vos visites ne sont pas comptées dans ce navigateur.',
       refusedByBrowser:
-        'Votre navigateur envoie le signal Global Privacy Control : vos visites ne sont jamais comptées.',
+        'Votre navigateur envoie le signal Global Privacy Control\u00a0: vos visites ne sont jamais comptées.',
       retention: defineTranslation(
         'Chaque enregistrement est conservé {months:plural} au plus.',
         { plural: { months: { one: '{?} mois', other: '{?} mois' } } }
@@ -302,7 +304,7 @@ export const FR_DICTIONARY = defineDictionary({
       saveFailed:
         'Votre navigateur n’a pas conservé ce choix. Réessayez, ou activez Global Privacy Control.',
       storageBlocked:
-        'Ce navigateur bloque le stockage des sites : un refus ne peut pas y être conservé. Activer Global Privacy Control dans votre navigateur refuse la mesure sur tous les sites.',
+        'Ce navigateur bloque le stockage des sites\u00a0: un refus ne peut pas y être conservé. Activer Global Privacy Control dans votre navigateur refuse la mesure sur tous les sites.',
       switch: 'Compter mes visites'
     },
     publisher: {
@@ -312,7 +314,7 @@ export const FR_DICTIONARY = defineDictionary({
       heading: 'Éditeur'
     },
     rights: {
-      body: 'Le RGPD vous permet d’accéder à ce qui vous concerne, de le rectifier ou de l’effacer, et de vous opposer à son utilisation. Demandez-le depuis <contact>ma page de contact</contact> ; je réponds sous un mois.',
+      body: 'Le RGPD vous permet d’accéder à ce qui vous concerne, de le rectifier ou de l’effacer, et de vous opposer à son utilisation. Demandez-le depuis <contact>ma page de contact</contact>\u00a0; je réponds sous un mois.',
       complaint:
         'Si vous estimez que vos droits ne sont pas respectés, vous pouvez adresser une réclamation à la <authority>CNIL</authority>.',
       heading: 'Vos droits'
@@ -372,7 +374,7 @@ export const FR_DICTIONARY = defineDictionary({
       qrLabel: 'QR code de la console d’arbitrage de la table {table:number}',
       scanHint: 'ou scanne ce QR code avec son téléphone',
       sheet: {
-        scan: 'Arbitre : scannez ce QR code avec votre téléphone',
+        scan: 'Arbitre\u00a0: scannez ce QR code avec votre téléphone',
         type: 'ou tapez ce code sur'
       },
       spectator: 'Page des spectateurs',
@@ -392,7 +394,7 @@ export const FR_DICTIONARY = defineDictionary({
       lineup: 'Composition',
       loading: 'Ouverture du club…',
       noClub:
-        'Préparez une fois les équipes du club : chaque rencontre se crée ensuite en deux choix.',
+        'Préparez une fois les équipes du club\u00a0: chaque rencontre se crée ensuite en deux choix.',
       noOpponent: 'Ajoutez un club adverse',
       noTables: 'Pas assez de tables libres',
       prepare: 'Préparer les équipes du club',
@@ -406,11 +408,11 @@ export const FR_DICTIONARY = defineDictionary({
       submit: 'Ouvrir l’organisation',
       title: 'Organiser cette rencontre',
       yours:
-        'Votre code organisateur, à garder pour ouvrir cette page ailleurs :'
+        'Votre code organisateur, à garder pour ouvrir cette page ailleurs\u00a0:'
     },
     correction: {
       hint: 'Les manches dans l’ordre, la dernière peut être en cours.',
-      invalid: 'Écrivez les manches ainsi : 11-7 6-4',
+      invalid: 'Écrivez les manches ainsi\u00a0: 11-7 6-4',
       label: 'Score, manche par manche',
       open: 'Corriger',
       submit: 'Enregistrer le score',
@@ -429,7 +431,7 @@ export const FR_DICTIONARY = defineDictionary({
     deletion: {
       confirm: 'Effacer la rencontre définitivement',
       explain: defineTranslation(
-        'La rencontre, ses joueurs et ses scores sont effacés automatiquement {days:plural} après la dernière modification. Vous pouvez l’effacer dès maintenant : les écrans, les arbitres et les spectateurs la perdent aussitôt, et rien ne pourra être récupéré.',
+        'La rencontre, ses joueurs et ses scores sont effacés automatiquement {days:plural} après la dernière modification. Vous pouvez l’effacer dès maintenant\u00a0: les écrans, les arbitres et les spectateurs la perdent aussitôt, et rien ne pourra être récupéré.',
         DAYS_PLURAL
       ),
       label: 'Effacer la rencontre',
@@ -452,14 +454,14 @@ export const FR_DICTIONARY = defineDictionary({
         done: '{name} est branché.',
         error: {
           expired:
-            'Ce code n’est plus valable. L’écran en affiche un nouveau : tapez-le.',
+            'Ce code n’est plus valable. L’écran en affiche un nouveau\u00a0: tapez-le.',
           network: 'Pas de connexion. Réessayez.',
           refused: 'L’écran n’a pas pu être branché. Réessayez.',
           unknown_display: 'Cet écran a été retiré de la rencontre.',
           wrong_code: 'Votre code organisateur n’est plus le bon.'
         },
         explain:
-          'Sur l’ordinateur branché au téléviseur, ouvrez <link>{url}</link>. Il affiche un code : tapez-le ici, ou scannez son QR code avec ce téléphone.',
+          'Sur l’ordinateur branché au téléviseur, ouvrez <link>{url}</link>. Il affiche un code\u00a0: tapez-le ici, ou scannez son QR code avec ce téléphone.',
         submit: 'Brancher l’écran',
         title: 'Brancher un écran',
         which: 'Ce que montre l’écran'
@@ -478,7 +480,7 @@ export const FR_DICTIONARY = defineDictionary({
       home: 'Équipe à domicile'
     },
     forfeit: {
-      confirm: defineTranslation('Forfait de {name} : {count:plural}', {
+      confirm: defineTranslation('Forfait de {name}\u00a0: {count:plural}', {
         plural: {
           count: { one: '{?} match perdu', other: '{?} matchs perdus' }
         }
@@ -498,7 +500,7 @@ export const FR_DICTIONARY = defineDictionary({
       freeLong: 'Aucune rencontre sur cette table.',
       hidden: 'Rangée',
       hintEncounter:
-        'Touchez la table où installer {encounter} : elle prend aussi sa voisine.',
+        'Touchez la table où installer {encounter}\u00a0: elle prend aussi sa voisine.',
       hintIdle:
         'Touchez une table pour son QR d’arbitrage, ou une rencontre pour la changer de tables.',
       hintTable:
@@ -509,7 +511,7 @@ export const FR_DICTIONARY = defineDictionary({
       label: 'Plan de la salle',
       moveEncounter: 'Déplacer la rencontre',
       moveTable: 'Déplacer la table',
-      noEncounter: 'Aucune rencontre : ajoutez-en dans Équipes.',
+      noEncounter: 'Aucune rencontre\u00a0: ajoutez-en dans Équipes.',
       noTable: 'Sans table',
       number: 'Numéro',
       stands: 'Gradins',
@@ -578,7 +580,8 @@ export const FR_DICTIONARY = defineDictionary({
       count: defineTranslation('{count:plural}', {
         plural: { count: { one: '{?} équipe', other: '{?} équipes' } }
       }),
-      empty: 'Aucune équipe : utile seulement pour les rencontres par équipes.',
+      empty:
+        'Aucune équipe\u00a0: utile seulement pour les rencontres par équipes.',
       members: defineTranslation('{count:plural}', {
         plural: { count: { one: '{?} joueur', other: '{?} joueurs' } }
       }),
@@ -594,16 +597,16 @@ export const FR_DICTIONARY = defineDictionary({
       clubmates: 'Deux joueurs du même club dans cette poule.',
       clubs: 'Clubs',
       clubsHint:
-        'Touchez les clubs du tournoi : leurs deux meilleurs joueurs entrent.',
-      draw: 'Tirer au sort les égalités',
+        'Touchez les clubs du tournoi\u00a0: leurs deux meilleurs joueurs entrent.',
+      draw: 'Tirer au sort',
       drawAgain: 'Refaire le tirage au sort',
       drawHint:
-        'Des joueurs restent à égalité après le départage : un tirage au sort les place.',
+        'Des joueurs restent à égalité après le départage\u00a0: un tirage au sort les place, égalité par égalité.',
       final: 'Finale',
       lossPoints: 'Points pour une défaite',
       needPlayers: 'Il faut au moins 4 joueurs, 2 par poule.',
       noClub:
-        'Aucun club avec des joueurs : ajoutez-les dans la fiche du club, ou dans l’onglet Joueurs.',
+        'Aucun club avec des joueurs\u00a0: ajoutez-les dans la fiche du club, ou dans l’onglet Joueurs.',
       players: 'Joueurs',
       playersHint:
         'Touchez un joueur pour l’ajouter ou le retirer, rangés par points.',
@@ -615,8 +618,8 @@ export const FR_DICTIONARY = defineDictionary({
       ready: defineTranslation('{count:plural}', {
         plural: {
           count: {
-            one: 'Tournoi prêt : {?} match.',
-            other: 'Tournoi prêt : {?} matchs.'
+            one: 'Tournoi prêt\u00a0: {?} match.',
+            other: 'Tournoi prêt\u00a0: {?} matchs.'
           }
         }
       }),
@@ -635,12 +638,14 @@ export const FR_DICTIONARY = defineDictionary({
       tablesBracket:
         'Demi-finales tables {first:number} et {second:number}, finale table {first:number}.',
       tablesHint: 'Dans l’ordre du plan de la salle, sans les tables rangées.',
-      tablesPool: 'Poule {number:number} : tables {tables:list}',
+      tablesPool: 'Poule {number:number}\u00a0: tables {tables:list}',
       thirdPlace: 'Petite finale',
       thirdPlaceSwitch: 'Match pour la 3e place',
+      tieGroup: 'Poule {pool:number} · places {first:number} à {last:number}',
+      tiePair: 'Poule {pool:number} · places {first:number} et {last:number}',
       title: 'Top 12',
       underWay:
-        'Le tournoi a commencé : les poules et les règles ne changent plus.',
+        'Le tournoi a commencé\u00a0: les poules et les règles ne changent plus.',
       undo: 'Annuler la dernière modification',
       winPoints: 'Points pour une victoire'
     }
@@ -691,12 +696,12 @@ export const FR_DICTIONARY = defineDictionary({
       title: 'Phase finale'
     },
     detail: {
-      card: '{name} : carton jaune',
+      card: '{name}\u00a0: carton jaune',
       cardPenalty: defineTranslation(
-        '{name} : carton jaune et rouge, {points:plural}',
+        '{name}\u00a0: carton jaune et rouge, {points:plural}',
         { plural: { points: { one: '{?} point', other: '{?} points' } } }
       ),
-      timeout: '{name} : temps mort pris'
+      timeout: '{name}\u00a0: temps mort pris'
     },
     empty: {
       finished: 'Aucun match terminé pour l’instant.',
@@ -707,7 +712,7 @@ export const FR_DICTIONARY = defineDictionary({
       date: { at: { timeStyle: 'short' } }
     }),
     follow: 'Suivre {name}',
-    following: 'Suivi : {name}',
+    following: 'Suivi\u00a0: {name}',
     followPlayer: 'Suivre un joueur',
     game: 'Manche',
     gameByGame: 'Score manche par manche',
@@ -789,7 +794,7 @@ export const FR_DICTIONARY = defineDictionary({
     underAMinute: '< 1 min'
   },
   timing: {
-    duration: 'Durée : {minutes:number} min',
+    duration: 'Durée\u00a0: {minutes:number} min',
     estimated: defineTranslation('Début estimé vers {at:date}', {
       date: { at: { timeStyle: 'short' } }
     }),
@@ -812,7 +817,7 @@ export const FR_DICTIONARY = defineDictionary({
       cancel: 'Pas de carton',
       confirmYellow: 'Carton jaune pour {name}',
       confirmYellowRed: defineTranslation(
-        'Jaune et rouge pour {name} : {points:plural} à {opponent}',
+        'Jaune et rouge pour {name}\u00a0: {points:plural} à {opponent}',
         { plural: { points: { one: '{?} point', other: '{?} points' } } }
       ),
       give: 'Carton…',
@@ -850,7 +855,7 @@ export const FR_DICTIONARY = defineDictionary({
     encounter: 'Rencontre',
     end: {
       cancel: 'Revenir au match',
-      confirm: 'Confirmer : {name} gagne',
+      confirm: 'Confirmer\u00a0: {name} gagne',
       explain:
         'Le match s’arrête ici et l’adversaire est déclaré vainqueur. L’organisateur pourra corriger.',
       open: 'Fin du match / abandon…',
@@ -861,12 +866,12 @@ export const FR_DICTIONARY = defineDictionary({
       },
       section: 'Fin de match',
       title: 'Fin du match / abandon',
-      who: 'Qui s’arrête ?',
+      who: 'Qui s’arrête\u00a0?',
       why: 'Motif'
     },
     entry: {
       code: 'Code de la table',
-      hint: 'Il est affiché sur la table, sous le QR code : six lettres ou chiffres.',
+      hint: 'Il est affiché sur la table, sous le QR code\u00a0: six lettres ou chiffres.',
       invalid: 'Ce code fait six caractères, sans 0, 1, I ni O.',
       missing: 'Saisissez le code inscrit sur la table.',
       placeholder: 'A7K2PQ',
@@ -900,8 +905,8 @@ export const FR_DICTIONARY = defineDictionary({
       second: '2e service'
     },
     start: {
-      last: 'Match précédent : {winner} bat {loser} {games}',
-      title: 'Qui sert en premier ?'
+      last: 'Match précédent\u00a0: {winner} bat {loser} {games}',
+      title: 'Qui sert en premier\u00a0?'
     },
     startedAt: defineTranslation('Commencé à {at:date} · {elapsed} de jeu', {
       date: { at: { timeStyle: 'short' } }
@@ -924,12 +929,12 @@ export const FR_DICTIONARY = defineDictionary({
     title: 'Cet écran attend sa rencontre'
   },
   wallPairing: {
-    choose: 'Sur quelle rencontre brancher l’écran {code} ?',
+    choose: 'Sur quelle rencontre brancher l’écran {code}\u00a0?',
     invalid: 'Ce lien ne contient pas de code d’écran valable.',
     none: {
       detail: 'Ce téléphone n’a créé aucune rencontre.',
       scan: 'Scannez l’écran avec le téléphone qui a créé la rencontre.',
-      type: 'Ou, dans l’organisation de la rencontre, onglet Tables et écrans, tapez le code :'
+      type: 'Ou, dans l’organisation de la rencontre, onglet Tables et écrans, tapez le code\u00a0:'
     },
     title: 'Brancher un écran'
   }

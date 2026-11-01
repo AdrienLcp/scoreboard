@@ -2,16 +2,17 @@ import type React from 'react'
 
 import type { Player } from '@scoreboard/protocol/event-setup'
 import type { MatchView } from '@scoreboard/protocol/event-snapshot'
-import type { InstantMs } from '@scoreboard/protocol/scoring-event'
+import type { CardPenalty, InstantMs } from '@scoreboard/protocol/scoring-event'
 import { type Side, sides } from '@scoreboard/protocol/side'
 
 import { runningTimeoutOf } from '@scoreboard/core/discipline/timeout-clock'
+import { isDoublesLabel } from '@scoreboard/core/encounter/encounter-sheet'
 
 import { matchCallOf } from '@/features/event/match-call'
 import { sideName } from '@/features/event/participant-names'
 import { scoreText } from '@/features/event/score-text'
 import { wallCallOf } from '@/features/event/sheet-call'
-import { wallSideOf } from '@/features/event/sheet-side'
+import { type ChipPlayer, wallSideOf } from '@/features/event/sheet-side'
 import type { TeamPaint } from '@/features/event/team-paint'
 import { DrawnTable } from '@/presentation/components/drawn-table'
 import { Icon } from '@/presentation/components/icon'
@@ -42,10 +43,24 @@ const teamStyle = (team: TeamPaint): React.CSSProperties => ({
   '--team': team.colour
 })
 
-/** The one word above a table that says what is at stake: a won game or match, a level score, the decider. */
-const WallPill: React.FC<{ match: MatchView }> = ({ match }) => {
+/** The one word above a table that says what is at stake: a won game or match, a level score, the decider; over, how it ended. */
+const WallPill: React.FC<{ isOver: boolean; match: MatchView }> = ({
+  isOver,
+  match
+}) => {
   const translate = useTranslate()
-  const { awaiting, periodsWon } = match.state
+  const { awaiting, concession, periodsWon } = match.state
+
+  if (isOver) {
+    return (
+      <span className='wall-pill' data-tone='over'>
+        <Icon name='check' />
+        {concession === null
+          ? translate('match.call.over')
+          : translate(`match.concession.${concession.reason}`)}
+      </span>
+    )
+  }
 
   if (awaiting !== null) {
     const after = {
@@ -87,8 +102,41 @@ const WallPill: React.FC<{ match: MatchView }> = ({ match }) => {
   return null
 }
 
-type WallHalfProps = {
+const WallCard: React.FC<{ penalty: CardPenalty }> = ({ penalty }) => {
+  const translate = useTranslate()
+
+  return (
+    <span
+      aria-label={translate(
+        penalty === 0 ? 'display.wall.card' : 'display.wall.cardPenalty'
+      )}
+      className='wall-card'
+      data-penalty={penalty === 0 ? undefined : true}
+      role='img'
+    />
+  )
+}
+
+/** A player's line in a chip; in a doubles, the card he carries follows his name. */
+const ChipLine: React.FC<{ isDoubles: boolean; player: ChipPlayer }> = ({
+  isDoubles,
+  player
+}) => (
+  <span className='wall-name'>
+    <span className='wall-name-text'>{player.name}</span>
+    {player.points === null ? null : (
+      <small className='wall-points'>{player.points}</small>
+    )}
+    {isDoubles && player.card !== null ? (
+      <WallCard penalty={player.card} />
+    ) : null}
+  </span>
+)
+
+type WallCornerProps = {
   encounterMatches: readonly MatchView[]
+  /** The match just ended: no serve, no running time-out. */
+  isOver: boolean
   /** What the letter square says when the sheet's letters do not apply: a pool number. */
   letters: string | null
   match: MatchView
@@ -98,9 +146,14 @@ type WallHalfProps = {
   team: TeamPaint
 }
 
-/** One end of a live table: the player's chip and marks at its corner, his games and score on the blue. */
-const WallHalf: React.FC<WallHalfProps> = ({
+/**
+ * A side's chip and marks, at its top corner of the table: beside the other
+ * side's when both fit, under it, still on its own side, when the table is
+ * too narrow for both.
+ */
+const WallCorner: React.FC<WallCornerProps> = ({
   encounterMatches,
+  isOver,
   letters,
   match,
   nowMs,
@@ -116,91 +169,92 @@ const WallHalf: React.FC<WallHalfProps> = ({
     players,
     side
   })
-  const running = runningTimeoutOf({
-    lastTimeout: match.timing.lastTimeout,
-    nowMs
-  })
+  const running = isOver
+    ? null
+    : runningTimeoutOf({ lastTimeout: match.timing.lastTimeout, nowMs })
   const isTimeoutRunning = running?.side === side
   const hasTakenTimeout = state.timeouts[side] || isTimeoutRunning
-  const won = state.periodsWon[side]
-  const isLosingAwaited =
-    state.awaiting !== null && state.awaiting.side !== side
+  const isDoubles = chip.players.length > 1
+  const markedCard = isDoubles ? chip.sideCard : chip.card
 
   return (
     <div
-      className='wall-half'
+      className='wall-corner'
       data-side={side}
       data-white={team.isWhite || undefined}
       style={teamStyle(team)}
     >
-      <div className='wall-corner'>
-        <div className='wall-chip'>
-          <span className='wall-letters'>{letters ?? chip.letters}</span>
-          <span className='wall-names'>
-            {chip.players.length === 0 ? (
-              <span>{translate('match.unnamedSide')}</span>
-            ) : (
-              chip.players.map((player) => (
-                <span key={player.id}>
-                  {player.name}
-                  {player.points === null ? null : (
-                    <small className='wall-points'>{player.points}</small>
-                  )}
-                </span>
-              ))
-            )}
-          </span>
-          {state.serving === side ? (
+      <div className='wall-chip'>
+        <span className='wall-letters'>{letters ?? chip.letters}</span>
+        <span className='wall-names'>
+          {chip.players.length === 0 ? (
+            <span>{translate('match.unnamedSide')}</span>
+          ) : (
+            chip.players.map((player) => (
+              <ChipLine isDoubles={isDoubles} key={player.id} player={player} />
+            ))
+          )}
+        </span>
+        {!isOver && state.serving === side ? (
+          <span
+            aria-label={translate('display.wall.serving')}
+            className='wall-serve'
+            role='img'
+          />
+        ) : null}
+      </div>
+      {markedCard === null && !hasTakenTimeout ? null : (
+        <span className='wall-marks'>
+          {markedCard === null ? null : <WallCard penalty={markedCard} />}
+          {hasTakenTimeout ? (
             <span
-              aria-label={translate('display.wall.serving')}
-              className='wall-serve'
+              aria-label={translate(
+                isTimeoutRunning
+                  ? 'display.wall.timeoutRunning'
+                  : 'display.wall.timeout'
+              )}
+              className='wall-stopwatch'
+              data-running={isTimeoutRunning || undefined}
               role='img'
-            />
+            >
+              <Icon name='timer' />
+            </span>
           ) : null}
-        </div>
-        {chip.card === null && !hasTakenTimeout ? null : (
-          <span className='wall-marks'>
-            {chip.card === null ? null : (
-              <span
-                aria-label={translate(
-                  chip.card === 0
-                    ? 'display.wall.card'
-                    : 'display.wall.cardPenalty'
-                )}
-                className='wall-card'
-                data-penalty={chip.card === 0 ? undefined : true}
-                role='img'
-              />
-            )}
-            {hasTakenTimeout ? (
-              <span
-                aria-label={translate(
-                  isTimeoutRunning
-                    ? 'display.wall.timeoutRunning'
-                    : 'display.wall.timeout'
-                )}
-                className='wall-stopwatch'
-                data-running={isTimeoutRunning || undefined}
-                role='img'
-              >
-                <Icon name='timer' />
-              </span>
-            ) : null}
+        </span>
+      )}
+    </div>
+  )
+}
+
+/** One end of a live table: its games and score on the blue; once over, the games won as the score. */
+const WallHalf: React.FC<{ isOver: boolean; match: MatchView; side: Side }> = ({
+  isOver,
+  match,
+  side
+}) => {
+  const translate = useTranslate()
+  const { state } = match
+  const won = state.periodsWon[side]
+  const isDimmed = isOver
+    ? state.winner !== null && state.winner !== side
+    : state.awaiting !== null && state.awaiting.side !== side
+
+  return (
+    <div className='wall-half' data-side={side}>
+      <div className='wall-score-row'>
+        {isOver ? null : (
+          <span
+            aria-label={translate('display.wall.gamesWon', { count: won })}
+            className='wall-games'
+            role='img'
+          >
+            {gameSlotsOf(match).map((slot) => (
+              <i data-won={slot <= won || undefined} key={slot} />
+            ))}
           </span>
         )}
-      </div>
-      <div className='wall-score-row'>
-        <span
-          aria-label={translate('display.wall.gamesWon', { count: won })}
-          className='wall-games'
-          role='img'
-        >
-          {gameSlotsOf(match).map((slot) => (
-            <i data-won={slot <= won || undefined} key={slot} />
-          ))}
-        </span>
-        <span className='wall-score' data-dimmed={isLosingAwaited || undefined}>
-          {scoreOf(match, side)}
+        <span className='wall-score' data-dimmed={isDimmed || undefined}>
+          {isOver ? won : scoreOf(match, side)}
         </span>
       </div>
     </div>
@@ -210,6 +264,8 @@ const WallHalf: React.FC<WallHalfProps> = ({
 type WallTableProps = {
   /** The matches whose cards follow a player onto this table: his encounter's, or his pool's. */
   encounterMatches: readonly MatchView[]
+  /** What the call starts with when the table's place does not say it: the match's pool. */
+  tagOf?: (match: MatchView) => string | null
   /** A side's letter square when the sheet's letters do not apply. */
   lettersOf?: (match: MatchView, side: Side) => string
   nowMs: InstantMs
@@ -226,15 +282,25 @@ export const WallTable: React.FC<WallTableProps> = ({
   nowMs,
   paintOf,
   players,
+  tagOf,
   wallTable
 }) => {
   const translate = useTranslate()
-  const { live, next, table } = wallTable
+  const { isOver, live, next, table } = wallTable
+  const callOf = (match: MatchView): string =>
+    [
+      tagOf?.(match) ?? null,
+      isDoublesLabel(match.label)
+        ? translate('display.wall.doubles')
+        : wallCallOf(match)
+    ]
+      .filter((part) => part !== null)
+      .join(' · ')
   const nameOf = (match: MatchView, side: Side) =>
     sideName({ form: 'full', participant: match[side], players }) ??
     translate('match.unnamedSide')
   const running =
-    live === null
+    live === null || isOver
       ? null
       : runningTimeoutOf({ lastTimeout: live.timing.lastTimeout, nowMs })
 
@@ -248,9 +314,9 @@ export const WallTable: React.FC<WallTableProps> = ({
           {translate('table.name', { number: table })}
         </span>
         <span className='wall-call'>
-          {live === null ? translate('display.wall.waiting') : wallCallOf(live)}
+          {live === null ? translate('display.wall.waiting') : callOf(live)}
         </span>
-        {live === null ? null : <WallPill match={live} />}
+        {live === null ? null : <WallPill isOver={isOver} match={live} />}
       </header>
       <DrawnTable className='wall-court' isIdle={live === null}>
         {live === null ? (
@@ -260,7 +326,7 @@ export const WallTable: React.FC<WallTableProps> = ({
               <>
                 <span>
                   {translate('display.wall.next', {
-                    call: wallCallOf(next) ?? ''
+                    call: callOf(next)
                   })}
                 </span>
                 <span>
@@ -277,17 +343,23 @@ export const WallTable: React.FC<WallTableProps> = ({
           </div>
         ) : (
           <>
+            <div className='wall-corners'>
+              {sides.map((side) => (
+                <WallCorner
+                  encounterMatches={encounterMatches}
+                  isOver={isOver}
+                  key={side}
+                  letters={lettersOf?.(live, side) ?? null}
+                  match={live}
+                  nowMs={nowMs}
+                  players={players}
+                  side={side}
+                  team={paintOf(live, side)}
+                />
+              ))}
+            </div>
             {sides.map((side) => (
-              <WallHalf
-                encounterMatches={encounterMatches}
-                key={side}
-                letters={lettersOf?.(live, side) ?? null}
-                match={live}
-                nowMs={nowMs}
-                players={players}
-                side={side}
-                team={paintOf(live, side)}
-              />
+              <WallHalf isOver={isOver} key={side} match={live} side={side} />
             ))}
             {running === null ? null : (
               <WallTimeout remainingMs={running.remainingMs} />

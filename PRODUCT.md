@@ -67,7 +67,9 @@ another sport can adopt it.
   collapse into a compact summary. Tiles stay ordered by table number and only
   reflow when a match starts or ends. Paging is a last resort, used only when
   live matches exceed what stays legible, with a visible page indicator. An
-  organiser can split tables across several displays.
+  organiser can split tables across several displays. A finished match keeps
+  its final score for about four seconds before its table shows what comes
+  next, on the open board and on the wall alike.
 - The server keeps the ordered list of scoring events; scores, games won and
   the serving player are derived from it. Undo and organiser corrections are
   events too.
@@ -92,7 +94,8 @@ another sport can adopt it.
   clubmates, 2 points a win and 1 a loss, crossed semi-finals and a final.
   Ties: two players are parted by their own match; three or more by games
   then points ratio over the matches between them only (FFTT practice), then
-  a draw.
+  a draw, one per group of level players, so drawing one tie never redraws
+  another.
 - A club's store (teams, players, opponents) is opened by its club code and
   erased two years after its last change; an event is kept 30 days after its
   last change or its start, whichever is later.

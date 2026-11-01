@@ -15,7 +15,8 @@ export type StageTile = {
   table: TableNumber
 }
 
-const lastFinishedOn = (
+/** The match that ended last on a table. */
+export const lastFinishedOn = (
   snapshot: PublicSnapshot,
   table: TableNumber
 ): MatchView | null =>
@@ -34,6 +35,21 @@ const lastFinishedOn = (
 export const isLingering = (match: MatchView, nowMs: InstantMs): boolean =>
   match.timing.finishedAtMs !== null &&
   nowMs - match.timing.finishedAtMs < LINGER_MS
+
+/** The match that just ended on a table, while the room reads its final score. */
+export const heldMatchOn = ({
+  nowMs,
+  snapshot,
+  table
+}: {
+  nowMs: InstantMs
+  snapshot: PublicSnapshot
+  table: TableNumber
+}): MatchView | null => {
+  const finished = lastFinishedOn(snapshot, table)
+
+  return finished !== null && isLingering(finished, nowMs) ? finished : null
+}
 
 /**
  * The tables that own the screen, in table order: those playing, and those
@@ -58,9 +74,7 @@ export const stageTilesFor = ({
       return [{ isOver: false, match: current, table }]
     }
 
-    const finished = lastFinishedOn(snapshot, table)
+    const held = heldMatchOn({ nowMs, snapshot, table })
 
-    return finished !== null && isLingering(finished, nowMs)
-      ? [{ isOver: true, match: finished, table }]
-      : []
+    return held === null ? [] : [{ isOver: true, match: held, table }]
   })

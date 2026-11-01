@@ -29,6 +29,8 @@ const lettersByPlayer = (
 
 /** One player in a chip: his sheet letter, his name and his ranking points when known. */
 export type ChipPlayer = {
+  /** The worst card he carries in the encounter, `null` without one: a doubles shows it on his own line. */
+  card: CardPenalty | null
   id: PlayerId
   name: string
   points: number | null
@@ -40,6 +42,8 @@ export type WallSide = {
   card: CardPenalty | null
   letters: string
   players: ChipPlayer[]
+  /** The worst card given to the side in this match without naming a player. */
+  sideCard: CardPenalty | null
 }
 
 const worseCard = (
@@ -62,18 +66,23 @@ export const wallSideOf = ({
   const { playerIds } = match[side]
   const letters = lettersByPlayer(matches)
   const lineLetters = singlesLettersOf(match.label)
-  let card: CardPenalty | null = null
-
-  for (const shown of matches.flatMap((candidate) => candidate.state.cards)) {
-    const isOnThisSide =
-      shown.playerId === null
-        ? match.state.cards.includes(shown) && shown.side === side
-        : playerIds.includes(shown.playerId)
-
-    if (isOnThisSide) {
-      card = worseCard(card, shown.penalty)
-    }
-  }
+  const cards = matches.flatMap((candidate) => candidate.state.cards)
+  const sideCards = match.state.cards.filter(
+    (shown) => shown.playerId === null && shown.side === side
+  )
+  const worstOf = (shown: readonly { penalty: CardPenalty }[]) =>
+    shown.reduce<CardPenalty | null>(
+      (worst, next) => worseCard(worst, next.penalty),
+      null
+    )
+  const cardOf = (playerId: PlayerId) =>
+    worstOf(cards.filter((shown) => shown.playerId === playerId))
+  const card = worstOf([
+    ...sideCards,
+    ...cards.filter(
+      (shown) => shown.playerId !== null && playerIds.includes(shown.playerId)
+    )
+  ])
 
   return {
     card,
@@ -85,7 +94,15 @@ export const wallSideOf = ({
 
       return player === undefined
         ? []
-        : [{ id: player.id, name: player.name, points: player.points }]
-    })
+        : [
+            {
+              card: cardOf(player.id),
+              id: player.id,
+              name: player.name,
+              points: player.points
+            }
+          ]
+    }),
+    sideCard: worstOf(sideCards)
   }
 }

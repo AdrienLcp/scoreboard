@@ -155,3 +155,73 @@ export const wallHallFor = ({
     rows: lines.length
   }
 }
+
+/** A tournament's tables laid out as the hall: each where it stands, empty aisles closed up. */
+export type WallFloor = {
+  columns: number
+  /** The free place nearest the stands on the left, `null` when every place holds a table. */
+  join: HallPlace | null
+  /** Each table's place on the wall, counted from 1. */
+  places: ReadonlyMap<TableNumber, HallPlace>
+  rows: number
+}
+
+/** More columns or rows of tables than this, beside the pools, and a table stops being legible. */
+const MAX_FLOOR_TRACKS = 3
+
+/**
+ * The tournament wall as the hall: every table it shows at its place on the
+ * plan, empty aisles closed up, and the free place nearest the stands on the
+ * left for the QR when one is left. `null` when a table has no place, or the
+ * hall is too wide or too deep to stay legible beside the pools.
+ */
+export const wallFloorFor = ({
+  plan,
+  tables
+}: {
+  plan: HallPlan
+  tables: readonly TableNumber[]
+}): WallFloor | null => {
+  const placed = tables.flatMap((table) => {
+    const found = plan.tables.find(
+      (candidate) => candidate.table === table && !candidate.isHidden
+    )
+
+    return found === undefined ? [] : [found]
+  })
+
+  if (placed.length === 0 || placed.length !== tables.length) {
+    return null
+  }
+
+  const boxes = placed.map((place) => ({ first: place, last: place }))
+  const columns = usedTracks(boxes, 'column')
+  const lines = usedTracks(boxes, 'row')
+
+  if (columns.length > MAX_FLOOR_TRACKS || lines.length > MAX_FLOOR_TRACKS) {
+    return null
+  }
+
+  const places = new Map(
+    placed.map((place) => [
+      place.table,
+      {
+        column: columns.indexOf(place.column) + 1,
+        row: lines.indexOf(place.row) + 1
+      }
+    ])
+  )
+  const taken = [...places.values()]
+  const join =
+    lines
+      .map((_, index) => lines.length - index)
+      .flatMap((row) => columns.map((_, index) => ({ column: index + 1, row })))
+      .find(
+        (place) =>
+          !taken.some(
+            (table) => table.column === place.column && table.row === place.row
+          )
+      ) ?? null
+
+  return { columns: columns.length, join, places, rows: lines.length }
+}

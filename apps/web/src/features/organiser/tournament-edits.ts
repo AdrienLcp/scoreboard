@@ -420,24 +420,50 @@ export const isTournamentUnderWay = (matches: readonly MatchView[]): boolean =>
     (match) => match.stage != null && match.state.status !== 'scheduled'
   )
 
-/** The players the tie-break leaves level once their pool is over: before, a level table is only a table under way. */
-export const drawnPlayersOf = ({
+/** Players the tie-break leaves level in a finished pool, placed by one draw of their own. */
+export type TiedGroup = {
+  /** The best place the group shares, counted from 1. */
+  firstRank: number
+  /** The organiser has drawn this group: its order is the draw's, not the pool numbers'. */
+  isDrawn: boolean
+  /** The group in the order it stands in now. */
+  playerIds: PlayerId[]
+  /** The pool's number, counted from 1. */
+  poolNumber: number
+}
+
+/** Each group of players the tie-break leaves level, once their pool is over: before, a level table is only a table under way. */
+export const tiedGroupsOf = ({
   matches,
   setup
 }: {
   matches: readonly MatchView[]
   setup: EventSetup
-}): PlayerId[] =>
-  setup.tournament === null || setup.tournament === undefined
-    ? []
-    : poolTablesFor({ matches, tournament: setup.tournament }).flatMap(
-        (table) =>
-          (table.isComplete ? table.standings : [])
-            .filter((standing) => standing.isDrawn)
-            .map((standing) => standing.playerId)
-      )
+}): TiedGroup[] => {
+  const { tournament } = setup
 
-/** The draw for the level players, as a tap gives it: a fresh random order, written into the tournament. */
+  if (tournament === null || tournament === undefined) {
+    return []
+  }
+
+  return poolTablesFor({ matches, tournament }).flatMap((table, poolIndex) =>
+    table.isComplete
+      ? table.drawnGroups.map((playerIds) => ({
+          firstRank:
+            table.standings.findIndex(
+              (standing) => standing.playerId === playerIds[0]
+            ) + 1,
+          isDrawn: playerIds.every((playerId) =>
+            tournament.drawOrder.includes(playerId)
+          ),
+          playerIds,
+          poolNumber: poolIndex + 1
+        }))
+      : []
+  )
+}
+
+/** One group's draw, as a tap gives it: a fresh random order for its players, the other groups' draws kept. */
 export const withDrawFor = ({
   playerIds,
   random,
@@ -455,6 +481,12 @@ export const withDrawFor = ({
     .map((playerId) => ({ key: random(), playerId }))
     .toSorted((left, right) => left.key - right.key)
     .map(({ playerId }) => playerId)
+  const kept = setup.tournament.drawOrder.filter(
+    (playerId) => !playerIds.includes(playerId)
+  )
 
-  return { ...setup, tournament: { ...setup.tournament, drawOrder: shuffled } }
+  return {
+    ...setup,
+    tournament: { ...setup.tournament, drawOrder: [...kept, ...shuffled] }
+  }
 }

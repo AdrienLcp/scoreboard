@@ -3,6 +3,7 @@ import type {
   PublicSnapshot
 } from '@scoreboard/protocol/event-snapshot'
 import type { PlayerId, TableNumber } from '@scoreboard/protocol/identifiers'
+import type { InstantMs } from '@scoreboard/protocol/scoring-event'
 import type { Side } from '@scoreboard/protocol/side'
 
 import { poolTablesFor } from '@scoreboard/core/tournament/pool-standings'
@@ -10,10 +11,11 @@ import { poolTablesFor } from '@scoreboard/core/tournament/pool-standings'
 import { currentMatchOn } from '@/features/event/table-match'
 import { paintOf, type TeamPaint } from '@/features/event/team-paint'
 
-import { type WallTable, wallTableOf } from './wall-rows'
+import { heldMatchOn } from './display-stage'
+import { MAX_WALL_ROWS, type WallTable, wallTableOf } from './wall-rows'
 
-/** Pools of up to eight play on four tables at once: more and a row stops being legible. */
-const MAX_TABLES_PER_ROW = 4
+/** More tables than this side by side and a table stops being legible: the row goes on a second line. */
+const MAX_TABLES_PER_LINE = 4
 
 /** A player's line in his pool's table on the wall: his club's colour and logo, his pool points. */
 export type WallStanding = {
@@ -35,6 +37,8 @@ export type WallTournamentRow =
       id: string
       kind: 'pool'
       isComplete: boolean
+      /** The lines its tables take, at most four tables side by side. */
+      lines: number
       matches: readonly MatchView[]
       name: string
       standings: WallStanding[]
@@ -43,11 +47,22 @@ export type WallTournamentRow =
   | {
       id: string
       kind: 'bracket'
+      lines: number
       matches: readonly MatchView[]
       tables: WallTable[]
     }
 
 const BRACKET_ROW = 'bracket'
+
+const rowIdOf = (match: MatchView): string | null =>
+  match.stage == null
+    ? null
+    : match.stage.kind === 'pool'
+      ? match.stage.poolId
+      : BRACKET_ROW
+
+const linesFor = (tables: readonly WallTable[]): number =>
+  Math.ceil(tables.length / MAX_TABLES_PER_LINE)
 
 /**
  * The wall of an individual tournament: one row per pool with its table and
@@ -55,9 +70,11 @@ const BRACKET_ROW = 'bracket'
  * the day has no tournament or a shown table plays outside it.
  */
 export const wallTournamentFor = ({
+  nowMs,
   snapshot,
   tables
 }: {
+  nowMs: InstantMs
   snapshot: PublicSnapshot
   tables: readonly TableNumber[]
 }): WallTournamentRow[] | null => {
@@ -76,20 +93,28 @@ export const wallTournamentFor = ({
       continue
     }
 
-    if (current.stage == null) {
+    const rowId = rowIdOf(current)
+
+    if (rowId === null) {
       return null
     }
 
-    const rowId =
-      current.stage.kind === 'pool' ? current.stage.poolId : BRACKET_ROW
+    const held = heldMatchOn({ nowMs, snapshot, table })
+    const wallTable = wallTableOf({
+      current,
+      held: held !== null && rowIdOf(held) === rowId ? held : null,
+      table
+    })
 
-    byRow.set(rowId, [...(byRow.get(rowId) ?? []), wallTableOf(current, table)])
+    byRow.set(rowId, [...(byRow.get(rowId) ?? []), wallTable])
   }
 
-  if (
-    byRow.size === 0 ||
-    [...byRow.values()].some((row) => row.length > MAX_TABLES_PER_ROW)
-  ) {
+  const lineCount = [...byRow.values()].reduce(
+    (sum, rowTables) => sum + linesFor(rowTables),
+    0
+  )
+
+  if (byRow.size === 0 || lineCount > MAX_WALL_ROWS) {
     return null
   }
 
@@ -117,6 +142,7 @@ export const wallTournamentFor = ({
             id: poolTable.pool.id,
             isComplete: poolTable.isComplete,
             kind: 'pool',
+            lines: linesFor(rowTables),
             matches: snapshot.matches.filter(
               (match) =>
                 match.stage?.kind === 'pool' &&
@@ -147,6 +173,7 @@ export const wallTournamentFor = ({
           {
             id: BRACKET_ROW,
             kind: 'bracket',
+            lines: linesFor(bracketTables),
             matches: snapshot.matches.filter(
               (match) => match.stage != null && match.stage.kind !== 'pool'
             ),

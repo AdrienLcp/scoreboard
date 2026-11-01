@@ -22,6 +22,10 @@ const participantFor = (lineup: Lineup, letter: string): Participant => {
 
 const DOUBLES_LABEL_PREFIX = 'Double'
 
+/** A sheet line's label names a doubles: "Double 1", "Double 2". */
+export const isDoublesLabel = (label: string | null): boolean =>
+  label?.startsWith(`${DOUBLES_LABEL_PREFIX} `) === true
+
 const labelFor = (line: SheetLine): string =>
   line.kind === 'singles'
     ? `${line.home}${line.away}`

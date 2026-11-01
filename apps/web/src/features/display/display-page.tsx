@@ -100,9 +100,9 @@ const DisplayBoard: React.FC<{
     return line === undefined ? null : encounterTitleOf(line)
   }
   const spectatorUrl = `${pageOrigin()}${spectatorPathFor(eventId)}`
-  const wallRows = wallRowsFor({ snapshot, tables })
+  const wallRows = wallRowsFor({ nowMs, snapshot, tables })
   const tournamentRows =
-    wallRows === null ? wallTournamentFor({ snapshot, tables }) : null
+    wallRows === null ? wallTournamentFor({ nowMs, snapshot, tables }) : null
   const isWall = wallRows !== null || tournamentRows !== null
   const header = (page: PageIndicator | null) => (
     <DisplayHeader

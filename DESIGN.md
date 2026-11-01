@@ -328,11 +328,12 @@ The wall mockup (`.handoff/ping-club/assets/wall-mockup/wall.html`, validated 20
 - **QR column:** QR on white with 12px padding, prompt, join code in a white box (width 75%, ~820, 54px, 0.12em tracking), full URL.
 
 ### Table cell
-- **Head:** an ink plate with white "Table N" (width 78%, ~760, 26px), the call ("B – X", "Double") in ink-muted 600, and one state pill.
+- **Head:** an ink plate with white "Table N" (width 78%, ~760, 26px), the call ("B – X", "Double", never the sheet's "Double 1") in ink-muted 600, and one state pill.
 - **Drawn table, in perspective:** an SVG trapezoid in Table Blue with a Table Edge front strip, white edges and centre line, an ink net and ink legs, at a fixed ~2.7:1 proportion, centred, never stretched; the floor (mist grey, the lower 38% a step darker, #D3DADF) shows on both sides. A free table turns Idle Table and carries a white card "Table libre / Prochain match A – Y / names", lifted by `0 6px 14px -6px rgb(14 34 56 / 40%)`.
 - **Scores:** big white digits (width 62%, ~820, `min(124px, 47cqh)`, line-height 0.86, -0.02em) centred in each blue half at 58% height, with a hard `0 3px 0` Table Edge text shadow. While a game or match win awaits validation, the loser's score drops to 40% opacity.
+- **A finished match is held** about four seconds (`LINGER_MS`, as the open board does) before the table turns free: the big digits become the games won (3 and 1), the dots and the serve triangle leave, the loser's digits stay at 40%, and the pill says how it ended.
 - **Games-won dots in a dark pill:** a column of 13px circles in a full pill of `rgb(14 34 56 / 60%)` beside each score, on the outer side; white = won, a 2px white ring (85%) = not yet; the count is the games needed to win.
-- **Player chip** at each top outer corner: white, with a 5px inset underline in the team colour; a letter square in the team colour with its text colour, then "Prénom Nom" (width 76%, ~680, 21px). Doubles: each player on their own line, same size as a single. The player's FFTT points follow the name, smaller (0.8em, width 70%, 600, Slate Edge), no "pts", nothing when unknown.
+- **Player chip** at each top outer corner: white, with a 5px inset underline in the team colour; a letter square in the team colour with its text colour, then "Prénom Nom" (width 76%, ~680, 21px). Doubles: each player on their own line, same size as a single; a player's card follows his own name on his line (a little smaller, on the net side), since a doubles card is a player's, and the marks line keeps the time-out and a card given to the pair. The player's FFTT points follow the name, smaller (0.8em, width 70%, 600, Slate Edge), no "pts", nothing when unknown.
 - **Serve triangle** at the net end of the server's name, pointing to the net (14×18px). No ball icon: balls are white and read as an empty dot. On a white chip it takes Burnt Orange, as the shipped point target does, since Decision Orange on white is under 3:1 for a mark that carries meaning on its own.
 - **Marks line** under the name, fixed order, an absent mark takes no space (a lone mark sits against the outer edge); the worst case (triangle + card + stopwatch on one player) must hold:
   - **Tilted yellow card:** a 16×22px Card Yellow rectangle rotated -6deg with a 1.5px `rgb(14 34 56 / 50%)` edge.
@@ -344,6 +345,11 @@ Square, ~720, ink text, with these words only (no "à valider"):
 - **"Manche gagnée"** and **"Match gagné 3–1"**: Decision Orange fill with a check icon.
 - **"Égalité"** (10–10 and beyond): 3px ink inset outline.
 - **"Belle"** (the decider): 3px orange inset outline.
+- **"Terminé"** (or "Forfait", "Abandon"), only while a finished match is held: Silver fill with a check icon, as the open board's over pill; nothing is left to decide, so no orange.
+
+### Tournament wall (Top 12)
+One row per pool: an ink plate "Poule N" over its table (rank, a square in the player's club colour with his pool number or the club logo, name over club, pool points in figures; the two going through on mist grey), then the pool's tables. A pool on more than four tables takes as many lines (four side by side at most), its table spanning them; past six lines in all, the open board takes over. The final phase gets its own row once its matches hold tables.
+- **As the hall:** when the plan places every table shown in at most three columns and three rows, the pools stack down the left (sharing the height by their length), each table stands at its place in its own white frame, its call starting with its pool ("Poule 1 · 2 – 5"), and the QR takes the free place nearest the stands on the left, or its own column when the tables fill the hall.
 
 ### Team colours
 A colour per team, not per club (Angles 1 is not Angles 2), set in the team settings, editable with a colour picker, each paired with a text colour chosen for contrast. Used on the encounter block, the player letter square and the chip underline; never on a pill, a mark or a score. Defaults the club gave:

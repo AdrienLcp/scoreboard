@@ -2,7 +2,7 @@ import type React from 'react'
 import { useState } from 'react'
 import { Button as AriaButton } from 'react-aria-components'
 
-import type { EventSetup, Team } from '@scoreboard/protocol/event-setup'
+import type { EventSetup, Player, Team } from '@scoreboard/protocol/event-setup'
 import type { MatchView } from '@scoreboard/protocol/event-snapshot'
 import type { PlayerId, TeamId } from '@scoreboard/protocol/identifiers'
 import { tableTennisBestOfs } from '@scoreboard/protocol/match-format'
@@ -26,12 +26,13 @@ import { useTranslate } from '@/presentation/i18n/i18n-context'
 import {
   canBuildTournament,
   draftPoolsOf,
-  drawnPlayersOf,
   hasClubmatesTogether,
   isTournamentUnderWay,
   swapPoolPlayers,
+  type TiedGroup,
   type TournamentClub,
   type TournamentDraft,
+  tiedGroupsOf,
   toggleClub,
   togglePlayer,
   tournamentClubsFor,
@@ -100,6 +101,64 @@ const NumberChoice: React.FC<{
 )
 
 /**
+ * Players level after the tie-break, in one finished pool: they share their
+ * place until the organiser draws them, then stand in the draw's order.
+ */
+const TieDraw: React.FC<{
+  group: TiedGroup
+  onDraw: () => void
+  playerOf: (playerId: PlayerId) => Player | undefined
+  teamOf: (teamId: TeamId | null) => Team | undefined
+}> = ({ group, onDraw, playerOf, teamOf }) => {
+  const translate = useTranslate()
+  const lastRank = group.firstRank + group.playerIds.length - 1
+
+  return (
+    <section className='tournament-pool tournament-tie'>
+      <h3>
+        {translate(
+          group.playerIds.length === 2
+            ? 'organiser.tournament.tiePair'
+            : 'organiser.tournament.tieGroup',
+          {
+            first: group.firstRank,
+            last: lastRank,
+            pool: group.poolNumber
+          }
+        )}
+      </h3>
+      <ol>
+        {group.playerIds.map((playerId, index) => {
+          const player = playerOf(playerId)
+          const team = teamOf(player?.teamId ?? null)
+
+          return (
+            <li className='tournament-tie-player' key={playerId}>
+              <span className='tournament-number'>
+                {group.isDrawn ? group.firstRank + index : group.firstRank}
+              </span>
+              <Swatch colour={team?.colour ?? DEFAULT_OPPONENT_COLOUR} />
+              <span className='tournament-entrant-name'>
+                {player?.name ?? ''}
+                <small>{team?.name}</small>
+              </span>
+            </li>
+          )
+        })}
+      </ol>
+      <Button onPress={onDraw}>
+        <Icon name='shuffle' />
+        {translate(
+          group.isDrawn
+            ? 'organiser.tournament.drawAgain'
+            : 'organiser.tournament.draw'
+        )}
+      </Button>
+    </section>
+  )
+}
+
+/**
  * The Top 12 in a few taps: the clubs, which bring their two best players,
  * the pools seeded by themselves, the clubs' rules already set, and every
  * match built on the hall's tables. Each change is undone in one tap.
@@ -131,7 +190,7 @@ export const TournamentEditor: React.FC<TournamentEditorProps> = ({
   const pools = draftPoolsOf({ clubs, draft })
   const tables = tournamentTablesFor({ pools, setup })
   const isUnderWay = isTournamentUnderWay(matches)
-  const drawn = drawnPlayersOf({ matches, setup })
+  const tiedGroups = tiedGroupsOf({ matches, setup })
   const hasTournament =
     setup.tournament !== null && setup.tournament !== undefined
   const stagedCount = setup.matches.filter(
@@ -244,25 +303,28 @@ export const TournamentEditor: React.FC<TournamentEditorProps> = ({
           {translate('organiser.tournament.underWay')}
         </p>
         {poolCards}
-        {drawn.length === 0 ? null : (
-          <div className='organiser-panel tournament-draw'>
+        {tiedGroups.length === 0 ? null : (
+          <div className='tournament-ties'>
             <p className='organiser-note'>
               {translate('organiser.tournament.drawHint')}
             </p>
-            <Button
-              onPress={() =>
-                save(
-                  withDrawFor({ playerIds: drawn, random: Math.random, setup })
-                )
-              }
-            >
-              <Icon name='shuffle' />
-              {translate(
-                (setup.tournament?.drawOrder.length ?? 0) === 0
-                  ? 'organiser.tournament.draw'
-                  : 'organiser.tournament.drawAgain'
-              )}
-            </Button>
+            {tiedGroups.map((group) => (
+              <TieDraw
+                group={group}
+                key={group.playerIds.join()}
+                onDraw={() =>
+                  save(
+                    withDrawFor({
+                      playerIds: group.playerIds,
+                      random: Math.random,
+                      setup
+                    })
+                  )
+                }
+                playerOf={playerOf}
+                teamOf={(teamId) => teams.find((team) => team.id === teamId)}
+              />
+            ))}
           </div>
         )}
         {undo}

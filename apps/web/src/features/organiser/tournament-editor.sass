@@ -225,7 +225,26 @@
     flex-wrap: wrap
     gap: var(--space-2xs)
 
-  .tournament-draw
+  .tournament-ties
     display: grid
-    gap: var(--space-s)
+    gap: var(--space-m)
+
+    @include layout.container-wide(43.75rem)
+      grid-template-columns: repeat(2, minmax(0, 1fr))
+
+      > .organiser-note
+        grid-column: 1 / -1
+
+  .tournament-tie
     justify-items: start
+
+    ol
+      justify-self: stretch
+
+  .tournament-tie-player
+    align-items: center
+    display: grid
+    gap: var(--space-xs)
+    grid-template-columns: 1.5rem auto minmax(0, 1fr)
+    min-height: var(--control-height)
+    padding-inline: var(--space-xs)

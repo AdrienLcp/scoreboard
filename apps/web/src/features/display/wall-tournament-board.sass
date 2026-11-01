@@ -3,8 +3,53 @@
 
 /// A tournament's row starts with its pool's table instead of an encounter's
 /// two teams: each player on his club's colour, his pool points in figures,
-/// the two who go through on a mist-grey ground.
+/// the two who go through on a mist-grey ground. A pool on more than four
+/// tables takes as many lines, its table spanning them.
 @layer components
+  .wall-board[data-tournament] .wall-row
+    grid-row: span var(--lines, 1)
+    grid-template-rows: repeat(var(--lines, 1), minmax(0, 1fr))
+
+    > .wall-pool
+      grid-column: 1
+      grid-row: 1 / -1
+
+  /// The tournament as the hall: the pools down the left, sharing its height
+  /// by their length, each table where it stands, the QR in a free place or,
+  /// when the tables fill the hall, in its own column.
+  .wall-board[data-floor]
+    grid-template-columns: calc(var(--cu) * 31.5) repeat(var(--columns), minmax(0, 1fr)) calc(var(--cu) * 23.2)
+
+    &[data-hall]
+      grid-template-columns: calc(var(--cu) * 31.5) repeat(var(--columns), minmax(0, 1fr))
+
+    &:not([data-hall]) .wall-join
+      grid-column: -2
+
+  .wall-pools
+    display: flex
+    flex-direction: column
+    gap: calc(var(--cu) * 1.1)
+    grid-column: 1
+    grid-row: 1 / -1
+    min-height: 0
+
+    > .wall-pool
+      background: var(--surface)
+      box-shadow: inset 0 0 0 var(--stroke-bold) var(--rule)
+      flex: var(--weight, 1) 1 0
+      padding: calc(var(--cu) * 0.55)
+
+  .wall-floor-place
+    background: var(--surface)
+    box-shadow: inset 0 0 0 var(--stroke-bold) var(--rule)
+    display: grid
+    grid-column: var(--area-column)
+    grid-row: var(--area-row)
+    min-height: 0
+    min-width: 0
+    padding: calc(var(--cu) * 0.55)
+
   .wall-pool
     display: grid
     gap: calc(var(--cu) * 0.4)
@@ -97,6 +142,22 @@
 
     font-size: calc(var(--cu) * 3.4)
 
+  .wall-pool[data-long]
+    .wall-standing-rank
+      font-size: calc(var(--cu) * 2)
+
+    .wall-standing-mark
+      font-size: calc(var(--cu) * 1.8)
+
+    .wall-standing-name
+      font-size: calc(var(--cu) * 1.85)
+
+      small
+        font-size: calc(var(--cu) * 1.3)
+
+    .wall-standing-points
+      font-size: calc(var(--cu) * 2.8)
+
   .wall-bracket-line
     align-content: center
     display: grid
@@ -134,6 +195,27 @@
 
   @include stacked.stacked
     .wall-board[data-tournament] .wall-row
+      grid-row: auto
+      grid-template-rows: none
+
+      > .wall-pool
+        grid-row: auto
+
+    .wall-board[data-floor],
+    .wall-board[data-floor][data-hall]
+      grid-template-columns: minmax(0, 1fr)
+
+      .wall-pools, .wall-floor-place, .wall-join
+        grid-column: 1
+        grid-row: auto
+
+      .wall-pools > .wall-pool
+        flex: none
+
+      .wall-floor-place .wall-table
+        height: calc(var(--cu) * 30)
+
+    .wall-board[data-tournament] .wall-row, .wall-pools
       .wall-pool
         height: auto
 

@@ -11,6 +11,7 @@ import {
   type TournamentClub,
   toggleClub,
   tournamentDraftFor,
+  withDrawFor,
   withoutTournament,
   withTournament
 } from './tournament-edits'
@@ -97,5 +98,32 @@ describe('tournament edits', () => {
       )
     ).toEqual(new Set([1, 2, 3, 4, 5, 6]))
     expect(withoutTournament(built).matches).toEqual(setup.matches)
+  })
+
+  it('[top-12] draws one tied group and keeps the other groups’ draws', () => {
+    const [first, second, third, fourth] = ['p1', 'p2', 'p3', 'p4']
+    const setup = {
+      ...setupWith([]),
+      tournament: {
+        drawOrder: [first, second, third, fourth],
+        lossPoints: 1,
+        pools: [
+          { id: 'A', name: '1', playerIds: [first, second] },
+          { id: 'B', name: '2', playerIds: [third, fourth] }
+        ],
+        winPoints: 2
+      }
+    }
+    const drawn = withDrawFor({
+      playerIds: [third, fourth],
+      random: (() => {
+        const keys = [0.9, 0.1]
+
+        return () => keys.shift() ?? 0
+      })(),
+      setup
+    })
+
+    expect(drawn.tournament?.drawOrder).toEqual([first, second, fourth, third])
   })
 })

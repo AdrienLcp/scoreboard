@@ -27,6 +27,8 @@ export type PoolStanding = {
 
 /** A pool's table, best first, and whether every match of it is over. */
 export type PoolTable = {
+  /** Each group of players the tie-break leaves level, in the order the draw gives them. */
+  drawnGroups: PlayerId[][]
   isComplete: boolean
   pool: Pool
   standings: PoolStanding[]
@@ -78,7 +80,8 @@ const tallyOf = (playerId: PlayerId, matches: readonly MatchView[]): Tally =>
 const ratio = (won: number, lost: number): number =>
   lost === 0 ? (won === 0 ? 1 : Number.POSITIVE_INFINITY) : won / lost
 
-type Ordered = { isDrawn: boolean; playerId: PlayerId }
+/** A player in the order the tie-break gives, with the level group a draw had to place him in. */
+type Ordered = { drawnWith: readonly PlayerId[] | null; playerId: PlayerId }
 
 /**
  * Orders players level on wins. Two: the winner of their match. Three or more:
@@ -95,7 +98,7 @@ const breakTie = ({
   matches: readonly MatchView[]
 }): Ordered[] => {
   if (level.length === 1) {
-    return level.map((playerId) => ({ isDrawn: false, playerId }))
+    return level.map((playerId) => ({ drawnWith: null, playerId }))
   }
 
   const between = matches.filter((match) =>
@@ -106,7 +109,7 @@ const breakTie = ({
   const byDraw = (): Ordered[] =>
     level
       .toSorted((left, right) => drawRank(left) - drawRank(right))
-      .map((playerId) => ({ isDrawn: true, playerId }))
+      .map((playerId) => ({ drawnWith: level, playerId }))
 
   if (level.length === 2) {
     const [first, second] = level
@@ -123,7 +126,7 @@ const breakTie = ({
     }
 
     return [winner, winner === first ? second : first].map((playerId) => ({
-      isDrawn: false,
+      drawnWith: null,
       playerId
     }))
   }
@@ -198,13 +201,24 @@ export const poolTableFor = ({
   )
 
   return {
+    drawnGroups: [
+      ...new Set(
+        ordered.flatMap(({ drawnWith }) =>
+          drawnWith === null ? [] : [drawnWith]
+        )
+      )
+    ].map((group) =>
+      ordered
+        .filter(({ drawnWith }) => drawnWith === group)
+        .map(({ playerId }) => playerId)
+    ),
     isComplete:
       matches.length > 0 &&
       matches.every((match) => match.state.status === 'finished'),
     pool,
-    standings: ordered.map(({ isDrawn, playerId }, index) => ({
+    standings: ordered.map(({ drawnWith, playerId }, index) => ({
       ...(tallies.get(playerId) ?? EMPTY_TALLY),
-      isDrawn,
+      isDrawn: drawnWith !== null,
       number: pool.playerIds.indexOf(playerId) + 1,
       playerId,
       points: pointsOf(playerId),

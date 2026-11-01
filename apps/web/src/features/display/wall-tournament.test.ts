@@ -62,7 +62,11 @@ const snapshotWith = (overrides: Parameters<typeof setupWith>[1] = {}) =>
 
 describe('wallTournamentFor', () => {
   it('[wall] gives each pool its row, its players on their clubs’ colours', () => {
-    const rows = wallTournamentFor({ snapshot: snapshotWith(), tables: [1, 2] })
+    const rows = wallTournamentFor({
+      nowMs: 1000,
+      snapshot: snapshotWith(),
+      tables: [1, 2]
+    })
     const [first] = rows ?? []
 
     expect(rows?.map((row) => row.id)).toEqual(['pool-1', 'pool-2'])
@@ -76,6 +80,7 @@ describe('wallTournamentFor', () => {
   it('[wall] leaves a day without a tournament to the other boards', () => {
     expect(
       wallTournamentFor({
+        nowMs: 1000,
         snapshot: snapshotWith({ matches: [matchOn(1)], tournament: null }),
         tables: [1]
       })
