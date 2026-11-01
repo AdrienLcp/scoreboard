@@ -16,8 +16,7 @@
     @include typography.emphasis
 
     background: var(--surface)
-    border: var(--stroke-bold) solid var(--rule)
-    border-radius: var(--radius-m)
+    border: var(--stroke-bold) solid var(--edge)
     color: var(--ink)
     font-size: var(--text-m)
     min-height: var(--control-height)
@@ -32,10 +31,10 @@
       color: var(--ink-dim)
 
     &[data-hovered]
-      border-color: var(--surface-high)
+      border-color: var(--ink)
 
     &[data-focused]
-      border-color: var(--live)
+      border-color: var(--focus)
 
     &[data-invalid]
       border-color: var(--ink)
@@ -43,9 +42,6 @@
 
     &[data-disabled]
       color: var(--ink-dim)
-
-    &::-webkit-calendar-picker-indicator
-      filter: invert(0.8)
 
   .field-description
     @include typography.hint

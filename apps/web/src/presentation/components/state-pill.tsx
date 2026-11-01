@@ -8,7 +8,7 @@ import './state-pill.sass'
  * The one state a match shows at a time, by how much it matters:
  * - `'match-point'` — filled in the live accent
  * - `'game-point'` — outlined in the live accent
- * - `'deuce'` — outlined in white
+ * - `'deuce'` — outlined in muted ink
  * - `'over'` — a match that just ended, on a neutral fill
  */
 export type PillTone = 'match-point' | 'game-point' | 'deuce' | 'over'

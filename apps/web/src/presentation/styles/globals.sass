@@ -33,7 +33,7 @@
     @include layout.container(page)
 
     background: var(--field)
-    caret-color: var(--live)
+    caret-color: var(--live-ink)
     color: var(--ink)
     font-synthesis: none
     font-variant-numeric: tabular-nums lining-nums
@@ -50,8 +50,8 @@
     text-underline-offset: var(--underline-offset)
 
   ::selection
-    background: var(--live)
-    color: var(--on-live)
+    background: var(--sky)
+    color: var(--ink)
 
   ::-webkit-scrollbar
     height: 0.625rem
@@ -63,7 +63,6 @@
   ::-webkit-scrollbar-thumb
     background: var(--surface-high)
     border: var(--stroke-bold) solid var(--field)
-    border-radius: var(--radius-xs)
 
   @include focus.ring-focusables
 

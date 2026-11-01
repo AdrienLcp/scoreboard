@@ -1,24 +1,19 @@
 @use '@adrienlcp/styles/fonts'
 
-/// Every Barlow and Barlow Condensed cut: 1000 and 200 of 1000 units, capitals at 700.
-$barlow-metrics: (ascent: 1, descent: 0.2, cap-height: 0.7)
+$archivo-metrics: (ascent: 0.878, descent: 0.21, cap-height: 0.686)
+
+/// Archivo's two axes, served whole: every width and weight from one file per subset.
+$archivo-stretch: 62% 125%
+$archivo-weight: 100 900
 
 @layer base
-  @include fonts.font-face('Barlow', '/fonts/barlow-latin-500-normal.woff2', fonts.$latin, $weight: 500)
-  @include fonts.font-face('Barlow', '/fonts/barlow-latin-ext-500-normal.woff2', fonts.$latin-ext, $weight: 500)
-  @include fonts.font-face('Barlow', '/fonts/barlow-latin-600-normal.woff2', fonts.$latin, $weight: 600)
-  @include fonts.font-face('Barlow', '/fonts/barlow-latin-ext-600-normal.woff2', fonts.$latin-ext, $weight: 600)
-  @include fonts.font-face('Barlow', '/fonts/barlow-latin-700-normal.woff2', fonts.$latin, $weight: 700)
-  @include fonts.font-face('Barlow', '/fonts/barlow-latin-ext-700-normal.woff2', fonts.$latin-ext, $weight: 700)
+  @include fonts.font-face('Archivo', '/fonts/archivo-latin-wdth-normal.woff2', fonts.$latin, $weight: $archivo-weight, $stretch: $archivo-stretch)
+  @include fonts.font-face('Archivo', '/fonts/archivo-latin-ext-wdth-normal.woff2', fonts.$latin-ext, $weight: $archivo-weight, $stretch: $archivo-stretch)
 
-  @include fonts.font-face('Barlow Condensed', '/fonts/barlow-condensed-latin-600-normal.woff2', fonts.$latin, $weight: 600)
-  @include fonts.font-face('Barlow Condensed', '/fonts/barlow-condensed-latin-ext-600-normal.woff2', fonts.$latin-ext, $weight: 600)
-  @include fonts.font-face('Barlow Condensed', '/fonts/barlow-condensed-latin-700-normal.woff2', fonts.$latin, $weight: 700)
-  @include fonts.font-face('Barlow Condensed', '/fonts/barlow-condensed-latin-ext-700-normal.woff2', fonts.$latin-ext, $weight: 700)
-
-  // Each face's size-adjust and width ratio, from `measure-font`
-  // (`@adrienlcp/measure-font`) over every file of the family and the French
-  // dictionary's text; the digits' own ratio with `--figures --figure-feature
-  // tnum --figure-feature lnum`, as the body and every figure set them.
-  @include fonts.fallback-faces('Barlow', $barlow-metrics, 0.978015, $widths: (500: 1.0124, 600: 1.0036, 700: 1.0661), $figures: (500: 1.0205, 600: 1.011, 700: 0.9999))
-  @include fonts.fallback-faces('Barlow Condensed', $barlow-metrics, 0.798563, $widths: (600: 1.0036, 700: 1.0517), $figures: (600: 0.935, 700: 0.8918))
+  // Each band's size-adjust and width ratio, from `measure-font`
+  // (`@adrienlcp/measure-font`) over both files and the French dictionary's
+  // text, at wdth=100 for running text and wdth=76 for the condensed names
+  // and figures; the digits with `--figures --figure-feature tnum` (Archivo
+  // has no lnum).
+  @include fonts.fallback-faces('Archivo', $archivo-metrics, 1.022878, (500: 1.0263, 600: 1.0069, 700: 1.0448), $figures: (500: 0.9921, 600: 0.9825, 700: 0.9511), $stretch: 91% 125%)
+  @include fonts.fallback-faces('Archivo', $archivo-metrics, 1.022878, (600: 1.2538, 700: 1.3094, 800: 1.26), $figures: (600: 1.1934, 700: 1.1684, 800: 1.1328), $stretch: 62% 90%)

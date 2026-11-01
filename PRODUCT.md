@@ -84,10 +84,21 @@ another sport can adopt it.
 The app has its own default identity. A club can override it with its name,
 logo and colours on its events.
 
-Standing preference (2026-10-03): clean, legible, broadcast-grade sports
-graphics over themed or quirky worlds. Nothing sport-specific in the visual
-identity (no table tennis imagery), since other sports will plug in. Pages
-that look busy or ornamental were rejected; legibility from far away wins.
+Direction C, validated on 2026-10-31 through the wall mockup
+(`.handoff/ping-club/assets/wall-mockup/wall.html`), replaces the dark,
+sport-neutral look of 2026-10-03:
+
+- Black on white: paper and white grounds, navy ink. Requested by the
+  organisers: "il vaut mieux noir sur blanc"; a bright hall agrees.
+- The drawn table-tennis table is the signature motif, used where it
+  carries meaning (the wall, the hall plan, a table's umpire header, the
+  printable QR sheet), never as wallpaper. Table tennis is the sport the
+  product serves first; another sport would bring its own drawn court.
+- One orange for what needs a decision now (a game or match to validate, a
+  running time-out, the serve), the table's blue, a colour per team.
+- Icons and drawings over words for an audience that "n'y connait rien en
+  informatique": serve triangle, tilted yellow card, stopwatch time-out.
+- Legibility from far away still wins over decoration.
 
 ## Evidence on Hand
 

@@ -45,7 +45,6 @@
 
     align-items: center
     background: var(--ink)
-    border-radius: var(--radius-m)
     color: var(--on-ink)
     display: flex
     gap: var(--space-xs)
@@ -56,7 +55,6 @@
 
   .umpire-idle, .umpire-start
     background: var(--surface)
-    border-radius: var(--radius-xl)
     display: flex
     flex-direction: column
     gap: var(--space-s)
@@ -113,7 +111,6 @@
 
     align-items: baseline
     background: var(--surface)
-    border-radius: var(--radius-s)
     color: var(--ink-muted)
     display: inline-flex
     font-size: var(--text-xl)
@@ -157,7 +154,6 @@
 
     align-items: center
     background: var(--surface-raised)
-    border-radius: var(--radius-m)
     display: flex
     flex: 1
     font-size: var(--text-l)
@@ -165,7 +161,7 @@
     padding: var(--space-s) var(--space-m)
 
     .icon
-      color: var(--live)
+      color: var(--live-ink)
       font-size: var(--icon-m)
       stroke-width: 2.6
 
@@ -182,7 +178,6 @@
     @include typography.strong
 
     background: var(--surface-raised)
-    border-radius: var(--radius-l)
     bottom: max(var(--space-s), var(--safe-area-bottom))
     font-size: var(--text-l)
     min-height: 4rem
@@ -209,7 +204,6 @@
 
   .umpire-card
     background: var(--surface)
-    border-radius: var(--radius-l)
     padding: var(--space-m) var(--space-l)
 
     h2
@@ -266,7 +260,6 @@
       @include typography.emphasis
 
       background: var(--surface-raised)
-      border-radius: var(--radius-xs)
       box-shadow: var(--shadow-key-cap)
       color: var(--ink)
       display: inline-grid

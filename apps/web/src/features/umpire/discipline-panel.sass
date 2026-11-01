@@ -30,6 +30,9 @@
     &[data-running=true]
       @include typography.strong
 
+      background: var(--live)
+      color: var(--on-live)
+
   .button.discipline-withdraw
     margin-inline-start: auto
 
@@ -49,3 +52,13 @@
       @include typography.emphasis
 
       font-size: var(--text-l)
+
+  .discipline-panel, .discipline-confirm
+    .icon[data-filled]
+      color: var(--card-yellow)
+      rotate: -6deg
+      stroke: var(--ink)
+      stroke-width: 1.5
+
+    [data-card='red'] .icon[data-filled]
+      color: var(--card-red)

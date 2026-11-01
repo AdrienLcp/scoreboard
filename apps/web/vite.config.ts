@@ -14,10 +14,7 @@ import { REGIONAL_LOCALES } from './src/presentation/i18n/regional-locales.ts'
 const WORKER_ORIGIN = 'http://127.0.0.1:8788'
 
 /** Written per weight band by `fonts.fallback-faces` in `_fonts.sass`. */
-const FALLBACK_FACES_WRITTEN_BY_HAND = new Set([
-  'Barlow fallback',
-  'Barlow Condensed fallback'
-])
+const FALLBACK_FACES_WRITTEN_BY_HAND = new Set(['Archivo fallback'])
 
 /**
  * Each face gets a fallback face of its own, a local font scaled to the same

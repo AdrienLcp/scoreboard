@@ -4,14 +4,12 @@
 @layer components
   .match-card
     background: var(--surface)
-    border-radius: var(--radius-l)
     margin-bottom: var(--space-xs)
     overflow: hidden
 
   .match-card-head
     @include focus.ring-inset
 
-    border-radius: var(--radius-l)
     cursor: pointer
     display: block
     padding: var(--space-s) var(--space-m) var(--space-xs)
@@ -67,9 +65,6 @@
     grid-template-columns: 1rem minmax(0, 1fr) 1.875rem 3.125rem
     height: 2.5rem
 
-    &[data-hot] .match-card-score
-      color: var(--live)
-
     &[data-lost]
       .match-card-name, .match-card-score
         color: var(--ink-dim)
@@ -78,7 +73,7 @@
     grid-template-columns: 1rem minmax(0, 1fr) 3.125rem
 
   .match-card-mark
-    color: var(--live)
+    color: var(--live-ink)
     display: grid
     font-size: var(--icon-2xs)
 
@@ -99,14 +94,13 @@
       @include typography.single-line
 
     .icon
-      color: var(--live)
+      color: var(--live-ink)
       font-size: var(--icon-xs)
 
   .match-card-games
     @include typography.figure-secondary
 
     background: var(--surface-raised)
-    border-radius: var(--radius-xs)
     display: grid
     font-size: var(--text-xl)
     height: 1.75rem

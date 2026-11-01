@@ -40,6 +40,7 @@
 
 /// A heading sized by its place: a console's table, a player's name on a target.
 @mixin heading
+  font-stretch: var(--stretch-name)
   font-weight: 700
   line-height: 1.15
 
@@ -51,22 +52,26 @@
 /// The home page's statement, the one headline that grows with the screen.
 @mixin hero
   font-size: var(--text-hero)
+  font-stretch: var(--stretch-name)
   font-weight: 700
   letter-spacing: var(--tracking-display)
   line-height: 1.05
 
 /// The display's club name, read across the hall.
 @mixin display-title
+  font-stretch: var(--stretch-name)
   font-weight: 700
   line-height: 1.1
 
 /// A player or a team on a line of its own.
 @mixin name
+  font-stretch: var(--stretch-name)
   font-weight: 600
   line-height: 1.25
 
 /// A player's name in a live tile, scaled with the tile.
 @mixin tile-name
+  font-stretch: var(--stretch-name)
   font-weight: 600
   line-height: 1.15
 
@@ -92,6 +97,7 @@
 /// Every figure the room reads: scores, games, table numbers, times.
 @mixin figure
   font-family: var(--font-figure)
+  font-stretch: var(--stretch-figure)
   font-variant-numeric: tabular-nums lining-nums
   font-weight: 700
   line-height: 1
@@ -124,6 +130,8 @@
 @mixin score
   @include figure
 
+  font-stretch: var(--stretch-score)
+  font-weight: 800
   line-height: 0.86
 
 /// The point score in a live tile, drawn close at the size the hall reads it.
@@ -142,6 +150,7 @@
 /// A code typed into its field, in the figure face so each character stands apart.
 @mixin code-entry
   font-family: var(--font-figure)
+  font-stretch: var(--stretch-figure)
   letter-spacing: var(--tracking-code)
 
 /// The umpire's code typed on the entry screen, spaced wide enough to check

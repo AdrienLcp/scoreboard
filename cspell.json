@@ -15,6 +15,7 @@
       "filename": [
         "**/i18n/dictionary-fr.ts",
         "PRODUCT.md",
+        "DESIGN.md",
         "**/encounter/encounter-formats.ts"
       ],
       "language": "en,en-GB,fr"
@@ -26,10 +27,12 @@
     "ABCDEFGHJKLMNPQRSTUVWXYZ",
     "abcdefghjkmnpqrstuvwxyz",
     "adrienlcp",
+    "Archivo",
     "Arimo",
     "biomejs",
     "CDTT",
     "CNIL",
+    "connait",
     "esbuild",
     "fftt",
     "FFTT",
@@ -63,6 +66,7 @@
     "suivre",
     "tabindex",
     "tnum",
+    "wdth",
     "workerd",
     "Yanis"
   ]

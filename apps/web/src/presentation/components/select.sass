@@ -7,8 +7,7 @@
 
     align-items: center
     background: var(--surface)
-    border: var(--stroke-bold) solid var(--rule)
-    border-radius: var(--radius-m)
+    border: var(--stroke-bold) solid var(--edge)
     cursor: pointer
     display: flex
     font-size: var(--text-m)
@@ -27,7 +26,7 @@
       transition: rotate var(--transition-base, 0s) var(--ease-out)
 
     &[data-hovered]
-      border-color: var(--surface-high)
+      border-color: var(--ink)
 
     &[data-pressed] .icon
       rotate: 180deg
@@ -52,7 +51,6 @@
 
   .popover
     background: var(--surface-raised)
-    border-radius: var(--radius-m)
     box-shadow: var(--shadow-overlay)
     display: flex
     flex-direction: column
@@ -79,7 +77,6 @@
     @include typography.emphasis
 
     align-items: center
-    border-radius: var(--radius-s)
     column-gap: var(--space-xs)
     cursor: pointer
     display: grid

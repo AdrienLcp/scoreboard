@@ -2,56 +2,63 @@
 name: Scoreboard
 description: Live table-tennis scores for the club room, readable from across the hall.
 colors:
-  field: "oklch(15.1% 0.025 267)"
-  surface: "oklch(20% 0.04 267.5)"
-  surface-raised: "oklch(24.9% 0.049 268)"
-  surface-high: "oklch(29.9% 0.057 268)"
-  rule: "oklch(32.1% 0.055 266)"
-  ink: "oklch(97.2% 0.007 261)"
-  ink-muted: "oklch(75.1% 0.039 267)"
-  ink-dim: "oklch(66.6% 0.048 268)"
-  live: "oklch(89.6% 0.199 122)"
-  on-live: "oklch(18% 0.032 267)"
-  qr-paper: "oklch(100% 0 0)"
+  field: "#F6F7F4"
+  surface: "#FFFFFF"
+  surface-raised: "#E3E8EB"
+  surface-high: "#C9D1D7"
+  rule: "#C9D1D7"
+  edge: "#5E7690"
+  ink: "#0E2238"
+  ink-muted: "#34506E"
+  ink-dim: "#465B73"
+  on-ink: "#FFFFFF"
+  live: "#F07F1E"
+  on-live: "#0E2238"
+  live-ink: "#8F3F00"
+  focus: "#1A4F8C"
+  table: "#1A4F8C"
+  table-dark: "#123B6A"
+  table-idle: "#9FB0C0"
+  sky: "#8FCBEF"
+  card-yellow: "#FFD23F"
+  qr-paper: "#FFFFFF"
 typography:
   display:
-    fontFamily: "Barlow Condensed, Barlow, Arial Narrow, sans-serif"
+    fontFamily: "Archivo, Archivo fallback, Arial Narrow, sans-serif"
     fontSize: "calc(var(--unit) * 37)"
-    fontWeight: 700
+    fontWeight: 800
     lineHeight: 0.86
     letterSpacing: "-0.01em"
     fontFeature: "tnum, lnum"
+    fontVariation: "'wdth' 64"
   headline:
-    fontFamily: "Barlow, system-ui, -apple-system, Segoe UI, sans-serif"
+    fontFamily: "Archivo, Archivo fallback, system-ui, -apple-system, Segoe UI, sans-serif"
     fontSize: "1.75rem"
     fontWeight: 700
     lineHeight: 1.15
+    fontVariation: "'wdth' 84"
   title:
-    fontFamily: "Barlow, system-ui, -apple-system, Segoe UI, sans-serif"
-    fontSize: "1.0625rem"
+    fontFamily: "Archivo, Archivo fallback, system-ui, -apple-system, Segoe UI, sans-serif"
     fontWeight: 600
     lineHeight: 1.25
+    fontVariation: "'wdth' 84"
   body:
-    fontFamily: "Barlow, system-ui, -apple-system, Segoe UI, sans-serif"
+    fontFamily: "Archivo, Archivo fallback, system-ui, -apple-system, Segoe UI, sans-serif"
     fontSize: "1rem"
     fontWeight: 500
     lineHeight: 1.45
   label:
-    fontFamily: "Barlow, system-ui, -apple-system, Segoe UI, sans-serif"
+    fontFamily: "Archivo, Archivo fallback, system-ui, -apple-system, Segoe UI, sans-serif"
     fontSize: "0.875rem"
     fontWeight: 600
     lineHeight: 1.2
   figure:
-    fontFamily: "Barlow Condensed, Barlow, Arial Narrow, sans-serif"
+    fontFamily: "Archivo, Archivo fallback, Arial Narrow, sans-serif"
     fontWeight: 700
     lineHeight: 1
     fontFeature: "tnum, lnum"
+    fontVariation: "'wdth' 72"
 rounded:
-  xs: "6px"
-  s: "10px"
-  m: "14px"
-  l: "18px"
-  xl: "22px"
   full: "999px"
 spacing:
   4xs: "0.125rem"
@@ -70,72 +77,76 @@ components:
   button-secondary:
     backgroundColor: "transparent"
     textColor: "{colors.ink}"
-    rounded: "{rounded.m}"
     padding: "0.75rem 1rem"
     height: "3rem"
   button-secondary-hover:
-    backgroundColor: "{colors.surface}"
+    backgroundColor: "{colors.ink}"
+    textColor: "{colors.on-ink}"
+  button-secondary-disabled:
+    textColor: "{colors.ink-dim}"
   button-primary:
     backgroundColor: "{colors.ink}"
-    textColor: "{colors.on-live}"
-    rounded: "{rounded.m}"
+    textColor: "{colors.on-ink}"
     padding: "0.75rem 1rem"
-    height: "3.875rem"
+    height: "3.75rem"
   button-primary-disabled:
     backgroundColor: "{colors.surface-raised}"
     textColor: "{colors.ink-dim}"
   button-quiet:
     backgroundColor: "transparent"
     textColor: "{colors.ink-muted}"
-    rounded: "{rounded.m}"
     padding: "0.75rem"
-    height: "2.75rem"
+    height: "3rem"
   button-quiet-hover:
     backgroundColor: "{colors.surface-raised}"
     textColor: "{colors.ink}"
   button-stop:
     backgroundColor: "{colors.ink}"
-    textColor: "{colors.on-live}"
-    rounded: "{rounded.m}"
+    textColor: "{colors.on-ink}"
     padding: "0.75rem 1rem"
     height: "3rem"
   field-input:
     backgroundColor: "{colors.surface}"
     textColor: "{colors.ink}"
-    rounded: "{rounded.m}"
     padding: "0.5rem 0.75rem"
     height: "3rem"
   tab:
     backgroundColor: "transparent"
     textColor: "{colors.ink-muted}"
-    rounded: "{rounded.s}"
-    height: "2.75rem"
+    height: "3rem"
   tab-selected:
-    backgroundColor: "{colors.surface-high}"
-    textColor: "{colors.ink}"
+    backgroundColor: "{colors.ink}"
+    textColor: "{colors.on-ink}"
   toggle-button:
     backgroundColor: "{colors.surface-raised}"
     textColor: "{colors.ink}"
-    rounded: "{rounded.s}"
     padding: "0.75rem 1rem"
-    height: "2.75rem"
+    height: "3rem"
   toggle-button-selected:
     backgroundColor: "{colors.ink}"
-    textColor: "{colors.on-live}"
+    textColor: "{colors.on-ink}"
+  switch-track:
+    backgroundColor: "{colors.field}"
+    rounded: "{rounded.full}"
+    height: "1.625rem"
+    width: "2.875rem"
+  switch-track-selected:
+    backgroundColor: "{colors.ink}"
   state-pill-match-point:
     backgroundColor: "{colors.live}"
     textColor: "{colors.on-live}"
-    rounded: "{rounded.full}"
     padding: "0.34em 0.82em"
   state-pill-game-point:
     backgroundColor: "transparent"
-    textColor: "{colors.live}"
-    rounded: "{rounded.full}"
+    textColor: "{colors.ink}"
+    padding: "0.34em 0.82em"
+  state-pill-deuce:
+    backgroundColor: "transparent"
+    textColor: "{colors.ink}"
     padding: "0.34em 0.82em"
   state-pill-over:
     backgroundColor: "{colors.surface-high}"
     textColor: "{colors.ink}"
-    rounded: "{rounded.full}"
     padding: "0.34em 0.82em"
   table-number:
     backgroundColor: "{colors.surface-raised}"
@@ -150,11 +161,9 @@ components:
   match-card:
     backgroundColor: "{colors.surface}"
     textColor: "{colors.ink}"
-    rounded: "{rounded.l}"
   point-target:
     backgroundColor: "{colors.surface}"
     textColor: "{colors.ink}"
-    rounded: "{rounded.xl}"
     padding: "1rem 1.25rem 0.75rem"
 ---
 
@@ -162,150 +171,215 @@ components:
 
 ## Overview
 
-**Creative North Star: "The Hall Scoreboard"**
+**Creative North Star: "The Club Hall Wall"**
 
-A live-score product for the room. Every match in play owns the screen; everything else is folded into one calm summary column. The world is a deep navy field with white figures and a single lime accent that only ever means "live" or "hot". It is built to be read from 10 to 20 metres across a bright, noisy sports hall, so the score digits are the largest thing on any surface and nothing competes with them.
+A live-score product for the club room, drawn black on white. Paper and white grounds, navy ink, one orange that only ever asks for a decision, and the blue of the table itself. It is read from 10 to 20 metres across a bright sports hall, by people who "know nothing about computers", so the score digits are the largest thing on any surface, every state has an icon or a drawing before it has a word, and nothing competes with the figures.
 
-The system deliberately refuses the busy broadcast package: no badge clusters, no logo bugs, no gradients, no tickers. A tile carries a table number, a quiet label, two names, games won, the point score, and at most one state pill. Density comes from the grid, not from decoration. The same tokens drive four surfaces (display, umpire console, organiser console, spectator phone view); the display alone is sized by the viewport, the others by their containers.
+The world comes from the validated wall mockup of 2026-10-31 (direction C, `.handoff/ping-club/assets/wall-mockup/wall.html`): Archivo used across its width axis (narrow figures, narrower scores), square-cornered blocks, a seven-stripe band under the club header, a drawn table-tennis table as the signature motif, and a colour per team. The same tokens drive five surfaces (display, wall, umpire console, organiser console, spectator phone view); the display and the wall are sized by the viewport, the others by their containers.
 
-Tone is factual and sentence-case. Headings are quiet and muted; the figures do the shouting. Benchmarked against Apple Sports, FlashScore/SofaScore and the WTT broadcast graphics, then pared back further for the room.
+Tone is factual and sentence-case. Headings are quiet and muted; the figures do the shouting. The drawn table appears where it carries meaning (the wall, the hall plan, a table's umpire header, the printable QR sheet, a spectator's table card), never as wallpaper; the umpire's two point targets stay big flat buttons, because speed and error-proofing beat illustration there.
 
 **Key Characteristics:**
-- Dark tonal field, four navy steps, no shadows on resting surfaces.
-- One accent, lime, reserved for live and hot states (serve, match point, game point, hot score, focus).
-- Barlow Condensed tabular figures for every number the room reads; Barlow for names and text.
-- Score digits are the largest element on every surface that shows a score.
-- At most one state pill per tile; serving shown as a small lime triangle on the serving row.
+- Black on white: paper field, white surfaces, navy ink, no dark theme.
+- One orange, as a fill, for what needs a decision now; ink text on it.
+- The table's blue for focus today and for the drawn table on the wall.
+- Archivo variable on its width axis: names 84%, figures 72%, scores 64% at 800.
+- Square corners on every block; circles only for dots and the switch.
+- Flat UI chrome; depth only inside the drawings and on floating menus.
 
 ## Colors
 
-A near-monochrome navy ramp with white ink and one saturated lime voice. All tokens are authored in OKLCH in `apps/web/src/presentation/styles/_tokens.sass`; the frontmatter mirrors them.
+A cool paper-and-navy ground, one saturated orange, and the table's blue. All tokens are authored in hex in `apps/web/src/presentation/styles/_tokens.sass` (`color-scheme: light`); the frontmatter mirrors them.
 
 ### Primary
-- **Scoreboard Lime** (live, ≈ #C8F03C): the only chromatic color. Marks what is happening right now: the serve triangle, a hot score (game or match point pending), the match-point pill fill, the game-point pill outline, the page-progress bar, the focus ring, text selection, the brand mark's lit stroke. Text on it is **Deep Ink Navy** (on-live).
+- **Decision Orange** (live): the only warm hue, and always a **fill**: the match-point pill, the running time-out tile, the live dots (connection, organiser, spectator), the countdown arc. Text and icons on it are **Hall Ink** (on-live), at about 6:1. Orange on white sits near 2.7:1, so it is never a text or thin-icon colour on a light ground.
+- **Burnt Orange** (live-ink): the orange's text voice. Small orange text and icons on paper or white (the umpire's "serving" marker, the waiting stage's live line, spectator and organiser live labels, the text caret), at about 7:1 on white.
+
+### Secondary
+- **Table Blue** (focus, table): the focus colour of every control (ring and focused field border) and, on the wall, the drawn table's playing surface. **Table Edge** (table-dark) is the table's front edge and the shadow under its white score digits; **Idle Table** (table-idle) greys a free table.
+
+### Tertiary
+- **Hall Sky** (sky): text selection today; on the wall, the QR column's ground.
+- **Card Yellow** (card-yellow): the yellow card mark only, never a status colour.
 
 ### Neutral
-- **Hall Night** (field, ≈ #070B16): the page background on every surface.
-- **Tile Navy** (surface, ≈ #0E1528): live tiles, summary column, match cards, inputs, tab tracks, point targets.
-- **Raised Navy** (surface-raised, ≈ #172039): table-number chips, games-won wells, popovers, hover on surface.
-- **High Navy** (surface-high, ≈ #212C4A): selected tab, finished-match pill, list hover, scrollbar thumb.
-- **Rule Navy** (rule, ≈ #26324F): hairlines, input borders, the 1px edge on secondary buttons and point targets.
-- **Chalk White** (ink, ≈ #F3F6FB): names and figures; also the fill of the primary and "stop" buttons, the selected toggle, the check on a selected list option and the offline badge.
-- **Mist** (ink-muted, ≈ #A3AEC8): labels, section headings, times, hints, secondary detail.
-- **Dusk** (ink-dim, ≈ #7A86A4): the losing side of a finished match, disabled text, placeholders, the games strip in a tile foot.
-- **Deep Ink Navy** (on-live, ≈ #0B1120): text on lime and on white fills.
-- **QR Paper** (qr-paper, white): the QR code's own background only, for scanner contrast.
+- **Paper** (field): the page background on every surface.
+- **White** (surface): live tiles, summary column, match cards, inputs, tab tracks, point targets, select triggers.
+- **Mist Grey** (surface-raised): table-number chips, games-won wells, popovers, toggle chips, hover on white.
+- **Silver** (surface-high, rule): hairlines, list hover, the finished-match pill, the scrollbar thumb, a disabled secondary button's edge.
+- **Slate Edge** (edge): the 2px border of inputs, selects and the switch track; on the wall, the FFTT ranking points beside a name.
+- **Hall Ink** (ink): names, figures, running text; also the fill of primary, stop, selected tab, selected toggle, selected switch, and the hover of a secondary button.
+- **Harbour** (ink-muted): labels, section headings, times, hints, the event line.
+- **Dusk** (ink-dim): the losing side of a finished match, disabled text, placeholders, the games strip in a tile foot.
+- **White On Ink** (on-ink): text and icons on ink fills.
+- **QR Paper** (qr-paper): the QR code's own background only, for scanner contrast.
 
 ### Named Rules
-**The Lime Means Live Rule.** Lime marks live and hot states only. If removing it would not lose information about what is happening in a match right now (or where keyboard focus is), it should not be lime.
+**The Orange Asks Rule.** Orange marks what needs a decision or is running right now (match point, game or match won awaiting validation, a running time-out, a live connection). If removing it would not lose that information, it is not orange. It is a fill with ink on it; as text or a small icon it becomes Burnt Orange.
 
-**The White Alarm Rule.** Errors, offline and refusal states are drawn in white (ink fill or ink border), never in red and never in lime. The palette has no warning hue; urgency comes from inverting to the brightest neutral.
+**The Ink Alarm Rule.** Errors, offline and refusal states are drawn in ink: an ink fill with white text (offline and refused badges) or an ink border with an ink error line and an icon. Never red, never orange. The palette has no warning hue; urgency comes from the heaviest neutral.
 
 **The Losing Side Dims Rule.** A finished match dims the loser (ink-dim) rather than highlighting the winner.
 
+**The Calm Score Rule.** A score is never coloured to signal game or match point. The state pill carries it; the digits stay ink.
+
 ## Typography
 
-**Display Font:** Barlow Condensed (with Barlow, Arial Narrow, sans-serif), weights 600 and 700.
-**Body Font:** Barlow (with system-ui, -apple-system, Segoe UI, sans-serif), weights 500, 600, 700.
+**Display Font:** Archivo variable (with a metric-matched local "Archivo fallback", then Arial Narrow, sans-serif), width axis 62% to 125%, weight axis 100 to 900, self-hosted woff2 for latin and latin-ext.
+**Body Font:** Archivo variable at its normal width (with "Archivo fallback", system-ui, -apple-system, Segoe UI, sans-serif).
 
-**Character:** a condensed athletic numeral for everything counted and a plain humanist sans for everything named. The pair reads like a hall scoreboard, not a magazine.
+**Character:** one family, three widths. Running text at the normal width, names a little condensed (84%), figures narrow (72%) and the point score narrowest and heaviest (64%, 800), so the hall reads one voice that tightens as the information gets more urgent. Archivo has no `lnum`; its default figures are already lining and `tnum` keeps them fixed-width.
 
 ### Hierarchy
-- **Display** (Barlow Condensed 700, 37% of a tile's unit, line-height 0.86, -0.01em): the point score inside a live tile; the umpire's point target uses the same face fitted to its target, `clamp(var(--text-score), min(52cqi, 116cqh - 5rem), 20.625rem)`, never below `--text-score` (4rem). Always the largest element on the surface.
-- **Headline** (Barlow 700, 1.75rem, 1.15): page titles on tool pages; on the display, the club name at 3cu.
-- **Title** (Barlow 600, 1.0625rem, 1.25): player and team names in cards and lists. In tiles, names scale with the tile (10 units, 8 when long) and truncate with an ellipsis.
-- **Body** (Barlow 500, 1rem, 1.45): running text; measure capped at 65ch, forms at 28rem.
-- **Label** (Barlow 600, 0.875rem, 1.2, muted): section headings and field labels, sentence case.
-- **Figure** (Barlow Condensed 700, tabular and lining numerals, line-height 1): table numbers, games won, game scores, clock, times, counts. Body text also enables tabular numerals globally.
+- **Display** (800, width 64%, 37 units of a tile, line-height 0.86, -0.01em): the point score in a live tile. The umpire's point target uses the same voice fitted to its target, `clamp(var(--text-score), min(52cqi, 116cqh - 5rem), 20.625rem)`, never below `--text-score` (4rem). Always the largest element on the surface.
+- **Headline** (700, width 84%, 1.75rem, 1.15): page titles on tool pages; on the display, the club name at 3cu. The home hero grows from 2rem to 3.25rem at 1.05 with -0.01em.
+- **Title** (600, width 84%, 1.25): player and team names in cards and lists. In tiles, names scale with the tile (10 units, 8 when long) and truncate with an ellipsis.
+- **Body** (500, 1rem, 1.45): running text; measure capped at 26em for intros, forms at 28rem.
+- **Label** (600, 0.875rem, 1.2, muted): section headings and field labels, sentence case.
+- **Figure** (700, width 72%, tabular, line-height 1): table numbers, games won (600), game scores, clock, times, counts. Body text also enables tabular numerals globally.
 
-UI and body text take the steps `--text-2xs` to `--text-3xl` (0.75rem to 1.5rem), `--text-m` (1rem) being the body. A display size takes a role name: `--text-title` (1.75rem), `--text-code` (1.75rem), `--text-code-entry` (3.375rem, the umpire's code input), `--text-figure` (2.25rem), `--text-score` (4rem, the floor of the umpire's fitted score), and two that grow with the screen through `sizes.fluid`, `--text-hero` (2rem to 3.25rem, the home title) and `--text-player` (1.25rem to 2rem, a name on a point target). The big numbers do not come from this scale but from container-relative units. Weight, leading and tracking live only in the `_typography.sass` mixins, tracking through `--tracking-*`.
+UI and body text take the steps `--text-2xs` to `--text-3xl` (0.75rem to 1.5rem), `--text-m` (1rem) being the body. A display size takes a role name: `--text-title` (1.75rem), `--text-code` (1.75rem), `--text-code-entry` (3.375rem), `--text-figure` (2.25rem), `--text-score` (4rem), and two fluid ones, `--text-hero` (2rem to 3.25rem) and `--text-player` (1.25rem to 2rem, a name on a point target). The big numbers come from container units, not from this scale. Weight, width, leading and tracking live only in the `_typography.sass` mixins; widths through `--stretch-name`, `--stretch-figure`, `--stretch-score`.
 
 ### Named Rules
-**The Every Number Is A Figure Rule.** Any number the room reads (score, games, table, time, clock, count) uses the figure style: Barlow Condensed with tabular lining numerals, so digits never shift width as they change.
+**The Every Number Is A Figure Rule.** Any number the room reads (score, games, table, time, clock, count) uses the figure voice: Archivo at 72% width with tabular figures, so digits never shift width as they change. The point score narrows to 64% and 800.
 
-**The Quiet Heading Rule.** Section headings are sentence case, muted, 600 weight and small. No uppercase tracking, no kickers or eyebrows above titles. Uppercase with wide tracking is reserved for literal join codes typed or read by umpires and organisers.
+**The Quiet Heading Rule.** Section headings are sentence case, muted, 600 and small. No uppercase tracking, no kickers or eyebrows above titles. Wide tracking is reserved for literal join codes typed or read by umpires and organisers (0.08em, 0.22em on the umpire's entry field).
 
 ## Layout
 
 Two geometries share one token set.
 
-**The display** is sized by the viewport through `--cu` (one hundredth of the screen height, capped by width at 16:9: `min(1dvh, 0.5625vw)`), so a TV, a projector and a laptop show the same composition at their own size. Header row, then a board: live tiles grid on the left taking the remaining width, summary column fixed at 40cu (~22% of a 16:9 screen) on the right. Gaps and tile radii are 1.2cu. Tiles are ordered by table number and laid out by a computed column/row count; paging is a last resort with a thin lime progress bar in the header. Inside a tile, everything is drawn on `--unit` (`min(1cqh, 0.75cqw)` of the tile's container), in four rows: head (table number, label, one pill), two player rows, foot (game history and elapsed time). Player rows are a fixed grid: serve mark, name, games well, score. Below a 45rem page the display reflows into a single scrolling column with fixed-height tiles and the summary underneath.
+**The display** is sized by the viewport through `--cu` (one hundredth of the screen height, capped by width at 16:9: `min(1dvh, 0.5625vw)`), so a TV, a projector and a laptop show the same composition at their own size. Header row, then a board: live tiles on the left taking the remaining width, summary column fixed at 40cu on the right. Gaps are 1.2cu. Tiles are ordered by table number and laid out by a computed column/row count; paging is a last resort with a thin progress bar in the header. Inside a tile, everything is drawn on `--unit` (`min(1cqh, 0.75cqw)` of the tile's container), in four rows (18 units, two flexible player rows, 12 units): head (table number, label, one pill), two player rows, foot (game history and elapsed time). Player rows are a fixed grid: serve mark (6.5 units), name, games well (14), score (39). Below a 45rem page the display stacks into one scrolling column (`--cu` fixed at 0.4375rem) with the summary underneath. The wall pairing page draws on the same `--cu`.
 
-**Tool surfaces** (umpire, organiser, spectator, home) use the rem spacing scale and a page column capped at 92.5rem with a 1rem gutter on both sides. Layout breaks are container queries on the page width (`body` is the `page` container) at 43.75, 53.75, 60 and 68.75rem. The umpire console splits into two large point targets, one per side.
+**Tool surfaces** (umpire, organiser, spectator, home, legal) use the rem spacing scale and a page column capped at 92.5rem with the 1rem gutter widened to the safe area. Layout breaks are container queries on the page width (`body` is the `page` container) at 43.75, 53.75, 60 and 68.75rem. Controls never fall below `--control-height` (3rem, over the 44px target). The umpire console splits into two large point targets, one per side.
 
 The summary column clips lists to whole rows (never a half-visible item) and gives results priority: "à suivre" shrinks first when the column runs out of room; the QR block sits at the bottom.
 
 ## Elevation & Depth
 
-Flat by default. Depth is tonal: field, then surface, then raised, then high, each a small lightness step in the same navy hue. Edges are drawn as inset 1px or 2px rings (`--inset-hairline`, `--inset-live`, `--inset-muted`) rather than outer borders, so they never change layout.
+UI chrome is flat: tiles, cards, panels and controls sit on the paper without shadows, separated by the white/paper step and the grey wells. Edges are inset rings (`--inset-hairline` 1px silver, 2px ink on secondary buttons, 2px orange or muted on outlined pills) rather than outer borders, so they never change layout. The drawn table on the wall is the one place with modelled depth, and that depth belongs to the drawing (see Committed, not yet built).
 
 ### Shadow Vocabulary
-- **Overlay** (`--shadow-overlay: 0 14px 34px oklch(0% 0 0 / 55%)`): popovers and list-box menus only, the one thing that floats above the page.
-- **Key cap** (`--shadow-key-cap: inset 0 -2px 0 var(--field)`): keyboard-shortcut hints on the umpire console on laptops.
+- **Overlay** (`box-shadow: 0 14px 34px rgb(14 34 56 / 40%)`): popovers and list-box menus only.
+- **Key cap** (`box-shadow: inset 0 -2px 0 var(--field)`): keyboard-shortcut hints on the umpire console on laptops.
 
 ### Named Rules
-**The Tonal Step Rule.** Resting surfaces never cast shadows. To lift something, move it one step up the navy ramp; reserve the overlay shadow for content that actually floats.
+**The Flat Chrome Rule.** Resting UI surfaces never cast shadows. To set something apart, put it on white over paper or in a grey well; the overlay shadow is for content that floats.
 
 ## Shapes
 
-Softly rounded rectangles throughout, one radius family: 6px for chips and key caps, 10px for tabs, toggles and list items, 14px for buttons, inputs and tab tracks, 18px for spectator match cards, 22px for the umpire's point targets, full pills for state pills and connection badges. On the display, tiles and the summary column share a viewport-relative radius (1.2cu); table-number chips are rounded at 0.2em of their own size so they stay proportional at any scale. Serving is a small solid triangle, the only pictorial shape inside a tile.
+Square corners everywhere: tiles, the summary column, cards, buttons, inputs, tabs, toggles, pills, table-number chips, popovers. No radius tokens remain except `--radius-full`. Circles are a separate shape, not a softened corner: the switch track and thumb, the live dots (`50%`), and on the wall the games-won dots and their pill. Serving is a small solid triangle, the only pictorial shape inside a tile.
+
+### Named Rules
+**The Square Block Rule.** A rectangle is square-cornered. Roundness only appears as a full circle or a full pill, and only where the world draws one: a dot, a switch, the games-won pill.
 
 ## Components
 
 ### Buttons
-Plain and confident; one obvious action per screen.
-- **Shape:** gently rounded (14px).
-- **Secondary (default):** transparent with a 1px inset rule edge, ink text, 600 weight, 3rem minimum height; hover fills surface; pressed scales to 0.985.
-- **Primary:** lime fill with on-live text, 700 weight, larger type (1.0625rem) and taller (3.875rem); hover brightens slightly; disabled drops to raised navy with dim text. One per screen.
-- **Quiet:** no edge, muted text, `--control-height` (2.75rem, never below the 44px target); hover fills raised navy and brightens the text.
-- **Stop:** white fill with on-live text, for ending or irreversible actions (end match).
-- **Focus:** 3px lime outline at 3px offset, shared by every focusable control.
+Plain and confident, one obvious action per screen.
+- **Shape:** square.
+- **Secondary (default):** no fill (it shows the ground it sits on), a 2px ink inset edge, ink text 600, 3rem minimum height; hover inverts to an ink fill with white text; pressed scales to 0.985; disabled swaps the edge to silver and the text to dusk.
+- **Primary:** ink fill, white text 700 at 1.0625rem, taller (3.75rem); hover darkens slightly (`brightness(0.92)`); disabled drops to mist grey with dusk text. One per screen.
+- **Quiet:** no edge, muted text, 3rem; hover fills mist grey and turns the text to ink.
+- **Stop:** ink fill, white text 700, at the secondary's height, for ending or irreversible actions (end match). Primary and stop share the fill and never share a screen.
+- **Focus:** 3px Table Blue ring at 3px offset, shared by every focusable control.
 
 ### Chips (state pills)
-- **Style:** full pill, 700 weight, sized in em so it scales with the tile; enters with a short fade and scale (340ms, ease-out).
-- **Tones:** match point = lime fill; game point = lime 2px inset outline with lime text; deuce = muted 2px outline with white text; over = high navy fill. At most one per tile.
+- **Style:** square, 700 at line-height 1.05, sized in em so it scales with the tile; enters with a fade and scale from 0.9 (340ms, ease-out).
+- **Tones (built):** match point = orange fill, ink text; game point = 2px orange inset outline, ink text; deuce = 2px muted inset outline, ink text; over = silver fill, ink text, with a check icon. At most one per tile.
 
 ### Cards / Containers
-- **Live tile:** surface navy, viewport-relative radius, no border, no shadow; enters with a fade and scale from 0.95 (640ms). The hot score turns lime; the losing side dims after the match.
-- **Summary column:** one surface panel; blocks for team encounters, results with finish times, free tables with next-match ETA, "à suivre" (each start in muted figures above the names, so a doubles pair keeps the full width), and the QR.
-- **Match card (spectator):** surface navy, 18px radius, header row is the disclosure trigger; expanded detail sits below a hairline with a per-game table.
+- **Live tile:** white, square, no border, no shadow; enters with a fade and scale from 0.95 (640ms). The score stays ink; the losing side dims after the match.
+- **Summary column:** one white panel; blocks for team encounters, results with finish times, free tables with next-match ETA, "à suivre" (each start in muted figures above the names, so a doubles pair keeps the full width), and the QR.
+- **Match card (spectator):** white, square, the header row is the disclosure trigger; expanded detail sits below a hairline with a per-game table.
 - **Internal padding:** tool cards 0.75 to 1rem; display panels in cu.
 
 ### Inputs / Fields
-- **Style:** surface fill, 2px rule border, 14px radius, 3rem minimum height, 600 weight value text; label above in muted 0.875rem 600.
-- **Focus:** border turns lime (no extra glow).
-- **Error:** border and a 1px inset ring in white, error text in white 600 with an icon. **Disabled:** dim text.
-- **Code inputs:** figure face, large, centered, uppercase with wide tracking (literal codes only).
+- **Style:** white fill, 2px slate-edge border, square, 3rem minimum height, 600 value text; label above in muted 0.875rem 600; placeholder in dusk 500.
+- **Hover / Focus:** hover turns the border ink; focus turns it Table Blue (no glow).
+- **Error:** ink border plus a 1px ink inset ring; error line in ink 600 with an icon. **Disabled:** dusk text.
+- **Select:** same box as a field, chevron rotates on open; the popover is mist grey with the overlay shadow, scrolling inside its list; options hover silver, the selected one carries a neutral ink check.
+- **Switch:** paper track with a 2px slate inset and a muted thumb; on, the track fills ink and the thumb turns white.
+- **Code inputs:** figure voice, large, centred, uppercase with wide tracking (literal codes only).
 
 ### Navigation
-- **Tabs:** a surface track with 0.25rem padding; tabs are muted text at `--control-height` (2.75rem, never below the 44px target), the selected tab fills high navy with white text. Counts inside tabs use the figure style.
-- **Toggle groups:** raised navy chips; the selected one inverts to a white fill.
-- **Links:** white text with a dim underline that turns lime on hover.
+- **Tabs:** a white track with 0.25rem padding; tabs are muted text at 3rem, the selected tab fills ink with white text. Counts inside tabs use the figure voice.
+- **Toggle groups:** mist grey chips, silver on hover; the selected one fills ink with white text.
+- **Links:** ink text with a dusk 1px underline at 0.22em offset.
 
-### Live Tile (signature)
-Table number chip, muted single-line label, optional single state pill; two rows of serve triangle, name, games-won well (raised navy, figure 600) and point score (display figure, right-aligned); a foot with the game history in dim figures (won games brighter) and elapsed time. Every dimension is a multiple of the tile's own unit, so the score keeps its share at any grid size.
+### Live Tile (signature, display)
+Table number chip, muted single-line label, optional single state pill; two rows of serve triangle, name, games-won well (mist grey, figure 600) and point score (display voice, right-aligned); a foot with the game history in dusk figures (won games in muted) and elapsed time. Every dimension is a multiple of the tile's own unit, so the score keeps its share at any grid size.
 
 ### Point Target (signature, umpire)
-A full-half-screen tap target per side: surface fill, 22px radius, 1px inset edge; name with a lime "serving" marker, a giant centered score, and a foot with games won. On tap it scales to 0.988 and flashes a 3px lime inset ring for 550ms. The hot score turns lime as on the display.
+A half-screen tap target per side: white, square, 1px silver inset edge; name (width 84%, 700) with a Burnt Orange "serving" marker, a giant centred score, and a foot with games won. Hover fills mist grey; on tap it scales to 0.988 and flashes a 3px orange inset ring.
+
+## Committed, not yet built
+
+The wall mockup (`.handoff/ping-club/assets/wall-mockup/wall.html`, validated 2026-10-31, layout spec in `.handoff/ping-club/04-wall-layout.md`) commits these pieces. The wall session (04) and the organiser session (06) build them to this spec; their tokens (`--table`, `--table-dark`, `--table-idle`, `--sky`, `--card-yellow`, `--band`) already exist. Sizes are given in pixels on the mockup's 1920×1080 stage; on the wall they become `--cu` (1cu = 10.8px on that stage). The mockup's in-between weights (680 to 820) land as named mixins in `_typography.sass`, never as one-off weights.
+
+### Wall page
+- **Header** (84px, white): club logo (72px) + club name (width 78%, ~780, 46px, -0.01em) + event line (500, 26px, ink-muted). No date, clock or app name.
+- **Seven-stripe band** (21px) under the header: seven equal hard-stopped horizontal stripes, top to bottom #1C5A9E, #2F7FC1, #8FCBEF, #00894A, #6DBE45, #BADF9B, #F07F1E (`--band`). Hard stops only; it is the one multi-colour element.
+- **Body grid:** `minmax(0, 1fr) 250px`, one row per encounter (a pair of tables), the QR column spanning all rows on Hall Sky. Each row is a white group with a 2px silver inset: the encounter block (340px) then its two table cells.
+- **Encounter block:** home team on top, away below, each on its team colour with its text colour; name 27px on one line, encounter score (parties won, up to 20) 52px on a darker shade of the same colour (`rgb(0 0 0 / 18%)` over it).
+- **QR column:** QR on white with 12px padding, prompt, join code in a white box (width 75%, ~820, 54px, 0.12em tracking), full URL.
+
+### Table cell
+- **Head:** an ink plate with white "Table N" (width 78%, ~760, 26px), the call ("B – X", "Double") in ink-muted 600, and one state pill.
+- **Drawn table, in perspective:** an SVG trapezoid in Table Blue with a Table Edge front strip, white edges and centre line, an ink net and ink legs, at a fixed ~2.7:1 proportion, centred, never stretched; the floor (mist grey, the lower 38% a step darker, #D3DADF) shows on both sides. A free table turns Idle Table and carries a white card "Table libre / Prochain match A – Y / names", lifted by `0 6px 14px -6px rgb(14 34 56 / 40%)`.
+- **Scores:** big white digits (width 62%, ~820, `min(124px, 47cqh)`, line-height 0.86, -0.02em) centred in each blue half at 58% height, with a hard `0 3px 0` Table Edge text shadow. While a game or match win awaits validation, the loser's score drops to 40% opacity.
+- **Games-won dots in a dark pill:** a column of 13px circles in a full pill of `rgb(14 34 56 / 60%)` beside each score, on the outer side; white = won, a 2px white ring (85%) = not yet; the count is the games needed to win.
+- **Player chip** at each top outer corner: white, with a 5px inset underline in the team colour; a letter square in the team colour with its text colour, then "Prénom Nom" (width 76%, ~680, 21px). Doubles: each player on their own line, same size as a single. The player's FFTT points follow the name, smaller (0.8em, width 70%, 600, Slate Edge), no "pts", nothing when unknown.
+- **Serve triangle** at the net end of the server's name, pointing to the net (14×18px). No ball icon: balls are white and read as an empty dot. On a white chip it takes Burnt Orange, as the shipped point target does, since Decision Orange on white is under 3:1 for a mark that carries meaning on its own.
+- **Marks line** under the name, fixed order, an absent mark takes no space (a lone mark sits against the outer edge); the worst case (triangle + card + stopwatch on one player) must hold:
+  - **Tilted yellow card:** a 16×22px Card Yellow rectangle rotated -6deg with a 1.5px `rgb(14 34 56 / 50%)` edge.
+  - **Stopwatch time-out tile:** 24×26px ink tile with a white stopwatch icon (never a "T"); Decision Orange with an ink icon while the time-out runs.
+- **Running time-out countdown:** a 66px white disc with a 60s orange arc and the seconds in ink (width 70%, ~820), above the net, never over a score.
+
+### State pills (wall)
+Square, ~720, ink text, with these words only (no "à valider"):
+- **"Manche gagnée"** and **"Match gagné 3–1"**: Decision Orange fill with a check icon.
+- **"Égalité"** (10–10 and beyond): 3px ink inset outline.
+- **"Belle"** (the decider): 3px orange inset outline.
+
+### Team colours
+A colour per team, not per club (Angles 1 is not Angles 2), set in the team settings, editable with a colour picker, each paired with a text colour chosen for contrast. Used on the encounter block, the player letter square and the chip underline; never on a pill, a mark or a score. Defaults the club gave:
+
+| Team | Colour | Text | Contrast |
+|---|---|---|---|
+| Angles 1, sky blue | #8FCBEF | ink #0E2238 | 9.2:1 |
+| Angles 2, orange | #F4A259 | ink #0E2238 | 7.8:1 |
+| Angles 3, yellow | #E9C46A | ink #0E2238 | 9.6:1 |
+| Angles 4, green | #007A42 | white #FFFFFF | 5.4:1 |
+| Angles 5, salmon | #F4A08C | ink #0E2238 | 7.9:1 |
+| Angles 6, blue-grey | #8DA4BA | ink #0E2238 | 6.2:1 |
+| Angles 7, green-grey | #8FA89A | ink #0E2238 | 6.3:1 |
+| Opponents (default) | #FFFFFF | ink #0E2238 | 16:1 |
+
+Angles 2's orange is a lighter tangerine than Decision Orange and Angles 3's yellow a deeper mustard than Card Yellow, so a team never reads as a state; the picker should warn when a chosen colour comes within reach of `--live` or `--card-yellow`. A white opponent block keeps a 2px silver inset so it holds on the white group. The text colour is computed (ink or white, whichever passes 4.5:1) and can be overridden.
 
 ## Do's and Don'ts
 
 ### Do:
-- **Do** make the point score the largest element of any surface that shows a live score.
-- **Do** set every number in Barlow Condensed with tabular lining numerals.
-- **Do** keep lime for live and hot states: serve, hot score, match/game point, focus, page progress.
+- **Do** make the point score the largest element of any surface that shows a live score, in the score voice (width 64%, 800).
+- **Do** set every number in the figure voice with tabular figures.
+- **Do** use orange as a fill with ink on it, for what needs a decision or is running; use Burnt Orange (`--live-ink`) for small orange text and icons.
+- **Do** use Table Blue for focus: a 3px ring at 3px offset, a blue border on a focused field.
+- **Do** keep every rectangle square; circles only for dots, the switch and the games-won pill.
+- **Do** draw errors and offline states in ink (fill or border) with an icon.
 - **Do** order display tiles by table number and keep them still; reflow only when a match starts or ends.
-- **Do** build depth from the four navy steps; use the overlay shadow only for floating menus.
-- **Do** draw errors and offline states in white, inverted onto the dark field.
 - **Do** truncate names with an ellipsis on one line rather than wrapping inside a tile.
+- **Do** give each state an icon or a drawing (serve triangle, yellow card, stopwatch) before a word.
 - **Do** keep one primary action per screen.
 
 ### Don't:
+- **Don't** colour a score to signal game or match point; the pill carries it.
+- **Don't** set text or thin icons in `--live` on paper or white.
+- **Don't** introduce red, green or a second warm hue for status; team colours stay on team positions.
 - **Don't** put more than one state pill on a tile, or add badges, logos or tickers to tiles.
-- **Don't** introduce a second accent hue, or red/orange/green for status.
-- **Don't** add shadows, gradients or glows to resting surfaces.
+- **Don't** add shadows or soft gradients to resting UI surfaces; the band's hard stops and the drawn table's own depth are the only exceptions.
+- **Don't** round a rectangle's corners.
 - **Don't** set section headings in uppercase with letter-spacing, or add eyebrow labels above titles.
-- **Don't** size display text in rem; the display draws on `--cu` and tiles on `--unit`.
+- **Don't** size display or wall text in rem; they draw on `--cu` and tiles on `--unit`.
 - **Don't** show half a list item in the summary column; clip to whole rows.
-
-**Primary buttons are white.** Primary actions are filled with Chalk White and Deep Ink Navy text, never lime: a button is not live, so it falls under the Lime Means Live Rule like everything else. Primary and stop share the fill and never share a screen (primary starts or confirms, stop ends); primary is set apart by its larger height and type. One primary action per screen.
+- **Don't** use the drawn table as wallpaper, or on the umpire's point targets.

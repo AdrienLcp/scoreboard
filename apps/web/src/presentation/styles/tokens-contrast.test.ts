@@ -11,7 +11,7 @@ const SURFACES = [
   '--surface-raised',
   '--surface-high'
 ] as const
-const TEXT_INKS = ['--ink', '--ink-muted', '--ink-dim', '--live'] as const
+const TEXT_INKS = ['--ink', '--ink-muted', '--ink-dim', '--live-ink'] as const
 
 describe('colour tokens', () => {
   it('[contrast] every ink reads on every surface', () => {

@@ -5,27 +5,41 @@
   \:root
     @include tokens.defaults
 
-    color-scheme: dark
+    color-scheme: light
 
-    --field: oklch(15.1% 0.025 267)
-    --surface: oklch(20% 0.04 267.5)
-    --surface-raised: oklch(24.9% 0.049 268)
-    --surface-high: oklch(29.9% 0.057 268)
-    --rule: oklch(32.1% 0.055 266)
-    --ink: oklch(97.2% 0.007 261)
-    --ink-muted: oklch(75.1% 0.039 267)
-    --ink-dim: oklch(66.6% 0.048 268)
-    --live: oklch(89.6% 0.199 122)
-    --on-live: oklch(18% 0.032 267)
-    --on-ink: var(--on-live)
-    --focus: var(--live)
-    --qr-paper: oklch(100% 0 0)
-    --qr-ink: var(--on-live)
-    --scrim: oklch(0% 0 0 / 55%)
+    // Direction C, the validated wall: paper and white grounds, navy ink, one
+    // orange for what needs a decision now, the table's own blue.
+    --field: #F6F7F4
+    --surface: #FFFFFF
+    --surface-raised: #E3E8EB
+    --surface-high: #C9D1D7
+    --rule: #C9D1D7
+    --edge: #5E7690
+    --ink: #0E2238
+    --ink-muted: #34506E
+    --ink-dim: #465B73
+    --live: #F07F1E
+    --on-live: var(--ink)
+    --live-ink: #8F3F00
+    --on-ink: #FFFFFF
+    --focus: #1A4F8C
+    --table: #1A4F8C
+    --table-dark: #123B6A
+    --table-idle: #9FB0C0
+    --sky: #8FCBEF
+    --card-yellow: #FFD23F
+    --card-red: #D7263D
+    --qr-paper: #FFFFFF
+    --qr-ink: var(--ink)
+    --scrim: rgb(14 34 56 / 40%)
+    --band: linear-gradient(to bottom, #1C5A9E 0 14.29%, #2F7FC1 0 28.57%, #8FCBEF 0 42.86%, #00894A 0 57.14%, #6DBE45 0 71.43%, #BADF9B 0 85.71%, #F07F1E 0 100%)
 
-    // Each '… fallback' is a local face fonts.fallback-faces scales to the web font's metrics
-    --font-figure: 'Barlow Condensed', 'Barlow Condensed fallback', 'Barlow', 'Arial Narrow', sans-serif
-    --font-text: 'Barlow', 'Barlow fallback', system-ui, -apple-system, 'Segoe UI', sans-serif
+    // 'Archivo fallback' is a local face fonts.fallback-faces scales to the web font's metrics
+    --font-figure: 'Archivo', 'Archivo fallback', 'Arial Narrow', sans-serif
+    --font-text: 'Archivo', 'Archivo fallback', system-ui, -apple-system, 'Segoe UI', sans-serif
+    --stretch-name: 84%
+    --stretch-figure: 72%
+    --stretch-score: 64%
 
     --text-2xs: 0.75rem
     --text-xs: 0.8125rem
@@ -71,13 +85,7 @@
     --icon-m: 1.125rem
     --icon-l: 1.375rem
 
-    --radius-xs: 6px
-    --radius-s: 10px
-    --radius-m: 14px
-    --radius-l: 18px
-    --radius-xl: 22px
     --radius-full: 999px
-    --radius-figure: 0.2em
     --outline-thick: 3px
     --underline-offset: 0.22em
     --inset-live: inset 0 0 0 var(--stroke-bold) var(--live)

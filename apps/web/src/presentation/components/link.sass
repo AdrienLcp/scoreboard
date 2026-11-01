@@ -1,6 +1,5 @@
 @layer components
   .text-link
-    border-radius: var(--radius-xs)
     color: var(--ink)
     cursor: pointer
     text-decoration: underline
@@ -10,7 +9,7 @@
     transition: color var(--transition-fast, 0s), text-decoration-color var(--transition-fast, 0s)
 
     &[data-hovered]
-      text-decoration-color: var(--live)
+      text-decoration-color: var(--ink)
 
     &[data-pressed]
       color: var(--ink-muted)
