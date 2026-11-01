@@ -4,7 +4,7 @@ import { describe, expect, it } from 'vitest'
 
 import {
   defaultHallPlan,
-  placeHallTable
+  swapHallTables
 } from '@scoreboard/core/hall/hall-plan'
 
 import type { TeamPaint } from '@/features/event/team-paint'
@@ -61,13 +61,24 @@ describe('wallHallFor', () => {
   })
 
   it('[display] gives up on the hall when an encounter is split across it', () => {
-    const plan = placeHallTable({
-      place: { column: 5, row: 5 },
-      plan: defaultHallPlan(8),
-      table: 2
-    })
+    const plan = swapHallTables(defaultHallPlan(8), 2, 8)
 
     expect(wallHallFor({ plan, rows: EIGHT_TABLES })).toBeNull()
+  })
+
+  it('[display] gives up on the hall when its tables do not read as rows and columns', () => {
+    const plan = {
+      depth: 20,
+      tables: [
+        { isHidden: false, isTurned: true, table: 1, x: 2, y: 0 },
+        { isHidden: false, isTurned: true, table: 2, x: 2, y: 10 },
+        { isHidden: false, isTurned: false, table: 3, x: 12, y: 7.5 },
+        { isHidden: false, isTurned: false, table: 4, x: 22, y: 7.5 }
+      ],
+      width: 37
+    }
+
+    expect(wallHallFor({ plan, rows: [rowOn(1, 2), rowOn(3, 4)] })).toBeNull()
   })
 })
 
@@ -89,9 +100,9 @@ describe('wallFloorFor', () => {
     ).toEqual({ column: 1, row: 2 })
   })
 
-  it('[display] keeps the rows when the hall is too wide to stay legible', () => {
+  it('[display] keeps the rows when the hall is too deep to stay legible', () => {
     expect(
-      wallFloorFor({ plan: defaultHallPlan(12), tables: [1, 2, 3, 4] })
+      wallFloorFor({ plan: defaultHallPlan(12), tables: [1, 2, 7, 8] })
     ).toBeNull()
   })
 })

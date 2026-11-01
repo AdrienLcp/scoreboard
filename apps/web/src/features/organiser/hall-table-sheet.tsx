@@ -7,18 +7,13 @@ import type {
 } from '@scoreboard/protocol/event-snapshot'
 import type { HallPlan } from '@scoreboard/protocol/hall-plan'
 import type {
-  EncounterId,
   EventId,
   MatchId,
   TableNumber
 } from '@scoreboard/protocol/identifiers'
 import type { ScoringEvent } from '@scoreboard/protocol/scoring-event'
 
-import {
-  isHiddenIn,
-  renumberHallTable,
-  toggleHallTable
-} from '@scoreboard/core/hall/hall-plan'
+import { blockOf, isInTouchingBlock } from '@scoreboard/core/hall/hall-plan'
 
 import type { EncounterLine } from '@/features/event/encounter-lines'
 import { EncounterScore } from '@/features/event/encounter-score'
@@ -27,27 +22,30 @@ import { umpirePathFor } from '@/infrastructure/router/navigation'
 import { Button } from '@/presentation/components/button'
 import { CodeAndQr } from '@/presentation/components/code-and-qr'
 import { Icon } from '@/presentation/components/icon'
-import { Switch } from '@/presentation/components/switch'
 import { useTranslate } from '@/presentation/i18n/i18n-context'
 
-import { ChoiceField } from './choice-field'
+import { ConfirmButton } from './confirm-button'
 import { TableMatchPanel } from './table-match-panel'
 
 import './hall-table-sheet.sass'
 
 type HallTableSheetProps = {
   access: TableAccess | undefined
+  /** The last table of the hall cannot go. */
+  canDelete: boolean
   encounter: EncounterLine | undefined
   event: PublicSnapshot
   eventId: EventId
+  /** Its block hosts an encounter: off for a tournament. */
+  hasBlocks: boolean
+  onChooseEncounter: (trigger: HTMLElement) => void
   onClose: () => void
-  onMoveEncounter: (encounterId: EncounterId) => void
-  onMoveTable: () => void
+  onDelete: () => void
+  onPutAway: () => void
   onRecord: (matchId: MatchId, event: ScoringEvent) => void
-  /** Saves the plan, the sheet staying open on the table now numbered `table`. */
-  onSaveHall: (hall: HallPlan, table: TableNumber) => void
   /** Saves any other change to the setup, the sheet staying open. */
   onSaveSetup: (setup: EventSetup) => void
+  onTurn: () => void
   plan: HallPlan
   setup: EventSetup
   table: TableNumber
@@ -60,21 +58,25 @@ type HallTableSheetProps = {
  */
 export const HallTableSheet: React.FC<HallTableSheetProps> = ({
   access,
+  canDelete,
   encounter,
   event,
   eventId,
+  hasBlocks,
+  onChooseEncounter,
   onClose,
-  onMoveEncounter,
-  onMoveTable,
+  onDelete,
+  onPutAway,
   onRecord,
-  onSaveHall,
   onSaveSetup,
+  onTurn,
   plan,
   setup,
   table
 }) => {
   const translate = useTranslate()
-  const isHidden = isHiddenIn(plan, table)
+  const [first, second] = blockOf(table)
+  const block = second <= setup.tableCount ? `${first}–${second}` : `${first}`
 
   return (
     <section aria-labelledby='hall-sheet-title' className='hall-sheet'>
@@ -95,17 +97,15 @@ export const HallTableSheet: React.FC<HallTableSheetProps> = ({
       ) : (
         <EncounterScore encounter={encounter} />
       )}
-      {isHidden ? null : (
-        <TableMatchPanel
-          event={event}
-          key={table}
-          onRecord={onRecord}
-          onSaveSetup={onSaveSetup}
-          setup={setup}
-          table={table}
-        />
-      )}
-      {access === undefined || isHidden ? null : (
+      <TableMatchPanel
+        event={event}
+        key={table}
+        onRecord={onRecord}
+        onSaveSetup={onSaveSetup}
+        setup={setup}
+        table={table}
+      />
+      {access === undefined ? null : (
         <CodeAndQr
           code={access.code}
           codeHint={translate('organiser.access.codeHint')}
@@ -115,37 +115,36 @@ export const HallTableSheet: React.FC<HallTableSheetProps> = ({
         />
       )}
       <div className='hall-sheet-actions'>
-        {encounter === undefined ? null : (
-          <Button onPress={() => onMoveEncounter(encounter.id)}>
-            <Icon name='move' />
-            {translate('organiser.hall.moveEncounter')}
+        {hasBlocks ? (
+          <Button
+            aria-haspopup='dialog'
+            onPress={(press) => {
+              if (press.target instanceof HTMLElement) {
+                onChooseEncounter(press.target)
+              }
+            }}
+          >
+            <Icon name='swap' />
+            {translate('organiser.plan.chooseOn', { block })}
           </Button>
-        )}
-        <Button onPress={onMoveTable}>
-          <Icon name='move' />
-          {translate('organiser.hall.moveTable')}
+        ) : null}
+        <Button onPress={onTurn}>
+          <Icon name='rotate' />
+          {isInTouchingBlock(plan, table)
+            ? translate('organiser.plan.turnBlock', { block })
+            : translate('organiser.plan.turn')}
         </Button>
-        <ChoiceField
-          choices={Array.from({ length: setup.tableCount }, (_, index) => ({
-            id: String(index + 1),
-            label: translate('organiser.access.table', { table: index + 1 })
-          }))}
-          label={translate('organiser.hall.number')}
-          onChange={(id) => {
-            const number = Number(id)
-
-            if (id !== null && number !== table) {
-              onSaveHall(renumberHallTable({ number, plan, table }), number)
-            }
-          }}
-          selectedId={String(table)}
-        />
-        <Switch
-          isSelected={!isHidden}
-          onChange={() => onSaveHall(toggleHallTable(plan, table), table)}
-        >
-          {translate('organiser.hall.inUse')}
-        </Switch>
+        <Button onPress={onPutAway}>
+          <Icon name='reserve' />
+          {translate('organiser.plan.putAway')}
+        </Button>
+        {canDelete ? (
+          <ConfirmButton
+            confirmLabel={translate('organiser.plan.deleteTable', { table })}
+            label={translate('organiser.plan.delete')}
+            onConfirm={onDelete}
+          />
+        ) : null}
       </div>
     </section>
   )

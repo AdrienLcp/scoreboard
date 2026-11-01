@@ -1,0 +1,94 @@
+@use '../../presentation/styles/typography'
+
+/// The club's saved plans: small drawings to pick from, a star for the default, then the save form.
+@layer components
+  .saved-plans
+    max-height: min(36rem, 80dvh)
+    overflow: auto
+    width: min(22rem, calc(100vw - 2rem))
+
+  .saved-plans-dialog
+    display: grid
+    gap: var(--space-s)
+    outline: none
+    padding: var(--space-s)
+
+  .saved-plans-title
+    @include typography.label
+
+    margin: 0
+
+  .saved-plans-empty
+    @include typography.hint
+
+    margin: 0
+
+  .saved-plans-list
+    display: grid
+    gap: var(--space-3xs)
+    list-style: none
+    margin: 0
+    padding: 0
+
+  .saved-plan
+    align-items: stretch
+    display: flex
+
+  .saved-plan-use
+    @include typography.emphasis
+
+    align-items: center
+    background: var(--surface)
+    border: 0
+    color: var(--ink)
+    display: flex
+    flex: 1
+    gap: var(--space-s)
+    min-width: 0
+    padding: var(--space-2xs)
+    text-align: start
+
+    &[data-hovered],
+    &[data-focus-visible]
+      background: var(--surface-high)
+
+  .saved-plan-name
+    min-width: 0
+    overflow: hidden
+    text-overflow: ellipsis
+    white-space: nowrap
+
+  .saved-plan-default
+    background: var(--surface)
+    border: 0
+    color: var(--ink-muted)
+    display: grid
+    place-items: center
+    width: var(--control-height)
+
+    &[aria-pressed='true']
+      color: var(--ink)
+
+    &[data-hovered]
+      background: var(--surface-high)
+      color: var(--ink)
+
+  .saved-plans-form
+    border-top: 1px solid var(--surface-high)
+    display: grid
+    gap: var(--space-s)
+    padding-top: var(--space-s)
+
+  .plan-thumbnail
+    display: block
+    flex: none
+    width: 6.5rem
+
+  .plan-thumbnail-floor
+    fill: var(--surface-raised)
+
+  .plan-thumbnail-stands
+    fill: var(--floor-shade)
+
+  .plan-thumbnail-table
+    fill: var(--table)

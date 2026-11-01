@@ -32,10 +32,11 @@ const recordShowing = ({
   opponentLogoId?: string | null
   ownLogoId?: string | null
 }): ClubRecord => ({
-  hall: null,
+  defaultPlanId: null,
   opponentColour: DEFAULT_OPPONENT_COLOUR,
   opponents: [clubShowing(opponentLogoId)],
   own: clubShowing(ownLogoId),
+  plans: [],
   pools: []
 })
 

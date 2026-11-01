@@ -98,9 +98,12 @@ export const FR_DICTIONARY = defineDictionary({
     code: 'Code du club',
     forget: 'Changer de club',
     hall: {
+      default: 'Plan des prochains événements',
+      delete: 'Supprimer le plan {name}',
       empty:
-        'Dessinez la salle dans l’onglet Plan d’une journée, puis touchez « Garder ce plan pour le club »\u00a0: chaque nouvelle journée partira de ce plan.',
-      help: 'Chaque nouvelle journée part de ce plan. Pour le changer\u00a0: onglet Plan d’une journée, puis « Garder ce plan pour le club ».',
+        'Dessinez la salle dans l’onglet Plan d’une journée, puis touchez « Plans enregistrés » et « Enregistrer ce plan » : chaque nouvel événement partira de ce plan.',
+      help: 'Chaque nouvel événement part du plan étoilé. Pour en ajouter un : onglet Plan d’une journée, « Plans enregistrés », puis « Enregistrer ce plan ».',
+      makeDefault: 'En faire le plan par défaut',
       title: 'Salle'
     },
     home: 'Accueil',
@@ -595,28 +598,10 @@ export const FR_DICTIONARY = defineDictionary({
     hall: {
       cancel: 'Annuler',
       close: 'Fermer la table',
-      emptyPlace: 'Mettre la table ici',
-      encounters: 'Rencontres',
-      free: 'Libre',
       freeLong: 'Aucune rencontre sur cette table.',
-      hidden: 'Rangée',
-      hintEncounter:
-        'Touchez la table où installer {encounter}\u00a0: elle prend aussi sa voisine.',
-      hintIdle:
-        'Touchez une table pour son QR d’arbitrage, ou une rencontre pour la changer de tables.',
-      hintTable:
-        'Touchez une place libre ou une autre table pour y mettre la table {table:number}.',
-      inUse: 'Utilisée aujourd’hui',
-      keepForClub: 'Garder ce plan pour le club',
-      keptForClub: 'Plan gardé pour le club',
       label: 'Plan de la salle',
-      moveEncounter: 'Déplacer la rencontre',
-      moveTable: 'Déplacer la table',
-      noEncounter: 'Aucune rencontre\u00a0: ajoutez-en dans Équipes.',
       noTable: 'Sans table',
-      number: 'Numéro',
-      stands: 'Gradins',
-      undo: 'Annuler la dernière modification'
+      stands: 'Gradins'
     },
     keep: 'Garder',
     live: {
@@ -656,6 +641,73 @@ export const FR_DICTIONARY = defineDictionary({
       playerPlaceholder: 'Nom ou premières lettres',
       teamPlaceholder: 'Équipe ou club',
       typeToAdd: 'Tapez un nom pour l’ajouter.'
+    },
+    plan: {
+      add: 'Ajouter une table',
+      added: 'Table {table:number} ajoutée.',
+      blockCleared: 'Plus de rencontre sur les tables {block}.',
+      blockLabel:
+        'Tables {block} : {encounter}. Choisir la rencontre, ou glisser pour déplacer le bloc.',
+      blockSeated: '{encounter} joue sur les tables {block}.',
+      changed: 'Modification enregistrée.',
+      chooseFor: 'Sur les tables {block}',
+      chooseOn: 'Rencontre des tables {block}',
+      delete: 'Supprimer la table',
+      deleted: 'Table {table:number} supprimée.',
+      deletedRenumbered:
+        'Table {table:number} supprimée : les tables sont renumérotées de 1 à {count:number}, réimprimez leurs QR.',
+      deleteTable: 'Supprimer la table {table:number} pour de bon',
+      dropToPutAway: 'Lâcher ici pour ranger {what} pour la journée',
+      hallOf: defineTranslation('Salle à {count:plural}', {
+        plural: {
+          count: { one: '{?} table', other: '{?} tables' }
+        }
+      }),
+      hint: 'Glissez les tables où elles sont dans la salle ; touchez-en une pour son QR d’arbitrage.',
+      isDefault: '{name}, plan des prochains événements',
+      makeDefault: 'Faire de {name} le plan des prochains événements',
+      movedBlock: 'Bloc {block} déplacé.',
+      movedTable: 'Table {table:number} déplacée.',
+      noEncounter: 'Aucune rencontre',
+      noneSaved: 'Aucun plan enregistré pour le club.',
+      noRoomBack: 'Pas de place à cet endroit : la table est revenue.',
+      noRoomHere:
+        'Pas de place à cet endroit : la table est restée dans la réserve.',
+      noRoomToTurn:
+        'Pas la place de tourner la table {table:number} ici : déplacez-la d’abord.',
+      noRoomToTurnBlock:
+        'Pas la place de tourner le bloc {block} ici : déplacez-le d’abord.',
+      playing: 'Un match s’y joue',
+      putAway: 'Ranger pour la journée',
+      putAwayBlock: 'Bloc {block} rangé pour la journée.',
+      putAwayDone: 'Table {table:number} rangée pour la journée.',
+      putAwayTable:
+        'Ranger la table {table:number} dans la réserve pour la journée',
+      putBackDone: 'Table {table:number} remise sur le plan.',
+      putBackHint: 'Toucher pour la remettre, ou la glisser sur le plan',
+      putBackTable: 'Table {table:number}, rangée : la remettre sur le plan',
+      reserve: 'Réserve',
+      reserveEmpty: 'Glissez ici une table à ranger pour la journée',
+      reserveHint:
+        'Touchez une table pour la remettre à sa place, ou glissez-la sur le plan.',
+      reserveLabel: 'Réserve : les tables rangées pour la journée',
+      save: 'Enregistrer ce plan',
+      saveAsDefault: 'Par défaut pour les prochains événements',
+      saved: 'Plans enregistrés',
+      saveName: 'Nom du plan',
+      swap: 'Échanger',
+      swappedBlocks: 'Blocs {one} et {other} échangés.',
+      swappedTables: 'Tables {one:number} et {other:number} échangées.',
+      tableLabel:
+        'Table {table:number}. Glisser pour la déplacer, dans la réserve pour la ranger ; flèches pour la déplacer, R pour la tourner.',
+      theBlock: 'le bloc {block}',
+      theTable: 'la table {table:number}',
+      turn: 'Tourner la table',
+      turnBlock: 'Tourner le bloc {block}',
+      turnedBlock: 'Bloc {block} tourné.',
+      turnedTable: 'Table {table:number} tournée.',
+      turnTable: 'Tourner la table {table:number}',
+      used: 'Plan « {name} » mis en place.'
     },
     players: {
       add: 'Ajouter le joueur',

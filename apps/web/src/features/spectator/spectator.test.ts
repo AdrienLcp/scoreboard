@@ -10,7 +10,10 @@ import { matchOn, setupWith } from '@scoreboard/protocol/testing/event-setups'
 import { stampedAt, started } from '@scoreboard/protocol/testing/scoring-events'
 
 import { publicSnapshotFor } from '@scoreboard/core/event/public-snapshot'
-import { defaultHallPlan } from '@scoreboard/core/hall/hall-plan'
+import {
+  defaultHallPlan,
+  putAwayHallTables
+} from '@scoreboard/core/hall/hall-plan'
 
 import { encounterTotalsOf } from './encounter-totals'
 import { followedFirst } from './followed-first'
@@ -99,14 +102,8 @@ describe('encounter totals', () => {
   })
 })
 
-const CLUB_HALL = defaultHallPlan(8)
-
-const putAway = (...tables: number[]): HallPlan => ({
-  tables: CLUB_HALL.tables.map((table) => ({
-    ...table,
-    isHidden: tables.includes(table.table)
-  }))
-})
+const putAway = (...tables: number[]): HallPlan =>
+  putAwayHallTables(defaultHallPlan(8), tables)
 
 const hallDay = ({
   hall,
@@ -149,6 +146,28 @@ describe('room layout', () => {
       { column: 2, row: 1, table: 4 },
       { column: 1, row: 2, table: 7 },
       { column: 2, row: 2, table: 8 }
+    ])
+  })
+
+  it('[spectator] draws the blocks two tables a row when the hall does not read as rows and columns', () => {
+    const hall: HallPlan = {
+      depth: 20,
+      tables: [
+        { isHidden: false, isTurned: true, table: 1, x: 2, y: 0 },
+        { isHidden: false, isTurned: true, table: 2, x: 2, y: 10 },
+        { isHidden: false, isTurned: false, table: 3, x: 12, y: 7.5 },
+        { isHidden: false, isTurned: false, table: 4, x: 22, y: 7.5 }
+      ],
+      width: 37
+    }
+    const layout = roomLayoutOf(hallDay({ hall, matches: [], tableCount: 4 }))
+
+    expect(layout.columns).toEqual([true, true])
+    expect(layout.tables).toMatchObject([
+      { column: 1, row: 1, table: 1 },
+      { column: 2, row: 1, table: 2 },
+      { column: 1, row: 2, table: 3 },
+      { column: 2, row: 2, table: 4 }
     ])
   })
 

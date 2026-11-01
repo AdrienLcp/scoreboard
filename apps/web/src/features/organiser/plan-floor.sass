@@ -1,0 +1,427 @@
+@use '../../presentation/styles/typography'
+
+/// The hall to set up, drawn to scale: a mist-grey floor in metres, each
+/// table a white card on its play area, a block of two touching tables
+/// enclosed in ink with its home team's colour along the top, the stands
+/// under the floor and the reserve under the stands.
+@layer components
+  .plan
+    display: grid
+    user-select: none
+    -webkit-user-select: none
+
+  .plan-floor
+    background: var(--surface-raised)
+    container-type: inline-size
+    overflow: hidden
+    position: relative
+
+    > *
+      // One metre of the hall, in the floor's own width.
+      --metre: calc(100cqi / var(--hall-width))
+
+  .plan-links
+    height: 100%
+    inset: 0
+    pointer-events: none
+    position: absolute
+    width: 100%
+
+    line
+      stroke: var(--ink-muted)
+      stroke-dasharray: 6 5
+      stroke-width: 2
+
+  .plan-guide
+    pointer-events: none
+    position: absolute
+    z-index: 5
+
+    &[data-axis='x']
+      border-left: var(--stroke-bold) dashed var(--focus)
+      inset-block: 0
+      width: 0
+
+    &[data-axis='y']
+      border-top: var(--stroke-bold) dashed var(--focus)
+      height: 0
+      inset-inline: 0
+
+  .plan-table
+    background: var(--surface)
+    box-shadow: var(--inset-hairline)
+    cursor: grab
+    position: absolute
+    touch-action: none
+    transition: left var(--transition-base) var(--ease-move), top var(--transition-base) var(--ease-move), box-shadow var(--transition-fast, 0s)
+    z-index: 1
+
+    @media (hover: hover)
+      &:hover
+        box-shadow: inset 0 0 0 var(--stroke-bold) var(--edge)
+
+    &[data-selected]
+      box-shadow: inset 0 0 0 3px var(--ink)
+      z-index: 3
+
+    &[data-dragging]
+      box-shadow: inset 0 0 0 var(--stroke-bold) var(--ink), var(--shadow-overlay)
+      cursor: grabbing
+      transform: scale(1.03)
+      transition: transform var(--transition-fast, 0s) var(--ease-move), box-shadow var(--transition-fast, 0s)
+      z-index: 6
+
+    &[data-target]
+      background: var(--surface-raised)
+      box-shadow: inset 0 0 0 3px var(--ink)
+      z-index: 3
+
+    &[data-leaving]
+      opacity: 0.35
+
+  .plan-table-open
+    background: transparent
+    border: 0
+    cursor: inherit
+    inset: 0
+    outline-offset: -3px
+    padding: 0
+    position: absolute
+
+  .plan-plate
+    @include typography.wall-plate
+
+    align-items: center
+    background: var(--ink)
+    color: var(--on-ink)
+    display: inline-flex
+    font-size: clamp(0.75rem, var(--metre, 1rem), 1.25rem)
+    height: clamp(1.125rem, calc(var(--metre, 1rem) * 1.5), 2.125rem)
+    justify-content: center
+    min-width: clamp(1.125rem, calc(var(--metre, 1rem) * 1.5), 2.125rem)
+    padding-inline: 0.2em
+
+  .plan-table-open .plan-plate
+    left: calc(var(--metre) * 0.35)
+    position: absolute
+    top: max(calc(var(--metre) * 0.35), 0.4375rem)
+
+  .plan-playing
+    aspect-ratio: 1
+    background: var(--live)
+    border-radius: 50%
+    left: calc(var(--metre) * 2.1)
+    position: absolute
+    top: max(calc(var(--metre) * 0.55), 0.625rem)
+    width: clamp(0.5rem, calc(var(--metre) * 0.5), 0.75rem)
+
+  // Along the top of a table, down the side of a turned one, so both fit a phone's plan.
+  .plan-table-actions
+    align-items: flex-end
+    display: flex
+    flex-direction: row-reverse
+    gap: calc(var(--metre) * 0.35)
+    position: absolute
+    right: calc(var(--metre) * 0.35)
+    top: max(calc(var(--metre) * 0.35), 0.4375rem)
+
+    .plan-table[data-turned] &
+      flex-direction: column
+
+  .plan-table-action
+    aspect-ratio: 1
+    background: transparent
+    border: 0
+    color: var(--ink)
+    display: grid
+    padding: 0
+    place-items: center
+    position: relative
+    transition: opacity var(--transition-fast, 0s), visibility 0s var(--transition-fast, 0s), background-color var(--transition-fast, 0s), color var(--transition-fast, 0s)
+    width: clamp(1.5rem, calc(var(--metre) * 1.5), 2.125rem)
+
+    // A finger's reach beyond the drawn square.
+    &::after
+      content: ''
+      inset: -0.375rem
+      position: absolute
+
+    .icon
+      height: 64%
+      width: 64%
+
+    @media (hover: hover)
+      &:hover
+        background: var(--ink)
+        color: var(--on-ink)
+
+  // The turn button shows on the table being looked at; a finger sees it always.
+  .plan-table-action[data-turn]
+    opacity: 0
+    visibility: hidden
+
+    .plan-table:hover &,
+    .plan-table:focus-within &,
+    .plan-table[data-selected] &
+      opacity: 1
+      transition: opacity var(--transition-fast, 0s), background-color var(--transition-fast, 0s), color var(--transition-fast, 0s)
+      visibility: visible
+
+    .plan-table[data-dragging] &
+      opacity: 0
+      visibility: hidden
+
+    @media (hover: none)
+      opacity: 1
+      visibility: visible
+
+  .plan-table-top
+    aspect-ratio: 274 / 152.5
+    left: 50%
+    pointer-events: none
+    position: absolute
+    top: 50%
+    transform: translate(-50%, -50%)
+    width: 46%
+
+    .plan-table[data-turned] &
+      aspect-ratio: 152.5 / 274
+      height: 46%
+      width: auto
+
+  .plan-swap
+    @include typography.strong
+
+    align-items: center
+    background: var(--ink)
+    color: var(--on-ink)
+    display: none
+    font-size: clamp(0.75rem, calc(var(--metre) * 0.7), 1rem)
+    gap: var(--space-2xs)
+    left: 50%
+    padding: var(--space-2xs) var(--space-xs)
+    position: absolute
+    top: 50%
+    transform: translate(-50%, -50%)
+    white-space: nowrap
+    z-index: 2
+
+    .plan-table[data-target] &
+      display: inline-flex
+
+  .plan-pair
+    --block: var(--surface-raised)
+    --on-block: var(--ink)
+
+    box-shadow: inset 0 0 0 var(--stroke-bold) var(--ink)
+    pointer-events: none
+    position: absolute
+    transition: left var(--transition-base) var(--ease-move), top var(--transition-base) var(--ease-move), width var(--transition-base) var(--ease-move), height var(--transition-base) var(--ease-move), box-shadow var(--transition-fast, 0s), background-color var(--transition-fast, 0s)
+    z-index: 4
+
+    // The home team's colour along the top of the block hosting its encounter.
+    &::before
+      background: var(--block)
+      content: ''
+      height: clamp(0.1875rem, calc(var(--metre) * 0.25), 0.4375rem)
+      inset-inline: var(--stroke-bold)
+      opacity: 0
+      position: absolute
+      top: var(--stroke-bold)
+
+    &[data-encounter]::before
+      opacity: 1
+
+    &[data-dragging]
+      transition: box-shadow var(--transition-fast, 0s)
+      z-index: 7
+
+    &[data-target]
+      background: rgb(14 34 56 / 8%)
+      box-shadow: inset 0 0 0 4px var(--ink)
+
+  .plan-handle
+    @include typography.emphasis
+
+    align-items: center
+    background: var(--block)
+    border: 0
+    bottom: calc(var(--metre) * 0.3)
+    color: var(--on-block)
+    cursor: grab
+    display: inline-flex
+    font-size: clamp(0.6875rem, calc(var(--metre) * 0.62), 0.9375rem)
+    gap: 0.35em
+    height: clamp(1.375rem, calc(var(--metre) * 1.15), 2rem)
+    left: 50%
+    max-width: calc(100% - var(--metre) * 0.8)
+    padding: 0 0.4em 0 0.3em
+    pointer-events: auto
+    position: absolute
+    touch-action: none
+    transform: translateX(-50%)
+    transition: background-color var(--transition-base), color var(--transition-base), box-shadow var(--transition-fast, 0s)
+    white-space: nowrap
+
+    @media (hover: hover)
+      &:hover
+        box-shadow: inset 0 0 0 var(--stroke-bold) var(--ink)
+
+    b
+      @include typography.wall-plate
+
+    span
+      font-stretch: var(--stretch-name)
+      min-width: 0
+      overflow: hidden
+      text-overflow: ellipsis
+
+    .plan-pair:not([data-encounter]) & span
+      color: var(--ink-muted)
+
+  .plan-handle-grip
+    flex: none
+    height: 1.1em
+    opacity: 0.7
+    width: 1.1em
+
+  .plan-handle-caret
+    flex: none
+    height: 1em
+    width: 1em
+
+  .plan-add
+    @include typography.strong
+
+    background: transparent
+    border: 0
+    color: var(--ink)
+    display: grid
+    font-size: clamp(0.6875rem, calc(var(--metre) * 0.7), 1rem)
+    gap: var(--space-3xs)
+    justify-items: center
+    outline: var(--stroke-bold) dashed var(--ink-muted)
+    outline-offset: calc(-1 * var(--stroke-bold))
+    padding: 0 var(--space-3xs)
+    place-content: center
+    position: absolute
+    text-align: center
+    transition: left var(--transition-base) var(--ease-move), top var(--transition-base) var(--ease-move), background-color var(--transition-fast, 0s)
+    z-index: 1
+
+    .icon
+      height: clamp(1.125rem, calc(var(--metre) * 1.4), 2rem)
+      width: clamp(1.125rem, calc(var(--metre) * 1.4), 2rem)
+
+    @media (hover: hover)
+      &:hover
+        background: var(--surface)
+
+    &:focus-visible
+      outline: 3px solid var(--focus)
+
+    &[hidden]
+      display: none
+
+  .plan-stands
+    @include typography.label
+
+    background: var(--floor-shade)
+    display: grid
+    height: 2.5rem
+    margin: 0
+    place-items: center
+
+  .plan-reserve
+    align-items: center
+    background: var(--surface)
+    display: flex
+    flex-wrap: wrap
+    gap: var(--space-xs) var(--space-s)
+    margin-top: var(--space-xs)
+    min-height: 3.75rem
+    padding: var(--space-xs) var(--space-s)
+    transition: box-shadow var(--transition-fast, 0s), background-color var(--transition-fast, 0s)
+
+    &[data-empty]
+      background: transparent
+      outline: var(--stroke-bold) dashed var(--edge)
+      outline-offset: calc(-1 * var(--stroke-bold))
+
+    &[data-target]
+      box-shadow: inset 0 0 0 3px var(--ink)
+
+  .plan-reserve-title
+    @include typography.label
+
+  .plan-reserve-note
+    @include typography.emphasis
+
+    align-items: center
+    color: var(--ink-muted)
+    display: inline-flex
+    flex: 1
+    gap: var(--space-xs)
+    justify-content: center
+    text-align: center
+
+    &[data-drop]
+      color: var(--ink)
+
+  .plan-reserve-hint
+    @include typography.hint
+
+    margin-left: auto
+
+  .plan-chips
+    display: flex
+    flex-wrap: wrap
+    gap: var(--space-2xs)
+    list-style: none
+    margin: 0
+    padding: 0
+
+  .plan-chip,
+  .plan-ghost
+    --metre: 1rem
+
+    align-items: center
+    background: var(--field)
+    border: 0
+    box-shadow: var(--inset-hairline)
+    display: inline-flex
+    gap: var(--space-xs)
+    min-height: 2.75rem
+    padding: var(--space-2xs) var(--space-s) var(--space-2xs) var(--space-2xs)
+
+  .plan-chip
+    cursor: grab
+    touch-action: none
+    transition: background-color var(--transition-fast, 0s), opacity var(--transition-fast, 0s), box-shadow var(--transition-fast, 0s)
+
+    @media (hover: hover)
+      &:hover
+        background: var(--surface-raised)
+        box-shadow: inset 0 0 0 var(--stroke-bold) var(--edge)
+
+    &[data-lifted]
+      opacity: 0.35
+
+  .plan-chip-top
+    display: block
+    width: 2.25rem
+
+  .plan-ghost
+    box-shadow: inset 0 0 0 var(--stroke-bold) var(--ink), var(--shadow-overlay)
+    left: 0
+    margin: -1.375rem 0 0 -2rem
+    pointer-events: none
+    position: fixed
+    top: 0
+    z-index: 50
+
+  @media (prefers-reduced-motion: reduce)
+    .plan-table,
+    .plan-pair,
+    .plan-add
+      transition: none

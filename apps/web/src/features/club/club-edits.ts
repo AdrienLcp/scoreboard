@@ -6,7 +6,7 @@ import type {
   DirectoryTeam
 } from '@scoreboard/protocol/club-record'
 import { encounterFormatIds } from '@scoreboard/protocol/encounter-format-id'
-import type { HallPlan } from '@scoreboard/protocol/hall-plan'
+import type { ClubHallPlanId, HallPlan } from '@scoreboard/protocol/hall-plan'
 import type { PlayerId, TeamId } from '@scoreboard/protocol/identifiers'
 import type { LogoUrl } from '@scoreboard/protocol/logo'
 import { DEFAULT_MATCH_POINTS_RULE } from '@scoreboard/protocol/match-points-rule'
@@ -233,14 +233,77 @@ export const keepLineup = ({
   own: withTeamLineup(record.own, teamId, lineup)
 })
 
-/** The club's hall as an event drew it: where each table stands and its number; a table put away was put away for that day only. */
-export const keepHallPlan = (
-  record: ClubRecord,
+/** The plan new events start from: the default saved plan, or none. */
+export const defaultPlanOf = (record: ClubRecord): HallPlan | null =>
+  (
+    record.plans.find((saved) => saved.id === record.defaultPlanId) ??
+    record.plans[0]
+  )?.plan ?? null
+
+/**
+ * Keeps an event's plan for the club under a name; a plan of the same name
+ * is replaced. A table put away was put away for that day only: it stands
+ * again in the saved plan.
+ */
+export const saveClubPlan = ({
+  id,
+  isDefault,
+  name,
+  plan,
+  record
+}: {
+  id: ClubHallPlanId
+  isDefault: boolean
+  name: string
   plan: HallPlan
-): ClubRecord => ({
-  ...record,
-  hall: { tables: plan.tables.map((table) => ({ ...table, isHidden: false })) }
-})
+  record: ClubRecord
+}): ClubRecord => {
+  const replaced = record.plans.find(
+    (saved) => saved.name?.toLowerCase() === name.toLowerCase()
+  )
+  const savedId = replaced?.id ?? id
+  const saved = {
+    id: savedId,
+    name,
+    plan: {
+      ...plan,
+      tables: plan.tables.map((table) => ({ ...table, isHidden: false }))
+    }
+  }
+
+  return {
+    ...record,
+    defaultPlanId:
+      isDefault || record.plans.length === 0 ? savedId : record.defaultPlanId,
+    plans:
+      replaced === undefined
+        ? [...record.plans, saved]
+        : record.plans.map((candidate) =>
+            candidate.id === savedId ? saved : candidate
+          )
+  }
+}
+
+export const setDefaultClubPlan = (
+  record: ClubRecord,
+  id: ClubHallPlanId
+): ClubRecord => ({ ...record, defaultPlanId: id })
+
+export const deleteClubPlan = (
+  record: ClubRecord,
+  id: ClubHallPlanId
+): ClubRecord => {
+  const plans = record.plans.filter((saved) => saved.id !== id)
+
+  return {
+    ...record,
+    defaultPlanId:
+      record.defaultPlanId === id
+        ? (plans[0]?.id ?? null)
+        : record.defaultPlanId,
+    plans
+  }
+}
 
 /**
  * A licensee typed where the search found nobody: kept in his club as typed,

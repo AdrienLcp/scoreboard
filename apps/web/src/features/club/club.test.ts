@@ -9,7 +9,10 @@ import {
   type DirectoryTeam
 } from '@scoreboard/protocol/club-record'
 
-import { defaultHallPlan } from '@scoreboard/core/hall/hall-plan'
+import {
+  defaultHallPlan,
+  putAwayHallTables
+} from '@scoreboard/core/hall/hall-plan'
 
 import {
   absentSeatsLast,
@@ -17,9 +20,11 @@ import {
   addTypedPlayer,
   addTypedTeam,
   changeClubLogo,
-  keepHallPlan,
+  defaultPlanOf,
+  deleteClubPlan,
   keepLineup,
-  markPlayed
+  markPlayed,
+  saveClubPlan
 } from './club-edits'
 import {
   byRecentThenName,
@@ -52,10 +57,11 @@ const recordWith = (
   own: DirectoryClub,
   opponent: DirectoryClub
 ): ClubRecord => ({
-  hall: null,
+  defaultPlanId: null,
   opponentColour: '#FFFFFF',
   opponents: [opponent],
   own,
+  plans: [],
   pools: []
 })
 
@@ -79,15 +85,48 @@ describe('club record edits', () => {
     expect(kept.opponents[0]?.teams[0]?.lineup).toEqual([...lineup].reverse())
   })
 
-  it('[club] keeps an event plan for the club with every table back in play', () => {
+  it('[club] keeps an event plan for the club with every table back in play, the first one as default', () => {
     const plan = defaultHallPlan(8)
-    const putAway = {
-      tables: plan.tables.map((table) =>
-        table.table === 3 ? { ...table, isHidden: true } : table
-      )
-    }
+    const putAway = putAwayHallTables(plan, [3])
+    const saved = saveClubPlan({
+      id: 'first',
+      isDefault: false,
+      name: 'Salle à 8 tables',
+      plan: putAway,
+      record
+    })
 
-    expect(keepHallPlan(record, putAway).hall).toEqual(plan)
+    expect(defaultPlanOf(saved)).toEqual(plan)
+  })
+
+  it('[club] replaces a plan saved under the same name and moves the default on request', () => {
+    const first = saveClubPlan({
+      id: 'first',
+      isDefault: true,
+      name: 'Salle',
+      plan: defaultHallPlan(8),
+      record
+    })
+    const second = saveClubPlan({
+      id: 'second',
+      isDefault: true,
+      name: 'Top 12',
+      plan: defaultHallPlan(6),
+      record: first
+    })
+    const replaced = saveClubPlan({
+      id: 'third',
+      isDefault: false,
+      name: 'salle',
+      plan: defaultHallPlan(4),
+      record: second
+    })
+
+    expect(replaced.plans.map((saved) => saved.id)).toEqual(['first', 'second'])
+    expect(defaultPlanOf(replaced)).toEqual(defaultHallPlan(6))
+    expect(defaultPlanOf(deleteClubPlan(replaced, 'second'))).toEqual(
+      defaultHallPlan(4)
+    )
   })
 
   it('[club] sets and removes a club logo without touching the others', () => {
@@ -110,11 +149,11 @@ describe('club record edits', () => {
   })
 
   it('[club] reads a record saved before the club had a hall or logos', () => {
-    const { hall: _hall, ...older } = record
+    const { defaultPlanId: _default, plans: _plans, ...older } = record
     const { logoUrl: _logo, ...ownWithoutLogo } = record.own
     const parsed = clubRecordSchema.parse({ ...older, own: ownWithoutLogo })
 
-    expect(parsed.hall).toBeNull()
+    expect(parsed.plans).toEqual([])
     expect(parsed.own.logoUrl).toBeNull()
   })
 

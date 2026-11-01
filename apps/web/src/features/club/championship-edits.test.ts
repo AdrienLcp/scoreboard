@@ -33,7 +33,7 @@ const angles1 = teamNamed('Angles 1')
 const riviere2 = teamNamed('Rivière 2')
 
 const record: ClubRecord = {
-  hall: null,
+  defaultPlanId: null,
   opponentColour: '#FFFFFF',
   opponents: [
     {
@@ -53,6 +53,7 @@ const record: ClubRecord = {
     players: [],
     teams: [angles1]
   },
+  plans: [],
   pools: []
 }
 

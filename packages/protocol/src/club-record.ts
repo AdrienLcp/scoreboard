@@ -3,7 +3,11 @@ import { z } from 'zod'
 import { championshipPoolSchema, MAX_POOLS } from './championship'
 import { hexColourSchema } from './club'
 import { encounterFormatIdSchema } from './encounter-format-id'
-import { hallPlanSchema } from './hall-plan'
+import {
+  clubHallPlanIdSchema,
+  clubHallPlanSchema,
+  MAX_CLUB_HALL_PLANS
+} from './hall-plan'
 import {
   ACCESS_CODE_ALPHABET,
   playerIdSchema,
@@ -83,20 +87,46 @@ export const directoryClubSchema = z.object({
 })
 export type DirectoryClub = z.infer<typeof directoryClubSchema>
 
+/** The one hall a club kept before it could keep several: its first saved plan, and the default. */
+const KEPT_HALL_PLAN_ID = 'hall'
+
+const fromKeptHall = (value: unknown): unknown => {
+  if (typeof value !== 'object' || value === null || !('hall' in value)) {
+    return value
+  }
+
+  const { hall, ...record } = value
+
+  if (hall === null || 'plans' in record) {
+    return record
+  }
+
+  return {
+    ...record,
+    defaultPlanId: KEPT_HALL_PLAN_ID,
+    plans: [{ id: KEPT_HALL_PLAN_ID, name: null, plan: hall }]
+  }
+}
+
 /**
  * Everything a club keeps between its Sundays: its own teams and licensees,
  * and the clubs it meets with theirs, so a day is prepared by picking.
  */
-export const clubRecordSchema = z.object({
-  /** The club's own hall, kept from an event's plan: every new event starts from it. */
-  hall: hallPlanSchema.nullable().default(null),
-  /** What an opposing team wears on the wall until the club picks otherwise. */
-  opponentColour: hexColourSchema,
-  opponents: z.array(directoryClubSchema).max(200),
-  own: directoryClubSchema,
-  /** Our teams' championship pools, phase after phase: their calendars and standings. */
-  pools: z.array(championshipPoolSchema).max(MAX_POOLS).default([])
-})
+export const clubRecordSchema = z.preprocess(
+  fromKeptHall,
+  z.object({
+    /** The plan every new event starts from; `null` lays the tables out by count. */
+    defaultPlanId: clubHallPlanIdSchema.nullable().default(null),
+    /** What an opposing team wears on the wall until the club picks otherwise. */
+    opponentColour: hexColourSchema,
+    opponents: z.array(directoryClubSchema).max(200),
+    own: directoryClubSchema,
+    /** The ways the club sets its hall up, each one picked when a day is prepared. */
+    plans: z.array(clubHallPlanSchema).max(MAX_CLUB_HALL_PLANS).default([]),
+    /** Our teams' championship pools, phase after phase: their calendars and standings. */
+    pools: z.array(championshipPoolSchema).max(MAX_POOLS).default([])
+  })
+)
 export type ClubRecord = z.infer<typeof clubRecordSchema>
 
 export const createClubInputSchema = z.object({ name: nameSchema })

@@ -1,34 +1,66 @@
 @use '../../presentation/styles/typography'
 
-/// The organiser's plan, small and still: the same drawn tables on the
-/// mist-grey floor, the stands along the bottom.
+/// A kept plan, still and to scale: the drawn tables on the mist-grey floor,
+/// each on its play area, the stands along the bottom. Every size follows
+/// the floor's width, so the same plan reads on the club page and in a
+/// thumbnail.
 @layer components
   .club-hall
-    background: var(--surface-raised)
     display: grid
-    gap: var(--space-s)
+    gap: var(--space-2xs)
     justify-self: stretch
-    padding: var(--space-m)
+    margin: 0
+    min-inline-size: 0
 
   .club-hall-floor
-    display: grid
-    gap: var(--space-xs)
-    justify-content: center
+    background: var(--surface-raised)
+    box-shadow: var(--inset-hairline)
+    container-type: inline-size
+    overflow: hidden
+    position: relative
+
+    > *
+      // One metre of the hall, in the floor's own width.
+      --metre: calc(100cqi / var(--hall-width))
 
   .club-hall-table
-    align-items: center
-    display: grid
-    gap: var(--space-3xs)
-    justify-items: center
+    overflow: hidden
+    position: absolute
 
-  .club-hall-drawing
-    block-size: 2.75rem
-    inline-size: 5rem
+    // The play area's edge, over the drawing's own floor.
+    &::after
+      box-shadow: var(--inset-hairline)
+      content: ''
+      inset: 0
+      pointer-events: none
+      position: absolute
+
+    // The table seen from above, centred on its play area, turned with it.
+    .club-hall-drawing
+      aspect-ratio: 274 / 152.5
+      left: 50%
+      position: absolute
+      top: 50%
+      translate: -50% -50%
+      width: 50%
+
+    &[data-turned] .club-hall-drawing
+      aspect-ratio: 152.5 / 274
+      height: 50%
+      width: auto
+
+  .club-hall-number
+    // Below the type ramp on purpose: a thumbnail's play area is a few
+    // millimetres tall, and its number must stay inside it.
+    font-size: clamp(0.5rem, calc(var(--metre) * 1.4), var(--text-xl))
+    left: 0
+    position: absolute
+    top: 0
+    z-index: 1
 
   .club-hall-stands
     @include typography.label
 
     border-block-start: 2px solid var(--ink-muted)
-    color: var(--ink-muted)
-    padding-block-start: var(--space-2xs)
+    padding-block-start: var(--space-3xs)
     text-align: center

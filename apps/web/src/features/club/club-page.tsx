@@ -39,7 +39,7 @@ import {
   changeClubLogo,
   removeOpponentClub
 } from './club-edits'
-import { ClubHallPlan } from './club-hall-plan'
+import { ClubPlans } from './club-plans'
 import { LicenseeList } from './licensee-list'
 import { LogoPicker } from './logo-picker'
 import { TeamEditor } from './team-editor'
@@ -361,16 +361,7 @@ export const ClubPage: React.FC = () => {
           <ChampionshipSection onChange={club.change} record={state.record} />
           <section className='club-hall-section'>
             <h2 className='club-heading'>{translate('club.hall.title')}</h2>
-            {state.record.hall === null ? null : (
-              <ClubHallPlan plan={state.record.hall} />
-            )}
-            <p className='club-note'>
-              {translate(
-                state.record.hall === null
-                  ? 'club.hall.empty'
-                  : 'club.hall.help'
-              )}
-            </p>
+            <ClubPlans onChange={club.change} record={state.record} />
           </section>
           <section className='club-section'>
             <h2 className='club-heading'>

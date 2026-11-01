@@ -62,6 +62,17 @@ another sport can adopt it.
 
 ## Capabilities and Constraints
 
+- The hall plan is drawn to scale in metres (a 37 × 20 m hall, a 10 × 5 m
+  play area per table): the organiser drags each table where it stands, a
+  table aligning on the walls and on the others' edges and centres within
+  0.7 m, else on the half metre; dropped on another table the two trade
+  places, dropped on the reserve under the stands it is put away for the
+  day, and a block of two touching tables moves, swaps and turns as one by
+  its handle, which also picks the encounter played on it. A table put away
+  keeps its number; deleting a table numbers the others 1 to N again, whole
+  blocks first so each pair keeps its encounter, and their QR sheets are
+  printed again. Nothing ever locks: every setting stays reachable and
+  changeable after its step, during the live day included.
 - Four surfaces: the display, the umpire console, the organiser console, and a
   spectator view on visitors' phones (reached from a QR code shown on the
   display) listing past, live and upcoming matches with their details, and,
@@ -121,9 +132,11 @@ another sport can adopt it.
   The first visit asks only the club's name and the device keeps the code; a
   second device opens the club by scanning its QR code or typing the code.
   Defaults, each one changeable:
-  - the club keeps a hall plan when the organiser taps "Garder ce plan pour
-    le club" in an event's plan; every new event starts from it, with its
-    table count, and tables put away for one day come back;
+  - the club keeps several hall plans ("Salle à 8 tables", "Top 12"), each
+    saved by name from an event's plan ("Plans enregistrés", "Enregistrer ce
+    plan"), one of them starred as the default; every new event starts from
+    the default, with its table count, and tables put away for one day come
+    back;
   - a new event carries the club's name and logo onto the wall and the
     spectators' phone;
   - an encounter created from the club starts from each team's last

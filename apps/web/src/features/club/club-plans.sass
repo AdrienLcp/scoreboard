@@ -1,0 +1,32 @@
+@use '../../presentation/styles/typography'
+
+/// The club's saved hall plans side by side, each drawn with its name and its default star.
+@layer components
+  .club-plans
+    display: grid
+    gap: var(--space-m)
+    grid-template-columns: repeat(auto-fill, minmax(min(100%, 18rem), 1fr))
+    list-style: none
+    margin: 0
+    padding: 0
+    width: 100%
+
+  .club-plan
+    align-content: start
+    background: var(--surface)
+    display: grid
+    gap: var(--space-xs)
+    padding: var(--space-s)
+
+  .club-plan-foot
+    align-items: center
+    display: flex
+    flex-wrap: wrap
+    gap: var(--space-3xs) var(--space-xs)
+
+  .club-plan-name
+    @include typography.emphasis
+
+    flex: 1 1 8rem
+    margin: 0
+    min-width: 0

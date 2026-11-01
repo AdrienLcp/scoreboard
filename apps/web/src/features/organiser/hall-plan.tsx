@@ -1,17 +1,12 @@
 import type React from 'react'
 import { useRef, useState } from 'react'
-import { Button as AriaButton } from 'react-aria-components'
 
 import type { EventSetup } from '@scoreboard/protocol/event-setup'
 import type {
   PublicSnapshot,
   TableAccess
 } from '@scoreboard/protocol/event-snapshot'
-import {
-  HALL_GRID_SIZE,
-  type HallPlan,
-  type HallTable
-} from '@scoreboard/protocol/hall-plan'
+import type { HallPlan } from '@scoreboard/protocol/hall-plan'
 import type {
   EncounterId,
   EventId,
@@ -26,36 +21,40 @@ import {
 } from '@scoreboard/core/club/team-colours'
 import {
   blockOf,
-  type HallPlace,
+  freeSpotOf,
   hallPlanOf,
-  placeHallTable
+  isInTouchingBlock,
+  moveHallTables,
+  putAwayHallTables,
+  putBackHallTable,
+  swapHallBlocks,
+  swapHallTables,
+  turnHallTable
 } from '@scoreboard/core/hall/hall-plan'
 
-import { keepHallPlan } from '@/features/club/club-edits'
-import { useClub } from '@/features/club/use-club'
 import {
   type EncounterLine,
   encounterLinesFor
 } from '@/features/event/encounter-lines'
 import { Button } from '@/presentation/components/button'
-import { DrawnTable } from '@/presentation/components/drawn-table'
 import { Icon } from '@/presentation/components/icon'
 import { useTranslate } from '@/presentation/i18n/i18n-context'
 
+import { BlockChooser, type ChoosableEncounter } from './block-chooser'
 import { HallTableSheet } from './hall-table-sheet'
-import { changeHall, seatEncounterOnBlock } from './setup-edits'
+import { type BlockLabel, PlanFloor } from './plan-floor'
+import { SavedPlans } from './saved-plans'
+import {
+  addTable,
+  changeHall,
+  changeTableCount,
+  clearBlock,
+  deleteTable,
+  seatEncounterOnBlock
+} from './setup-edits'
+import type { DropTarget } from './use-plan-drag'
 
 import './hall-plan.sass'
-
-/** A column without any table is an aisle: narrow, unless a table is being placed. */
-const AISLE_TRACK = 'minmax(0.75rem, 0.3fr)'
-
-/** What the next tap on the plan does. */
-type Picking =
-  | { kind: 'none' }
-  | { kind: 'table'; table: TableNumber }
-  | { kind: 'moving-table'; table: TableNumber }
-  | { kind: 'moving-encounter'; encounterId: EncounterId }
 
 type HallPlanBoardProps = {
   accesses: readonly TableAccess[]
@@ -66,26 +65,39 @@ type HallPlanBoardProps = {
   setup: EventSetup
 }
 
-const teamColourOf = (event: PublicSnapshot, teamId: string): string =>
-  event.teams.find((team) => team.id === teamId)?.colour ??
-  DEFAULT_OPPONENT_COLOUR
+/** The last change, said in words, with a way back. */
+type Notice = { previous: EventSetup | null; text: string }
 
-/** The encounter seated on a table, if any. */
-const encounterOn = (
-  lines: readonly EncounterLine[],
-  table: TableNumber
-): EncounterLine | undefined =>
-  lines.find((line) => line.tables.includes(table))
+const colourOf = (event: PublicSnapshot, teamId: string) => {
+  const colour =
+    event.teams.find((team) => team.id === teamId)?.colour ??
+    DEFAULT_OPPONENT_COLOUR
 
-const extentOf = (
-  tables: readonly HallTable[],
-  axis: keyof HallPlace
-): number => Math.max(0, ...tables.map((table) => table[axis])) + 1
+  return { background: colour, text: textColourOn(colour) }
+}
+
+const isWhite = (colour: string) =>
+  colour.toUpperCase() === DEFAULT_OPPONENT_COLOUR
+
+const blockName = (first: TableNumber) => `${first}–${first + 1}`
+
+/** The tables a match is being played on right now. */
+const playingTables = (event: PublicSnapshot): Set<TableNumber> =>
+  new Set(
+    event.matches.flatMap((match) =>
+      match.table !== null &&
+      match.timing.startedAtMs !== null &&
+      match.timing.finishedAtMs === null
+        ? [match.table]
+        : []
+    )
+  )
 
 /**
- * The hall seen from above with its tables where they stand: tap a table for
- * its umpire QR and what to change, tap an encounter then a table to seat it
- * on that table's block. Every change can be undone in one tap.
+ * The hall seen from above, to set up as it stands today: drag a table or a
+ * block where it goes, turn it, put it away for the day, add one; tap a
+ * table for its umpire QR and what to change, a block's handle for its
+ * encounter. Every change says what it did and is undone in one tap.
  */
 export const HallPlanBoard: React.FC<HallPlanBoardProps> = ({
   accesses,
@@ -96,350 +108,295 @@ export const HallPlanBoard: React.FC<HallPlanBoardProps> = ({
   setup
 }) => {
   const translate = useTranslate()
-  const [picking, setPicking] = useState<Picking>({ kind: 'none' })
-  const [previous, setPrevious] = useState<EventSetup | null>(null)
+  const [selected, setSelected] = useState<TableNumber | null>(null)
+  const [choosing, setChoosing] = useState<{
+    first: TableNumber
+    trigger: HTMLElement
+  } | null>(null)
+  const [notice, setNotice] = useState<Notice | null>(null)
   const sheet = useRef<HTMLDivElement>(null)
-  const club = useClub()
   const plan = hallPlanOf(setup)
-  const clubRecord = club.state.status === 'ready' ? club.state.record : null
-  const isKeptForClub =
-    clubRecord !== null &&
-    JSON.stringify(keepHallPlan(clubRecord, plan).hall) ===
-      JSON.stringify(clubRecord.hall)
+  const nextSpot = freeSpotOf(plan)
+  const drawn: HallPlan = { ...plan, depth: nextSpot.depth }
   const lines = encounterLinesFor(event)
-  const isPlacing = picking.kind === 'moving-table'
-  const columns = Math.min(
-    HALL_GRID_SIZE,
-    extentOf(plan.tables, 'column') + (isPlacing ? 1 : 0)
-  )
-  const rows = Math.min(
-    HALL_GRID_SIZE,
-    extentOf(plan.tables, 'row') + (isPlacing ? 1 : 0)
-  )
-  const movingEncounter =
-    picking.kind === 'moving-encounter'
-      ? lines.find((line) => line.id === picking.encounterId)
-      : undefined
+  const hasBlocks = (setup.tournament ?? null) === null
+  const selectedTable =
+    selected !== null && selected <= setup.tableCount ? selected : null
 
-  const save = (next: EventSetup) => {
+  const save = (next: EventSetup, text: string) => {
     if (onSave(next)) {
-      setPrevious(setup)
+      setNotice({ previous: setup, text })
     }
-
-    setPicking({ kind: 'none' })
   }
 
-  const saveHall = (hall: HallPlan) => save(changeHall(setup, hall))
+  const saveHall = (next: HallPlan | null, text: string, refusal: string) => {
+    if (next === null) {
+      setNotice({ previous: null, text: refusal })
 
-  const tableAt = (place: HallPlace): HallTable | undefined =>
-    plan.tables.find(
-      (table) => table.column === place.column && table.row === place.row
+      return
+    }
+
+    save(changeHall(setup, next), text)
+  }
+
+  const encounterOf = (first: TableNumber): EncounterLine | undefined =>
+    lines.find((line) =>
+      line.tables.some((table) => blockOf(first).includes(table))
     )
 
-  const pickTable = (table: TableNumber) => {
-    if (picking.kind === 'moving-encounter') {
+  const blocks = new Map<TableNumber, BlockLabel>(
+    Array.from({ length: Math.ceil(setup.tableCount / 2) }, (_, index) => {
+      const first = 2 * index + 1
+      const line = encounterOf(first)
+      const encounter = event.encounters.find(
+        (candidate) => candidate.id === line?.id
+      )
+      const colour =
+        encounter === undefined ? null : colourOf(event, encounter.home)
+
+      return [
+        first,
+        {
+          colour: colour === null || isWhite(colour.background) ? null : colour,
+          encounter:
+            line === undefined ? null : `${line.homeName} – ${line.awayName}`
+        }
+      ]
+    })
+  )
+
+  const choosable: ChoosableEncounter[] = lines.map((line) => {
+    const encounter = event.encounters.find(
+      (candidate) => candidate.id === line.id
+    )
+
+    return {
+      awayName: line.awayName,
+      colours:
+        encounter === undefined
+          ? null
+          : {
+              away: colourOf(event, encounter.away).background,
+              home: colourOf(event, encounter.home).background
+            },
+      homeName: line.homeName,
+      id: line.id,
+      tables: line.tables
+    }
+  })
+
+  const turn = (table: TableNumber) => {
+    const isBlock = isInTouchingBlock(plan, table)
+    const first = blockOf(table)[0]
+
+    saveHall(
+      turnHallTable(plan, table),
+      isBlock
+        ? translate('organiser.plan.turnedBlock', { block: blockName(first) })
+        : translate('organiser.plan.turnedTable', { table }),
+      isBlock
+        ? translate('organiser.plan.noRoomToTurnBlock', {
+            block: blockName(first)
+          })
+        : translate('organiser.plan.noRoomToTurn', { table })
+    )
+  }
+
+  const putAway = (tables: readonly TableNumber[]) => {
+    if (selectedTable !== null && tables.includes(selectedTable)) {
+      setSelected(null)
+    }
+
+    save(
+      changeHall(setup, putAwayHallTables(plan, tables)),
+      tables.length > 1
+        ? translate('organiser.plan.putAwayBlock', {
+            block: blockName(tables[0] ?? 1)
+          })
+        : translate('organiser.plan.putAwayDone', { table: tables[0] ?? 1 })
+    )
+  }
+
+  const putBack = (table: TableNumber, at?: { x: number; y: number }) =>
+    saveHall(
+      putBackHallTable({ at, plan, table }),
+      translate('organiser.plan.putBackDone', { table }),
+      translate('organiser.plan.noRoomHere')
+    )
+
+  const swap = (target: DropTarget, tables: readonly TableNumber[]) => {
+    const [first] = tables
+
+    if (first === undefined) {
+      return
+    }
+
+    if (target.kind === 'table') {
       save(
-        seatEncounterOnBlock({
-          block: blockOf(table).filter((number) => number <= setup.tableCount),
-          encounterId: picking.encounterId,
-          setup
+        changeHall(setup, swapHallTables(plan, first, target.table)),
+        translate('organiser.plan.swappedTables', {
+          one: first,
+          other: target.table
         })
       )
 
       return
     }
 
-    if (picking.kind === 'moving-table') {
-      const target = plan.tables.find((candidate) => candidate.table === table)
+    save(
+      changeHall(setup, swapHallBlocks(plan, first, target.first)),
+      translate('organiser.plan.swappedBlocks', {
+        one: blockName(first),
+        other: blockName(target.first)
+      })
+    )
+  }
 
-      if (target !== undefined && table !== picking.table) {
-        saveHall(placeHallTable({ place: target, plan, table: picking.table }))
-      } else {
-        setPicking({ kind: 'table', table })
-      }
+  const chooseEncounter = (first: TableNumber, id: EncounterId | null) => {
+    setChoosing(null)
+    const block = blockOf(first).filter((table) => table <= setup.tableCount)
+
+    if (id === null) {
+      save(
+        clearBlock(setup, block),
+        translate('organiser.plan.blockCleared', { block: blockName(first) })
+      )
 
       return
     }
 
-    setPicking(
-      picking.kind === 'table' && picking.table === table
-        ? { kind: 'none' }
-        : { kind: 'table', table }
-    )
-    requestAnimationFrame(() =>
-      sheet.current?.scrollIntoView({ behavior: 'smooth', block: 'nearest' })
+    const line = lines.find((candidate) => candidate.id === id)
+
+    save(
+      seatEncounterOnBlock({ block, encounterId: id, setup }),
+      translate('organiser.plan.blockSeated', {
+        block: blockName(first),
+        encounter:
+          line === undefined ? '' : `${line.homeName} – ${line.awayName}`
+      })
     )
   }
 
-  const hint =
-    picking.kind === 'moving-table'
-      ? translate('organiser.hall.hintTable', { table: picking.table })
-      : movingEncounter !== undefined
-        ? translate('organiser.hall.hintEncounter', {
-            encounter: `${movingEncounter.homeName} – ${movingEncounter.awayName}`
+  const deleteSelected = (table: TableNumber) => {
+    setSelected(null)
+    save(
+      deleteTable(setup, table),
+      table === setup.tableCount
+        ? translate('organiser.plan.deleted', { table })
+        : translate('organiser.plan.deletedRenumbered', {
+            count: setup.tableCount - 1,
+            table
           })
-        : translate('organiser.hall.hintIdle')
-
-  const places = Array.from({ length: rows * columns }, (_, index) => ({
-    column: index % columns,
-    row: Math.floor(index / columns)
-  }))
-  const selectedTable = picking.kind === 'table' ? picking.table : null
+    )
+  }
 
   return (
     <div className='hall-layout'>
       <section className='hall-main'>
-        <div className='hall-encounters'>
-          <h2 className='organiser-subheading'>
-            {translate('organiser.hall.encounters')}
-          </h2>
-          {lines.length === 0 ? (
-            <p className='organiser-empty'>
-              {translate('organiser.hall.noEncounter')}
-            </p>
-          ) : (
-            <ul className='hall-encounter-list'>
-              {lines.map((line) => {
-                const encounter = event.encounters.find(
-                  (candidate) => candidate.id === line.id
-                )
-                const isMoving = movingEncounter?.id === line.id
-
-                return (
-                  <li key={line.id}>
-                    <AriaButton
-                      aria-pressed={isMoving}
-                      className='hall-encounter'
-                      onPress={() =>
-                        setPicking(
-                          isMoving
-                            ? { kind: 'none' }
-                            : { encounterId: line.id, kind: 'moving-encounter' }
-                        )
-                      }
-                    >
-                      <span aria-hidden='true' className='hall-swatches'>
-                        {[encounter?.home, encounter?.away].map(
-                          (teamId, at) => (
-                            <span
-                              className='hall-swatch'
-                              data-white={
-                                teamId === undefined ||
-                                teamColourOf(event, teamId).toUpperCase() ===
-                                  DEFAULT_OPPONENT_COLOUR ||
-                                undefined
-                              }
-                              key={at === 0 ? 'home' : 'away'}
-                              style={{
-                                '--team':
-                                  teamId === undefined
-                                    ? DEFAULT_OPPONENT_COLOUR
-                                    : teamColourOf(event, teamId)
-                              }}
-                            />
-                          )
-                        )}
-                      </span>
-                      <span className='hall-encounter-names'>
-                        {line.homeName} – {line.awayName}
-                      </span>
-                      <span className='hall-encounter-tables'>
-                        {line.tables.length === 0
-                          ? translate('organiser.hall.noTable')
-                          : line.tables.join('–')}
-                      </span>
-                    </AriaButton>
-                  </li>
-                )
-              })}
-            </ul>
-          )}
-        </div>
-        <div className='hall-hint'>
-          <p aria-live='polite'>{hint}</p>
-          {picking.kind === 'moving-table' ||
-          picking.kind === 'moving-encounter' ? (
-            <Button
-              onPress={() => setPicking({ kind: 'none' })}
-              variant='quiet'
-            >
-              <Icon name='close' />
-              {translate('organiser.hall.cancel')}
-            </Button>
-          ) : previous === null ? null : (
+        <div className='hall-head'>
+          <p aria-live='polite' className='hall-notice'>
+            {notice?.text ?? translate('organiser.plan.hint')}
+          </p>
+          {notice?.previous === null || notice === null ? null : (
             <Button
               onPress={() => {
-                if (onSave(previous)) {
-                  setPrevious(null)
+                if (notice.previous !== null && onSave(notice.previous)) {
+                  setNotice(null)
                 }
               }}
               variant='quiet'
             >
               <Icon name='undo' />
-              {translate('organiser.hall.undo')}
+              {translate('organiser.hall.cancel')}
             </Button>
           )}
-        </div>
-        <section
-          aria-label={translate('organiser.hall.label')}
-          className='hall-floor'
-          data-picking={picking.kind}
-          style={{
-            '--plan-columns': Array.from({ length: columns }, (_, column) =>
-              isPlacing || plan.tables.some((table) => table.column === column)
-                ? 'minmax(0, 1fr)'
-                : AISLE_TRACK
-            ).join(' ')
-          }}
-        >
-          {places.map((place) => {
-            const hallTable = tableAt(place)
-
-            if (hallTable === undefined) {
-              return picking.kind === 'moving-table' ? (
-                <AriaButton
-                  aria-label={translate('organiser.hall.emptyPlace')}
-                  className='hall-place'
-                  key={`${place.column}-${place.row}`}
-                  onPress={() =>
-                    saveHall(
-                      placeHallTable({ place, plan, table: picking.table })
-                    )
-                  }
-                >
-                  <Icon name='plus' />
-                </AriaButton>
-              ) : (
-                <span
-                  aria-hidden='true'
-                  className='hall-aisle'
-                  key={`${place.column}-${place.row}`}
-                />
+          <SavedPlans
+            onUse={(saved, name) =>
+              save(
+                {
+                  ...changeTableCount(setup, saved.tables.length),
+                  hall: saved
+                },
+                translate('organiser.plan.used', { name })
               )
             }
-
-            const { table } = hallTable
-            const line = encounterOn(lines, table)
-            const encounter = event.encounters.find(
-              (candidate) => candidate.id === line?.id
+            plan={plan}
+          />
+        </div>
+        <PlanFloor
+          blocks={blocks}
+          gestures={{
+            onMove: (tables, shiftX, shiftY) =>
+              saveHall(
+                moveHallTables({ plan, shiftX, shiftY, tables }),
+                tables.length > 1
+                  ? translate('organiser.plan.movedBlock', {
+                      block: blockName(tables[0] ?? 1)
+                    })
+                  : translate('organiser.plan.movedTable', {
+                      table: tables[0] ?? 1
+                    }),
+                translate('organiser.plan.noRoomBack')
+              ),
+            onPickBlock: (first, trigger) => setChoosing({ first, trigger }),
+            onPickTable: (table) => {
+              setSelected((current) => (current === table ? null : table))
+              requestAnimationFrame(() =>
+                sheet.current?.scrollIntoView({
+                  behavior: 'smooth',
+                  block: 'nearest'
+                })
+              )
+            },
+            onPutAway: putAway,
+            onPutBack: putBack,
+            onSwap: swap
+          }}
+          hasBlocks={hasBlocks}
+          nextSpot={nextSpot.area}
+          onAdd={() => {
+            save(
+              addTable(setup),
+              translate('organiser.plan.added', { table: setup.tableCount + 1 })
             )
-            const isBeingMoved =
-              (picking.kind === 'moving-table' && picking.table === table) ||
-              movingEncounter?.tables.includes(table) === true
-
-            return (
-              <AriaButton
-                aria-pressed={selectedTable === table}
-                className='hall-table'
-                data-hidden={hallTable.isHidden || undefined}
-                data-moving={isBeingMoved || undefined}
-                key={table}
-                onPress={() => pickTable(table)}
-              >
-                <span className='hall-table-head'>
-                  <span className='hall-plate'>
-                    {translate('organiser.access.table', { table })}
-                  </span>
-                  {hallTable.isHidden ? (
-                    <span className='hall-table-state'>
-                      {translate('organiser.hall.hidden')}
-                    </span>
-                  ) : null}
-                </span>
-                <DrawnTable
-                  className='hall-drawing'
-                  isIdle={line === undefined || hallTable.isHidden}
-                />
-                {encounter === undefined || line === undefined ? (
-                  <span className='hall-table-free'>
-                    {hallTable.isHidden
-                      ? null
-                      : translate('organiser.hall.free')}
-                  </span>
-                ) : (
-                  <span className='hall-table-teams'>
-                    {[encounter.home, encounter.away].map((teamId, at) => {
-                      const colour = teamColourOf(event, teamId)
-
-                      return (
-                        <span
-                          className='hall-team'
-                          data-white={
-                            colour.toUpperCase() === DEFAULT_OPPONENT_COLOUR ||
-                            undefined
-                          }
-                          key={at === 0 ? 'home' : 'away'}
-                          style={{
-                            '--on-team': textColourOn(colour),
-                            '--team': colour
-                          }}
-                        >
-                          {at === 0 ? line.homeName : line.awayName}
-                        </span>
-                      )
-                    })}
-                  </span>
-                )}
-              </AriaButton>
-            )
-          })}
-          <p className='hall-stands'>{translate('organiser.hall.stands')}</p>
-        </section>
-        {clubRecord === null ? null : (
-          <div className='hall-club'>
-            {isKeptForClub ? (
-              <p className='hall-club-kept'>
-                <Icon name='check' />
-                {translate('organiser.hall.keptForClub')}
-              </p>
-            ) : (
-              <Button
-                onPress={() =>
-                  club.edit((record) => keepHallPlan(record, plan))
-                }
-              >
-                <Icon name='club' />
-                {translate('organiser.hall.keepForClub')}
-              </Button>
-            )}
-            {isKeptForClub &&
-            club.state.status === 'ready' &&
-            club.state.previous !== null ? (
-              <Button onPress={club.undo} variant='quiet'>
-                <Icon name='undo' />
-                {translate('organiser.hall.undo')}
-              </Button>
-            ) : null}
-          </div>
+            setSelected(setup.tableCount + 1)
+          }}
+          onPutAway={(table) => putAway([table])}
+          onTurn={turn}
+          plan={drawn}
+          playing={playingTables(event)}
+          selected={selectedTable}
+        />
+        {choosing === null ? null : (
+          <BlockChooser
+            encounters={choosable}
+            first={choosing.first}
+            onChoose={(id) => chooseEncounter(choosing.first, id)}
+            onClose={() => setChoosing(null)}
+            trigger={choosing.trigger}
+          />
         )}
       </section>
       <div className='hall-side' ref={sheet}>
         {selectedTable === null ? null : (
           <HallTableSheet
             access={accesses.find((access) => access.table === selectedTable)}
-            encounter={encounterOn(lines, selectedTable)}
+            canDelete={setup.tableCount > 1}
+            encounter={encounterOf(selectedTable)}
             event={event}
             eventId={eventId}
-            onClose={() => setPicking({ kind: 'none' })}
-            onMoveEncounter={(encounterId) =>
-              setPicking({ encounterId, kind: 'moving-encounter' })
+            hasBlocks={hasBlocks}
+            onChooseEncounter={(trigger) =>
+              setChoosing({ first: blockOf(selectedTable)[0], trigger })
             }
-            onMoveTable={() =>
-              setPicking({ kind: 'moving-table', table: selectedTable })
-            }
+            onClose={() => setSelected(null)}
+            onDelete={() => deleteSelected(selectedTable)}
+            onPutAway={() => putAway([selectedTable])}
             onRecord={onRecord}
-            onSaveHall={(hall, table) => {
-              if (onSave(changeHall(setup, hall))) {
-                setPrevious(setup)
-              }
-
-              setPicking({ kind: 'table', table })
-            }}
-            onSaveSetup={(next) => {
-              if (onSave(next)) {
-                setPrevious(setup)
-              }
-            }}
+            onSaveSetup={(next) =>
+              save(next, translate('organiser.plan.changed'))
+            }
+            onTurn={() => turn(selectedTable)}
             plan={plan}
             setup={setup}
             table={selectedTable}

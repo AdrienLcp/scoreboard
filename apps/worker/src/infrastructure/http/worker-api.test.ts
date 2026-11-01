@@ -153,10 +153,12 @@ describe('the worker', () => {
       name: 'PPC Angles'
     }
     const hall = {
+      depth: 20,
       tables: [
-        { column: 0, isHidden: false, row: 0, table: 1 },
-        { column: 1, isHidden: true, row: 0, table: 2 }
-      ]
+        { isHidden: false, isTurned: false, table: 1, x: 2, y: 2 },
+        { isHidden: true, isTurned: true, table: 2, x: 12, y: 2 }
+      ],
+      width: 37
     }
     const created = createdEventSchema.parse(
       await (

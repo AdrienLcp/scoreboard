@@ -1,50 +1,61 @@
 import type React from 'react'
 
-import type { HallPlan, HallTable } from '@scoreboard/protocol/hall-plan'
+import type { HallPlan } from '@scoreboard/protocol/hall-plan'
 
-import { DrawnTable } from '@/presentation/components/drawn-table'
+import { areaOf, standingTablesOf } from '@scoreboard/core/hall/hall-plan'
+
+import { withClass } from '@/presentation/components/class-names'
 import { TableNumber } from '@/presentation/components/table-number'
+import { TableTop } from '@/presentation/components/table-top'
 import { useTranslate } from '@/presentation/i18n/i18n-context'
 
 import './club-hall-plan.sass'
 
-/** A row or column of the grid no table stands in: an aisle, kept narrow. */
-const AISLE_TRACK = '0.75rem'
+const percentOf = (metres: number, total: number): string =>
+  `${(metres / total) * 100}%`
 
-const trackList = (
-  tables: readonly HallTable[],
-  axis: 'column' | 'row'
-): string => {
-  const extent = Math.max(0, ...tables.map((table) => table[axis] + 1))
-
-  return Array.from({ length: extent }, (_, place) =>
-    tables.some((table) => table[axis] === place) ? 'auto' : AISLE_TRACK
-  ).join(' ')
-}
-
-/** The club's hall seen from above, stands at the bottom, as every new day starts from it. */
-export const ClubHallPlan: React.FC<{ plan: HallPlan }> = ({ plan }) => {
+/**
+ * A kept plan of the club's hall seen from above, drawn to scale, the stands
+ * at the bottom: each table standing on its play area, numbered. Reads as
+ * well across the club page as in a thumbnail a few centimetres wide.
+ */
+export const ClubHallPlan: React.FC<{ className?: string; plan: HallPlan }> = ({
+  className,
+  plan
+}) => {
   const translate = useTranslate()
 
   return (
-    <figure className='club-hall'>
+    <figure className={withClass('club-hall', className)}>
       <div
         className='club-hall-floor'
         style={{
-          gridTemplateColumns: trackList(plan.tables, 'column'),
-          gridTemplateRows: trackList(plan.tables, 'row')
+          '--hall-width': plan.width,
+          aspectRatio: `${plan.width} / ${plan.depth}`
         }}
       >
-        {plan.tables.map((table) => (
-          <span
-            className='club-hall-table'
-            key={table.table}
-            style={{ gridColumn: table.column + 1, gridRow: table.row + 1 }}
-          >
-            <TableNumber number={table.table} />
-            <DrawnTable className='club-hall-drawing' isIdle />
-          </span>
-        ))}
+        {standingTablesOf(plan).map((table) => {
+          const area = areaOf(table)
+
+          return (
+            <span
+              className='club-hall-table'
+              data-turned={table.isTurned || undefined}
+              key={table.table}
+              style={{
+                height: percentOf(area.height, plan.depth),
+                left: percentOf(area.x, plan.width),
+                top: percentOf(area.y, plan.depth),
+                width: percentOf(area.width, plan.width)
+              }}
+            >
+              <span className='club-hall-drawing'>
+                <TableTop isTurned={table.isTurned} />
+              </span>
+              <TableNumber className='club-hall-number' number={table.table} />
+            </span>
+          )
+        })}
       </div>
       <figcaption className='club-hall-stands'>
         {translate('organiser.hall.stands')}

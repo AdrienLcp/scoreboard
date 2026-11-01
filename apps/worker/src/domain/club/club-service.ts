@@ -21,7 +21,7 @@ const emptyRecordFor = (
   input: CreateClubInput,
   newClubId: () => string
 ): ClubRecord => ({
-  hall: null,
+  defaultPlanId: null,
   opponentColour: DEFAULT_OPPONENT_COLOUR,
   opponents: [],
   own: {
@@ -32,6 +32,7 @@ const emptyRecordFor = (
     players: [],
     teams: []
   },
+  plans: [],
   pools: []
 })
 

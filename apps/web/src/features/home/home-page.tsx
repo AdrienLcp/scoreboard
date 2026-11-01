@@ -3,6 +3,7 @@ import { useState } from 'react'
 
 import { eventIdSchema } from '@scoreboard/protocol/identifiers'
 
+import { defaultPlanOf } from '@/features/club/club-edits'
 import { useClub } from '@/features/club/use-club'
 import {
   organiserPathFor,
@@ -54,7 +55,7 @@ const CreateEventForm: React.FC = () => {
   const { create, state } = useCreateEvent()
   const { state: club } = useClub()
   const record = club.status === 'ready' ? club.record : null
-  const clubHall = record?.hall ?? null
+  const clubHall = record === null ? null : defaultPlanOf(record)
   const [name, setName] = useState('')
   const tableCount = clubHall?.tables.length ?? DEFAULT_TABLE_COUNT
 

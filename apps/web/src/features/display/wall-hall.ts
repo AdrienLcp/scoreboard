@@ -1,9 +1,12 @@
 import type { HallPlan } from '@scoreboard/protocol/hall-plan'
 import type { TableNumber } from '@scoreboard/protocol/identifiers'
 
-import type { HallPlace } from '@scoreboard/core/hall/hall-plan'
+import { hallGridOf } from '@scoreboard/core/hall/hall-plan'
 
 import type { WallRow } from './wall-rows'
+
+/** A cell of the hall read as rows and columns of tables. */
+export type WallPlace = { column: number; row: number }
 
 /** A grid area of the wall, its first track counted from 1 as CSS does. */
 export type WallArea = {
@@ -17,7 +20,7 @@ export type WallArea = {
 export type WallFrame = {
   area: WallArea
   /** Where each table of the encounter stands inside its frame, counted from 1. */
-  places: ReadonlyMap<TableNumber, HallPlace>
+  places: ReadonlyMap<TableNumber, WallPlace>
   row: WallRow
 }
 
@@ -29,9 +32,9 @@ export type WallHall = {
   rows: number
 }
 
-type Box = { first: HallPlace; last: HallPlace }
+type Box = { first: WallPlace; last: WallPlace }
 
-const boxOf = (places: readonly HallPlace[]): Box => ({
+const boxOf = (places: readonly WallPlace[]): Box => ({
   first: {
     column: Math.min(...places.map((place) => place.column)),
     row: Math.min(...places.map((place) => place.row))
@@ -42,17 +45,17 @@ const boxOf = (places: readonly HallPlace[]): Box => ({
   }
 })
 
-const areaOf = (box: Box): number =>
+const cellCountOf = (box: Box): number =>
   (box.last.column - box.first.column + 1) * (box.last.row - box.first.row + 1)
 
-const isInside = (place: HallPlace, box: Box): boolean =>
+const isInside = (place: WallPlace, box: Box): boolean =>
   place.column >= box.first.column &&
   place.column <= box.last.column &&
   place.row >= box.first.row &&
   place.row <= box.last.row
 
 /** The plan's columns or rows some frame covers, so an empty aisle takes no room on the wall. */
-const usedTracks = (boxes: readonly Box[], axis: keyof HallPlace): number[] =>
+const usedTracks = (boxes: readonly Box[], axis: keyof WallPlace): number[] =>
   [
     ...new Set(
       boxes.flatMap((box) =>
@@ -67,8 +70,9 @@ const usedTracks = (boxes: readonly Box[], axis: keyof HallPlace): number[] =>
 /**
  * The wall as the hall: every encounter in one frame where its tables stand,
  * empty aisles closed up, and the spectators' QR in the free place nearest
- * the stands on the left. `null` when the plan cannot hold it — an encounter
- * split across the hall, two frames overlapping, or no free place.
+ * the stands on the left. `null` when the plan cannot hold it — tables that
+ * do not read as rows and columns, an encounter split across the hall, two
+ * frames overlapping, or no free place.
  */
 export const wallHallFor = ({
   plan,
@@ -77,11 +81,14 @@ export const wallHallFor = ({
   plan: HallPlan
   rows: readonly WallRow[]
 }): WallHall | null => {
+  const grid = hallGridOf(plan)
+
+  if (grid === null) {
+    return null
+  }
+
   const placed = rows.map((row) =>
-    row.tables.map(
-      ({ table }) =>
-        plan.tables.find((candidate) => candidate.table === table) ?? null
-    )
+    row.tables.map(({ table }) => grid.places.get(table) ?? null)
   )
   const boxes = placed.flatMap((places) =>
     places.every((place) => place !== null) && places.length > 0
@@ -90,7 +97,7 @@ export const wallHallFor = ({
   )
   const isHeld =
     boxes.length === rows.length &&
-    boxes.every((box, index) => areaOf(box) === placed[index]?.length) &&
+    boxes.every((box, index) => cellCountOf(box) === placed[index]?.length) &&
     placed
       .flat()
       .every(
@@ -105,7 +112,7 @@ export const wallHallFor = ({
 
   const columns = usedTracks(boxes, 'column')
   const lines = usedTracks(boxes, 'row')
-  const wallPlaceOf = (place: HallPlace): HallPlace => ({
+  const wallPlaceOf = (place: WallPlace): WallPlace => ({
     column: columns.indexOf(place.column) + 1,
     row: lines.indexOf(place.row) + 1
   })
@@ -160,9 +167,9 @@ export const wallHallFor = ({
 export type WallFloor = {
   columns: number
   /** The free place nearest the stands on the left, `null` when every place holds a table. */
-  join: HallPlace | null
+  join: WallPlace | null
   /** Each table's place on the wall, counted from 1. */
-  places: ReadonlyMap<TableNumber, HallPlace>
+  places: ReadonlyMap<TableNumber, WallPlace>
   rows: number
 }
 
@@ -172,8 +179,9 @@ const MAX_FLOOR_TRACKS = 3
 /**
  * The tournament wall as the hall: every table it shows at its place on the
  * plan, empty aisles closed up, and the free place nearest the stands on the
- * left for the QR when one is left. `null` when a table has no place, or the
- * hall is too wide or too deep to stay legible beside the pools.
+ * left for the QR when one is left. `null` when a table has no place, the
+ * tables do not read as rows and columns, or the hall is too wide or too
+ * deep to stay legible beside the pools.
  */
 export const wallFloorFor = ({
   plan,
@@ -182,19 +190,18 @@ export const wallFloorFor = ({
   plan: HallPlan
   tables: readonly TableNumber[]
 }): WallFloor | null => {
+  const grid = hallGridOf(plan)
   const placed = tables.flatMap((table) => {
-    const found = plan.tables.find(
-      (candidate) => candidate.table === table && !candidate.isHidden
-    )
+    const place = grid?.places.get(table)
 
-    return found === undefined ? [] : [found]
+    return place === undefined ? [] : [{ place, table }]
   })
 
   if (placed.length === 0 || placed.length !== tables.length) {
     return null
   }
 
-  const boxes = placed.map((place) => ({ first: place, last: place }))
+  const boxes = placed.map(({ place }) => ({ first: place, last: place }))
   const columns = usedTracks(boxes, 'column')
   const lines = usedTracks(boxes, 'row')
 
@@ -203,8 +210,8 @@ export const wallFloorFor = ({
   }
 
   const places = new Map(
-    placed.map((place) => [
-      place.table,
+    placed.map(({ place, table }) => [
+      table,
       {
         column: columns.indexOf(place.column) + 1,
         row: lines.indexOf(place.row) + 1

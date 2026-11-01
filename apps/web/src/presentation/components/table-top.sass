@@ -1,0 +1,26 @@
+/// The drawn table seen from above: the table's blue, white lines, an ink net.
+@layer components
+  .table-top
+    display: block
+    height: 100%
+    width: 100%
+
+  .table-top-surface
+    fill: var(--table)
+    stroke: var(--table-dark)
+    stroke-width: 8
+
+    .table-top[data-idle] &
+      fill: var(--table-idle)
+
+  .table-top-line
+    stroke: var(--on-ink)
+    stroke-width: 5
+
+  .table-top-centre
+    stroke: var(--on-ink)
+    stroke-opacity: 0.6
+    stroke-width: 2.5
+
+  .table-top-net
+    fill: var(--ink)

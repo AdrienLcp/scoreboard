@@ -23,6 +23,11 @@ import {
   type Lineup,
   sheetMatchesFor
 } from '@scoreboard/core/encounter/encounter-sheet'
+import {
+  addHallTable,
+  deleteHallTable,
+  hallPlanOf
+} from '@scoreboard/core/hall/hall-plan'
 
 export const addPlayer = (setup: EventSetup, player: Player): EventSetup => ({
   ...setup,
@@ -302,3 +307,62 @@ export const changeHall = (setup: EventSetup, hall: HallPlan): EventSetup => ({
   ...setup,
   hall
 })
+
+/** Takes every encounter off a block's tables: its matches wait for tables. */
+export const clearBlock = (
+  setup: EventSetup,
+  block: readonly TableNumber[]
+): EventSetup => {
+  let cleared = setup
+
+  for (const encounter of setup.encounters) {
+    if (
+      encounterTablesOf(setup, encounter.id).some((table) =>
+        block.includes(table)
+      )
+    ) {
+      cleared = {
+        ...cleared,
+        matches: reseat({ encounter, setup: cleared, tables: null })
+      }
+    }
+  }
+
+  return cleared
+}
+
+/** One more table, numbered after the last, at the next free spot of the plan. */
+export const addTable = (setup: EventSetup): EventSetup => ({
+  ...setup,
+  hall: addHallTable(hallPlanOf(setup)),
+  tableCount: setup.tableCount + 1
+})
+
+/**
+ * A table gone for good: the others are numbered 1 to N again, every match
+ * and screen following its table; the matches of the deleted one wait for a
+ * table.
+ */
+export const deleteTable = (
+  setup: EventSetup,
+  table: TableNumber
+): EventSetup => {
+  const { numbers, plan } = deleteHallTable(hallPlanOf(setup), table)
+
+  return {
+    ...setup,
+    displays: setup.displays
+      .map((display) => ({
+        ...display,
+        tables: display.tables.flatMap((number) => numbers.get(number) ?? [])
+      }))
+      .filter((display) => display.tables.length > 0),
+    hall: plan,
+    matches: setup.matches.map((match) =>
+      match.table === null
+        ? match
+        : { ...match, table: numbers.get(match.table) ?? null }
+    ),
+    tableCount: setup.tableCount - 1
+  }
+}

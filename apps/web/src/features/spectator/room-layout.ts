@@ -5,7 +5,13 @@ import type {
 import type { TableNumber } from '@scoreboard/protocol/identifiers'
 import type { Side } from '@scoreboard/protocol/side'
 
-import { hallPlanOf } from '@scoreboard/core/hall/hall-plan'
+import {
+  areaOf,
+  type HallGrid,
+  hallGridOf,
+  hallPlanOf,
+  standingTablesOf
+} from '@scoreboard/core/hall/hall-plan'
 
 import { currentMatchOn } from '@/features/event/table-match'
 import { paintOf, type TeamPaint } from '@/features/event/team-paint'
@@ -30,40 +36,67 @@ export type RoomLayout = {
   tables: RoomTable[]
 }
 
-const tracksOf = (places: readonly number[]): number[] =>
-  [...new Set(places)].sort((one, other) => one - other)
+/** Two columns of tables this far apart, or more, stand either side of an aisle. */
+const AISLE_M = 1
+
+/** Two tables a row, block by block, when the hall does not read as rows and columns. */
+const blockGridOf = (tables: readonly TableNumber[]): HallGrid => ({
+  columns: Math.min(2, tables.length),
+  places: new Map(
+    tables.map((table, index) => [
+      table,
+      { column: index % 2, row: Math.floor(index / 2) }
+    ])
+  ),
+  rows: Math.ceil(tables.length / 2)
+})
 
 /**
- * The hall plan with the tables put away left out: empty columns between
- * tables stay as aisles, a row nobody stands on closes up.
+ * The hall plan with the tables put away left out, read as rows and columns:
+ * an aisle between two columns of tables stays, drawn narrow.
  */
 export const roomLayoutOf = (snapshot: PublicSnapshot): RoomLayout => {
-  const standing = hallPlanOf(snapshot).tables.filter(
-    (table) => !table.isHidden
+  const plan = hallPlanOf(snapshot)
+  const standing = standingTablesOf(plan).toSorted(
+    (one, other) => one.table - other.table
   )
-  const columns = tracksOf(standing.map((table) => table.column))
-  const rows = tracksOf(standing.map((table) => table.row))
-  const firstColumn = columns[0] ?? 0
-  const lastColumn = columns.at(-1) ?? -1
+  const hallGrid = hallGridOf(plan)
+  const grid = hallGrid ?? blockGridOf(standing.map((table) => table.table))
+  const columnOf = (table: TableNumber) => grid.places.get(table)?.column ?? 0
+  const edgesOf = (column: number) => {
+    const areas = standing
+      .filter((table) => columnOf(table.table) === column)
+      .map(areaOf)
+
+    return {
+      end: Math.max(...areas.map((area) => area.x + area.width)),
+      start: Math.min(...areas.map((area) => area.x))
+    }
+  }
+  const hasAisleBefore = (column: number) =>
+    hallGrid !== null &&
+    column > 0 &&
+    edgesOf(column).start - edgesOf(column - 1).end >= AISLE_M
+  const tracks = Array.from({ length: grid.columns }, (_, column) =>
+    hasAisleBefore(column) ? [false, true] : [true]
+  )
+  const trackOf = (column: number) => tracks.slice(0, column + 1).flat().length
 
   return {
-    columns: Array.from({ length: lastColumn - firstColumn + 1 }, (_, index) =>
-      columns.includes(firstColumn + index)
-    ),
-    rows: rows.length,
-    tables: standing
-      .toSorted((one, other) => one.table - other.table)
-      .map((standingTable) => {
-        const current = currentMatchOn(snapshot, standingTable.table)
+    columns: tracks.flat(),
+    rows: grid.rows,
+    tables: standing.map((standingTable) => {
+      const current = currentMatchOn(snapshot, standingTable.table)
+      const place = grid.places.get(standingTable.table)
 
-        return {
-          column: standingTable.column - firstColumn + 1,
-          live: current?.state.status === 'live' ? current : null,
-          next: current?.state.status === 'scheduled' ? current : null,
-          row: rows.indexOf(standingTable.row) + 1,
-          table: standingTable.table
-        }
-      })
+      return {
+        column: trackOf(place?.column ?? 0),
+        live: current?.state.status === 'live' ? current : null,
+        next: current?.state.status === 'scheduled' ? current : null,
+        row: (place?.row ?? 0) + 1,
+        table: standingTable.table
+      }
+    })
   }
 }
 
