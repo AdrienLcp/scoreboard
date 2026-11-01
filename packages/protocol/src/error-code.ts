@@ -43,7 +43,11 @@ export const setupRefusals = [
   'unknown_encounter',
   'table_out_of_range',
   'player_twice_in_match',
-  'unknown_display_table'
+  'unknown_display_table',
+  /** A match already under way keeps the number of games it started with. */
+  'started_match_format_changed',
+  /** A pool names an unknown player or one twice, or a tournament's matches are not the ones its pools and bracket need. */
+  'tournament_inconsistent'
 ] as const
 export const setupRefusalSchema = z.enum(setupRefusals)
 export type SetupRefusal = z.infer<typeof setupRefusalSchema>

@@ -3,7 +3,11 @@ import type {
   MatchSetup,
   Participant
 } from '@scoreboard/protocol/event-setup'
-import type { MatchId, PlayerId } from '@scoreboard/protocol/identifiers'
+import type {
+  MatchId,
+  PlayerId,
+  TableNumber
+} from '@scoreboard/protocol/identifiers'
 
 import type { EncounterFormat, SheetLine } from './encounter-format'
 
@@ -24,19 +28,22 @@ const labelFor = (line: SheetLine): string =>
     : `${DOUBLES_LABEL_PREFIX} ${line.number}`
 
 /**
- * The matches of an encounter's sheet, in playing order. A doubles starts with
- * no players: teams name their pairs during the encounter.
+ * The matches of an encounter's sheet, in playing order, each on the table of
+ * its group: the first of `tables` for group 1, the second for group 2. A
+ * doubles starts with no players: teams name their pairs during the encounter.
  */
 export const sheetMatchesFor = ({
   encounter,
   format,
   lineups,
-  newMatchId
+  newMatchId,
+  tables
 }: {
   encounter: Encounter
   format: EncounterFormat
   lineups: { away: Lineup; home: Lineup }
   newMatchId: () => MatchId
+  tables: readonly TableNumber[]
 }): MatchSetup[] =>
   format.sheet.map((line) => ({
     away:
@@ -52,5 +59,5 @@ export const sheetMatchesFor = ({
     id: newMatchId(),
     label: labelFor(line),
     plannedAtMs: null,
-    table: null
+    table: tables.at(line.group - 1) ?? tables.at(0) ?? null
   }))

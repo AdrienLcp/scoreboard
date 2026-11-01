@@ -37,15 +37,17 @@ const pointsEarned = ({
  */
 export const scoreEncounter = ({
   format,
+  matchPoints,
   states
 }: {
   format: EncounterFormat
+  matchPoints: MatchPoints
   states: readonly MatchState[]
 }): { outcome: EncounterOutcome | null; points: Score } => {
   const pointsFor = (side: Side): number =>
     states.reduce(
       (total, state) =>
-        total + pointsEarned({ points: format.matchPoints, side, state }),
+        total + pointsEarned({ points: matchPoints, side, state }),
       0
     )
   const points = { away: pointsFor('away'), home: pointsFor('home') }

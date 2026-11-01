@@ -1,0 +1,211 @@
+@use '../../presentation/styles/layout'
+@use '../../presentation/styles/typography'
+
+/// The hall seen from above: its floor in mist grey, the tables on white cards
+/// where they stand, the stands along the bottom as on the club's own plan.
+@layer components
+  .hall-layout
+    display: grid
+    gap: var(--space-2xl)
+
+    @include layout.container-wide(60rem)
+      align-items: start
+      grid-template-columns: minmax(0, 1fr) 24rem
+
+  .hall-main
+    display: grid
+    gap: var(--space-m)
+    min-width: 0
+
+  .hall-encounters
+    display: grid
+    gap: var(--space-xs)
+
+    .organiser-subheading
+      margin: 0
+
+  .hall-encounter-list
+    display: flex
+    flex-wrap: wrap
+    gap: var(--space-2xs)
+    list-style: none
+    margin: 0
+    padding: 0
+
+  .hall-encounter
+    @include typography.emphasis
+
+    align-items: center
+    background: var(--surface)
+    border: 0
+    box-shadow: var(--inset-hairline)
+    color: var(--ink)
+    display: flex
+    gap: var(--space-xs)
+    min-height: var(--control-height)
+    padding: var(--space-2xs) var(--space-s)
+
+    &[data-hovered]
+      background: var(--surface-raised)
+
+    &[aria-pressed='true']
+      background: var(--ink)
+      box-shadow: none
+      color: var(--on-ink)
+
+  .hall-swatches
+    display: flex
+
+  .hall-swatch
+    background: var(--team)
+    block-size: 1.25rem
+    inline-size: 0.75rem
+
+    &[data-white]
+      box-shadow: var(--inset-hairline)
+
+  .hall-encounter-tables
+    @include typography.figure-secondary
+
+    color: inherit
+    opacity: 0.75
+
+  .hall-hint
+    align-items: center
+    display: flex
+    flex-wrap: wrap
+    gap: var(--space-2xs) var(--space-m)
+    justify-content: space-between
+    min-height: var(--control-height)
+
+    p
+      @include typography.hint
+
+      flex: 1 1 18rem
+      margin: 0
+
+  .hall-floor
+    align-items: stretch
+    background: var(--surface-raised)
+    display: grid
+    gap: var(--space-xs)
+    grid-template-columns: var(--plan-columns)
+    padding: var(--space-s) var(--space-s) 0
+
+    @include layout.container-wide(43.75rem)
+      gap: var(--space-m)
+      padding: var(--space-l) var(--space-l) 0
+
+  .hall-table
+    align-content: start
+    background: var(--surface)
+    border: 0
+    box-shadow: var(--inset-hairline)
+    color: var(--ink)
+    display: grid
+    gap: var(--space-3xs)
+    min-width: 0
+    padding: var(--space-3xs) var(--space-3xs) var(--space-2xs)
+    text-align: start
+
+    &[data-hovered]
+      background: var(--field)
+
+    &[aria-pressed='true']
+      box-shadow: inset 0 0 0 var(--outline-thick) var(--ink)
+
+    &[data-moving]
+      box-shadow: inset 0 0 0 var(--outline-thick) var(--live)
+
+    &[data-hidden] .hall-drawing
+      opacity: 0.45
+
+  .hall-table-head
+    align-items: center
+    display: flex
+    gap: var(--space-2xs)
+    justify-content: space-between
+    min-width: 0
+
+  .hall-plate
+    @include typography.figure-chip
+
+    background: var(--ink)
+    color: var(--on-ink)
+    font-size: var(--text-xs)
+    padding: var(--space-4xs) var(--space-2xs)
+    white-space: nowrap
+
+    @include layout.container-wide(43.75rem)
+      font-size: var(--text-m)
+
+  .hall-table-state
+    @include typography.caption
+    @include typography.single-line
+
+    color: var(--ink-muted)
+    font-size: var(--text-2xs)
+
+  .hall-drawing
+    aspect-ratio: 2.7
+    width: 100%
+
+  .hall-table-free,
+  .hall-table-teams
+    display: grid
+    gap: var(--space-4xs)
+    min-height: 2.25rem
+
+  .hall-table-free
+    @include typography.caption
+
+    align-content: center
+    color: var(--ink-muted)
+    font-size: var(--text-2xs)
+    justify-items: center
+
+  .hall-team
+    @include typography.name
+    @include typography.single-line
+
+    background: var(--team)
+    color: var(--on-team)
+    font-size: var(--text-2xs)
+    padding: 0 var(--space-3xs)
+
+    &[data-white]
+      box-shadow: var(--inset-hairline)
+
+    @include layout.container-wide(43.75rem)
+      font-size: var(--text-xs)
+      padding: var(--space-4xs) var(--space-2xs)
+
+  .hall-place
+    align-items: center
+    background: transparent
+    border: 0
+    box-shadow: inset 0 0 0 var(--stroke-bold) var(--edge)
+    color: var(--ink-muted)
+    display: grid
+    justify-items: center
+    min-height: 4.5rem
+
+    &[data-hovered]
+      background: var(--surface)
+      color: var(--ink)
+
+  .hall-stands
+    @include typography.label
+
+    background: var(--floor-shade)
+    color: var(--ink-muted)
+    grid-column: 1 / -1
+    margin: var(--space-xs) calc(var(--space-s) * -1) 0
+    padding: var(--space-xs)
+    text-align: center
+
+    @include layout.container-wide(43.75rem)
+      margin-inline: calc(var(--space-l) * -1)
+
+  .hall-side
+    scroll-margin-block: 6rem var(--space-m)

@@ -6,8 +6,10 @@ import type {
   Player,
   Team
 } from '@scoreboard/protocol/event-setup'
+import type { HallPlan } from '@scoreboard/protocol/hall-plan'
 import type {
   DisplayId,
+  EncounterId,
   MatchId,
   PlayerId,
   TableNumber
@@ -15,6 +17,7 @@ import type {
 import type { TableTennisFormat } from '@scoreboard/protocol/match-format'
 import type { InstantMs } from '@scoreboard/protocol/scoring-event'
 
+import { defaultTablesFor } from '@scoreboard/core/club/club-encounter'
 import { encounterFormatFor } from '@scoreboard/core/encounter/encounter-formats'
 import {
   type Lineup,
@@ -164,7 +167,7 @@ export const tableRange = ({
     (_, index) => first + index
   )
 
-/** Adds a team encounter and every match of its sheet, in playing order. */
+/** Adds a team encounter and every match of its sheet, in playing order, on the first free tables. */
 export const addEncounter = ({
   encounter,
   lineups,
@@ -184,7 +187,101 @@ export const addEncounter = ({
       encounter,
       format: encounterFormatFor(encounter.formatId),
       lineups,
-      newMatchId
+      newMatchId,
+      tables: defaultTablesFor({
+        format: encounterFormatFor(encounter.formatId),
+        preferred: [],
+        setup
+      })
     })
   ]
+})
+
+/** The tables an encounter is seated on, in the order of its sheet's groups. */
+export const encounterTablesOf = (
+  setup: EventSetup,
+  encounterId: EncounterId
+): TableNumber[] => [
+  ...new Set(
+    setup.matches.flatMap((match) =>
+      match.encounterId === encounterId && match.table !== null
+        ? [match.table]
+        : []
+    )
+  )
+]
+
+const reseat = ({
+  encounter,
+  setup,
+  tables
+}: {
+  encounter: Encounter
+  setup: EventSetup
+  tables: readonly TableNumber[] | null
+}): MatchSetup[] => {
+  const { sheet } = encounterFormatFor(encounter.formatId)
+  let line = 0
+
+  return setup.matches.map((match) => {
+    if (match.encounterId !== encounter.id) {
+      return match
+    }
+
+    const group = sheet[line]?.group ?? 1
+    line++
+
+    return { ...match, table: tables?.[group - 1] ?? null }
+  })
+}
+
+/**
+ * Seats a whole encounter on a block of the hall, each line of its sheet on
+ * its group's table; an encounter already there takes the block it leaves.
+ */
+export const seatEncounterOnBlock = ({
+  block,
+  encounterId,
+  setup
+}: {
+  block: readonly TableNumber[]
+  encounterId: EncounterId
+  setup: EventSetup
+}): EventSetup => {
+  const moved = setup.encounters.find(
+    (encounter) => encounter.id === encounterId
+  )
+
+  if (moved === undefined) {
+    return setup
+  }
+
+  const left = encounterTablesOf(setup, encounterId)
+  const displaced = setup.encounters.find(
+    (encounter) =>
+      encounter.id !== encounterId &&
+      encounterTablesOf(setup, encounter.id).some((table) =>
+        block.includes(table)
+      )
+  )
+  const seated = {
+    ...setup,
+    matches: reseat({ encounter: moved, setup, tables: block })
+  }
+
+  return displaced === undefined
+    ? seated
+    : {
+        ...seated,
+        matches: reseat({
+          encounter: displaced,
+          setup: seated,
+          tables: left.length === 0 ? null : left
+        })
+      }
+}
+
+export const changeHall = (setup: EventSetup, hall: HallPlan): EventSetup => ({
+  ...setup,
+  hall
 })

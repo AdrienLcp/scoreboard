@@ -23,14 +23,16 @@
   "durable_objects": {
     "bindings": [
       { "class_name": "EventRoom", "name": "EVENT_ROOMS" },
-      { "class_name": "WallPairingRoom", "name": "WALL_PAIRINGS" }
+      { "class_name": "WallPairingRoom", "name": "WALL_PAIRINGS" },
+      { "class_name": "ClubRoom", "name": "CLUB_ROOMS" }
     ]
   },
   "main": "src/index.ts",
   // The free plan only offers Durable Objects backed by SQLite.
   "migrations": [
     { "new_sqlite_classes": ["EventRoom"], "tag": "v1" },
-    { "new_sqlite_classes": ["WallPairingRoom"], "tag": "v2" }
+    { "new_sqlite_classes": ["WallPairingRoom"], "tag": "v2" },
+    { "new_sqlite_classes": ["ClubRoom"], "tag": "v3" }
   ],
   "name": "scoreboard",
   "observability": { "enabled": true },

@@ -1,0 +1,38 @@
+@use '../../presentation/styles/typography'
+
+@layer components
+  .wall-timeout
+    display: grid
+    height: calc(var(--cu) * 6.1)
+    left: 50%
+    place-items: center
+    position: absolute
+    top: calc(var(--cu) * 0.3)
+    translate: -50% 0
+    width: calc(var(--cu) * 6.1)
+    z-index: 3
+
+    svg
+      inset: 0
+      position: absolute
+      rotate: -90deg
+
+    b
+      @include typography.wall-notice
+      @include typography.figure
+
+      color: var(--ink)
+      font-size: calc(var(--cu) * 2.5)
+      position: relative
+
+  .wall-timeout-disc
+    fill: var(--surface)
+
+  .wall-timeout-arc
+    fill: none
+    stroke: var(--live)
+    stroke-width: 8
+    transition: stroke-dashoffset var(--transition-slow) linear
+
+    @media (prefers-reduced-motion: reduce)
+      transition: none

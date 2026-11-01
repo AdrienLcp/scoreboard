@@ -23,7 +23,10 @@ import {
   newOrganiserCode,
   tableAccessesFor
 } from '@scoreboard/core/access/access-codes'
-import { checkEventSetup } from '@scoreboard/core/event/event-setup-check'
+import {
+  checkEventSetup,
+  checkSetupChange
+} from '@scoreboard/core/event/event-setup-check'
 import { recordScoringEvent } from '@scoreboard/core/match/match-log'
 
 import type { Admission } from './admission'
@@ -51,6 +54,7 @@ export const openEvent = ({
     defaultFormat: input.format,
     displays: [],
     encounters: [],
+    hall: null,
     matches: [],
     name: input.name,
     players: [],
@@ -177,6 +181,20 @@ export const saveSetup = ({
 
   if (checked.status === 'failure') {
     return checked
+  }
+
+  const previous = store.readSetup()
+  const changed =
+    previous === null
+      ? checked
+      : checkSetupChange({
+          next: checked.data,
+          previous,
+          startedMatchIds: new Set(store.readLogs().keys())
+        })
+
+  if (changed.status === 'failure') {
+    return changed
   }
 
   store.writeSetup(checked.data)

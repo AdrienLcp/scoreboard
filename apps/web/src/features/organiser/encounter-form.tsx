@@ -6,6 +6,7 @@ import {
   encounterFormatIds
 } from '@scoreboard/protocol/encounter-format-id'
 import type { EventSetup } from '@scoreboard/protocol/event-setup'
+import { DEFAULT_MATCH_POINTS_RULE } from '@scoreboard/protocol/match-points-rule'
 
 import { encounterFormatFor } from '@scoreboard/core/encounter/encounter-formats'
 import type { Lineup } from '@scoreboard/core/encounter/encounter-sheet'
@@ -89,7 +90,8 @@ export const EncounterForm: React.FC<EncounterFormProps> = ({
               away: awayTeamId,
               formatId,
               home: homeTeamId,
-              id: newEncounterId()
+              id: newEncounterId(),
+              matchPoints: DEFAULT_MATCH_POINTS_RULE
             },
             lineups,
             newMatchId,

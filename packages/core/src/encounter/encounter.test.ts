@@ -12,6 +12,11 @@ import type { Side } from '@scoreboard/protocol/side'
 import { encounterFormatFor } from './encounter-formats'
 import { scoreEncounter } from './encounter-score'
 import { sheetMatchesFor } from './encounter-sheet'
+import { matchPointsFor } from './match-points'
+import { forfeitedMatchesOf } from './player-forfeit'
+
+const ONE_PER_WIN = matchPointsFor('one-per-win')
+const TWO_PER_WIN = matchPointsFor('two-per-win')
 
 const FOUR_PLAYERS = encounterFormatFor('fftt-4-players-14-games')
 
@@ -19,7 +24,8 @@ const ENCOUNTER: Encounter = {
   away: randomUUID(),
   formatId: 'fftt-4-players-14-games',
   home: randomUUID(),
-  id: randomUUID()
+  id: randomUUID(),
+  matchPoints: 'one-per-win'
 }
 
 const finished = (
@@ -59,6 +65,24 @@ describe('FFTT sheets', () => {
   it('[encounter] plays 10 matches with 3 players', () => {
     expect(encounterFormatFor('fftt-3-players-10-games').sheet).toHaveLength(10)
   })
+
+  it('[encounter] plays the 6-player sheet in the order of the signed departmental D2 sheet', () => {
+    expect(
+      encounterFormatFor('fftt-6-players-20-games').sheet.map((line) =>
+        line.kind === 'singles' ? `${line.home}${line.away}` : `D${line.number}`
+      )
+    ).toEqual(
+      'AX DR BY ES CZ FT BX D1 AZ ER CY DT D2 FS BZ ET CX FR AY DS'.split(' ')
+    )
+  })
+
+  it('[encounter] puts odd lines of the 6-player sheet in the first group, even lines in the second', () => {
+    expect(
+      encounterFormatFor('fftt-6-players-20-games').sheet.map(
+        (line) => line.group
+      )
+    ).toEqual(Array.from({ length: 20 }, (_, index) => (index % 2) + 1))
+  })
 })
 
 describe('sheetMatchesFor', () => {
@@ -69,7 +93,8 @@ describe('sheetMatchesFor', () => {
     encounter: ENCOUNTER,
     format: FOUR_PLAYERS,
     lineups: { away: { W: awayW }, home: { A: homeA } },
-    newMatchId: randomUUID
+    newMatchId: randomUUID,
+    tables: [3]
   })
 
   it('[encounter] seats each lettered player in their singles', () => {
@@ -77,8 +102,21 @@ describe('sheetMatchesFor', () => {
       away: { playerIds: [awayW] },
       encounterId: ENCOUNTER.id,
       home: { playerIds: [homeA] },
-      label: 'AW'
+      label: 'AW',
+      table: 3
     })
+  })
+
+  it('[encounter] runs each group of a 6-player sheet on its own table of the pair', () => {
+    const tables = sheetMatchesFor({
+      encounter: { ...ENCOUNTER, formatId: 'fftt-6-players-20-games' },
+      format: encounterFormatFor('fftt-6-players-20-games'),
+      lineups: { away: {}, home: {} },
+      newMatchId: randomUUID,
+      tables: [5, 6]
+    }).map((match) => match.table)
+
+    expect(tables.slice(0, 4)).toEqual([5, 6, 5, 6])
   })
 
   it('[encounter] leaves a letter nobody holds empty', () => {
@@ -98,19 +136,31 @@ describe('sheetMatchesFor', () => {
 })
 
 describe('scoreEncounter', () => {
-  it('[encounter] gives 2 points for a win and 1 for a loss played out', () => {
+  it('[encounter] counts one point per match won, as the departmental sheet does', () => {
     expect(
       scoreEncounter({
         format: FOUR_PLAYERS,
+        matchPoints: ONE_PER_WIN,
+        states: [finished('home'), finished('home'), finished('away')]
+      })
+    ).toEqual({ outcome: null, points: { away: 1, home: 2 } })
+  })
+
+  it('[encounter] gives 2 points for a win and 1 for a loss played out under the two-per-win rule', () => {
+    expect(
+      scoreEncounter({
+        format: FOUR_PLAYERS,
+        matchPoints: TWO_PER_WIN,
         states: [finished('home'), finished('home'), finished('away')]
       })
     ).toEqual({ outcome: null, points: { away: 4, home: 5 } })
   })
 
-  it('[encounter] gives a side that retires 1 point', () => {
+  it('[encounter] gives a side that retires 1 point under the two-per-win rule', () => {
     expect(
       scoreEncounter({
         format: FOUR_PLAYERS,
+        matchPoints: TWO_PER_WIN,
         states: [finished('away', { by: 'home', reason: 'retirement' })]
       }).points
     ).toEqual({ away: 2, home: 1 })
@@ -120,6 +170,7 @@ describe('scoreEncounter', () => {
     expect(
       scoreEncounter({
         format: FOUR_PLAYERS,
+        matchPoints: TWO_PER_WIN,
         states: [finished('away', { by: 'home', reason: 'walkover' })]
       }).points
     ).toEqual({ away: 2, home: 0 })
@@ -131,9 +182,30 @@ describe('scoreEncounter', () => {
       ...Array.from({ length: 7 }, () => finished('away'))
     ]
 
-    expect(scoreEncounter({ format: FOUR_PLAYERS, states })).toEqual({
-      outcome: 'draw',
-      points: { away: 21, home: 21 }
-    })
+    expect(
+      scoreEncounter({ format: FOUR_PLAYERS, matchPoints: ONE_PER_WIN, states })
+    ).toEqual({ outcome: 'draw', points: { away: 7, home: 7 } })
+  })
+})
+
+describe('forfeitedMatchesOf', () => {
+  const absent = randomUUID()
+  const sheet = sheetMatchesFor({
+    encounter: { ...ENCOUNTER, formatId: 'fftt-3-players-10-games' },
+    format: encounterFormatFor('fftt-3-players-10-games'),
+    lineups: { away: { X: absent }, home: {} },
+    newMatchId: randomUUID,
+    tables: [1]
+  })
+  const views = sheet.map((match, index) => ({
+    ...match,
+    state: index === 0 ? finished('home') : scheduledMatchState
+  }))
+
+  it('[encounter] gives up every match still waiting for the absent player, on his side', () => {
+    expect(forfeitedMatchesOf({ matches: views, playerId: absent })).toEqual([
+      { by: 'away', matchId: sheet[3]?.id },
+      { by: 'away', matchId: sheet[8]?.id }
+    ])
   })
 })

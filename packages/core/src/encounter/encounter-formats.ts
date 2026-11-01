@@ -1,39 +1,42 @@
 import type { EncounterFormatId } from '@scoreboard/protocol/encounter-format-id'
 
-import type {
-  EncounterFormat,
-  MatchPoints,
-  SheetLine
-} from './encounter-format'
+import type { EncounterFormat, SheetGroup, SheetLine } from './encounter-format'
 
-/** Règlements sportifs FFTT, art. 26.2: 2 points for a win, 1 for a loss played out or abandoned, 0 for a match not played. */
-const FFTT_MATCH_POINTS: MatchPoints = {
-  loss: 1,
-  retirement: 1,
-  walkover: 0,
-  win: 2
-}
-
-const singles = (home: string, away: string): SheetLine => ({
+const singles = (
+  home: string,
+  away: string,
+  group: SheetGroup = 1
+): SheetLine => ({
   away,
+  group,
   home,
   kind: 'singles'
 })
 
-const doubles = (number: number): SheetLine => ({ kind: 'doubles', number })
+const doubles = (number: number, group: SheetGroup = 1): SheetLine => ({
+  group,
+  kind: 'doubles',
+  number
+})
+
+const BEST_OF_FIVE_TO_ELEVEN = {
+  bestOf: 5,
+  pointsPerGame: 11,
+  sport: 'table-tennis'
+} as const
 
 /**
  * The FFTT team championship sheets, as the 2025-2026 departmental
  * regulations print them (CDTT 91, "Règlement Championnat de France par
- * équipes", art. 13 and 16). Every match is played, in this order, best of
- * five games to 11.
+ * équipes", art. 13 and 16; the 6-player one from a signed departmental D2 sheet).
+ * Every match is played, in this order, best of five games to 11.
  */
 export const ENCOUNTER_FORMATS = {
   'fftt-3-players-10-games': {
     awayLetters: ['X', 'Y', 'Z'],
+    groupCount: 1,
     homeLetters: ['A', 'B', 'C'],
-    matchFormat: { bestOf: 5, pointsPerGame: 11, sport: 'table-tennis' },
-    matchPoints: FFTT_MATCH_POINTS,
+    matchFormat: BEST_OF_FIVE_TO_ELEVEN,
     sheet: [
       singles('A', 'X'),
       singles('B', 'Y'),
@@ -49,9 +52,9 @@ export const ENCOUNTER_FORMATS = {
   },
   'fftt-4-players-14-games': {
     awayLetters: ['W', 'X', 'Y', 'Z'],
+    groupCount: 1,
     homeLetters: ['A', 'B', 'C', 'D'],
-    matchFormat: { bestOf: 5, pointsPerGame: 11, sport: 'table-tennis' },
-    matchPoints: FFTT_MATCH_POINTS,
+    matchFormat: BEST_OF_FIVE_TO_ELEVEN,
     sheet: [
       singles('A', 'W'),
       singles('B', 'X'),
@@ -67,6 +70,35 @@ export const ENCOUNTER_FORMATS = {
       singles('C', 'W'),
       singles('D', 'X'),
       singles('B', 'Z')
+    ]
+  },
+  /** Two groups of three, ABC–XYZ and DEF–RST, one table each; odd lines are the first group. */
+  'fftt-6-players-20-games': {
+    awayLetters: ['X', 'Y', 'Z', 'R', 'S', 'T'],
+    groupCount: 2,
+    homeLetters: ['A', 'B', 'C', 'D', 'E', 'F'],
+    matchFormat: BEST_OF_FIVE_TO_ELEVEN,
+    sheet: [
+      singles('A', 'X'),
+      singles('D', 'R', 2),
+      singles('B', 'Y'),
+      singles('E', 'S', 2),
+      singles('C', 'Z'),
+      singles('F', 'T', 2),
+      singles('B', 'X'),
+      doubles(1, 2),
+      singles('A', 'Z'),
+      singles('E', 'R', 2),
+      singles('C', 'Y'),
+      singles('D', 'T', 2),
+      doubles(2),
+      singles('F', 'S', 2),
+      singles('B', 'Z'),
+      singles('E', 'T', 2),
+      singles('C', 'X'),
+      singles('F', 'R', 2),
+      singles('A', 'Y'),
+      singles('D', 'S', 2)
     ]
   }
 } as const satisfies Record<EncounterFormatId, EncounterFormat>

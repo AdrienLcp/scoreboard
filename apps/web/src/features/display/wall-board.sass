@@ -1,0 +1,226 @@
+@use '../../presentation/styles/typography'
+@use './stacked'
+
+/// The wall's body: one row per encounter on the left, the spectators' QR
+/// column spanning them all on the right. Sized by the display's `--cu`, so it
+/// holds the validated 1920×1080 composition at any 16:9 size.
+@layer components
+  .wall-board
+    --gutter-left: max(calc(var(--cu) * 2.6), var(--safe-area-left))
+    --gutter-right: max(calc(var(--cu) * 2.6), var(--safe-area-right))
+
+    display: grid
+    gap: calc(var(--cu) * 1.1) calc(var(--cu) * 1.85)
+    grid-template-columns: minmax(0, 1fr) calc(var(--cu) * 23.2)
+    grid-template-rows: repeat(var(--rows), minmax(0, 1fr))
+    min-height: 0
+    padding: calc(var(--cu) * 1.3) var(--gutter-right) calc(var(--cu) * 1.5) var(--gutter-left)
+
+  .wall-row
+    background: var(--surface)
+    box-shadow: inset 0 0 0 var(--stroke-bold) var(--rule)
+    display: grid
+    gap: calc(var(--cu) * 0.55) calc(var(--cu) * 1.3)
+    grid-column: 1
+    grid-template-columns: calc(var(--cu) * 31.5) repeat(var(--cells, 2), minmax(0, 1fr))
+    min-height: 0
+    min-width: 0
+    padding: calc(var(--cu) * 0.55)
+
+  .wall-join
+    @include typography.prompt
+
+    align-content: center
+    background: var(--sky)
+    display: grid
+    gap: calc(var(--cu) * 1.6)
+    grid-column: 2
+    grid-row: 1 / -1
+    justify-items: center
+    min-height: 0
+    padding: calc(var(--cu) * 2.4) calc(var(--cu) * 1.6)
+    text-align: center
+
+    .qr-code
+      padding: calc(var(--cu) * 0.6)
+      width: 100%
+
+    h2
+      @include typography.wall-notice
+
+      font-size: calc(var(--cu) * 3.15)
+      margin: 0
+      text-wrap: balance
+
+    p
+      color: var(--ink-muted)
+      font-size: calc(var(--cu) * 1.85)
+      margin: 0
+
+    small
+      font-size: calc(var(--cu) * 1.75)
+
+  .wall-join-words
+    display: contents
+
+  /// The hall: each encounter in the frame its tables draw on the plan, the
+  /// encounter's band across the top, its tables standing as in the hall;
+  /// the QR takes a free place, its words beside it.
+  .wall-board[data-hall]
+    grid-template-columns: repeat(var(--columns), minmax(0, 1fr))
+
+    .wall-join
+      align-items: center
+      gap: calc(var(--cu) * 1.6)
+      grid-template-columns: auto minmax(0, 1fr)
+      grid-template-rows: minmax(0, 1fr)
+      justify-items: start
+      padding: calc(var(--cu) * 1.3)
+      text-align: start
+
+      .qr-code
+        aspect-ratio: 1
+        height: 100%
+        min-height: 0
+        width: auto
+
+      h2
+        font-size: calc(var(--cu) * 2.6)
+
+      p
+        font-size: calc(var(--cu) * 1.6)
+
+      small
+        font-size: calc(var(--cu) * 1.4)
+        overflow-wrap: anywhere
+
+      .wall-code
+        font-size: calc(var(--cu) * 3.6)
+
+    .wall-join-words
+      align-content: center
+      display: grid
+      gap: calc(var(--cu) * 1)
+      justify-items: start
+      min-width: 0
+
+  .wall-frame,
+  .wall-board[data-hall] .wall-join
+    grid-column: var(--area-column) / span var(--area-columns)
+    grid-row: var(--area-row) / span var(--area-rows)
+
+  .wall-frame
+    background: var(--surface)
+    box-shadow: inset 0 0 0 var(--stroke-bold) var(--rule)
+    display: grid
+    gap: calc(var(--cu) * 0.55)
+    grid-template-rows: calc(var(--cu) * 6.4) minmax(0, 1fr)
+    min-height: 0
+    min-width: 0
+    padding: calc(var(--cu) * 0.55)
+
+    .wall-encounter
+      grid-template-columns: repeat(2, minmax(0, 1fr))
+      grid-template-rows: none
+
+    .wall-team:last-child
+      flex-direction: row-reverse
+
+      .wall-team-name
+        text-align: end
+
+  .wall-frame-tables
+    display: grid
+    gap: calc(var(--cu) * 0.55) calc(var(--cu) * 1.3)
+    grid-auto-columns: minmax(0, 1fr)
+    grid-auto-rows: minmax(0, 1fr)
+    min-height: 0
+
+  .wall-frame-place
+    display: grid
+    grid-column: var(--place-column)
+    grid-row: var(--place-row)
+    min-height: 0
+    min-width: 0
+
+  .wall-code
+    @include typography.wall-code
+
+    background: var(--surface)
+    display: grid
+    font-size: calc(var(--cu) * 4.3)
+    padding: calc(var(--cu) * 0.6) calc(var(--cu) * 1.3) calc(var(--cu) * 0.75)
+
+  /// The legal footer would push the wall into a scroll a TV cannot use; a
+  /// phone, which scrolls anyway, keeps it.
+  body:has(.display-page[data-wall]) .site-footer
+    display: none
+
+  html:has(.display-page[data-wall])
+    scrollbar-gutter: auto
+
+  @include stacked.stacked
+    body:has(.display-page[data-wall]) .site-footer
+      display: block
+
+    .wall-board
+      grid-template-columns: minmax(0, 1fr)
+      grid-template-rows: none
+      padding-block: var(--space-m) 0
+
+    .wall-board[data-hall]
+      grid-template-columns: minmax(0, 1fr)
+
+    .wall-frame,
+    .wall-board[data-hall] .wall-join
+      grid-column: 1
+      grid-row: auto
+
+    .wall-frame
+      grid-template-rows: calc(var(--cu) * 12) auto
+
+      .wall-encounter
+        grid-template-columns: minmax(0, 1fr)
+        grid-template-rows: repeat(2, minmax(0, 1fr))
+
+      .wall-team:last-child
+        flex-direction: row
+
+        .wall-team-name
+          text-align: start
+
+    .wall-frame-place
+      grid-column: 1
+      grid-row: auto
+
+      .wall-table
+        height: calc(var(--cu) * 30)
+
+    .wall-board[data-hall] .wall-join
+      grid-template-columns: minmax(0, 1fr)
+      justify-items: center
+      text-align: center
+
+      .qr-code
+        height: auto
+        width: 14rem
+
+    .wall-board[data-hall] .wall-join-words
+      justify-items: center
+
+    .wall-row
+      grid-template-columns: minmax(0, 1fr)
+
+      .wall-encounter
+        height: calc(var(--cu) * 12)
+
+      .wall-table
+        height: calc(var(--cu) * 30)
+
+    .wall-join
+      grid-column: 1
+      grid-row: auto
+      padding: var(--space-xl) var(--space-m)
+
+      .qr-code
+        width: 14rem

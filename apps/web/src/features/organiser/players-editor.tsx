@@ -53,7 +53,9 @@ export const PlayersEditor: React.FC<PlayersEditorProps> = ({
             onSave(
               addPlayer(setup, {
                 id: newPlayerId(),
+                licence: null,
                 name: playerName,
+                points: null,
                 teamId: teamId === NO_TEAM ? null : teamId
               })
             )
@@ -111,7 +113,13 @@ export const PlayersEditor: React.FC<PlayersEditorProps> = ({
           className='organiser-panel organiser-inline-form'
           onSubmit={(event) => {
             event.preventDefault()
-            onSave(addTeam(setup, { id: newTeamId(), name: teamName }))
+            onSave(
+              addTeam(setup, {
+                colour: null,
+                id: newTeamId(),
+                name: teamName
+              })
+            )
             setTeamName('')
           }}
         >

@@ -1,6 +1,7 @@
 import type React from 'react'
 import { useId } from 'react'
 
+import { CLUB_RETENTION_DAYS } from '@scoreboard/protocol/club-retention'
 import { EVENT_RETENTION_DAYS } from '@scoreboard/protocol/event-retention'
 
 import { paths } from '@/infrastructure/router/navigation'
@@ -112,6 +113,7 @@ export const LegalPage: React.FC = () => {
           <p className='legal-retention'>
             {translate('legal.event.retention', { days: EVENT_RETENTION_DAYS })}
           </p>
+          <p>{translate('legal.event.club', { days: CLUB_RETENTION_DAYS })}</p>
           <p>{translate('legal.event.deletion')}</p>
           <p>
             <RichText

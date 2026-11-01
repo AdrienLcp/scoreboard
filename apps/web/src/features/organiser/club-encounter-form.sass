@@ -1,0 +1,19 @@
+/// The club's shortcut sits above the hand-made encounter: same quiet panel,
+/// its three choices side by side once the console is wide enough.
+@layer components
+  .club-encounter-form
+    display: grid
+    gap: var(--space-s)
+
+    @container page (width >= 53.75rem)
+      grid-template-columns: repeat(3, minmax(0, 1fr))
+
+      > h3, > .organiser-note, > .club-encounter-actions
+        grid-column: 1 / -1
+
+  .club-encounter-actions
+    display: flex
+    flex-wrap: wrap
+    gap: var(--space-s)
+    justify-content: space-between
+

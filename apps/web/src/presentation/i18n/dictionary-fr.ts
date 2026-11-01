@@ -9,6 +9,78 @@ export const FR_DICTIONARY = defineDictionary({
   app: {
     name: 'Scoreboard'
   },
+  club: {
+    code: 'Code du club',
+    codeHelp:
+      'Ce code retrouve le club sur un autre appareil : gardez-le, il ouvre aussi ses équipes et ses joueurs.',
+    forget: 'Changer de club',
+    home: 'Accueil',
+    loading: 'Ouverture du club…',
+    missing: 'Aucun club ne répond à ce code. Il a peut-être été effacé.',
+    offline: 'Le serveur ne répond pas. Vérifiez la connexion puis réessayez.',
+    opponents: {
+      add: 'Ajouter le club',
+      help: 'Chaque club rencontré une fois, avec ses équipes et ses joueurs, se choisit ensuite dans une liste.',
+      name: 'Nom du club adverse',
+      remove: 'Retirer ce club',
+      summary: defineTranslation('{teams:plural} · {players:plural}', {
+        plural: {
+          players: { one: '{?} joueur', other: '{?} joueurs' },
+          teams: { one: '{?} équipe', other: '{?} équipes' }
+        }
+      }),
+      title: 'Clubs adverses'
+    },
+    players: {
+      add: 'Ajouter le joueur',
+      empty: 'Aucun joueur pour l’instant.',
+      firstName: 'Prénom',
+      lastName: 'Nom',
+      points: 'Points',
+      remove: 'Retirer',
+      removeConfirm: 'Retirer {name}',
+      title: 'Joueurs'
+    },
+    retry: 'Réessayer',
+    team: {
+      colour: 'Couleur',
+      format: 'Type de rencontre',
+      lineup: 'Dernière composition',
+      matchPoints: {
+        'one-per-win': '1 point par match gagné',
+        'two-per-win': '2 points la victoire, 1 la défaite'
+      },
+      matchPointsLabel: 'Score de la rencontre',
+      name: 'Nom de l’équipe',
+      nobody: 'Personne',
+      noPlayers: 'Ajoutez d’abord les joueurs du club.',
+      remove: 'Retirer l’équipe',
+      removeConfirm: 'Retirer {name}',
+      tables: 'Tables à domicile',
+      tablesChoice: defineTranslation('{count:plural} {tables:list}', {
+        plural: { count: { one: 'Table', other: 'Tables' } }
+      })
+    },
+    teams: {
+      add: 'Ajouter une équipe',
+      empty: 'Aucune équipe pour l’instant.',
+      title: 'Équipes'
+    },
+    title: 'Le club',
+    undo: 'Annuler la dernière modification',
+    unsaved:
+      'La dernière modification n’a pas atteint le serveur : elle reste sur cet appareil.',
+    welcome: {
+      create: 'Créer le club',
+      createHelp:
+        'Ses équipes, leurs couleurs et ses joueurs sont gardés une fois pour toutes ; chaque dimanche se prépare en les choisissant.',
+      createTitle: 'Nouveau club',
+      join: 'Ouvrir le club',
+      joinHelp: 'Le club existe déjà sur un autre appareil : tapez son code.',
+      joinTitle: 'J’ai le code du club',
+      name: 'Nom du club'
+    }
+  },
   connection: {
     closed: 'Reconnexion…',
     connecting: 'Connexion…',
@@ -65,12 +137,36 @@ export const FR_DICTIONARY = defineDictionary({
       tables: defineTranslation('{count:plural}', {
         plural: { count: { one: '{?} table', other: '{?} tables' } }
       })
+    },
+    wall: {
+      card: 'Carton jaune',
+      cardPenalty: 'Carton jaune et rouge',
+      decider: 'Belle',
+      deuce: 'Égalité',
+      finalPhase: 'Phase finale',
+      follow: 'Tous les matchs sur votre téléphone',
+      free: 'Table libre',
+      gamesWon: '{count:number} manches gagnées',
+      gameWon: 'Manche gagnée',
+      matchWon: 'Match gagné {score}',
+      next: 'Prochain match {call}',
+      nextPlayers: '<b>{home}</b> contre <b>{away}</b>',
+      pool: 'Poule {name}',
+      poolComplete: 'Terminée',
+      poolPoints: '{points:number} points de poule',
+      scanOrType: 'Scannez, ou tapez le code',
+      serving: 'Au service',
+      timeout: 'Temps mort pris',
+      timeoutLeft: 'Temps mort, {seconds:number} secondes',
+      timeoutRunning: 'Temps mort en cours',
+      waiting: 'En attente'
     }
   },
   encounter: {
     format: {
       'fftt-3-players-10-games': '3 joueurs, 10 matchs',
-      'fftt-4-players-14-games': '4 joueurs, 14 matchs'
+      'fftt-4-players-14-games': '4 joueurs, 14 matchs',
+      'fftt-6-players-20-games': '6 joueurs, 20 matchs sur 2 tables'
     },
     noTable: 'tables à définir',
     tables: defineTranslation('{count:plural} {tables:list}', {
@@ -140,6 +236,10 @@ export const FR_DICTIONARY = defineDictionary({
     },
     event: {
       body: 'Chaque rencontre garde sur le serveur ce que son organisateur y saisit : son nom, celui du club, les noms des joueurs et des équipes, le programme, ainsi que chaque point marqué et son heure.',
+      club: defineTranslation(
+        'Les équipes, joueurs et clubs adverses qu’un club enregistre sont gardés tant qu’il s’en sert, et effacés {days:plural} après leur dernière modification.',
+        DAYS_PLURAL
+      ),
       deletion:
         'Son organisateur peut aussi l’effacer tout de suite, depuis l’onglet Réglages de l’organisation.',
       heading: 'Ce que le serveur garde d’une rencontre',
@@ -148,7 +248,7 @@ export const FR_DICTIONARY = defineDictionary({
         DAYS_PLURAL
       ),
       retention: defineTranslation(
-        'Une rencontre est effacée en entier, automatiquement, {days:plural} après sa dernière modification.',
+        'Une rencontre est effacée en entier, automatiquement, {days:plural} après sa dernière modification, ou après son début s’il est plus tard.',
         DAYS_PLURAL
       ),
       yourName:
@@ -256,6 +356,20 @@ export const FR_DICTIONARY = defineDictionary({
     },
     choosePlayer: 'Choisir un joueur',
     chooseTeam: 'Choisir une équipe',
+    clubEncounter: {
+      add: 'Ajouter la rencontre',
+      away: 'Adversaire',
+      edit: 'Équipes du club',
+      home: 'Notre équipe',
+      loading: 'Ouverture du club…',
+      noClub:
+        'Préparez une fois les équipes du club : chaque rencontre se crée ensuite en deux choix.',
+      noOpponent: 'Ajoutez un club adverse',
+      noTables: 'Pas assez de tables libres',
+      prepare: 'Préparer les équipes du club',
+      tables: 'Tables',
+      title: 'Depuis le club'
+    },
     code: {
       explain:
         'Il vous a été donné à la création de la rencontre. Il ouvre la préparation et les corrections.',
@@ -334,6 +448,42 @@ export const FR_DICTIONARY = defineDictionary({
         'Le type de rencontre fixe le nombre de joueurs par équipe et l’ordre des matchs, comme la feuille officielle FFTT.',
       home: 'Équipe à domicile'
     },
+    forfeit: {
+      confirm: defineTranslation('Forfait de {name} : {count:plural}', {
+        plural: {
+          count: { one: '{?} match perdu', other: '{?} matchs perdus' }
+        }
+      }),
+      declare: defineTranslation('Déclarer forfait ({count:plural})', {
+        plural: { count: { one: '{?} match', other: '{?} matchs' } }
+      }),
+      none: 'Plus aucun match ne l’attend.',
+      player: 'Joueur absent'
+    },
+    hall: {
+      cancel: 'Annuler',
+      close: 'Fermer la table',
+      emptyPlace: 'Mettre la table ici',
+      encounters: 'Rencontres',
+      free: 'Libre',
+      freeLong: 'Aucune rencontre sur cette table.',
+      hidden: 'Rangée',
+      hintEncounter:
+        'Touchez la table où installer {encounter} : elle prend aussi sa voisine.',
+      hintIdle:
+        'Touchez une table pour son QR d’arbitrage, ou une rencontre pour la changer de tables.',
+      hintTable:
+        'Touchez une place libre ou une autre table pour y mettre la table {table:number}.',
+      inUse: 'Utilisée aujourd’hui',
+      label: 'Plan de la salle',
+      moveEncounter: 'Déplacer la rencontre',
+      moveTable: 'Déplacer la table',
+      noEncounter: 'Aucune rencontre : ajoutez-en dans Équipes.',
+      noTable: 'Sans table',
+      number: 'Numéro',
+      stands: 'Gradins',
+      undo: 'Annuler la dernière modification'
+    },
     keep: 'Garder',
     live: {
       free: 'Libre, rien de prévu'
@@ -386,9 +536,11 @@ export const FR_DICTIONARY = defineDictionary({
       encounters: 'Équipes',
       live: 'En direct',
       matches: 'Programme',
+      plan: 'Plan',
       players: 'Joueurs',
       settings: 'Réglages',
-      tables: 'Tables et écrans'
+      tables: 'Tables et écrans',
+      tournament: 'Top 12'
     },
     teams: {
       add: 'Ajouter l’équipe',
@@ -401,7 +553,66 @@ export const FR_DICTIONARY = defineDictionary({
       }),
       name: 'Nom de l’équipe'
     },
-    title: 'Organisation'
+    title: 'Organisation',
+    tournament: {
+      build: defineTranslation('{count:plural}', {
+        plural: {
+          count: { one: 'Créer le match', other: 'Créer les {?} matchs' }
+        }
+      }),
+      clubmates: 'Deux joueurs du même club dans cette poule.',
+      clubs: 'Clubs',
+      clubsHint:
+        'Touchez les clubs du tournoi : leurs deux meilleurs joueurs entrent.',
+      draw: 'Tirer au sort les égalités',
+      drawAgain: 'Refaire le tirage au sort',
+      drawHint:
+        'Des joueurs restent à égalité après le départage : un tirage au sort les place.',
+      final: 'Finale',
+      lossPoints: 'Points pour une défaite',
+      needPlayers: 'Il faut au moins 4 joueurs, 2 par poule.',
+      noClub:
+        'Aucun club avec des joueurs : ajoutez-les dans la fiche du club, ou dans l’onglet Joueurs.',
+      players: 'Joueurs',
+      playersHint:
+        'Touchez un joueur pour l’ajouter ou le retirer, rangés par points.',
+      pool: 'Poule {number:number}',
+      poolMatch: '{home:number} – {away:number}',
+      pools: 'Poules',
+      poolsHint:
+        'Par points, sans deux joueurs d’un même club. Touchez un joueur puis un autre pour les échanger.',
+      ready: defineTranslation('{count:plural}', {
+        plural: {
+          count: {
+            one: 'Tournoi prêt : {?} match.',
+            other: 'Tournoi prêt : {?} matchs.'
+          }
+        }
+      }),
+      rebuild: defineTranslation('{count:plural}', {
+        plural: {
+          count: { one: 'Refaire le match', other: 'Refaire les {?} matchs' }
+        }
+      }),
+      remove: 'Retirer le tournoi',
+      reseed: 'Revenir aux poules automatiques',
+      rules: 'Règles',
+      semiFinal: 'Demi-finale {slot:number}',
+      swapping:
+        'Touchez le joueur qui prend sa place, ou le même pour annuler.',
+      tables: 'Tables',
+      tablesBracket:
+        'Demi-finales tables {first:number} et {second:number}, finale table {first:number}.',
+      tablesHint: 'Dans l’ordre du plan de la salle, sans les tables rangées.',
+      tablesPool: 'Poule {number:number} : tables {tables:list}',
+      thirdPlace: 'Petite finale',
+      thirdPlaceSwitch: 'Match pour la 3e place',
+      title: 'Top 12',
+      underWay:
+        'Le tournoi a commencé : les poules et les règles ne changent plus.',
+      undo: 'Annuler la dernière modification',
+      winPoints: 'Points pour une victoire'
+    }
   },
   record: {
     refused: {
@@ -424,7 +635,11 @@ export const FR_DICTIONARY = defineDictionary({
     refused: {
       duplicate_id: 'Un élément apparaît deux fois.',
       player_twice_in_match: 'Un joueur est des deux côtés d’un match.',
+      started_match_format_changed:
+        'Un match commencé garde son nombre de manches.',
       table_out_of_range: 'Un match est sur une table qui n’existe pas.',
+      tournament_inconsistent:
+        'Les poules et les matchs du tournoi ne correspondent plus.',
       unknown_display_table: 'Un écran affiche une table qui n’existe pas.',
       unknown_encounter: 'Un match renvoie à une rencontre inconnue.',
       unknown_player: 'Un match renvoie à un joueur inconnu.',
@@ -437,6 +652,21 @@ export const FR_DICTIONARY = defineDictionary({
     }
   },
   spectator: {
+    bracket: {
+      poolRunnerUp: '2e de la poule {pool}',
+      poolWinner: '1er de la poule {pool}',
+      semiLoser: 'Perdant de la demi-finale {slot:number}',
+      semiWinner: 'Vainqueur de la demi-finale {slot:number}',
+      title: 'Phase finale'
+    },
+    detail: {
+      card: '{name} : carton jaune',
+      cardPenalty: defineTranslation(
+        '{name} : carton jaune et rouge, {points:plural}',
+        { plural: { points: { one: '{?} point', other: '{?} points' } } }
+      ),
+      timeout: '{name} : temps mort pris'
+    },
     empty: {
       finished: 'Aucun match terminé pour l’instant.',
       live: 'Aucun match en cours. Les prochains sont dans « À venir ».',
@@ -457,10 +687,45 @@ export const FR_DICTIONARY = defineDictionary({
     playedFromTo: defineTranslation('De {from:date} à {to:date}', {
       date: { from: { timeStyle: 'short' }, to: { timeStyle: 'short' } }
     }),
+    pools: {
+      complete: 'Terminée',
+      drawn: '* Départagés par tirage au sort.',
+      long: {
+        games: 'Manches gagnées et perdues',
+        losses: 'Défaites',
+        points: 'Points de poule',
+        wins: 'Victoires'
+      },
+      player: 'Joueur',
+      playing: 'En cours',
+      pool: 'Poule {name}',
+      rank: 'Place',
+      short: {
+        games: 'Manches',
+        losses: 'D',
+        points: 'Pts',
+        wins: 'V'
+      }
+    },
     section: {
+      encounters: 'Rencontres',
       finished: 'Résultats',
       live: 'En cours',
+      pools: 'Poules',
       upcoming: 'À venir'
+    },
+    sheet: {
+      games: 'Manches',
+      hide: 'Replier',
+      over: 'Rencontre terminée',
+      parties: 'Parties',
+      points: 'Points',
+      progress: '{done:number}/{total:number} parties jouées',
+      show: 'Toute la feuille',
+      tables: defineTranslation('{count:plural} {tables:list}', {
+        plural: { count: { one: 'Table', other: 'Tables' } }
+      }),
+      totals: 'Totaux de la feuille'
     },
     tablesInPlay: 'Tables en jeu',
     title: 'Matchs',

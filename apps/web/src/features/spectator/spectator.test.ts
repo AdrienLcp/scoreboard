@@ -6,6 +6,7 @@ import type { MatchView } from '@scoreboard/protocol/event-snapshot'
 import { scheduledMatchState } from '@scoreboard/protocol/match-state'
 import { matchOn } from '@scoreboard/protocol/testing/event-setups'
 
+import { encounterTotalsOf } from './encounter-totals'
 import { followedFirst } from './followed-first'
 import { whereaboutsOf } from './player-whereabouts'
 
@@ -63,5 +64,30 @@ describe('player whereabouts', () => {
       table: live.table
     })
     expect(whereaboutsOf(ada, programme)).toEqual({ status: 'upcoming' })
+  })
+})
+
+describe('encounter totals', () => {
+  it('[spectator] adds up parties, games and points won over the finished matches', () => {
+    const won: MatchView = {
+      ...between(camille, louis),
+      state: {
+        ...scheduledMatchState,
+        periods: [
+          { away: 7, home: 11 },
+          { away: 11, home: 9 },
+          { away: 5, home: 11 },
+          { away: 8, home: 11 }
+        ],
+        periodsWon: { away: 1, home: 3 },
+        status: 'finished',
+        winner: 'home'
+      }
+    }
+
+    expect(encounterTotalsOf([won, between(ada, louis)])).toEqual({
+      away: { games: 1, parties: 0, points: 31 },
+      home: { games: 3, parties: 1, points: 42 }
+    })
   })
 })

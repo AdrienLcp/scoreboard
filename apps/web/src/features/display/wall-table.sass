@@ -1,0 +1,266 @@
+@use '../../presentation/styles/typography'
+
+/// A table cell on the wall, drawn on the display's `--cu` and on the court's
+/// own container: the score takes its share of the drawing at any row height.
+@layer components
+  .wall-table
+    background: var(--surface-raised)
+    display: grid
+    grid-template-rows: calc(var(--cu) * 3.5) minmax(0, 1fr)
+    min-height: 0
+    min-width: 0
+
+  .wall-table-head
+    align-items: stretch
+    display: flex
+    gap: calc(var(--cu) * 1.1)
+    min-width: 0
+
+  .wall-plate
+    @include typography.wall-plate
+
+    align-items: center
+    background: var(--ink)
+    color: var(--on-ink)
+    display: flex
+    font-size: calc(var(--cu) * 2.4)
+    padding-inline: calc(var(--cu) * 1.5)
+    white-space: nowrap
+
+  .wall-call
+    @include typography.emphasis
+    @include typography.single-line
+
+    align-self: center
+    color: var(--ink-muted)
+    font-size: calc(var(--cu) * 1.95)
+
+  .wall-pill
+    @include typography.wall-pill
+
+    align-items: center
+    align-self: center
+    color: var(--ink)
+    display: inline-flex
+    flex: none
+    font-size: calc(var(--cu) * 1.75)
+    gap: 0.35em
+    padding: 0.37em 0.58em 0.42em
+    white-space: nowrap
+
+    .icon
+      font-size: 1em
+      stroke-width: 3
+
+    &[data-tone='won']
+      background: var(--live)
+
+    &[data-tone='deuce']
+      box-shadow: inset 0 0 0 var(--outline-thick) var(--ink)
+
+    &[data-tone='decider']
+      box-shadow: inset 0 0 0 var(--outline-thick) var(--live)
+
+  .wall-court
+    min-height: 0
+
+  .wall-half
+    --half-width: 50cqw
+
+    inset-block: 0
+    position: absolute
+    width: var(--half-width)
+    z-index: 1
+
+    &[data-side='home']
+      left: 0
+
+    &[data-side='away']
+      right: 0
+
+  .wall-corner
+    align-items: flex-start
+    display: flex
+    flex-direction: column
+    gap: calc(var(--cu) * 0.45)
+    position: absolute
+    top: calc(var(--cu) * 0.65)
+
+    [data-side='home'] > &
+      left: calc(var(--cu) * 0.75)
+
+    [data-side='away'] > &
+      align-items: flex-end
+      right: calc(var(--cu) * 0.75)
+
+  .wall-chip
+    align-items: center
+    background: var(--surface)
+    box-shadow: inset 0 calc(var(--cu) * -0.46) 0 var(--team)
+    color: var(--ink)
+
+    [data-white] > .wall-corner > &
+      box-shadow: inset 0 calc(var(--cu) * -0.46) 0 var(--surface-high)
+    display: flex
+    gap: calc(var(--cu) * 0.75)
+    padding: calc(var(--cu) * 0.37) calc(var(--cu) * 0.75) calc(var(--cu) * 0.83) calc(var(--cu) * 0.37)
+
+    [data-side='away'] &
+      flex-direction: row-reverse
+      padding: calc(var(--cu) * 0.37) calc(var(--cu) * 0.37) calc(var(--cu) * 0.83) calc(var(--cu) * 0.75)
+
+  .wall-letters
+    @include typography.wall-plate
+
+    align-self: stretch
+    background: var(--team)
+    color: var(--on-team)
+    display: grid
+    flex: none
+    font-size: calc(var(--cu) * 1.75)
+    min-width: calc(var(--cu) * 2.4)
+    padding-inline: calc(var(--cu) * 0.28)
+    place-items: center
+
+    &:empty
+      display: none
+
+    [data-white] &
+      box-shadow: inset 0 0 0 var(--stroke-bold) var(--ink)
+
+  .wall-names
+    @include typography.wall-player
+
+    display: flex
+    flex-direction: column
+    font-size: calc(var(--cu) * 1.95)
+    white-space: nowrap
+
+    [data-side='away'] &
+      align-items: flex-end
+
+  .wall-points
+    @include typography.wall-points
+
+    color: var(--edge)
+    font-size: calc(var(--cu) * 1.56)
+    margin-left: 0.3em
+
+  .wall-serve
+    background: var(--live-ink)
+    clip-path: polygon(0 0, 100% 50%, 0 100%)
+    flex: none
+    height: calc(var(--cu) * 1.67)
+    width: calc(var(--cu) * 1.3)
+
+    [data-side='away'] &
+      clip-path: polygon(100% 0, 0 50%, 100% 100%)
+
+  .wall-marks
+    align-items: center
+    display: flex
+    gap: calc(var(--cu) * 0.37)
+
+    [data-side='away'] &
+      flex-direction: row-reverse
+
+  .wall-card
+    background: var(--card-yellow)
+    box-shadow: 0 0 0 calc(var(--cu) * 0.14) var(--scrim)
+    height: calc(var(--cu) * 2.04)
+    margin-inline: calc(var(--cu) * 0.37)
+    rotate: -6deg
+    width: calc(var(--cu) * 1.48)
+
+    &[data-penalty]
+      background: linear-gradient(135deg, var(--card-yellow) 0 50%, var(--card-red) 50% 100%)
+
+  .wall-stopwatch
+    background: var(--ink)
+    color: var(--on-ink)
+    display: grid
+    font-size: calc(var(--cu) * 1.76)
+    height: calc(var(--cu) * 2.4)
+    place-items: center
+    width: calc(var(--cu) * 2.22)
+
+    &[data-running]
+      background: var(--live)
+      color: var(--on-live)
+
+    .icon
+      stroke-width: 2.6
+
+  .wall-score-row
+    align-items: center
+    display: flex
+    gap: calc(var(--cu) * 0.75)
+    position: absolute
+    top: 58%
+    translate: -50% -50%
+
+    [data-side='home'] > &
+      left: calc((var(--table-side) + var(--half-width)) / 2)
+
+    [data-side='away'] > &
+      flex-direction: row-reverse
+      left: calc((var(--half-width) - var(--table-side)) / 2)
+
+  .wall-games
+    background: var(--scrim-strong)
+    border-radius: var(--radius-full)
+    display: flex
+    flex-direction: column
+    gap: calc(var(--cu) * 0.37)
+    padding: calc(var(--cu) * 0.46) calc(var(--cu) * 0.37)
+
+    i
+      border-radius: 50%
+      box-shadow: inset 0 0 0 var(--stroke-bold) var(--on-ink)
+      height: calc(var(--cu) * 1.2)
+      width: calc(var(--cu) * 1.2)
+
+      &[data-won]
+        background: var(--on-ink)
+
+  .wall-score
+    @include typography.wall-score
+
+    --score-cap: 47cqh
+
+    color: var(--on-ink)
+    font-size: min(calc(var(--cu) * 11.5), var(--score-cap))
+    text-shadow: 0 calc(var(--cu) * 0.28) 0 var(--table-dark)
+    transition: opacity var(--transition-base) var(--ease-move)
+
+    &[data-dimmed]
+      opacity: 0.4
+
+  .wall-free
+    @include typography.emphasis
+
+    align-items: center
+    background: var(--surface)
+    box-shadow: 0 calc(var(--cu) * 0.55) calc(var(--cu) * 1.3) calc(var(--cu) * -0.55) var(--scrim)
+    color: var(--ink)
+    display: flex
+    flex-direction: column
+    font-size: calc(var(--cu) * 1.85)
+    gap: calc(var(--cu) * 0.5)
+    left: 50%
+    max-width: 86%
+    padding: calc(var(--cu) * 1) calc(var(--cu) * 2.8)
+    position: absolute
+    text-align: center
+    text-wrap: balance
+    top: 50%
+    translate: -50% -50%
+    z-index: 3
+
+    b
+      @include typography.wall-notice
+
+      font-size: calc(var(--cu) * 3.3)
+
+    strong
+      @include typography.strong

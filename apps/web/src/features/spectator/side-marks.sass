@@ -1,0 +1,36 @@
+@layer components
+  .side-marks
+    align-items: center
+    display: inline-flex
+    flex: none
+    gap: var(--space-2xs)
+
+    > span
+      display: inline-grid
+
+  .card-mark
+    background: var(--card-yellow)
+    box-shadow: 0 0 0 1.5px var(--scrim)
+    display: inline-block
+    flex: none
+    height: 1.125rem
+    margin-inline: 0.125rem
+    rotate: -6deg
+    width: 0.8125rem
+
+    &[data-penalty]
+      background: linear-gradient(135deg, var(--card-yellow) 0 50%, var(--card-red) 50% 100%)
+
+  .stopwatch-mark
+    background: var(--ink)
+    color: var(--on-ink)
+    display: inline-grid
+    flex: none
+    font-size: var(--icon-s)
+    height: 1.25rem
+    place-items: center
+    width: 1.25rem
+
+    &[data-running]
+      background: var(--live)
+      color: var(--on-live)

@@ -14,6 +14,8 @@ export const SOCKET_PREFIX = '/ws'
 
 /** Every path either end names: the worker matches the pattern, the client fills it. */
 export const API_ROUTES = {
+  club: `${API_PREFIX}/clubs/:clubCode`,
+  clubs: `${API_PREFIX}/clubs`,
   events: `${API_PREFIX}/events`,
   wallPairing: `${API_PREFIX}/wall-pairings/:pairingCode`,
   wallPairingClaim: `${API_PREFIX}/wall-pairings/:pairingCode/claim`,
@@ -85,6 +87,7 @@ export const apiErrorCodes = [
   'internal_error',
   'no_free_event_id',
   'no_free_pairing_code',
+  'no_free_club_code',
   'wrong_code',
   'unknown_display'
 ] as const

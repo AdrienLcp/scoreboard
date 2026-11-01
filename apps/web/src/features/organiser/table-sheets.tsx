@@ -3,6 +3,7 @@ import { createPortal } from 'react-dom'
 
 import type { TableAccess } from '@scoreboard/protocol/event-snapshot'
 
+import { DrawnTable } from '@/presentation/components/drawn-table'
 import { LinkText } from '@/presentation/components/link-text'
 import { QrCode } from '@/presentation/components/qr-code'
 import { useTranslate } from '@/presentation/i18n/i18n-context'
@@ -18,8 +19,8 @@ type TableSheetsProps = {
 }
 
 /**
- * One printed page per table, to lay on it: its name, its umpire QR code and
- * its code. Drawn beside the app, and the only thing printed while it is there.
+ * One printed page per table, to lay on it: its name, the drawn table, its
+ * umpire QR code and its code. Drawn beside the app, and the only thing printed while it is there.
  */
 export const TableSheets: React.FC<TableSheetsProps> = ({
   accesses,
@@ -37,6 +38,7 @@ export const TableSheets: React.FC<TableSheetsProps> = ({
           <h1>
             {translate('organiser.access.table', { table: access.table })}
           </h1>
+          <DrawnTable className='table-sheet-drawing' />
           <QrCode
             label={translate('organiser.access.qrLabel', {
               table: access.table

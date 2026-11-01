@@ -28,6 +28,10 @@ import { firstStartOf, hasNotStarted } from './display-summary'
 import { LiveBoard } from './live-board'
 import { tableScopeOf } from './table-scope'
 import { WaitingStage } from './waiting-stage'
+import { WallBoard } from './wall-board'
+import { wallRowsFor } from './wall-rows'
+import { wallTournamentFor } from './wall-tournament'
+import { WallTournamentBoard } from './wall-tournament-board'
 
 import './display-page.sass'
 
@@ -96,10 +100,16 @@ const DisplayBoard: React.FC<{
     return line === undefined ? null : encounterTitleOf(line)
   }
   const spectatorUrl = `${pageOrigin()}${spectatorPathFor(eventId)}`
+  const wallRows = wallRowsFor({ snapshot, tables })
+  const tournamentRows =
+    wallRows === null ? wallTournamentFor({ snapshot, tables }) : null
+  const isWall = wallRows !== null || tournamentRows !== null
   const header = (page: PageIndicator | null) => (
     <DisplayHeader
       eventName={snapshot.name}
       isPairedWall={isPairedWall}
+      isWall={isWall}
+      logoUrl={snapshot.club?.logoUrl ?? null}
       nowMs={nowMs}
       owner={snapshot.club?.name ?? translate('app.name')}
       page={page}
@@ -109,11 +119,33 @@ const DisplayBoard: React.FC<{
   )
 
   return (
-    <Main className='display-page'>
+    <Main className='display-page' data-wall={isWall || undefined}>
       <DocumentTitle>
         {`${display?.name ?? translate('display.title')} — ${snapshot.name}`}
       </DocumentTitle>
-      {hasNotStarted(snapshot) ? (
+      {wallRows !== null ? (
+        <>
+          {header(null)}
+          <WallBoard
+            eventId={eventId}
+            nowMs={nowMs}
+            rows={wallRows}
+            snapshot={snapshot}
+            spectatorUrl={spectatorUrl}
+          />
+        </>
+      ) : tournamentRows !== null ? (
+        <>
+          {header(null)}
+          <WallTournamentBoard
+            eventId={eventId}
+            nowMs={nowMs}
+            rows={tournamentRows}
+            snapshot={snapshot}
+            spectatorUrl={spectatorUrl}
+          />
+        </>
+      ) : hasNotStarted(snapshot) ? (
         <>
           {header(null)}
           <WaitingStage

@@ -1,0 +1,231 @@
+@use '../../presentation/styles/layout'
+@use '../../presentation/styles/typography'
+
+/// The Top 12 set up by picking: clubs, then their players, then the two
+/// pools side by side, the rules already set, the one button that builds it.
+@layer components
+  .tournament-editor
+    display: grid
+    gap: var(--space-2xl)
+    max-width: 60rem
+
+    .organiser-subheading
+      margin: 0
+
+    .organiser-note
+      margin: 0
+
+  .tournament-section
+    display: grid
+    gap: var(--space-xs)
+
+  .tournament-empty
+    align-items: center
+    display: flex
+    flex-wrap: wrap
+    gap: var(--space-s) var(--space-m)
+
+  .tournament-chips
+    display: flex
+    flex-wrap: wrap
+    gap: var(--space-2xs)
+    list-style: none
+    margin: 0
+    padding: 0
+
+  .tournament-chip
+    @include typography.emphasis
+
+    align-items: center
+    background: var(--surface)
+    border: 0
+    box-shadow: var(--inset-hairline)
+    color: var(--ink)
+    display: flex
+    gap: var(--space-xs)
+    min-height: var(--control-height)
+    padding: var(--space-2xs) var(--space-s)
+
+    &[data-hovered]
+      background: var(--surface-raised)
+
+    &[aria-pressed='true']
+      background: var(--ink)
+      box-shadow: none
+      color: var(--on-ink)
+
+      .tournament-points
+        color: inherit
+        opacity: 0.8
+
+  .tournament-swatch
+    background: var(--team)
+    block-size: 1.25rem
+    flex: none
+    inline-size: 0.75rem
+
+    &[data-white]
+      box-shadow: var(--inset-hairline)
+
+  .tournament-points
+    @include typography.figure-secondary
+
+    color: var(--edge)
+
+  .tournament-clubs
+    display: grid
+    gap: var(--space-m)
+
+    @include layout.container-wide(43.75rem)
+      grid-template-columns: repeat(2, minmax(0, 1fr))
+
+  .tournament-club
+    align-content: start
+    display: grid
+    gap: var(--space-2xs)
+    min-width: 0
+
+    h3
+      @include typography.label
+
+      align-items: center
+      display: flex
+      gap: var(--space-xs)
+      margin: 0
+
+  .tournament-hint
+    align-items: center
+    display: flex
+    flex-wrap: wrap
+    gap: var(--space-2xs) var(--space-m)
+    justify-content: space-between
+    min-height: var(--control-height)
+
+  .tournament-pools
+    display: grid
+    gap: var(--space-m)
+
+    @include layout.container-wide(43.75rem)
+      grid-template-columns: repeat(2, minmax(0, 1fr))
+
+  .tournament-pool
+    background: var(--surface)
+    display: grid
+    gap: var(--space-xs)
+    min-width: 0
+    padding: var(--space-m)
+
+    h3
+      @include typography.strong
+
+      font-size: var(--text-l)
+      margin: 0
+
+    ol
+      display: grid
+      gap: var(--space-4xs)
+      list-style: none
+      margin: 0
+      padding: 0
+
+  .tournament-entrant
+    align-items: center
+    background: transparent
+    border: 0
+    color: var(--ink)
+    display: grid
+    gap: var(--space-xs)
+    grid-template-columns: 1.5rem auto minmax(0, 1fr) auto
+    min-height: var(--control-height)
+    padding: var(--space-2xs) var(--space-xs)
+    text-align: start
+    width: 100%
+
+    &[data-hovered]
+      background: var(--surface-raised)
+
+    &[data-disabled]
+      cursor: default
+
+    &[aria-pressed='true']
+      background: var(--ink)
+      color: var(--on-ink)
+
+      small, .tournament-points
+        color: inherit
+        opacity: 0.8
+
+  .tournament-number
+    @include typography.figure
+
+    font-size: var(--text-l)
+
+  .tournament-entrant-name
+    @include typography.name
+
+    display: grid
+    font-size: var(--text-l)
+    min-width: 0
+
+    small
+      @include typography.hint
+
+      color: var(--ink-muted)
+      font-size: var(--text-xs)
+
+  .tournament-warning
+    @include typography.strong
+
+    align-items: center
+    box-shadow: inset 0 0 0 var(--stroke-bold) var(--ink)
+    display: flex
+    gap: var(--space-xs)
+    margin: 0
+    padding: var(--space-xs) var(--space-s)
+
+  .tournament-rules
+    align-items: end
+    display: flex
+    flex-wrap: wrap
+    gap: var(--space-m) var(--space-xl)
+
+  .tournament-choice
+    display: grid
+    gap: var(--space-2xs)
+
+  .tournament-choice-label
+    @include typography.label
+
+  .tournament-tables
+    @include typography.emphasis
+
+    display: grid
+    gap: var(--space-3xs)
+    list-style: none
+    margin: 0
+    padding: 0
+
+  .tournament-actions
+    align-items: center
+    display: flex
+    flex-wrap: wrap
+    gap: var(--space-s) var(--space-m)
+
+  .tournament-ready
+    @include typography.strong
+
+    align-items: center
+    display: flex
+    flex-basis: 100%
+    gap: var(--space-xs)
+    margin: 0
+
+  .tournament-secondary
+    display: flex
+    flex-wrap: wrap
+    gap: var(--space-2xs)
+
+  .tournament-draw
+    display: grid
+    gap: var(--space-s)
+    justify-items: start

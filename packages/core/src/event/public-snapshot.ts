@@ -12,8 +12,10 @@ import type {
 
 import { encounterFormatFor } from '../encounter/encounter-formats'
 import { scoreEncounter } from '../encounter/encounter-score'
+import { matchPointsFor } from '../encounter/match-points'
 import { describeMatch } from '../match/match-log'
 import { matchTimesOf } from '../match/match-times'
+import { withBracketPlayers } from '../tournament/bracket'
 import { estimatedDurationMs, type PlayedMatch } from './duration-estimate'
 import { estimatedStartsFor } from './start-estimate'
 import { matchOnTable, tableNumbers } from './table-queue'
@@ -125,13 +127,18 @@ export const publicSnapshotFor = ({
   nowMs: InstantMs
   setup: EventSetup
 }): PublicSnapshot => {
-  const matches = matchViewsFor({ logs, nowMs, setup })
+  const views = matchViewsFor({ logs, nowMs, setup })
+  const matches =
+    setup.tournament === null || setup.tournament === undefined
+      ? views
+      : withBracketPlayers({ matches: views, tournament: setup.tournament })
 
   const encounterViews = setup.encounters.map(
     (encounter): EncounterView => ({
       id: encounter.id,
       ...scoreEncounter({
         format: encounterFormatFor(encounter.formatId),
+        matchPoints: matchPointsFor(encounter.matchPoints),
         states: matches
           .filter((match) => match.encounterId === encounter.id)
           .map((match) => match.state)
@@ -152,6 +159,7 @@ export const publicSnapshotFor = ({
     encounters: setup.encounters,
     encounterViews,
     generatedAtMs: nowMs,
+    hall: setup.hall,
     matches,
     name: setup.name,
     players: setup.players,
@@ -161,6 +169,7 @@ export const publicSnapshotFor = ({
       matchId: matchOnTable(queued, number),
       number
     })),
-    teams: setup.teams
+    teams: setup.teams,
+    tournament: setup.tournament ?? null
   }
 }

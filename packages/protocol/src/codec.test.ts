@@ -70,6 +70,7 @@ describe('encodeChecked', () => {
           encounters: [],
           encounterViews: [],
           generatedAtMs: 0,
+          hall: null,
           matches: [],
           name: 'Club day',
           players: [],

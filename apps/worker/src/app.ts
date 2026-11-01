@@ -2,8 +2,10 @@ import { Hono } from 'hono'
 
 import { API_PREFIX, SOCKET_PREFIX } from '@scoreboard/protocol/routes'
 
+import { clubsOf } from '@/infrastructure/durable-objects/club-room-namespace'
 import { eventRoomsOf } from '@/infrastructure/durable-objects/event-room-namespace'
 import { wallPairingsOf } from '@/infrastructure/durable-objects/wall-pairing-namespace'
+import { registerClubRoutes } from '@/infrastructure/http/club-routes'
 import {
   answerNotFound,
   answerUnexpected
@@ -19,11 +21,13 @@ export const createApp = (): WorkerApp => {
 
   app.use(async (context, next) => {
     context.set('assets', context.env.ASSETS)
+    context.set('clubs', clubsOf(context.env.CLUB_ROOMS))
     context.set('eventRooms', eventRoomsOf(context.env.EVENT_ROOMS))
     context.set('wallPairings', wallPairingsOf(context.env.WALL_PAIRINGS))
     await next()
   })
 
+  registerClubRoutes(app)
   registerEventRoutes(app)
   registerWallPairingRoutes(app)
 

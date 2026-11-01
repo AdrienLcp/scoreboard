@@ -19,6 +19,7 @@ colors:
   table: "#1A4F8C"
   table-dark: "#123B6A"
   table-idle: "#9FB0C0"
+  floor-shade: "#D3DADF"
   sky: "#8FCBEF"
   card-yellow: "#FFD23F"
   qr-paper: "#FFFFFF"
@@ -313,15 +314,16 @@ Table number chip, muted single-line label, optional single state pill; two rows
 ### Point Target (signature, umpire)
 A half-screen tap target per side: white, square, 1px silver inset edge; name (width 84%, 700) with a Burnt Orange "serving" marker, a giant centred score, and a foot with games won. Hover fills mist grey; on tap it scales to 0.988 and flashes a 3px orange inset ring.
 
-## Committed, not yet built
+## The wall (built 2026-11-01)
 
-The wall mockup (`.handoff/ping-club/assets/wall-mockup/wall.html`, validated 2026-10-31, layout spec in `.handoff/ping-club/04-wall-layout.md`) commits these pieces. The wall session (04) and the organiser session (06) build them to this spec; their tokens (`--table`, `--table-dark`, `--table-idle`, `--sky`, `--card-yellow`, `--band`) already exist. Sizes are given in pixels on the mockup's 1920×1080 stage; on the wall they become `--cu` (1cu = 10.8px on that stage). The mockup's in-between weights (680 to 820) land as named mixins in `_typography.sass`, never as one-off weights.
+The wall mockup (`.handoff/ping-club/assets/wall-mockup/wall.html`, validated 2026-10-31) is built: `features/display/wall-*.tsx`, shown automatically on a display whose tables all belong to team encounters of at most two tables each (up to six rows); any other day keeps the open board. The drawn table is `presentation/components/drawn-table.tsx`, reused by the printed table sheet and meant for the hall plan (06) and the spectator's table card (08). Sizes below are pixels on the mockup's 1920×1080 stage; on the wall they are `--cu` (1cu = 10.8px on that stage). The mockup's in-between weights snap to the weights the fallback faces cover (700 and 800) in the `wall-*` mixins of `_typography.sass`. Tokens: `--table`, `--table-dark`, `--table-idle`, `--floor-shade` (the floor's lower part), `--sky`, `--card-yellow`, `--card-red` (the red half of a yellow-red card), `--scrim-strong` (the games-won pill), `--team-shade` (the darker score cell on a team colour), `--band`. A white team (the opponents' default) keeps a 2px silver inset on its block, an ink ring on its letter square and a silver chip underline. The legal footer and the scrollbar gutter are dropped on the wall above phone width; on a phone the rows stack and scroll.
 
 ### Wall page
 - **Header** (84px, white): club logo (72px) + club name (width 78%, ~780, 46px, -0.01em) + event line (500, 26px, ink-muted). No date, clock or app name.
 - **Seven-stripe band** (21px) under the header: seven equal hard-stopped horizontal stripes, top to bottom #1C5A9E, #2F7FC1, #8FCBEF, #00894A, #6DBE45, #BADF9B, #F07F1E (`--band`). Hard stops only; it is the one multi-colour element.
 - **Body grid:** `minmax(0, 1fr) 250px`, one row per encounter (a pair of tables), the QR column spanning all rows on Hall Sky. Each row is a white group with a 2px silver inset: the encounter block (340px) then its two table cells.
 - **Encounter block:** home team on top, away below, each on its team colour with its text colour; name 27px on one line, encounter score (parties won, up to 20) 52px on a darker shade of the same colour (`rgb(0 0 0 / 18%)` over it).
+- **As the hall (06):** when the event's hall plan (`EventSetup.hall`, default the club's eight-table hall) holds every encounter of the screen in one rectangle of its tables, the body follows the plan instead: one white frame per encounter where its tables stand, empty aisles closed up, the encounter's two teams in a band across the frame's top (home name then score, away score then name, the scores meeting in the middle), its tables below side by side or stacked; the QR takes the free place nearest the stands on the left, Hall Sky, the QR beside its words. Otherwise the rows below. The organiser's plan (`organiser/hall-plan.tsx`) draws the same tables on a mist-grey floor with the stands along the bottom.
 - **QR column:** QR on white with 12px padding, prompt, join code in a white box (width 75%, ~820, 54px, 0.12em tracking), full URL.
 
 ### Table cell

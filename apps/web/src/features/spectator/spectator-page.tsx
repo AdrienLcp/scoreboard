@@ -9,7 +9,6 @@ import {
   encounterLinesFor,
   encounterTitleOf
 } from '@/features/event/encounter-lines'
-import { EncounterScore } from '@/features/event/encounter-score'
 import { FeedMessage } from '@/features/event/feed-message'
 import { sideName } from '@/features/event/participant-names'
 import { versusText } from '@/features/event/score-text'
@@ -27,17 +26,22 @@ import { DocumentTitle } from '@/presentation/head/document-title'
 import { useTranslate } from '@/presentation/i18n/i18n-context'
 import { socketStatusKey } from '@/presentation/i18n/translation'
 
+import { EncounterSheetCard } from './encounter-sheet-card'
 import { FollowField } from './follow-field'
 import { followedFirst, involvesAnyOf } from './followed-first'
 import { MatchCard } from './match-card'
 import { whereaboutsOf } from './player-whereabouts'
+import { TournamentPanel } from './tournament-panel'
 import { useFollowedPlayers } from './use-followed-players'
 
 import './spectator-page.sass'
 
 type ProgrammeTab = 'live' | 'finished' | 'upcoming'
 
-const TABS: readonly ProgrammeTab[] = ['live', 'finished', 'upcoming']
+const PROGRAMME_TABS: readonly ProgrammeTab[] = ['live', 'finished', 'upcoming']
+
+/** The day's own view, first when it has one: the team sheets, or the tournament's pools. */
+type DayTab = 'encounters' | 'pools'
 
 const startOf = (match: MatchView): number | null =>
   match.timing.estimatedStartMs ?? match.plannedAtMs
@@ -74,6 +78,19 @@ const SpectatorProgramme: React.FC<{ eventId: EventId }> = ({ eventId }) => {
   )
   const matchesOf = { finished, live: programme.live, upcoming }
   const encounters = encounterLinesFor(snapshot)
+  const { tournament } = snapshot
+  const dayTab: DayTab | null =
+    snapshot.encounters.length > 0
+      ? 'encounters'
+      : tournament === null || tournament === undefined
+        ? null
+        : 'pools'
+  const encounterMatchesOf = (match: MatchView): MatchView[] =>
+    match.encounterId === null
+      ? []
+      : snapshot.matches.filter(
+          (candidate) => candidate.encounterId === match.encounterId
+        )
   const encounterTitleFor = (match: MatchView): string | null => {
     const line = encounters.find(
       (encounter) => encounter.id === match.encounterId
@@ -105,6 +122,7 @@ const SpectatorProgramme: React.FC<{ eventId: EventId }> = ({ eventId }) => {
 
   const card = (match: MatchView) => (
     <MatchCard
+      encounterMatches={encounterMatchesOf(match)}
       encounterTitle={encounterTitleFor(match)}
       followed={followed}
       key={match.id}
@@ -182,10 +200,13 @@ const SpectatorProgramme: React.FC<{ eventId: EventId }> = ({ eventId }) => {
         players={snapshot.players}
         whereIs={whereIs}
       />
-      <Tabs className='spectator-tabs' defaultSelectedKey='live'>
+      <Tabs className='spectator-tabs' defaultSelectedKey={dayTab ?? 'live'}>
         <div className='spectator-tab-bar'>
           <TabList aria-label={translate('spectator.title')}>
-            {TABS.map((tab) => (
+            {dayTab === null ? null : (
+              <Tab id={dayTab}>{translate(`spectator.section.${dayTab}`)}</Tab>
+            )}
+            {PROGRAMME_TABS.map((tab) => (
               <Tab id={tab} key={tab}>
                 {translate(`spectator.section.${tab}`)}
                 <span className='tab-count'>{matchesOf[tab].length}</span>
@@ -193,26 +214,55 @@ const SpectatorProgramme: React.FC<{ eventId: EventId }> = ({ eventId }) => {
             ))}
           </TabList>
         </div>
-        {TABS.map((tab) => {
+        {dayTab === 'encounters' ? (
+          <TabPanel id='encounters'>
+            {snapshot.encounters.map((encounter) => (
+              <EncounterSheetCard
+                followed={followed}
+                isOpenAtFirst={snapshot.encounters.length === 1}
+                key={encounter.id}
+                matches={snapshot.matches.filter(
+                  (match) => match.encounterId === encounter.id
+                )}
+                nowMs={nowMs}
+                onFollow={onFollow}
+                players={snapshot.players}
+                teams={{
+                  away: snapshot.teams.find(
+                    (team) => team.id === encounter.away
+                  ),
+                  home: snapshot.teams.find(
+                    (team) => team.id === encounter.home
+                  )
+                }}
+                view={snapshot.encounterViews.find(
+                  (view) => view.id === encounter.id
+                )}
+              />
+            ))}
+          </TabPanel>
+        ) : null}
+        {dayTab === 'pools' &&
+        tournament !== null &&
+        tournament !== undefined ? (
+          <TabPanel id='pools'>
+            <TournamentPanel
+              followed={followed}
+              matches={snapshot.matches}
+              nowMs={nowMs}
+              onFollow={onFollow}
+              players={snapshot.players}
+              teams={snapshot.teams}
+              tournament={tournament}
+            />
+          </TabPanel>
+        ) : null}
+        {PROGRAMME_TABS.map((tab) => {
           const split = followedFirst(matchesOf[tab], followed)
           const render = tab === 'upcoming' ? upcomingItem : card
 
           return (
             <TabPanel id={tab} key={tab}>
-              {tab === 'live' && encounters.length > 0 ? (
-                <>
-                  <h2 className='spectator-group'>
-                    {translate('display.encounters')}
-                  </h2>
-                  <div className='spectator-encounters'>
-                    {encounters.map((encounter) => (
-                      <div className='spectator-encounter' key={encounter.id}>
-                        <EncounterScore encounter={encounter} />
-                      </div>
-                    ))}
-                  </div>
-                </>
-              ) : null}
               {split.followed.length === 0 ? null : (
                 <>
                   <h2 className='spectator-group'>
@@ -223,8 +273,7 @@ const SpectatorProgramme: React.FC<{ eventId: EventId }> = ({ eventId }) => {
               )}
               {split.others.length === 0 ? null : (
                 <>
-                  {split.followed.length === 0 &&
-                  !(tab === 'live' && encounters.length > 0) ? null : (
+                  {split.followed.length === 0 ? null : (
                     <h2 className='spectator-group'>
                       {translate(
                         tab === 'live'

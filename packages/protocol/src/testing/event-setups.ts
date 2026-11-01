@@ -29,6 +29,7 @@ export const setupWith = (
   defaultFormat: BEST_OF_3,
   displays: [],
   encounters: [],
+  hall: null,
   matches,
   name: 'Club day',
   players: [CAMILLE, LOUIS],

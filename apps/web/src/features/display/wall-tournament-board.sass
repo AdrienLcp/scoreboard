@@ -1,0 +1,144 @@
+@use '../../presentation/styles/typography'
+@use './stacked'
+
+/// A tournament's row starts with its pool's table instead of an encounter's
+/// two teams: each player on his club's colour, his pool points in figures,
+/// the two who go through on a mist-grey ground.
+@layer components
+  .wall-pool
+    display: grid
+    gap: calc(var(--cu) * 0.4)
+    grid-template-rows: auto minmax(0, 1fr)
+    min-height: 0
+    min-width: 0
+
+  .wall-pool-title
+    @include typography.wall-plate
+
+    align-items: baseline
+    background: var(--ink)
+    color: var(--on-ink)
+    display: flex
+    font-size: calc(var(--cu) * 2.6)
+    gap: calc(var(--cu) * 1)
+    justify-content: space-between
+    margin: 0
+    padding: calc(var(--cu) * 0.75) calc(var(--cu) * 1)
+
+    small
+      @include typography.emphasis
+
+      font-size: calc(var(--cu) * 1.8)
+
+  .wall-standings, .wall-bracket
+    display: grid
+    gap: calc(var(--cu) * 0.25)
+    grid-auto-rows: minmax(0, 1fr)
+    list-style: none
+    margin: 0
+    min-height: 0
+    padding: 0
+
+  .wall-standing
+    align-items: center
+    display: grid
+    gap: calc(var(--cu) * 0.75)
+    grid-template-columns: calc(var(--cu) * 2.4) calc(var(--cu) * 3.6) minmax(0, 1fr) auto
+    min-height: 0
+    padding-inline: calc(var(--cu) * 0.5) calc(var(--cu) * 0.9)
+
+    &[data-qualified]
+      background: var(--surface-raised)
+
+  .wall-standing-rank
+    @include typography.wall-team-score
+
+    color: var(--ink-muted)
+    font-size: calc(var(--cu) * 2.4)
+    text-align: center
+
+  .wall-standing-mark
+    @include typography.wall-team-score
+
+    aspect-ratio: 1
+    background: var(--team)
+    color: var(--on-team)
+    display: grid
+    font-size: calc(var(--cu) * 2.2)
+    overflow: hidden
+    place-items: center
+
+    &[data-white]
+      box-shadow: inset 0 0 0 var(--stroke-bold) var(--ink)
+
+    img
+      height: 100%
+      object-fit: contain
+      width: 100%
+
+  .wall-standing-name
+    @include typography.wall-player
+
+    display: grid
+    font-size: calc(var(--cu) * 2.2)
+    min-width: 0
+
+    > *, &
+      @include typography.single-line
+
+    small
+      @include typography.emphasis
+
+      color: var(--ink-muted)
+      font-size: calc(var(--cu) * 1.6)
+
+  .wall-standing-points
+    @include typography.wall-team-score
+
+    font-size: calc(var(--cu) * 3.4)
+
+  .wall-bracket-line
+    align-content: center
+    display: grid
+    gap: calc(var(--cu) * 0.2)
+    min-height: 0
+    padding-inline: calc(var(--cu) * 0.5)
+
+  .wall-bracket-label
+    @include typography.wall-plate
+
+    color: var(--ink-muted)
+    font-size: calc(var(--cu) * 1.6)
+
+  .wall-bracket-side
+    align-items: center
+    display: grid
+    gap: calc(var(--cu) * 0.6)
+    grid-template-columns: calc(var(--cu) * 0.9) minmax(0, 1fr) auto
+
+  .wall-bracket-swatch
+    align-self: stretch
+    background: var(--team)
+    min-height: calc(var(--cu) * 2.2)
+
+  .wall-bracket-name
+    @include typography.wall-player
+    @include typography.single-line
+
+    font-size: calc(var(--cu) * 2)
+
+  .wall-bracket-games
+    @include typography.wall-team-score
+
+    font-size: calc(var(--cu) * 2.4)
+
+  @include stacked.stacked
+    .wall-board[data-tournament] .wall-row
+      .wall-pool
+        height: auto
+
+      .wall-standings
+        grid-auto-rows: auto
+
+      .wall-standing
+        min-height: calc(var(--cu) * 6)

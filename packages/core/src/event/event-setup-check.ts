@@ -2,13 +2,17 @@ import { Result } from '@adrienlcp/result'
 
 import type { SetupRefusal } from '@scoreboard/protocol/error-code'
 import type { EventSetup } from '@scoreboard/protocol/event-setup'
+import type { MatchId } from '@scoreboard/protocol/identifiers'
+
+import { isTournamentConsistent } from '../tournament/tournament-check'
 
 const hasDuplicates = (ids: readonly string[]): boolean =>
   new Set(ids).size !== ids.length
 
 /**
  * The references a setup must keep consistent: every player, team and
- * encounter a record points at exists, and every table is one the event has.
+ * encounter a record points at exists, every table is one the event has, and
+ * a tournament's pools and stage matches agree.
  */
 export const checkEventSetup = (
   setup: EventSetup
@@ -72,5 +76,37 @@ export const checkEventSetup = (
     }
   }
 
+  if (!isTournamentConsistent(setup)) {
+    return Result.failure('tournament_inconsistent')
+  }
+
   return Result.success(setup)
+}
+
+/**
+ * What a new setup may not change in the one it replaces: the format of a
+ * match already under way or over, whose score was counted against it.
+ */
+export const checkSetupChange = ({
+  next,
+  previous,
+  startedMatchIds
+}: {
+  next: EventSetup
+  previous: EventSetup
+  startedMatchIds: ReadonlySet<MatchId>
+}): Result<EventSetup, SetupRefusal> => {
+  const previousFormats = new Map(
+    previous.matches.map((match) => [match.id, JSON.stringify(match.format)])
+  )
+  const isStartedFormatChanged = next.matches.some(
+    (match) =>
+      startedMatchIds.has(match.id) &&
+      previousFormats.has(match.id) &&
+      previousFormats.get(match.id) !== JSON.stringify(match.format)
+  )
+
+  return isStartedFormatChanged
+    ? Result.failure('started_match_format_changed')
+    : Result.success(next)
 }

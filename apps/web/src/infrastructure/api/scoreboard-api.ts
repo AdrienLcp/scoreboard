@@ -1,5 +1,13 @@
 import { Result } from '@adrienlcp/result'
 
+import {
+  type ClubCode,
+  type ClubRecord,
+  type CreateClubInput,
+  type CreatedClub,
+  clubRecordSchema,
+  createdClubSchema
+} from '@scoreboard/protocol/club-record'
 import type { WallPairingCode } from '@scoreboard/protocol/identifiers'
 import {
   API_ROUTES,
@@ -121,6 +129,68 @@ export const claimWallPairing = async (
     return Result.failure(
       code === 'wrong_code' || code === 'unknown_display' ? code : 'refused'
     )
+  } catch {
+    return Result.failure('network')
+  }
+}
+
+const JSON_HEADERS = { 'Content-Type': 'application/json' }
+
+/** Opens the club's store; the answer holds the code its devices keep. */
+export const createClub = async (
+  input: CreateClubInput
+): Promise<Result<CreatedClub, ApiError>> => {
+  try {
+    const response = await fetch(API_ROUTES.clubs, {
+      body: JSON.stringify(input),
+      headers: JSON_HEADERS,
+      method: 'POST'
+    })
+    const created = createdClubSchema.safeParse(
+      response.ok ? await response.json() : null
+    )
+
+    return created.success
+      ? Result.success(created.data)
+      : Result.failure('refused')
+  } catch {
+    return Result.failure('network')
+  }
+}
+
+/** The club's teams, licensees and opponents; `refused` when no club holds the code. */
+export const readClub = async (
+  clubCode: ClubCode
+): Promise<Result<ClubRecord, ApiError>> => {
+  try {
+    const response = await fetch(fillRoute(API_ROUTES.club, { clubCode }))
+    const record = clubRecordSchema.safeParse(
+      response.ok ? await response.json() : null
+    )
+
+    return record.success
+      ? Result.success(record.data)
+      : Result.failure('refused')
+  } catch {
+    return Result.failure('network')
+  }
+}
+
+export const saveClub = async ({
+  clubCode,
+  record
+}: {
+  clubCode: ClubCode
+  record: ClubRecord
+}): Promise<Result<void, ApiError>> => {
+  try {
+    const response = await fetch(fillRoute(API_ROUTES.club, { clubCode }), {
+      body: JSON.stringify(record),
+      headers: JSON_HEADERS,
+      method: 'PUT'
+    })
+
+    return response.ok ? Result.success() : Result.failure('refused')
   } catch {
     return Result.failure('network')
   }

@@ -1,3 +1,7 @@
+import {
+  CLUB_CODE_LENGTH,
+  type ClubCode
+} from '@scoreboard/protocol/club-record'
 import type { TableAccess } from '@scoreboard/protocol/event-snapshot'
 import {
   ACCESS_CODE_ALPHABET,
@@ -25,6 +29,9 @@ export const newEventId = (drawCode: DrawCode): EventId =>
 
 export const newOrganiserCode = (drawCode: DrawCode): OrganiserCode =>
   drawCode(ACCESS_CODE_ALPHABET, ORGANISER_CODE_LENGTH)
+
+export const newClubCode = (drawCode: DrawCode): ClubCode =>
+  drawCode(ACCESS_CODE_ALPHABET, CLUB_CODE_LENGTH)
 
 const newUmpireCode = (drawCode: DrawCode): UmpireCode =>
   drawCode(ACCESS_CODE_ALPHABET, UMPIRE_CODE_LENGTH)

@@ -1,3 +1,4 @@
+import type { DirectoryClubId } from '@scoreboard/protocol/club-record'
 import type {
   DisplayId,
   EncounterId,
@@ -21,3 +22,5 @@ export const newDisplayId = (): DisplayId => newUuid()
 
 /** Minted by the device that scores, so the server recognises a resent event. */
 export const newScoringEventId = (): ScoringEventId => newUuid()
+
+export const newDirectoryClubId = (): DirectoryClubId => newUuid()

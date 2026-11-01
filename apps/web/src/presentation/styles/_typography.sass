@@ -165,3 +165,70 @@
   overflow: hidden
   text-overflow: ellipsis
   white-space: nowrap
+
+/// The club's name across the top of the wall.
+@mixin wall-club
+  font-stretch: 78%
+  font-weight: 800
+  letter-spacing: var(--tracking-display)
+  line-height: 1
+
+/// "Table 4" on its ink plate above a drawn table.
+@mixin wall-plate
+  font-stretch: 78%
+  font-weight: 700
+  line-height: 1
+
+/// A team's name on its colour in the wall's encounter block.
+@mixin wall-team
+  font-stretch: 82%
+  font-weight: 700
+  line-height: 1.05
+
+/// An encounter's parties won beside the team's name.
+@mixin wall-team-score
+  @include figure
+
+  font-stretch: 66%
+  font-weight: 800
+
+/// A player's name in his chip at a corner of the drawn table.
+@mixin wall-player
+  font-stretch: 76%
+  font-weight: 700
+  line-height: 1.1
+
+/// A player's FFTT ranking points after his name.
+@mixin wall-points
+  @include figure
+
+  font-stretch: 70%
+  font-weight: 600
+
+/// The point score in white on a drawn table's blue.
+@mixin wall-score
+  @include figure
+
+  font-stretch: 62%
+  font-weight: 800
+  letter-spacing: -0.02em
+  line-height: 0.86
+
+/// A state pill's words above a drawn table.
+@mixin wall-pill
+  font-weight: 700
+  line-height: 1
+
+/// A free table's card, and the seconds left in a time-out.
+@mixin wall-notice
+  font-stretch: 80%
+  font-weight: 800
+  line-height: 1.05
+
+/// The spectators' join code on the wall, read from across the hall.
+@mixin wall-code
+  @include figure
+
+  font-stretch: 75%
+  font-weight: 800
+  letter-spacing: 0.12em

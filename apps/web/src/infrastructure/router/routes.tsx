@@ -9,6 +9,9 @@ import { ErrorScreen } from './route-error'
 type RoutedPath = (typeof paths)[keyof typeof paths]
 
 const pageFor = {
+  [paths.club]: async () => ({
+    Component: (await import('@/features/club/club-page')).ClubPage
+  }),
   [paths.display]: async () => ({
     Component: (await import('@/features/display/display-page')).DisplayPage
   }),

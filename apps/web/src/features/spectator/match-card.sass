@@ -97,6 +97,10 @@
       color: var(--live-ink)
       font-size: var(--icon-xs)
 
+  .match-card-name[data-pending]
+    color: var(--ink-muted)
+    font-size: var(--text-m)
+
   .match-card-games
     @include typography.figure-secondary
 
@@ -120,56 +124,5 @@
     font-size: var(--text-xs)
     text-align: end
 
-  .match-card-detail
-    border-top: var(--hairline)
-    margin-inline: var(--space-m)
-    padding: var(--space-s) 0 var(--space-m)
-
-  .game-table
-    border-collapse: collapse
-    width: 100%
-
-    th, td
-      padding: var(--space-2xs) var(--space-3xs)
-      text-align: center
-
-    thead th
-      @include typography.plain
-
-      color: var(--ink-muted)
-      font-size: var(--text-2xs)
-
-    thead th:first-child, tbody th
-      text-align: start
-
-    tbody th
-      @include typography.single-line
-      @include typography.emphasis
-
-      font-size: var(--text-s)
-      max-width: 9em
-
-    td
-      @include typography.figure-secondary
-
-      color: var(--ink-muted)
-      font-size: var(--text-xl)
-
-      &[data-won]
-        @include typography.strong
-
-        color: var(--ink)
-
-    [data-current]
-      background: var(--surface-raised)
-
-  .match-card-meta
-    color: var(--ink-muted)
-    font-size: var(--text-xs)
-    margin-top: var(--space-xs)
-
-  .match-card-follow
-    display: flex
-    flex-wrap: wrap
-    gap: var(--space-xs)
-    margin-top: var(--space-s)
+  .match-card[data-scheduled] .match-card-row
+    grid-template-columns: 1rem minmax(0, 1fr)

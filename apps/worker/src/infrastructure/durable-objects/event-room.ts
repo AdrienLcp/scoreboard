@@ -148,9 +148,14 @@ export class EventRoom extends DurableObject<Env> {
     }
   }
 
-  /** Every change pushes the erasure back: the retention runs from the last one. */
+  /** Every change pushes the erasure back: the retention runs from the last one, or from the event's start. */
   private async postponeErasure(): Promise<void> {
-    await this.ctx.storage.setAlarm(eventErasureAtMs(nowMs()))
+    await this.ctx.storage.setAlarm(
+      eventErasureAtMs({
+        changedAtMs: nowMs(),
+        startsAtMs: this.store.readSetup()?.startsAtMs ?? null
+      })
+    )
   }
 
   /** Events opened before the retention existed get theirs the first time they wake. */

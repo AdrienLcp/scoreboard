@@ -8,9 +8,12 @@ import { LOUIS } from '@scoreboard/protocol/testing/players'
 
 import { parsePeriodsText, periodsText } from './periods-text'
 import {
+  addEncounter,
   changeBestOf,
   changeTableCount,
+  encounterTablesOf,
   removePlayer,
+  seatEncounterOnBlock,
   tableRange
 } from './setup-edits'
 
@@ -76,5 +79,52 @@ describe('changeBestOf', () => {
       7,
       second.format.bestOf
     ])
+  })
+})
+
+describe('seatEncounterOnBlock', () => {
+  const encounterOf = () => ({
+    away: randomUUID(),
+    formatId: 'fftt-6-players-20-games' as const,
+    home: randomUUID(),
+    id: randomUUID(),
+    matchPoints: 'one-per-win' as const
+  })
+  const first = encounterOf()
+  const second = encounterOf()
+  const day = [first, second].reduce(
+    (current, encounter) =>
+      addEncounter({
+        encounter,
+        lineups: { away: {}, home: {} },
+        newMatchId: randomUUID,
+        setup: current
+      }),
+    setupWith([], { tableCount: 8 })
+  )
+
+  it('[organiser] seats odd lines on the first table of the block, even lines on the second', () => {
+    const moved = seatEncounterOnBlock({
+      block: [5, 6],
+      encounterId: first.id,
+      setup: day
+    })
+    const tables = moved.matches
+      .filter((match) => match.encounterId === first.id)
+      .map((match) => match.table)
+
+    expect(tables.slice(0, 2)).toEqual([5, 6])
+    expect(encounterTablesOf(moved, second.id)).toEqual([3, 4])
+  })
+
+  it('[organiser] swaps two encounters when one goes on the block of the other', () => {
+    const moved = seatEncounterOnBlock({
+      block: [3, 4],
+      encounterId: first.id,
+      setup: day
+    })
+
+    expect(encounterTablesOf(moved, first.id)).toEqual([3, 4])
+    expect(encounterTablesOf(moved, second.id)).toEqual([1, 2])
   })
 })

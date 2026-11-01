@@ -7,7 +7,7 @@ import { matchOn, setupWith } from '@scoreboard/protocol/testing/event-setups'
 import { CAMILLE } from '@scoreboard/protocol/testing/players'
 import { stampedAt, started } from '@scoreboard/protocol/testing/scoring-events'
 
-import { checkEventSetup } from './event-setup-check'
+import { checkEventSetup, checkSetupChange } from './event-setup-check'
 import { publicSnapshotFor, withStartsEstimatedAt } from './public-snapshot'
 import { matchOnTable } from './table-queue'
 
@@ -66,6 +66,31 @@ describe('checkEventSetup', () => {
     ['an id used twice', onTwoTables([reused, reused]), 'duplicate_id']
   ])('[setup] refuses %s', (_, setup, error) => {
     expect(checkEventSetup(setup)).toEqual({ error, status: 'failure' })
+  })
+})
+
+describe('checkSetupChange', () => {
+  const played = matchOn(1)
+  const previous = onTwoTables([played])
+  const longer = onTwoTables([
+    { ...played, format: { ...played.format, bestOf: 5 } }
+  ])
+
+  it('[setup] refuses a new number of games on a match already started', () => {
+    expect(
+      checkSetupChange({
+        next: longer,
+        previous,
+        startedMatchIds: new Set([played.id])
+      })
+    ).toEqual({ error: 'started_match_format_changed', status: 'failure' })
+  })
+
+  it('[setup] lets a match not started yet change its number of games', () => {
+    expect(
+      checkSetupChange({ next: longer, previous, startedMatchIds: new Set() })
+        .status
+    ).toBe('success')
   })
 })
 

@@ -1,0 +1,55 @@
+/// The drawing is 2.7 times as wide as it is tall, never stretched: the box
+/// around it shows floor on both sides. Its own modelled depth (front edge,
+/// legs, the floor's darker lower part) is the one exception to flat chrome.
+@layer components
+  .drawn-table
+    --table-width: min(100cqw, 270cqh)
+    --table-side: max(0rem, (100cqw - var(--table-width)) / 2)
+
+    background: linear-gradient(to bottom, var(--surface-raised) 0 62%, var(--floor-shade) 62% 100%)
+    container-type: size
+    min-height: 0
+    min-width: 0
+    overflow: hidden
+    position: relative
+    print-color-adjust: exact
+
+  .drawn-table-art
+    height: 100%
+    inset-block: 0
+    left: 50%
+    position: absolute
+    translate: -50% 0
+    width: var(--table-width)
+
+  .drawn-table-legs
+    stroke: var(--ink)
+    stroke-width: 9
+
+  .drawn-table-surface
+    fill: var(--table)
+    transition: fill var(--transition-slow) var(--ease-move)
+
+    .drawn-table[data-idle] &
+      fill: var(--table-idle)
+
+  .drawn-table-front
+    fill: var(--table-dark)
+
+  .drawn-table-edge
+    fill: none
+    stroke: var(--on-ink)
+    stroke-width: 5
+
+  .drawn-table-centre
+    stroke: var(--on-ink)
+    stroke-opacity: 0.5
+    stroke-width: 2
+
+  .drawn-table-net
+    fill: var(--ink)
+    opacity: 0.85
+
+  .drawn-table-threads
+    stroke: var(--edge)
+    stroke-width: 2

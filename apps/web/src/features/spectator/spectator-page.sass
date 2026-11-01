@@ -49,6 +49,20 @@
     top: var(--safe-area-top)
     z-index: 2
 
+  .spectator-tab-bar
+    .tab-list
+      grid-auto-columns: minmax(max-content, 1fr)
+
+    .tab
+      gap: var(--space-2xs)
+      padding-inline: var(--space-2xs)
+      white-space: nowrap
+
+  @container page (width < 26rem)
+    .spectator-tab-bar
+      .tab, .tab-count
+        font-size: var(--text-s)
+
   .spectator-group
     @include typography.label
 
@@ -56,24 +70,6 @@
 
   .tab-panel > .spectator-group:first-child
     margin-top: var(--space-2xs)
-
-  .spectator-encounters
-    display: flex
-    gap: var(--space-xs)
-    margin-inline: calc(-1 * var(--gutter-left)) calc(-1 * var(--gutter-right))
-    overflow-x: auto
-    padding: 0 var(--gutter-right) var(--space-2xs) var(--gutter-left)
-    scroll-padding-inline: var(--gutter-left) var(--gutter-right)
-    scroll-snap-type: x mandatory
-
-  .spectator-encounter
-    background: var(--surface)
-    flex: 0 0 min(80%, 18.75rem)
-    padding: var(--space-s) var(--space-m)
-    scroll-snap-align: start
-
-    &:only-child
-      flex-basis: 100%
 
   .upcoming-item
     align-items: center

@@ -40,14 +40,18 @@ import {
   socketStatusKey
 } from '@/presentation/i18n/translation'
 
+import { ClubEncounterForm } from './club-encounter-form'
 import { DisplaysEditor } from './displays-editor'
 import { EncounterForm } from './encounter-form'
 import { EventDeletion } from './event-deletion'
 import { EventSettingsForm } from './event-settings-form'
+import { HallPlanBoard } from './hall-plan'
 import { LiveTables } from './live-tables'
 import { MatchesEditor } from './matches-editor'
+import { PlayerForfeit } from './player-forfeit'
 import { PlayersEditor } from './players-editor'
 import { TableAccesses } from './table-accesses'
+import { TournamentEditor } from './tournament-editor'
 import { useOrganiserConsole } from './use-organiser-console'
 import { WallPairingForm } from './wall-pairing-form'
 
@@ -55,17 +59,21 @@ import './organiser-page.sass'
 
 type OrganiserTab =
   | 'live'
+  | 'plan'
   | 'matches'
   | 'players'
   | 'encounters'
+  | 'tournament'
   | 'tables'
   | 'settings'
 
 const TABS: readonly OrganiserTab[] = [
   'live',
+  'plan',
   'matches',
   'players',
   'encounters',
+  'tournament',
   'tables',
   'settings'
 ]
@@ -205,6 +213,15 @@ const OrganiserConsole: React.FC<{ code: OrganiserCode; eventId: EventId }> = ({
         <TabPanel id='live'>
           <LiveTables event={event} onRecord={organiser.record} />
         </TabPanel>
+        <TabPanel id='plan'>
+          <HallPlanBoard
+            accesses={snapshot.tableAccesses}
+            event={event}
+            eventId={eventId}
+            onSave={organiser.saveSetup}
+            setup={setup}
+          />
+        </TabPanel>
         <TabPanel id='matches'>
           <MatchesEditor
             matches={event.matches}
@@ -227,12 +244,26 @@ const OrganiserConsole: React.FC<{ code: OrganiserCode; eventId: EventId }> = ({
                 {encounterLinesFor(event).map((encounter) => (
                   <li key={encounter.id}>
                     <EncounterScore encounter={encounter} />
+                    <PlayerForfeit
+                      encounterId={encounter.id}
+                      matches={event.matches}
+                      onRecord={organiser.record}
+                      setup={setup}
+                    />
                   </li>
                 ))}
               </ul>
             )}
+            <ClubEncounterForm onSave={organiser.saveSetup} setup={setup} />
             <EncounterForm onSave={organiser.saveSetup} setup={setup} />
           </div>
+        </TabPanel>
+        <TabPanel id='tournament'>
+          <TournamentEditor
+            matches={event.matches}
+            onSave={organiser.saveSetup}
+            setup={setup}
+          />
         </TabPanel>
         <TabPanel id='tables'>
           <div className='organiser-stack'>

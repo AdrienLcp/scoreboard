@@ -5,6 +5,10 @@ import { afterAll, beforeAll, beforeEach, describe, expect, it } from 'vitest'
 import { createTestHarness } from 'wrangler'
 
 import {
+  clubRecordSchema,
+  createdClubSchema
+} from '@scoreboard/protocol/club-record'
+import {
   API_ROUTES,
   apiErrorResponseSchema,
   createdEventSchema,
@@ -215,5 +219,57 @@ describe('the wall pairing', () => {
 
     expect(claimed.status).toBe(404)
     expect((await statusOf('ABCDEF')).status).toBe(404)
+  })
+})
+
+describe('the club store', () => {
+  const json = { 'Content-Type': 'application/json' }
+
+  const openClub = async () =>
+    createdClubSchema.parse(
+      await (
+        await server.fetch(API_ROUTES.clubs, {
+          body: JSON.stringify({ name: 'PPC Angles' }),
+          headers: json,
+          method: 'POST'
+        })
+      ).json()
+    )
+
+  const readClub = (clubCode: string) =>
+    server.fetch(fillRoute(API_ROUTES.club, { clubCode }))
+
+  it('opens a club under its code and gives it back on any device', async () => {
+    const { clubCode } = await openClub()
+    const record = clubRecordSchema.parse(
+      await (await readClub(clubCode)).json()
+    )
+
+    expect(record.own.name).toBe('PPC Angles')
+    expect(record.own.teams).toEqual([])
+  })
+
+  it('keeps the record the club saves', async () => {
+    const { clubCode } = await openClub()
+    const record = clubRecordSchema.parse(
+      await (await readClub(clubCode)).json()
+    )
+    const renamed = { ...record, own: { ...record.own, number: '12850078' } }
+    const saved = await server.fetch(fillRoute(API_ROUTES.club, { clubCode }), {
+      body: JSON.stringify(renamed),
+      headers: json,
+      method: 'PUT'
+    })
+
+    expect(saved.status).toBe(204)
+    expect(
+      clubRecordSchema.parse(
+        await (await readClub(clubCode.toLowerCase())).json()
+      ).own.number
+    ).toBe('12850078')
+  })
+
+  it('answers 404 on a code no club holds', async () => {
+    expect((await readClub('ABCDEFGHJKLM')).status).toBe(404)
   })
 })

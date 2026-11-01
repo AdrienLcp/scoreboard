@@ -26,6 +26,13 @@ type DisplayHeaderProps = {
   eventName: string
   /** This TV was paired from `/wall`: it offers to be paired again. */
   isPairedWall: boolean
+  /**
+   * The club's wall: its logo before its name, no date or clock, nothing
+   * but the club and the day.
+   */
+  isWall?: boolean
+  /** The club's logo, shown on the wall. */
+  logoUrl?: string | null
   nowMs: InstantMs
   owner: string
   page: PageIndicator | null
@@ -38,6 +45,8 @@ type DisplayHeaderProps = {
 export const DisplayHeader: React.FC<DisplayHeaderProps> = ({
   eventName,
   isPairedWall,
+  isWall = false,
+  logoUrl = null,
   nowMs,
   owner,
   page,
@@ -48,7 +57,10 @@ export const DisplayHeader: React.FC<DisplayHeaderProps> = ({
   const isPaged = page !== null && page.count > 1
 
   return (
-    <header className='display-header'>
+    <header className='display-header' data-wall={isWall || undefined}>
+      {isWall && logoUrl !== null ? (
+        <img alt='' className='display-logo' src={logoUrl} />
+      ) : null}
       <div className='display-owner'>
         <h1>{owner}</h1>
         <p>{eventName}</p>
@@ -89,12 +101,16 @@ export const DisplayHeader: React.FC<DisplayHeaderProps> = ({
             {translate(socketStatusKey(status))}
           </p>
         )}
-        <p className='display-date'>
-          {translate('display.date', { at: toDate(nowMs) })}
-        </p>
-        <time className='display-clock'>
-          {translate('display.clock', { at: toDate(nowMs) })}
-        </time>
+        {isWall ? null : (
+          <>
+            <p className='display-date'>
+              {translate('display.date', { at: toDate(nowMs) })}
+            </p>
+            <time className='display-clock'>
+              {translate('display.clock', { at: toDate(nowMs) })}
+            </time>
+          </>
+        )}
         {isPairedWall ? (
           <Link
             aria-label={translate('display.pairAgain')}

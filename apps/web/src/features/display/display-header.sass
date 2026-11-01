@@ -97,3 +97,42 @@
     &[data-hovered], &[data-focus-visible]
       color: var(--ink)
       opacity: 1
+
+  /// The club's wall: a white strip with the club's logo and name, the
+  /// seven-stripe band under it.
+  .display-header[data-wall]
+    --band-height: calc(var(--cu) * 1.95)
+    --gutter-left: max(calc(var(--cu) * 3.3), var(--safe-area-left))
+    --gutter-right: max(calc(var(--cu) * 3.3), var(--safe-area-right))
+
+    background: var(--surface)
+    gap: calc(var(--cu) * 2)
+    min-height: calc(var(--cu) * 9.75)
+    padding: 0 var(--gutter-right) var(--band-height) var(--gutter-left)
+    position: relative
+
+    &::after
+      background: var(--band)
+      bottom: 0
+      content: ''
+      height: var(--band-height)
+      inset-inline: 0
+      position: absolute
+
+    .display-owner
+      align-items: center
+      gap: calc(var(--cu) * 2)
+
+      h1
+        @include typography.wall-club
+
+        font-size: calc(var(--cu) * 4.25)
+
+      p
+        font-size: calc(var(--cu) * 2.4)
+
+  .display-logo
+    flex: none
+    height: calc(var(--cu) * 6.7)
+    object-fit: contain
+    width: calc(var(--cu) * 6.7)
