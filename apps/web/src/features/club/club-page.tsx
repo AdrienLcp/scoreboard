@@ -30,6 +30,7 @@ import { Input, Label, TextField } from '@/presentation/components/text-field'
 import { DocumentTitle } from '@/presentation/head/document-title'
 import { useTranslate } from '@/presentation/i18n/i18n-context'
 
+import { ChampionshipSection } from './championship-section'
 import {
   addOpponentClub,
   addTeam,
@@ -347,6 +348,7 @@ export const ClubPage: React.FC = () => {
               record={state.record}
             />
           </section>
+          <ChampionshipSection onChange={club.change} record={state.record} />
           <section className='club-hall-section'>
             <h2 className='club-heading'>{translate('club.hall.title')}</h2>
             {state.record.hall === null ? null : (

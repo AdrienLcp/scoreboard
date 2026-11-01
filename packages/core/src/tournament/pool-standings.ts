@@ -3,6 +3,7 @@ import type { PlayerId } from '@scoreboard/protocol/identifiers'
 import type { Pool, Tournament } from '@scoreboard/protocol/tournament'
 
 import { opponentOf } from '../match/opponent'
+import { wonLostRatio } from '../ranking/won-lost-ratio'
 
 /** A player's line in his pool's table. */
 export type PoolStanding = {
@@ -76,10 +77,6 @@ const tallyOf = (playerId: PlayerId, matches: readonly MatchView[]): Tally =>
     }
   }, EMPTY_TALLY)
 
-/** won / lost, where nothing lost beats any ratio and nothing at all counts as even. */
-const ratio = (won: number, lost: number): number =>
-  lost === 0 ? (won === 0 ? 1 : Number.POSITIVE_INFINITY) : won / lost
-
 /** A player in the order the tie-break gives, with the level group a draw had to place him in. */
 type Ordered = { drawnWith: readonly PlayerId[] | null; playerId: PlayerId }
 
@@ -135,8 +132,8 @@ const breakTie = ({
     const tally = tallyOf(playerId, between)
 
     return [
-      ratio(tally.gamesWon, tally.gamesLost),
-      ratio(tally.pointsWon, tally.pointsLost)
+      wonLostRatio(tally.gamesWon, tally.gamesLost),
+      wonLostRatio(tally.pointsWon, tally.pointsLost)
     ]
   }
   const groups = new Map<

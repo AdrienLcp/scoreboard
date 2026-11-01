@@ -1,3 +1,4 @@
+import type { ChampionshipPoolId } from '@scoreboard/protocol/championship'
 import type { DirectoryClubId } from '@scoreboard/protocol/club-record'
 import type {
   DisplayId,
@@ -24,3 +25,5 @@ export const newDisplayId = (): DisplayId => newUuid()
 export const newScoringEventId = (): ScoringEventId => newUuid()
 
 export const newDirectoryClubId = (): DirectoryClubId => newUuid()
+
+export const newChampionshipPoolId = (): ChampionshipPoolId => newUuid()

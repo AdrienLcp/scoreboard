@@ -54,7 +54,8 @@ const recordWith = (
   hall: null,
   opponentColour: '#FFFFFF',
   opponents: [opponent],
-  own
+  own,
+  pools: []
 })
 
 describe('club record edits', () => {

@@ -57,9 +57,11 @@ import { LiveTables } from './live-tables'
 import { MatchesEditor } from './matches-editor'
 import { PlayerForfeit } from './player-forfeit'
 import { PlayersEditor } from './players-editor'
+import { RoundEncounters } from './round-encounters'
 import { TableAccesses } from './table-accesses'
 import { TournamentEditor } from './tournament-editor'
 import { useOrganiserConsole } from './use-organiser-console'
+import { useSheetResults } from './use-sheet-results'
 import { WallPairingForm } from './wall-pairing-form'
 
 import './organiser-page.sass'
@@ -101,6 +103,7 @@ const OrganiserConsole: React.FC<{ code: OrganiserCode; eventId: EventId }> = ({
   const organiser = useOrganiserConsole({ code, eventId })
   const { snapshot } = organiser
   const { snapshot: event } = useCurrentSnapshot(snapshot?.event ?? null)
+  useSheetResults({ event, eventId })
   const isGone = isEventGone(organiser.error)
   const scannedPairingCode = usePairingSearchParam()
   const eventName = snapshot?.setup.name ?? null
@@ -254,6 +257,11 @@ const OrganiserConsole: React.FC<{ code: OrganiserCode; eventId: EventId }> = ({
                 ))}
               </ul>
             )}
+            <RoundEncounters
+              eventId={eventId}
+              onSave={organiser.saveSetup}
+              setup={setup}
+            />
             <ClubEncounterForm onSave={organiser.saveSetup} setup={setup} />
             <EncounterForm onSave={organiser.saveSetup} setup={setup} />
           </div>

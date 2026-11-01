@@ -10,6 +10,93 @@ export const FR_DICTIONARY = defineDictionary({
     name: 'Scoreboard'
   },
   club: {
+    championship: {
+      composer: {
+        dates: 'Dates des journées',
+        datesHelp:
+          'Une date posée place les journées suivantes deux semaines plus tard ; chacune se corrige ensuite.',
+        missingClub:
+          'Une équipe manque ? Ajoutez son club et l’équipe dans Clubs adverses, plus bas.',
+        noNumber: 'Pas encore connu',
+        number: 'Numéro de poule',
+        outcome: {
+          draw: 'Nul',
+          forfeit: 'Forfait',
+          loss: 'Défaite',
+          win: 'Victoire'
+        },
+        phase: 'Phase',
+        pick: 'À choisir',
+        points: 'Points au classement',
+        pointsChoice: defineTranslation('{count:plural}', {
+          plural: { count: { one: '{?} point', other: '{?} points' } }
+        }),
+        remove: 'Retirer cette poule',
+        removeConfirm: 'Retirer la poule et ses résultats',
+        size: 'Nombre d’équipes',
+        sizeChoice: '{count} équipes',
+        summary: '{teams} équipes · {rounds} journées',
+        teamNumber: 'N° {number}',
+        teams: 'Équipes, dans l’ordre du calendrier',
+        title: 'Poule et calendrier de la fédération'
+      },
+      earlier: defineTranslation('{count:plural}', {
+        plural: {
+          count: { one: 'Phase précédente', other: '{?} phases précédentes' }
+        }
+      }),
+      help: 'Recopiez une fois la poule et le calendrier de la fédération : le classement se calcule tout seul, et chaque dimanche la console prépare les rencontres de la journée.',
+      newPool: 'Nouvelle poule',
+      newPoolTeam: 'Pour l’équipe',
+      next: 'Prochaine journée : J{number}',
+      noOwnTeam: 'Aucune équipe du club',
+      noTeam: 'Ajoutez d’abord une équipe du club.',
+      phase: 'Phase {phase} · {season}–{nextSeason}',
+      points: defineTranslation('{count:plural}', {
+        plural: { count: { one: '{?} pt', other: '{?} pts' } }
+      }),
+      poolNumber: 'Poule {number}',
+      rank: defineTranslation('{rank:plural}', {
+        plural: { rank: { one: '{?}er', other: '{?}e' } }
+      }),
+      rounds: {
+        away: 'À l’extérieur',
+        date: defineTranslation('{at:date}', {
+          date: { at: { day: 'numeric', month: 'short', weekday: 'short' } }
+        }),
+        followed: 'Le score arrivera de la feuille de la journée.',
+        forfeit: 'Forfait {name}',
+        forfeitOurs: 'Forfait',
+        forfeitTheirs: 'Forfait adverse',
+        fromSheet: 'Score venu de la feuille de la journée.',
+        home: 'À domicile',
+        invert: 'Inverser : {name} reçoit',
+        long: 'Journée {number}',
+        notPlayed: 'Pas encore joué',
+        rest: 'Exempt',
+        short: 'J{number}',
+        title: 'Calendrier',
+        undated: 'Date à venir'
+      },
+      standings: {
+        drawn: 'Nuls',
+        drawnShort: 'N',
+        lost: 'Défaites',
+        lostShort: 'D',
+        played: 'Joués',
+        playedShort: 'J',
+        points: 'Points',
+        pointsShort: 'Pts',
+        rank: 'Classement',
+        rankShort: 'Clt',
+        team: 'Équipe',
+        title: 'Classement',
+        won: 'Victoires',
+        wonShort: 'V'
+      },
+      title: 'Championnat',
+      unknownTeam: 'Équipe {number}'
+    },
     code: 'Code du club',
     forget: 'Changer de club',
     hall: {
@@ -588,6 +675,24 @@ export const FR_DICTIONARY = defineDictionary({
       team: 'Équipe'
     },
     remove: 'Retirer',
+    round: {
+      add: 'Ajouter',
+      addAll: defineTranslation('{count:plural}', {
+        plural: {
+          count: {
+            one: 'Ajouter la rencontre à domicile',
+            other: 'Ajouter les {?} rencontres à domicile'
+          }
+        }
+      }),
+      added: 'Ajoutée',
+      away: 'À l’extérieur, chez',
+      help: 'Chaque équipe du club arrive avec sa dernière composition, sur ses tables.',
+      home: 'À domicile, contre',
+      title: 'Journée {number} du championnat',
+      titleMixed: 'Rencontres du championnat',
+      unknown: 'Adversaire à choisir dans Mon club'
+    },
     save: 'Enregistrer',
     settings: {
       club: 'Nom du club',

@@ -1,0 +1,19 @@
+@use '../../presentation/styles/typography'
+
+/// A team's pool number on its colour; a white team keeps a silver edge, a
+/// number nobody holds yet stays grey.
+@layer components
+  .pool-team-mark
+    @include typography.figure
+
+    background: var(--surface-raised)
+    color: var(--ink-dim)
+    display: inline-grid
+    flex: none
+    font-size: var(--text-m)
+    height: 2.25rem
+    place-items: center
+    width: 2.25rem
+
+    &[data-white]
+      box-shadow: var(--inset-hairline)

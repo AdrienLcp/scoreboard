@@ -35,7 +35,8 @@ const recordShowing = ({
   hall: null,
   opponentColour: DEFAULT_OPPONENT_COLOUR,
   opponents: [clubShowing(opponentLogoId)],
-  own: clubShowing(ownLogoId)
+  own: clubShowing(ownLogoId),
+  pools: []
 })
 
 const droppedOf = (record: ClubRecord, stored: StoredLogoEntry[]) =>

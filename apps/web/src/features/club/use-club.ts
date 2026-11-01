@@ -1,5 +1,5 @@
 import { Result } from '@adrienlcp/result'
-import { useCallback, useEffect, useRef, useState } from 'react'
+import { useEffect, useState, useSyncExternalStore } from 'react'
 
 import type {
   ClubCode,
@@ -46,50 +46,116 @@ const storedCode = (): ClubCode | null => {
 }
 
 /**
+ * One club per page, whatever reads it: the console's encounter forms and its
+ * results write-back edit the same record, so no save carries a stale one.
+ */
+let clubState: ClubState = { status: 'none' }
+let openReaders = 0
+const listeners = new Set<() => void>()
+
+const setClubState = (next: ClubState) => {
+  clubState = next
+
+  for (const listener of listeners) {
+    listener()
+  }
+}
+
+const subscribe = (listener: () => void) => {
+  listeners.add(listener)
+
+  return () => {
+    listeners.delete(listener)
+  }
+}
+
+const readClubState = (): ClubState => clubState
+
+const load = async (code: ClubCode) => {
+  setClubState({ status: 'loading' })
+  const read = await readClub(code)
+
+  if (read.status === 'success') {
+    writeClubCode(code)
+    setClubState({
+      code,
+      isUnsaved: false,
+      previous: null,
+      record: read.data,
+      status: 'ready'
+    })
+
+    return
+  }
+
+  setClubState({
+    code,
+    status: read.error === 'network' ? 'offline' : 'missing'
+  })
+}
+
+const commit = (
+  code: ClubCode,
+  record: ClubRecord,
+  previous: ClubRecord | null
+) => {
+  setClubState({
+    code,
+    isUnsaved: false,
+    previous,
+    record,
+    status: 'ready'
+  })
+  void saveClub({ clubCode: code, record }).then((saved) => {
+    if (
+      saved.status === 'failure' &&
+      clubState.status === 'ready' &&
+      clubState.record === record
+    ) {
+      setClubState({ ...clubState, isUnsaved: true })
+    }
+  })
+}
+
+/** Applies a change to the record as it stands now, even from an answer that took its time. */
+const edit = (apply: (record: ClubRecord) => ClubRecord) => {
+  if (clubState.status === 'ready') {
+    const next = apply(clubState.record)
+
+    if (next !== clubState.record) {
+      commit(clubState.code, next, clubState.record)
+    }
+  }
+}
+
+/**
  * The club this device prepares days for: read from the server by the code
- * the device keeps (or the one another device's QR code just handed over),
- * every change saved whole at once, the last one undone in one tap.
+ * the device keeps (or the one another device's QR code just handed over)
+ * when a page first needs it, every change saved whole at once, the last one
+ * undone in one tap.
  */
 export const useClub = (scannedCode: ClubCode | null = null) => {
-  const [firstCode] = useState(() => scannedCode ?? storedCode())
-  const [state, setState] = useState<ClubState>(() =>
-    firstCode === null ? { status: 'none' } : { status: 'loading' }
-  )
-  /** What an answer arriving later edits: the record as it is then, not as it was when the request left. */
-  const latest = useRef(state)
+  const state = useSyncExternalStore(subscribe, readClubState)
+  const [opening] = useState(() => ({
+    code: scannedCode ?? storedCode(),
+    isScanned: scannedCode !== null
+  }))
 
   useEffect(() => {
-    latest.current = state
-  }, [state])
+    openReaders += 1
 
-  const load = useCallback(async (code: ClubCode) => {
-    setState({ status: 'loading' })
-    const read = await readClub(code)
-
-    if (read.status === 'success') {
-      writeClubCode(code)
-      setState({
-        code,
-        isUnsaved: false,
-        previous: null,
-        record: read.data,
-        status: 'ready'
-      })
-
-      return
+    if (openReaders === 1 || opening.isScanned) {
+      if (opening.code === null) {
+        setClubState({ status: 'none' })
+      } else {
+        void load(opening.code)
+      }
     }
 
-    setState({
-      code,
-      status: read.error === 'network' ? 'offline' : 'missing'
-    })
-  }, [])
-
-  useEffect(() => {
-    if (firstCode !== null) {
-      void load(firstCode)
+    return () => {
+      openReaders -= 1
     }
-  }, [firstCode, load])
+  }, [opening])
 
   const create = async (name: string): Promise<boolean> => {
     const created = await createClub({ name })
@@ -103,48 +169,11 @@ export const useClub = (scannedCode: ClubCode | null = null) => {
     return true
   }
 
-  const commit = (
-    code: ClubCode,
-    record: ClubRecord,
-    previous: ClubRecord | null
-  ) => {
-    const next: ClubState = {
-      code,
-      isUnsaved: false,
-      previous,
-      record,
-      status: 'ready'
-    }
-
-    latest.current = next
-    setState(next)
-    void saveClub({ clubCode: code, record }).then((saved) => {
-      if (saved.status === 'failure') {
-        setState((current) =>
-          current.status === 'ready' && current.record === record
-            ? { ...current, isUnsaved: true }
-            : current
-        )
-      }
-    })
-  }
-
-  /** Applies a change to the record as it stands now, even from an answer that took its time. */
-  const edit = (apply: (record: ClubRecord) => ClubRecord) => {
-    const current = latest.current
-
-    if (current.status === 'ready') {
-      commit(current.code, apply(current.record), current.record)
-    }
-  }
-
   const change = (record: ClubRecord) => edit(() => record)
 
   const undo = () => {
-    const current = latest.current
-
-    if (current.status === 'ready' && current.previous !== null) {
-      commit(current.code, current.previous, null)
+    if (clubState.status === 'ready' && clubState.previous !== null) {
+      commit(clubState.code, clubState.previous, null)
     }
   }
 
@@ -155,7 +184,7 @@ export const useClub = (scannedCode: ClubCode | null = null) => {
     clubId: DirectoryClubId
     file: Blob
   }): Promise<Result<void, LogoUploadError>> => {
-    const current = latest.current
+    const current = clubState
 
     if (current.status !== 'ready') {
       return Result.failure('offline')
@@ -187,7 +216,7 @@ export const useClub = (scannedCode: ClubCode | null = null) => {
 
   const forget = () => {
     forgetClubCode()
-    setState({ status: 'none' })
+    setClubState({ status: 'none' })
   }
 
   return {

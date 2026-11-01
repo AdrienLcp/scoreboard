@@ -2,6 +2,7 @@ import { Result } from '@adrienlcp/result'
 import {
   fromAbsolute,
   getLocalTimeZone,
+  parseDate,
   parseDateTime,
   type Time,
   toCalendarDate,
@@ -52,3 +53,11 @@ export const atTimeOfDay = (time: Time, day: InstantMs): InstantMs =>
   toCalendarDateTime(toCalendarDate(onThisDevice(day)), time)
     .toDate(getLocalTimeZone())
     .getTime()
+
+/** The same weekday some weeks after a `YYYY-MM-DD` day: a calendar's next round. */
+export const dayWeeksAfter = (day: string, weeks: number): string =>
+  parseDate(day).add({ weeks }).toString()
+
+/** A `YYYY-MM-DD` day at midnight on this device, for `Intl` to name it. */
+export const dayAsDate = (day: string): Date =>
+  parseDate(day).toDate(getLocalTimeZone())

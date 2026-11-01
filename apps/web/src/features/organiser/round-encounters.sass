@@ -1,0 +1,59 @@
+@use '../../presentation/styles/typography'
+
+/// The day's round from the club's calendar: one line per encounter of ours,
+/// added in one tap, a check once it is on the day.
+@layer components
+  .round-encounters
+    display: grid
+    gap: var(--space-s)
+    justify-items: start
+
+  .round-encounter-list
+    background: var(--surface)
+    display: grid
+    justify-self: stretch
+    list-style: none
+    margin: 0
+    padding: 0
+
+    > li
+      align-items: center
+      box-shadow: inset 0 -1px 0 var(--rule)
+      column-gap: var(--space-s)
+      display: grid
+      grid-template-columns: auto minmax(0, 1fr) auto
+      min-height: calc(var(--control-height) + var(--space-s))
+      padding: var(--space-2xs) var(--space-xs) var(--space-2xs) var(--space-s)
+
+  .round-encounter-teams
+    display: grid
+    gap: var(--space-4xs)
+    min-width: 0
+
+  .round-encounter-own
+    @include typography.name
+    @include typography.single-line
+
+  .round-encounter-other
+    @include typography.caption
+
+    align-items: center
+    color: var(--ink-muted)
+    display: flex
+    gap: var(--space-2xs)
+    min-width: 0
+
+  .round-encounter-tables
+    @include typography.figure-secondary
+
+    color: var(--ink-muted)
+    font-size: var(--text-s)
+
+  .round-encounter-added
+    @include typography.emphasis
+
+    align-items: center
+    color: var(--ink)
+    display: flex
+    gap: var(--space-2xs)
+    padding-inline-end: var(--space-xs)

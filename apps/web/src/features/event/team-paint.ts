@@ -15,7 +15,9 @@ export type TeamPaint = {
 }
 
 /** How a team is painted: its colour or the opponents' white, and the text that reads on it. */
-export const paintOf = (team: Team | undefined): TeamPaint => {
+export const paintOf = (
+  team: Pick<Team, 'colour' | 'name'> | undefined
+): TeamPaint => {
   const colour = team?.colour ?? DEFAULT_OPPONENT_COLOUR
 
   return {

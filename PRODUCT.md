@@ -130,6 +130,26 @@ another sport can adopt it.
   - a logo is resized on the device to a 256-pixel square and kept with the
     club, erased with it; a replaced logo stays reachable for the 30 days an
     event may still show it.
+- The club page keeps each of our teams' championship pool, phase after
+  phase, copied once from the federation's calendar (its number, its teams by
+  number, the date of each round). Defaults, each one changeable:
+  - a pool holds eight teams over seven rounds on the federation's grid
+    (Berger's tables: 1–8, 2–7, 3–6, 4–5, then 8–5, 6–4…), the first team
+    named receiving; a fixture can be inverted;
+  - phase 1 runs from September, phase 2 from January, its calendar handed
+    out in December; a team's new pool takes the phase after its last one;
+  - a round's date places the undated rounds after it two weeks apart;
+  - standings count 3 points a win, 2 a draw, 1 a loss and 0 a forfeit; a
+    forfeit gives the present team every match of the sheet; teams level on
+    points are parted by the points, then the ratio of matches, over the
+    encounters between them, then by the ratio of matches over all of
+    theirs, and share their rank when nothing parts them;
+  - on match day the organiser console offers our teams' encounters of the
+    round (the one dated that day, else the next still to play), each added
+    in one tap with its opponent, who receives, its tables and each team's
+    last composition, all the home ones at once; a finished sheet writes its
+    result into the standings, again after a correction, until a result is
+    picked by hand.
 - Multi-club: each club has its own events and its own identity.
 - Offline-tolerant umpire console: queued points are resent on reconnect, and
   duplicates are ignored by event id.

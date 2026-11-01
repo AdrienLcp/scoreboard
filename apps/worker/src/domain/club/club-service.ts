@@ -31,7 +31,8 @@ const emptyRecordFor = (
     number: null,
     players: [],
     teams: []
-  }
+  },
+  pools: []
 })
 
 /** Opens a club's store under a fresh code, the one key its organisers keep. */

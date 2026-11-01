@@ -1,5 +1,6 @@
 import { z } from 'zod'
 
+import { championshipPoolSchema, MAX_POOLS } from './championship'
 import { hexColourSchema } from './club'
 import { encounterFormatIdSchema } from './encounter-format-id'
 import { hallPlanSchema } from './hall-plan'
@@ -92,7 +93,9 @@ export const clubRecordSchema = z.object({
   /** What an opposing team wears on the wall until the club picks otherwise. */
   opponentColour: hexColourSchema,
   opponents: z.array(directoryClubSchema).max(200),
-  own: directoryClubSchema
+  own: directoryClubSchema,
+  /** Our teams' championship pools, phase after phase: their calendars and standings. */
+  pools: z.array(championshipPoolSchema).max(MAX_POOLS).default([])
 })
 export type ClubRecord = z.infer<typeof clubRecordSchema>
 
