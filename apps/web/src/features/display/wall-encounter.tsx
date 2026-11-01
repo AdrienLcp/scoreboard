@@ -3,7 +3,7 @@ import type React from 'react'
 import type { Score } from '@scoreboard/protocol/side'
 import { sides } from '@scoreboard/protocol/side'
 
-import type { TeamPaint } from './wall-rows'
+import type { TeamPaint } from '@/features/event/team-paint'
 
 import './wall-encounter.sass'
 

@@ -12,7 +12,7 @@ import {
   poolTablesFor
 } from '@scoreboard/core/tournament/pool-standings'
 
-import { paintOf } from '@/features/display/wall-rows'
+import { paintOf } from '@/features/event/team-paint'
 import { Icon } from '@/presentation/components/icon'
 import { useTranslate } from '@/presentation/i18n/i18n-context'
 

@@ -7,7 +7,7 @@ import type { Side } from '@scoreboard/protocol/side'
 
 import { runningTimeoutOf } from '@scoreboard/core/discipline/timeout-clock'
 
-import { wallSideOf } from '@/features/display/wall-rows'
+import { wallSideOf } from '@/features/event/sheet-side'
 import { Icon } from '@/presentation/components/icon'
 import { useTranslate } from '@/presentation/i18n/i18n-context'
 

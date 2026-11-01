@@ -16,7 +16,10 @@ import {
 
 import { publicSnapshotFor } from '@scoreboard/core/event/public-snapshot'
 
-import { wallCallOf, wallRowsFor, wallSideOf } from './wall-rows'
+import { wallCallOf } from '@/features/event/sheet-call'
+import { wallSideOf } from '@/features/event/sheet-side'
+
+import { wallRowsFor } from './wall-rows'
 
 const ANNA = aPlayer('Anna Morel')
 const BRUNO = aPlayer('Bruno Garnier')

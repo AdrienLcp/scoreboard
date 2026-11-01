@@ -7,8 +7,10 @@ import {
   placeHallTable
 } from '@scoreboard/core/hall/hall-plan'
 
+import type { TeamPaint } from '@/features/event/team-paint'
+
 import { wallHallFor } from './wall-hall'
-import type { TeamPaint, WallRow } from './wall-rows'
+import type { WallRow } from './wall-rows'
 
 const PAINT: TeamPaint = {
   colour: '#FFFFFF',

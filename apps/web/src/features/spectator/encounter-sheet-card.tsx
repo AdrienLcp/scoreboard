@@ -10,7 +10,7 @@ import type { PlayerId } from '@scoreboard/protocol/identifiers'
 import type { InstantMs } from '@scoreboard/protocol/scoring-event'
 import { type Side, sides } from '@scoreboard/protocol/side'
 
-import { paintOf } from '@/features/display/wall-rows'
+import { paintOf } from '@/features/event/team-paint'
 import { PlainButton } from '@/presentation/components/button'
 import {
   Disclosure,

@@ -1,32 +1,15 @@
-import type { Player, Team } from '@scoreboard/protocol/event-setup'
 import type {
   MatchView,
   PublicSnapshot
 } from '@scoreboard/protocol/event-snapshot'
-import type {
-  EncounterId,
-  PlayerId,
-  TableNumber
-} from '@scoreboard/protocol/identifiers'
-import type { CardPenalty } from '@scoreboard/protocol/scoring-event'
-import { type Score, type Side, sides } from '@scoreboard/protocol/side'
+import type { EncounterId, TableNumber } from '@scoreboard/protocol/identifiers'
+import type { Score } from '@scoreboard/protocol/side'
 
-import {
-  DEFAULT_OPPONENT_COLOUR,
-  textColourOn
-} from '@scoreboard/core/club/team-colours'
+import { currentMatchOn } from '@/features/event/table-match'
+import { paintOf, type TeamPaint } from '@/features/event/team-paint'
 
 /** More encounters than this and a row stops being legible: the open board takes over. */
 export const MAX_WALL_ROWS = 6
-
-/** A team as the wall paints it: its colour and the text that reads on it. */
-export type TeamPaint = {
-  colour: string
-  /** White, the opponents' default: it needs an edge to hold on a white ground. */
-  isWhite: boolean
-  name: string
-  textColour: string
-}
 
 /** One table of an encounter's row: the match played on it, or the one it waits for. */
 export type WallTable = {
@@ -44,39 +27,6 @@ export type WallRow = {
   matches: readonly MatchView[]
   points: Score
   tables: WallTable[]
-}
-
-/** How a team is painted: its colour or the opponents' white, and the text that reads on it. */
-export const paintOf = (team: Team | undefined): TeamPaint => {
-  const colour = team?.colour ?? DEFAULT_OPPONENT_COLOUR
-
-  return {
-    colour,
-    isWhite: colour.toUpperCase() === DEFAULT_OPPONENT_COLOUR,
-    name: team?.name ?? '',
-    textColour: textColourOn(colour)
-  }
-}
-
-const lastMatchOn = (
-  matches: readonly MatchView[],
-  table: TableNumber
-): MatchView | null =>
-  matches.filter((match) => match.table === table).at(-1) ?? null
-
-/** The match a table is on: the one played or awaited there, else the last it played. */
-export const currentMatchOn = (
-  snapshot: PublicSnapshot,
-  table: TableNumber
-): MatchView | null => {
-  const currentId = snapshot.tables.find(
-    (view) => view.number === table
-  )?.matchId
-
-  return (
-    snapshot.matches.find((match) => match.id === currentId) ??
-    lastMatchOn(snapshot.matches, table)
-  )
 }
 
 /** A table as the wall shows it: its match live, or the one it waits for, or free. */
@@ -170,106 +120,4 @@ export const wallRowsFor = ({
       }
     ]
   })
-}
-
-const SINGLES_LABEL = /^([A-Z])([A-Z])$/
-
-/** "BX" → home B, away X: the letters a singles line of the sheet gives its players. */
-const singlesLettersOf = (
-  label: string | null
-): Record<Side, string> | null => {
-  const found = label === null ? null : SINGLES_LABEL.exec(label)
-
-  return found === null ? null : { away: found[2] ?? '', home: found[1] ?? '' }
-}
-
-/** "B – X" for a singles line of the sheet, the line's own label otherwise ("Double 1"). */
-export const wallCallOf = (match: MatchView): string | null => {
-  const letters = singlesLettersOf(match.label)
-
-  return letters === null ? match.label : `${letters.home} – ${letters.away}`
-}
-
-/** Each player's letter on the sheet, read from the singles he plays in the encounter. */
-const lettersByPlayer = (
-  matches: readonly MatchView[]
-): Map<PlayerId, string> => {
-  const letters = new Map<PlayerId, string>()
-
-  for (const match of matches) {
-    const lineLetters = singlesLettersOf(match.label)
-
-    for (const side of sides) {
-      const [playerId] = match[side].playerIds
-
-      if (lineLetters !== null && playerId !== undefined) {
-        letters.set(playerId, lineLetters[side])
-      }
-    }
-  }
-
-  return letters
-}
-
-/** One player in a chip: his sheet letter, his name and his ranking points when known. */
-export type ChipPlayer = {
-  id: PlayerId
-  name: string
-  points: number | null
-}
-
-/** The side of a live match as its chip shows it: one letter square and one line per player. */
-export type WallSide = {
-  /** The worst card a player of this side carries in the encounter, `null` without one. */
-  card: CardPenalty | null
-  letters: string
-  players: ChipPlayer[]
-}
-
-const worseCard = (
-  current: CardPenalty | null,
-  next: CardPenalty
-): CardPenalty => (current === null || next > current ? next : current)
-
-export const wallSideOf = ({
-  match,
-  matches,
-  players,
-  side
-}: {
-  match: MatchView
-  /** Every match of the encounter. */
-  matches: readonly MatchView[]
-  players: readonly Player[]
-  side: Side
-}): WallSide => {
-  const { playerIds } = match[side]
-  const letters = lettersByPlayer(matches)
-  const lineLetters = singlesLettersOf(match.label)
-  let card: CardPenalty | null = null
-
-  for (const shown of matches.flatMap((candidate) => candidate.state.cards)) {
-    const isOnThisSide =
-      shown.playerId === null
-        ? match.state.cards.includes(shown) && shown.side === side
-        : playerIds.includes(shown.playerId)
-
-    if (isOnThisSide) {
-      card = worseCard(card, shown.penalty)
-    }
-  }
-
-  return {
-    card,
-    letters:
-      lineLetters?.[side] ??
-      playerIds.map((playerId) => letters.get(playerId) ?? '').join(''),
-    players: playerIds.flatMap((playerId) => {
-      const player = players.find((candidate) => candidate.id === playerId)
-
-      return player === undefined
-        ? []
-        : [{ id: player.id, name: player.name, points: player.points }]
-    })
-  }
 }

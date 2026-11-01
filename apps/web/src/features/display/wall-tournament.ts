@@ -7,13 +7,10 @@ import type { Side } from '@scoreboard/protocol/side'
 
 import { poolTablesFor } from '@scoreboard/core/tournament/pool-standings'
 
-import {
-  currentMatchOn,
-  paintOf,
-  type TeamPaint,
-  type WallTable,
-  wallTableOf
-} from './wall-rows'
+import { currentMatchOn } from '@/features/event/table-match'
+import { paintOf, type TeamPaint } from '@/features/event/team-paint'
+
+import { type WallTable, wallTableOf } from './wall-rows'
 
 /** Pools of up to eight play on four tables at once: more and a row stops being legible. */
 const MAX_TABLES_PER_ROW = 4

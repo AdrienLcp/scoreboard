@@ -10,17 +10,15 @@ import { runningTimeoutOf } from '@scoreboard/core/discipline/timeout-clock'
 import { matchCallOf } from '@/features/event/match-call'
 import { sideName } from '@/features/event/participant-names'
 import { scoreText } from '@/features/event/score-text'
+import { wallCallOf } from '@/features/event/sheet-call'
+import { wallSideOf } from '@/features/event/sheet-side'
+import type { TeamPaint } from '@/features/event/team-paint'
 import { DrawnTable } from '@/presentation/components/drawn-table'
 import { Icon } from '@/presentation/components/icon'
 import { useTranslate } from '@/presentation/i18n/i18n-context'
 import { RichText } from '@/presentation/i18n/rich-text'
 
-import {
-  type TeamPaint,
-  type WallTable as WallTableModel,
-  wallCallOf,
-  wallSideOf
-} from './wall-rows'
+import type { WallTable as WallTableModel } from './wall-rows'
 import { WallTimeout } from './wall-timeout'
 
 import './wall-table.sass'

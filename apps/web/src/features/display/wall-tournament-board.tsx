@@ -9,10 +9,10 @@ import type { InstantMs } from '@scoreboard/protocol/scoring-event'
 import { sides } from '@scoreboard/protocol/side'
 
 import { sideName } from '@/features/event/participant-names'
+import type { TeamPaint } from '@/features/event/team-paint'
 import { useTranslate } from '@/presentation/i18n/i18n-context'
 
 import { WallJoin } from './wall-join'
-import type { TeamPaint } from './wall-rows'
 import { WallTable } from './wall-table'
 import {
   poolNumberOf,
