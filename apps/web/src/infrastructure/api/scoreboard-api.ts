@@ -10,6 +10,10 @@ import {
 } from '@scoreboard/protocol/club-record'
 import type { WallPairingCode } from '@scoreboard/protocol/identifiers'
 import {
+  type UploadedLogo,
+  uploadedLogoSchema
+} from '@scoreboard/protocol/logo'
+import {
   API_ROUTES,
   apiErrorResponseSchema,
   type ClaimWallPairingInput,
@@ -191,6 +195,31 @@ export const saveClub = async ({
     })
 
     return response.ok ? Result.success() : Result.failure('refused')
+  } catch {
+    return Result.failure('network')
+  }
+}
+
+/** Uploads a logo already resized on the device; the answer is the address the club record keeps. */
+export const uploadClubLogo = async ({
+  clubCode,
+  logo
+}: {
+  clubCode: ClubCode
+  logo: Blob
+}): Promise<Result<UploadedLogo, ApiError>> => {
+  try {
+    const response = await fetch(
+      fillRoute(API_ROUTES.clubLogos, { clubCode }),
+      { body: logo, headers: { 'Content-Type': logo.type }, method: 'POST' }
+    )
+    const uploaded = uploadedLogoSchema.safeParse(
+      response.ok ? await response.json() : null
+    )
+
+    return uploaded.success
+      ? Result.success(uploaded.data)
+      : Result.failure('refused')
   } catch {
     return Result.failure('network')
   }

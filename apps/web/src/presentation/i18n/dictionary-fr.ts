@@ -11,11 +11,25 @@ export const FR_DICTIONARY = defineDictionary({
   },
   club: {
     code: 'Code du club',
-    codeHelp:
-      'Ce code retrouve le club sur un autre appareil : gardez-le, il ouvre aussi ses équipes et ses joueurs.',
     forget: 'Changer de club',
+    hall: {
+      empty:
+        'Dessinez la salle dans l’onglet Plan d’une journée, puis touchez « Garder ce plan pour le club » : chaque nouvelle journée partira de ce plan.',
+      help: 'Chaque nouvelle journée part de ce plan. Pour le changer : onglet Plan d’une journée, puis « Garder ce plan pour le club ».',
+      title: 'Salle'
+    },
     home: 'Accueil',
     loading: 'Ouverture du club…',
+    logo: {
+      add: 'Ajouter le logo de {name}',
+      change: 'Changer le logo de {name}',
+      notAnImage:
+        'Ce fichier n’est pas une image. Choisissez une photo ou une image du logo.',
+      refused: 'Le serveur a refusé cette image. Essayez-en une autre.',
+      remove: 'Retirer le logo',
+      sending: 'Envoi du logo…',
+      title: 'Logo'
+    },
     missing: 'Aucun club ne répond à ce code. Il a peut-être été effacé.',
     offline: 'Le serveur ne répond pas. Vérifiez la connexion puis réessayez.',
     opponents: {
@@ -42,6 +56,14 @@ export const FR_DICTIONARY = defineDictionary({
       title: 'Joueurs'
     },
     retry: 'Réessayer',
+    share: {
+      codeHint: 'Dans « Mon club », tapez ce code',
+      open: 'Ouvrir sur un autre appareil',
+      qrLabel: 'QR code qui ouvre le club',
+      scanHint: 'Ou scannez pour ouvrir le club',
+      warning:
+        'Ce code ouvre et modifie le club : ne le donnez qu’à ceux qui préparent les journées.'
+    },
     team: {
       colour: 'Couleur',
       format: 'Type de rencontre',
@@ -67,18 +89,20 @@ export const FR_DICTIONARY = defineDictionary({
       title: 'Équipes'
     },
     title: 'Le club',
-    undo: 'Annuler la dernière modification',
+    undo: 'Annuler',
     unsaved:
       'La dernière modification n’a pas atteint le serveur : elle reste sur cet appareil.',
     welcome: {
-      create: 'Créer le club',
+      create: 'Ouvrir le club',
       createHelp:
         'Ses équipes, leurs couleurs et ses joueurs sont gardés une fois pour toutes ; chaque dimanche se prépare en les choisissant.',
-      createTitle: 'Nouveau club',
-      join: 'Ouvrir le club',
-      joinHelp: 'Le club existe déjà sur un autre appareil : tapez son code.',
-      joinTitle: 'J’ai le code du club',
-      name: 'Nom du club'
+      join: 'Ouvrir',
+      joinHelp:
+        'Sur l’appareil où le club est déjà ouvert : « Mon club », puis « Ouvrir sur un autre appareil ». Scannez son QR code, ou tapez son code ici.',
+      joinTitle: 'Le club est déjà ouvert ailleurs',
+      name: 'Nom du club',
+      namePlaceholder: 'PPC Angles',
+      title: 'Votre club'
     }
   },
   connection: {
@@ -199,6 +223,7 @@ export const FR_DICTIONARY = defineDictionary({
       'Chaque manche se joue en {points:number} points. Le premier à remporter ce nombre de manches gagne le match.',
     bestOfOption: '{toWin:number} manches gagnantes',
     bestOfOptionDetail: 'au meilleur des {count:number}',
+    club: 'Mon club',
     create: 'Créer la rencontre',
     createNote:
       'Vous recevrez un code organisateur : il ouvre la préparation et les corrections.',
@@ -218,6 +243,7 @@ export const FR_DICTIONARY = defineDictionary({
     shareImageAlt:
       'Le logo Scoreboard à côté de son nom, en blanc sur fond nuit.',
     tableCount: 'Nombre de tables',
+    tableCountFromClub: 'Comme la salle de {name}',
     title: 'Nouvelle rencontre'
   },
   legal: {
@@ -356,11 +382,14 @@ export const FR_DICTIONARY = defineDictionary({
     },
     choosePlayer: 'Choisir un joueur',
     chooseTeam: 'Choisir une équipe',
+    club: 'Mon club',
     clubEncounter: {
       add: 'Ajouter la rencontre',
       away: 'Adversaire',
       edit: 'Équipes du club',
       home: 'Notre équipe',
+      keepLineup: 'Garder cette composition pour la prochaine rencontre',
+      lineup: 'Composition',
       loading: 'Ouverture du club…',
       noClub:
         'Préparez une fois les équipes du club : chaque rencontre se crée ensuite en deux choix.',
@@ -475,6 +504,8 @@ export const FR_DICTIONARY = defineDictionary({
       hintTable:
         'Touchez une place libre ou une autre table pour y mettre la table {table:number}.',
       inUse: 'Utilisée aujourd’hui',
+      keepForClub: 'Garder ce plan pour le club',
+      keptForClub: 'Plan gardé pour le club',
       label: 'Plan de la salle',
       moveEncounter: 'Déplacer la rencontre',
       moveTable: 'Déplacer la table',

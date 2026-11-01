@@ -10,6 +10,7 @@ import {
   useSearchParams
 } from 'react-router'
 
+import { type ClubCode, clubCodeSchema } from '@scoreboard/protocol/club-record'
 import {
   type DisplayId,
   displayIdSchema,
@@ -80,6 +81,21 @@ export const usePairingSearchParam = (): WallPairingCode | null => {
   const typed = search.get(PAIRING_SEARCH_PARAM)
 
   return typed === null ? null : parseWallPairingCode(typed)
+}
+
+const CLUB_CODE_SEARCH_PARAM = 'code'
+
+/** `/club` as another device's QR code opens it: the club is joined there and its code kept. */
+export const clubJoinPathFor = (code: ClubCode): string =>
+  `${paths.club}?${CLUB_CODE_SEARCH_PARAM}=${code}`
+
+export const useClubCodeSearchParam = (): ClubCode | null => {
+  const [search] = useSearchParams()
+  const typed = clubCodeSchema.safeParse(
+    search.get(CLUB_CODE_SEARCH_PARAM)?.toUpperCase()
+  )
+
+  return typed.success ? typed.data : null
 }
 
 const NEW_PAIRING_SEARCH_PARAM = 'new'

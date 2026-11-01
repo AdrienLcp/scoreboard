@@ -37,6 +37,7 @@ const eventPlayerOf = (player: DirectoryPlayer, team: Team): Player => ({
 const eventTeamOf = (side: ClubSide, colour: string): Team => ({
   colour,
   id: side.team.id,
+  logoUrl: side.club.logoUrl,
   name: side.team.name
 })
 

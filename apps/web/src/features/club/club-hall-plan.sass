@@ -1,0 +1,34 @@
+@use '../../presentation/styles/typography'
+
+/// The organiser's plan, small and still: the same drawn tables on the
+/// mist-grey floor, the stands along the bottom.
+@layer components
+  .club-hall
+    background: var(--surface-raised)
+    display: grid
+    gap: var(--space-s)
+    justify-self: stretch
+    padding: var(--space-m)
+
+  .club-hall-floor
+    display: grid
+    gap: var(--space-xs)
+    justify-content: center
+
+  .club-hall-table
+    align-items: center
+    display: grid
+    gap: var(--space-3xs)
+    justify-items: center
+
+  .club-hall-drawing
+    block-size: 2.75rem
+    inline-size: 5rem
+
+  .club-hall-stands
+    @include typography.label
+
+    border-block-start: 2px solid var(--ink-muted)
+    color: var(--ink-muted)
+    padding-block-start: var(--space-2xs)
+    text-align: center

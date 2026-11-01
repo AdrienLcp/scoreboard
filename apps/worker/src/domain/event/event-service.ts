@@ -50,11 +50,11 @@ export const openEvent = ({
   }
 
   store.writeSetup({
-    club: null,
+    club: input.club,
     defaultFormat: input.format,
     displays: [],
     encounters: [],
-    hall: null,
+    hall: input.hall,
     matches: [],
     name: input.name,
     players: [],

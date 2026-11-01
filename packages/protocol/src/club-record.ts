@@ -2,6 +2,7 @@ import { z } from 'zod'
 
 import { hexColourSchema } from './club'
 import { encounterFormatIdSchema } from './encounter-format-id'
+import { hallPlanSchema } from './hall-plan'
 import {
   ACCESS_CODE_ALPHABET,
   playerIdSchema,
@@ -9,6 +10,7 @@ import {
   teamIdSchema
 } from './identifiers'
 import { licenceSchema, rankingPointsSchema } from './licensee'
+import { logoUrlSchema } from './logo'
 import {
   DEFAULT_MATCH_POINTS_RULE,
   matchPointsRuleIdSchema
@@ -62,6 +64,8 @@ export type DirectoryTeam = z.infer<typeof directoryTeamSchema>
 
 export const directoryClubSchema = z.object({
   id: directoryClubIdSchema,
+  /** Uploaded once on the club page: the wall's header, the spectators' tags, the Top 12. */
+  logoUrl: logoUrlSchema.nullable().default(null),
   name: nameSchema,
   /** FFTT club number, 8 digits: the key the federation's data is fetched by. */
   number: z
@@ -78,6 +82,8 @@ export type DirectoryClub = z.infer<typeof directoryClubSchema>
  * and the clubs it meets with theirs, so a day is prepared by picking.
  */
 export const clubRecordSchema = z.object({
+  /** The club's own hall, kept from an event's plan: every new event starts from it. */
+  hall: hallPlanSchema.nullable().default(null),
   /** What an opposing team wears on the wall until the club picks otherwise. */
   opponentColour: hexColourSchema,
   opponents: z.array(directoryClubSchema).max(200),

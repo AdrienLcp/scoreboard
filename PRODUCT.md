@@ -96,6 +96,21 @@ another sport can adopt it.
 - A club's store (teams, players, opponents) is opened by its club code and
   erased two years after its last change; an event is kept 30 days after its
   last change or its start, whichever is later.
+- The club page is reached from home ("Mon club") and the organiser console.
+  The first visit asks only the club's name and the device keeps the code; a
+  second device opens the club by scanning its QR code or typing the code.
+  Defaults, each one changeable:
+  - the club keeps a hall plan when the organiser taps "Garder ce plan pour
+    le club" in an event's plan; every new event starts from it, with its
+    table count, and tables put away for one day come back;
+  - a new event carries the club's name and logo onto the wall and the
+    spectators' phone;
+  - an encounter created from the club starts from each team's last
+    composition, and the day's composition becomes the new last one
+    ("Garder cette composition", on);
+  - a logo is resized on the device to a 256-pixel square and kept with the
+    club, erased with it; a replaced logo stays reachable for the 30 days an
+    event may still show it.
 - Multi-club: each club has its own events and its own identity.
 - Offline-tolerant umpire console: queued points are resent on reconnect, and
   duplicates are ignored by event id.

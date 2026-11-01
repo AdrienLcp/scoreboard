@@ -6,7 +6,9 @@ import { tableTennisBestOfs } from '@scoreboard/protocol/match-format'
 
 import { gamesToWinMatch } from '@scoreboard/core/table-tennis/table-tennis-game'
 
+import { useClub } from '@/features/club/use-club'
 import {
+  paths,
   spectatorPathFor,
   umpireEntryPathFor,
   useNavigateTo
@@ -15,6 +17,7 @@ import { BrandMark } from '@/presentation/components/brand-mark'
 import { Button } from '@/presentation/components/button'
 import { Form } from '@/presentation/components/form'
 import { Icon } from '@/presentation/components/icon'
+import { ButtonLink } from '@/presentation/components/link'
 import { Main } from '@/presentation/components/main'
 import { Group, NumberField } from '@/presentation/components/number-field'
 import {
@@ -54,12 +57,18 @@ const isBestOf = (value: unknown): value is BestOf =>
 const eventCodeIn = (typed: string): string =>
   typed.trim().split('/e/').at(-1)?.split(/[/?#]/)[0]?.toLowerCase() ?? ''
 
+/** A device that prepares a club's days opens each one with the club's name, logo and hall. */
 const CreateEventForm: React.FC = () => {
   const translate = useTranslate()
   const { create, state } = useCreateEvent()
+  const { state: club } = useClub()
+  const record = club.status === 'ready' ? club.record : null
+  const clubHall = record?.hall ?? null
   const [name, setName] = useState('')
-  const [tableCount, setTableCount] = useState(DEFAULT_TABLE_COUNT)
+  const [typedTableCount, setTypedTableCount] = useState<number | null>(null)
   const [bestOf, setBestOf] = useState<BestOf>(DEFAULT_BEST_OF)
+  const tableCount =
+    typedTableCount ?? clubHall?.tables.length ?? DEFAULT_TABLE_COUNT
 
   return (
     <Form
@@ -67,11 +76,20 @@ const CreateEventForm: React.FC = () => {
       onSubmit={(event) => {
         event.preventDefault()
         void create({
+          club:
+            record === null
+              ? null
+              : {
+                  colours: null,
+                  logoUrl: record.own.logoUrl,
+                  name: record.own.name
+                },
           format: {
             bestOf,
             pointsPerGame: POINTS_PER_GAME,
             sport: 'table-tennis'
           },
+          hall: clubHall,
           name,
           tableCount
         })
@@ -86,13 +104,18 @@ const CreateEventForm: React.FC = () => {
         <NumberField
           maxValue={64}
           minValue={1}
-          onChange={setTableCount}
+          onChange={setTypedTableCount}
           value={tableCount}
         >
           <Label>{translate('home.tableCount')}</Label>
           <Group>
             <Input />
           </Group>
+          {record !== null && clubHall !== null && typedTableCount === null ? (
+            <Description>
+              {translate('home.tableCountFromClub', { name: record.own.name })}
+            </Description>
+          ) : null}
         </NumberField>
         <Select
           onSelectionChange={(key) => {
@@ -213,6 +236,10 @@ export const HomePage: React.FC = () => {
       <DocumentTitle>{homeDocumentTitle(translate)}</DocumentTitle>
       <header className='home-bar'>
         <BrandMark />
+        <ButtonLink href={paths.club} variant='quiet'>
+          <Icon name='club' />
+          {translate('home.club')}
+        </ButtonLink>
       </header>
       <div className='home-intro'>
         <h1>{translate('home.headline')}</h1>

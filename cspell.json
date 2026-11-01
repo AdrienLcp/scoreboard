@@ -52,6 +52,7 @@
     "linejoin",
     "lnum",
     "minmax",
+    "nosniff",
     "nowrap",
     "nums",
     "oklch",

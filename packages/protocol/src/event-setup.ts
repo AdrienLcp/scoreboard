@@ -13,6 +13,7 @@ import {
   teamIdSchema
 } from './identifiers'
 import { licenceSchema, rankingPointsSchema } from './licensee'
+import { logoUrlSchema } from './logo'
 import { matchFormatSchema } from './match-format'
 import {
   DEFAULT_MATCH_POINTS_RULE,
@@ -41,7 +42,7 @@ export const teamSchema = z.object({
   colour: hexColourSchema.nullable().default(null),
   id: teamIdSchema,
   /** The club's logo, for a tournament where each team stands for a club. */
-  logoUrl: z.url().max(500).nullable().optional(),
+  logoUrl: logoUrlSchema.nullable().optional(),
   name: nameSchema
 })
 export type Team = z.infer<typeof teamSchema>

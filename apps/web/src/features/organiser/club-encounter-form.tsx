@@ -11,16 +11,23 @@ import {
 } from '@scoreboard/core/club/club-encounter'
 import { encounterFormatFor } from '@scoreboard/core/encounter/encounter-formats'
 
+import { keepLineup } from '@/features/club/club-edits'
 import { useClub } from '@/features/club/use-club'
 import { newEncounterId, newMatchId } from '@/infrastructure/ids'
 import { paths } from '@/infrastructure/router/navigation'
 import { Button } from '@/presentation/components/button'
+import {
+  Disclosure,
+  DisclosurePanel
+} from '@/presentation/components/disclosure'
 import { Form } from '@/presentation/components/form'
 import { Icon } from '@/presentation/components/icon'
 import { ButtonLink } from '@/presentation/components/link'
+import { Switch } from '@/presentation/components/switch'
 import { useTranslate } from '@/presentation/i18n/i18n-context'
 
 import { ChoiceField } from './choice-field'
+import { ClubLineup, lineupSummaryOf, type SeatedLineup } from './club-lineup'
 
 import './club-encounter-form.sass'
 
@@ -46,19 +53,34 @@ const firstFreeTeamId = (
     ) ?? sides.at(0)
   )?.team.id ?? null
 
+type DayLineups = {
+  /** `null` while the side keeps its last composition. */
+  away: SeatedLineup | null
+  home: SeatedLineup | null
+}
+
+const NO_CHANGE: DayLineups = { away: null, home: null }
+
+const isSameLineup = (one: SeatedLineup, other: SeatedLineup): boolean =>
+  JSON.stringify(one) === JSON.stringify(other)
+
 /**
  * The Sunday morning in a few taps: one of our teams, the club it meets, and
- * the encounter lands on its own tables with our last composition seated.
+ * the encounter lands on its own tables with the last composition seated.
+ * The day's changes to it are kept for the next encounter unless told not to.
  */
 export const ClubEncounterForm: React.FC<ClubEncounterFormProps> = ({
   onSave,
   setup
 }) => {
   const translate = useTranslate()
-  const { state } = useClub()
+  const club = useClub()
+  const { state } = club
   const [homeId, setHomeId] = useState<string | null>(null)
   const [awayId, setAwayId] = useState<string | null>(null)
   const [firstTable, setFirstTable] = useState<string | null>(null)
+  const [dayLineups, setDayLineups] = useState<DayLineups>(NO_CHANGE)
+  const [keepsLineup, setKeepsLineup] = useState(true)
 
   if (state.status !== 'ready') {
     return (
@@ -97,6 +119,8 @@ export const ClubEncounterForm: React.FC<ClubEncounterFormProps> = ({
           { length: format.groupCount },
           (_, offset) => Number(firstTable) + offset
         ).filter((table) => table <= setup.tableCount)
+  const homeLineup = dayLineups.home ?? home?.team.lineup ?? []
+  const awayLineup = dayLineups.away ?? away?.team.lineup ?? []
   const tablesLabel = (run: readonly number[]) =>
     translate('club.team.tablesChoice', {
       count: run.length,
@@ -115,18 +139,40 @@ export const ClubEncounterForm: React.FC<ClubEncounterFormProps> = ({
 
         onSave(
           addClubEncounter({
-            away,
+            away: { ...away, team: { ...away.team, lineup: [...awayLineup] } },
             awayColour: away.team.colour,
             encounterId: newEncounterId(),
-            home,
+            home: { ...home, team: { ...home.team, lineup: [...homeLineup] } },
             newMatchId,
             setup,
             tables
           })
         )
+
+        if (
+          keepsLineup &&
+          !(
+            isSameLineup(homeLineup, home.team.lineup) &&
+            isSameLineup(awayLineup, away.team.lineup)
+          )
+        ) {
+          club.edit((record) =>
+            keepLineup({
+              lineup: awayLineup,
+              record: keepLineup({
+                lineup: homeLineup,
+                record,
+                teamId: home.team.id
+              }),
+              teamId: away.team.id
+            })
+          )
+        }
+
         setHomeId(null)
         setAwayId(null)
         setFirstTable(null)
+        setDayLineups(NO_CHANGE)
       }}
     >
       <h3>{translate('organiser.clubEncounter.title')}</h3>
@@ -139,6 +185,7 @@ export const ClubEncounterForm: React.FC<ClubEncounterFormProps> = ({
         onChange={(id) => {
           setHomeId(id)
           setFirstTable(null)
+          setDayLineups((current) => ({ ...current, home: null }))
         }}
         placeholder={translate('organiser.chooseTeam')}
         selectedId={pickedHomeId}
@@ -149,7 +196,10 @@ export const ClubEncounterForm: React.FC<ClubEncounterFormProps> = ({
           label: side.team.name
         }))}
         label={translate('organiser.clubEncounter.away')}
-        onChange={setAwayId}
+        onChange={(id) => {
+          setAwayId(id)
+          setDayLineups((current) => ({ ...current, away: null }))
+        }}
         placeholder={translate(
           opponents.length === 0
             ? 'organiser.clubEncounter.noOpponent'
@@ -175,6 +225,48 @@ export const ClubEncounterForm: React.FC<ClubEncounterFormProps> = ({
         placeholder={translate('organiser.clubEncounter.noTables')}
         selectedId={tables[0] === undefined ? null : String(tables[0])}
       />
+      {home === null || away === null ? null : (
+        <Disclosure className='club-encounter-lineup'>
+          <Button
+            className='club-encounter-lineup-trigger'
+            slot='trigger'
+            variant='quiet'
+          >
+            {translate('organiser.clubEncounter.lineup')}
+            <span className='club-encounter-lineup-summary'>
+              {lineupSummaryOf({
+                letters: format.homeLetters,
+                lineup: homeLineup,
+                side: home
+              })}
+            </span>
+            <Icon name='chevronDown' />
+          </Button>
+          <DisclosurePanel>
+            <div className='club-encounter-lineup-body'>
+              <ClubLineup
+                letters={format.homeLetters}
+                lineup={homeLineup}
+                onChange={(lineup) =>
+                  setDayLineups((current) => ({ ...current, home: lineup }))
+                }
+                side={home}
+              />
+              <ClubLineup
+                letters={format.awayLetters}
+                lineup={awayLineup}
+                onChange={(lineup) =>
+                  setDayLineups((current) => ({ ...current, away: lineup }))
+                }
+                side={away}
+              />
+              <Switch isSelected={keepsLineup} onChange={setKeepsLineup}>
+                {translate('organiser.clubEncounter.keepLineup')}
+              </Switch>
+            </div>
+          </DisclosurePanel>
+        </Disclosure>
+      )}
       <div className='club-encounter-actions'>
         <Button isDisabled={home === null || away === null} type='submit'>
           <Icon name='plus' />

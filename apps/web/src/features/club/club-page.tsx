@@ -1,15 +1,23 @@
 import type React from 'react'
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 
 import {
+  type ClubCode,
   type ClubRecord,
   clubCodeSchema,
   type DirectoryClub
 } from '@scoreboard/protocol/club-record'
 
+import { pageOrigin } from '@/infrastructure/browser'
 import { newDirectoryClubId, newTeamId } from '@/infrastructure/ids'
-import { paths } from '@/infrastructure/router/navigation'
+import {
+  clubJoinPathFor,
+  paths,
+  useClubCodeSearchParam,
+  useReplaceWith
+} from '@/infrastructure/router/navigation'
 import { Button } from '@/presentation/components/button'
+import { CodeAndQr } from '@/presentation/components/code-and-qr'
 import {
   Disclosure,
   DisclosurePanel
@@ -22,8 +30,15 @@ import { Input, Label, TextField } from '@/presentation/components/text-field'
 import { DocumentTitle } from '@/presentation/head/document-title'
 import { useTranslate } from '@/presentation/i18n/i18n-context'
 
-import { addOpponentClub, addTeam, removeOpponentClub } from './club-edits'
+import {
+  addOpponentClub,
+  addTeam,
+  changeClubLogo,
+  removeOpponentClub
+} from './club-edits'
+import { ClubHallPlan } from './club-hall-plan'
 import { LicenseeList } from './licensee-list'
+import { LogoPicker } from './logo-picker'
 import { TeamEditor } from './team-editor'
 import { useClub } from './use-club'
 
@@ -119,17 +134,19 @@ const OpponentClubForm: React.FC<{
   )
 }
 
-/** No club on this device yet: open one, or find it again by its code. */
+/** No club here yet: its name is the one thing asked; a club opened elsewhere comes by its code. */
 const ClubWelcome: React.FC<{
   onCreate: (name: string) => Promise<boolean>
-  onJoin: (code: string) => void
+  onJoin: (code: ClubCode) => void
 }> = ({ onCreate, onJoin }) => {
   const translate = useTranslate()
   const [name, setName] = useState('')
   const [code, setCode] = useState('')
   const [isRefused, setIsRefused] = useState(false)
-  const typedCode = code.replace(/[\s-]/g, '').toUpperCase()
-  const isCodeComplete = clubCodeSchema.safeParse(typedCode).success
+  const [isCreating, setIsCreating] = useState(false)
+  const typedCode = clubCodeSchema.safeParse(
+    code.replace(/[\s-]/g, '').toUpperCase()
+  )
 
   return (
     <div className='club-welcome'>
@@ -137,16 +154,18 @@ const ClubWelcome: React.FC<{
         className='club-panel'
         onSubmit={async (event) => {
           event.preventDefault()
+          setIsCreating(true)
           setIsRefused(!(await onCreate(name.trim())))
+          setIsCreating(false)
         }}
       >
-        <h2 className='club-heading'>
-          {translate('club.welcome.createTitle')}
-        </h2>
         <p className='club-note'>{translate('club.welcome.createHelp')}</p>
         <TextField onChange={setName} value={name}>
           <Label>{translate('club.welcome.name')}</Label>
-          <Input autoComplete='organization' />
+          <Input
+            autoComplete='organization'
+            placeholder={translate('club.welcome.namePlaceholder')}
+          />
         </TextField>
         {isRefused ? (
           <p className='club-alert' role='alert'>
@@ -154,34 +173,48 @@ const ClubWelcome: React.FC<{
             {translate('club.offline')}
           </p>
         ) : null}
-        <Button isDisabled={name.trim() === ''} type='submit' variant='primary'>
+        <Button
+          isDisabled={name.trim() === ''}
+          isPending={isCreating}
+          type='submit'
+          variant='primary'
+        >
           {translate('club.welcome.create')}
         </Button>
       </Form>
-      <Form
-        className='club-panel'
-        onSubmit={(event) => {
-          event.preventDefault()
-
-          if (isCodeComplete) {
-            onJoin(typedCode)
-          }
-        }}
-      >
-        <h2 className='club-heading'>{translate('club.welcome.joinTitle')}</h2>
-        <p className='club-note'>{translate('club.welcome.joinHelp')}</p>
-        <TextField onChange={setCode} value={code}>
-          <Label>{translate('club.code')}</Label>
-          <Input
-            autoCapitalize='characters'
-            autoComplete='off'
-            className='club-code-input'
-          />
-        </TextField>
-        <Button isDisabled={!isCodeComplete} type='submit'>
-          {translate('club.welcome.join')}
+      <Disclosure className='club-join'>
+        <Button className='club-join-trigger' slot='trigger' variant='quiet'>
+          <Icon name='qr' />
+          {translate('club.welcome.joinTitle')}
+          <Icon name='chevronDown' />
         </Button>
-      </Form>
+        <DisclosurePanel>
+          <Form
+            className='club-panel'
+            onSubmit={(event) => {
+              event.preventDefault()
+
+              if (typedCode.success) {
+                onJoin(typedCode.data)
+              }
+            }}
+          >
+            <p className='club-note'>{translate('club.welcome.joinHelp')}</p>
+            <TextField onChange={setCode} value={code}>
+              <Label>{translate('club.code')}</Label>
+              <Input
+                autoCapitalize='characters'
+                autoComplete='off'
+                className='club-code-input'
+                spellCheck={false}
+              />
+            </TextField>
+            <Button isDisabled={!typedCode.success} type='submit'>
+              {translate('club.welcome.join')}
+            </Button>
+          </Form>
+        </DisclosurePanel>
+      </Disclosure>
     </div>
   )
 }
@@ -189,14 +222,64 @@ const ClubWelcome: React.FC<{
 const groupedCode = (code: string): string =>
   code.match(/.{1,4}/g)?.join(' ') ?? code
 
+/** Another organiser's phone or the hall's laptop opens the same club by scanning, or by typing the code. */
+const ClubShare: React.FC<{ code: ClubCode }> = ({ code }) => {
+  const translate = useTranslate()
+
+  return (
+    <Disclosure className='club-share'>
+      <Button className='club-share-trigger' slot='trigger' variant='quiet'>
+        <Icon name='qr' />
+        {translate('club.share.open')}
+        <Icon name='chevronDown' />
+      </Button>
+      <DisclosurePanel>
+        <div className='club-share-body'>
+          <CodeAndQr
+            code={groupedCode(code)}
+            codeHint={translate('club.share.codeHint')}
+            qrLabel={translate('club.share.qrLabel')}
+            scanHint={translate('club.share.scanHint')}
+            url={`${pageOrigin()}${clubJoinPathFor(code)}`}
+          />
+          <p className='club-note'>{translate('club.share.warning')}</p>
+        </div>
+      </DisclosurePanel>
+    </Disclosure>
+  )
+}
+
 /**
  * The club's own store: its teams with their colours, formats and tables, its
  * licensees, and the clubs it meets. Prepared once, picked from on every Sunday.
  */
 export const ClubPage: React.FC = () => {
   const translate = useTranslate()
-  const club = useClub()
+  const scannedCode = useClubCodeSearchParam()
+  const replaceWith = useReplaceWith()
+  const club = useClub(scannedCode)
   const { state } = club
+
+  useEffect(() => {
+    if (scannedCode !== null) {
+      replaceWith(paths.club)
+    }
+  }, [replaceWith, scannedCode])
+
+  const logoPickerOf = (target: DirectoryClub, children: React.ReactNode) => (
+    <LogoPicker
+      logoUrl={target.logoUrl}
+      name={target.name}
+      onPick={(file) => club.uploadLogo({ clubId: target.id, file })}
+      onRemove={() =>
+        club.edit((record) =>
+          changeClubLogo({ clubId: target.id, logoUrl: null, record })
+        )
+      }
+    >
+      {children}
+    </LogoPicker>
+  )
 
   return (
     <Main className='club-page'>
@@ -215,7 +298,7 @@ export const ClubPage: React.FC = () => {
       </header>
       {state.status === 'none' ? (
         <>
-          <h1 className='club-title'>{translate('club.title')}</h1>
+          <h1 className='club-title'>{translate('club.welcome.title')}</h1>
           <ClubWelcome onCreate={club.create} onJoin={club.join} />
         </>
       ) : null}
@@ -244,18 +327,17 @@ export const ClubPage: React.FC = () => {
       {state.status === 'ready' ? (
         <>
           <div className='club-head'>
-            <h1 className='club-title'>{state.record.own.name}</h1>
-            <p className='club-code'>
-              <span className='club-label'>{translate('club.code')}</span>
-              <span className='club-code-value'>{groupedCode(state.code)}</span>
-            </p>
-            <p className='club-note'>{translate('club.codeHelp')}</p>
+            {logoPickerOf(
+              state.record.own,
+              <h1 className='club-title'>{state.record.own.name}</h1>
+            )}
             {state.isUnsaved ? (
               <p className='club-alert' role='alert'>
                 <Icon name='wifiOff' />
                 {translate('club.unsaved')}
               </p>
             ) : null}
+            <ClubShare code={state.code} />
           </div>
           <section className='club-section'>
             <ClubTeamsAndPlayers
@@ -264,6 +346,19 @@ export const ClubPage: React.FC = () => {
               onChange={club.change}
               record={state.record}
             />
+          </section>
+          <section className='club-hall-section'>
+            <h2 className='club-heading'>{translate('club.hall.title')}</h2>
+            {state.record.hall === null ? null : (
+              <ClubHallPlan plan={state.record.hall} />
+            )}
+            <p className='club-note'>
+              {translate(
+                state.record.hall === null
+                  ? 'club.hall.empty'
+                  : 'club.hall.help'
+              )}
+            </p>
           </section>
           <section className='club-section'>
             <h2 className='club-heading'>
@@ -288,6 +383,12 @@ export const ClubPage: React.FC = () => {
                 </Button>
                 <DisclosurePanel>
                   <div className='opponent-club-body'>
+                    {logoPickerOf(
+                      opponent,
+                      <p className='club-label'>
+                        {translate('club.logo.title')}
+                      </p>
+                    )}
                     <ClubTeamsAndPlayers
                       club={opponent}
                       isOwn={false}

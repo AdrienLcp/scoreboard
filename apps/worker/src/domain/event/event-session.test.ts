@@ -26,7 +26,13 @@ const openedStore = (): EventStore => {
 
   openEvent({
     drawCode: countingCode(),
-    input: { format: BEST_OF_3, name: 'Club day', tableCount: 2 },
+    input: {
+      club: null,
+      format: BEST_OF_3,
+      hall: null,
+      name: 'Club day',
+      tableCount: 2
+    },
     organiserCode: ORGANISER_CODE,
     store
   })

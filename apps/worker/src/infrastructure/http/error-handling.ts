@@ -18,9 +18,12 @@ const internalErrorBody: ApiErrorResponse = {
   message: 'Unexpected failure'
 }
 
+export const answerInvalidInput = (context: Context) =>
+  context.json(invalidInputBody, 400)
+
 /** The validation hook every `zValidator` takes. */
 export const invalidInput = (result: { success: boolean }, context: Context) =>
-  result.success ? undefined : context.json(invalidInputBody, 400)
+  result.success ? undefined : answerInvalidInput(context)
 
 export const answerNotFound = (context: Context) =>
   context.json(notFoundBody, 404)

@@ -1,0 +1,68 @@
+@use '../../presentation/styles/typography'
+
+/// The logo square leads, what goes with it stacks beside it.
+@layer components
+  .logo-picker
+    align-items: start
+    display: grid
+    gap: var(--space-s) var(--space-m)
+    grid-template-columns: auto minmax(0, 1fr)
+
+  .logo-picker-slot
+    @include typography.label
+
+    align-content: center
+    background: var(--surface)
+    block-size: 5rem
+    box-shadow: var(--inset-hairline)
+    color: var(--ink-muted)
+    cursor: pointer
+    display: grid
+    gap: var(--space-3xs)
+    inline-size: 5rem
+    justify-items: center
+    padding: var(--space-2xs)
+
+    > img
+      block-size: 100%
+      inline-size: 100%
+      object-fit: contain
+
+    > .icon
+      block-size: 1.75rem
+      inline-size: 1.75rem
+
+    &[data-empty]
+      background: var(--surface-raised)
+      box-shadow: none
+
+    &[data-hovered]
+      color: var(--ink)
+
+    &[data-hovered][data-empty]
+      background: var(--surface-high)
+
+    &[data-pending]
+      opacity: 0.6
+
+  .logo-picker-side
+    align-content: start
+    display: grid
+    gap: var(--space-2xs)
+    justify-items: start
+    min-inline-size: 0
+
+  .logo-picker-note
+    @include typography.hint
+
+    color: var(--ink-muted)
+
+  .logo-picker-alert
+    @include typography.emphasis
+
+    align-items: center
+    display: flex
+    gap: var(--space-xs)
+
+  .logo-picker-remove.button
+    margin-inline-start: calc(var(--space-s) * -1)

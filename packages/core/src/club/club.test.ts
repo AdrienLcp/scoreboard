@@ -41,14 +41,18 @@ const teamOf = (
 
 const clubOf = (
   players: DirectoryPlayer[],
-  teams: DirectoryTeam[]
+  teams: DirectoryTeam[],
+  logoUrl: string | null = null
 ): DirectoryClub => ({
   id: randomUUID(),
+  logoUrl,
   name: 'PPC Angles',
   number: null,
   players,
   teams
 })
+
+const ANGLES_LOGO = '/api/logos/room/angles'
 
 describe('team colours', () => {
   it('[club] writes ink on light team colours and white on the dark green', () => {
@@ -102,7 +106,10 @@ describe('defaultTablesFor', () => {
 
 describe('addClubEncounter', () => {
   const players = Array.from({ length: 6 }, (_, index) => licensee(`N${index}`))
-  const home = { club: clubOf(players, []), team: teamOf(players) }
+  const home = {
+    club: clubOf(players, [], ANGLES_LOGO),
+    team: teamOf(players)
+  }
   const away = { club: clubOf([], []), team: teamOf([], { name: 'Rivals 2' }) }
   const setup = addClubEncounter({
     away,
@@ -123,6 +130,10 @@ describe('addClubEncounter', () => {
       players.map((player) => `Léa ${player.lastName}`)
     )
     expect(setup.players[0]?.points).toBe(812)
+  })
+
+  it('[club] gives each team its club logo, none for a club without one', () => {
+    expect(setup.teams.map((team) => team.logoUrl)).toEqual([ANGLES_LOGO, null])
   })
 
   it('[club] seats letter D on the second table of the pair', () => {

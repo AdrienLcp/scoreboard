@@ -1,5 +1,7 @@
 import { z } from 'zod'
 
+import { clubIdentitySchema } from './club.ts'
+import { hallPlanSchema } from './hall-plan.ts'
 import {
   displayIdSchema,
   eventIdSchema,
@@ -15,8 +17,11 @@ export const SOCKET_PREFIX = '/ws'
 /** Every path either end names: the worker matches the pattern, the client fills it. */
 export const API_ROUTES = {
   club: `${API_PREFIX}/clubs/:clubCode`,
+  clubLogos: `${API_PREFIX}/clubs/:clubCode/logos`,
   clubs: `${API_PREFIX}/clubs`,
   events: `${API_PREFIX}/events`,
+  /** A logo a club uploaded, by its club's room and its own id: public, it never holds the club code. */
+  logo: `${API_PREFIX}/logos/:roomId/:logoId`,
   wallPairing: `${API_PREFIX}/wall-pairings/:pairingCode`,
   wallPairingClaim: `${API_PREFIX}/wall-pairings/:pairingCode/claim`,
   wallPairings: `${API_PREFIX}/wall-pairings`
@@ -43,7 +48,11 @@ export const fillRoute = <TRoute extends string>(
 }
 
 export const createEventInputSchema = z.object({
+  /** The club the device prepares days for: its name and logo on the wall from the start. */
+  club: clubIdentitySchema.nullable().default(null),
   format: matchFormatSchema,
+  /** The club's own hall plan, when it kept one. */
+  hall: hallPlanSchema.nullable().default(null),
   name: z.string().trim().min(1).max(80),
   tableCount: z.number().int().min(1).max(MAX_TABLES)
 })

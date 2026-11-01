@@ -1,3 +1,5 @@
+@use '../../presentation/styles/typography'
+
 /// The club's shortcut sits above the hand-made encounter: same quiet panel,
 /// its three choices side by side once the console is wide enough.
 @layer components
@@ -17,3 +19,75 @@
     gap: var(--space-s)
     justify-content: space-between
 
+
+  .club-encounter-lineup
+    background: var(--field)
+
+    @container page (width >= 53.75rem)
+      grid-column: 1 / -1
+
+  .club-encounter-lineup-trigger
+    display: grid
+    gap: var(--space-3xs) var(--space-s)
+    grid-template-columns: minmax(0, 1fr) auto
+    justify-content: stretch
+    text-align: start
+    width: 100%
+
+    > .club-encounter-lineup-summary
+      @include typography.hint
+
+      color: var(--ink-muted)
+      grid-column: 1
+      overflow-wrap: anywhere
+
+    > .icon
+      grid-column: 2
+      grid-row: 1 / span 2
+      transition: rotate var(--transition-fast, 0s) var(--ease-out)
+
+  .club-encounter-lineup[data-expanded] > .club-encounter-lineup-trigger > .icon
+    rotate: 180deg
+
+  .club-encounter-lineup-body
+    display: grid
+    gap: var(--space-m)
+    padding: var(--space-xs) var(--space-s) var(--space-m)
+
+    @container page (width >= 53.75rem)
+      grid-template-columns: 1fr 1fr
+
+      > .switch
+        grid-column: 1 / -1
+
+  .club-lineup
+    border: 0
+    display: grid
+    gap: var(--space-xs)
+    margin: 0
+    min-inline-size: 0
+    padding: 0
+
+  .club-lineup-team
+    @include typography.label
+
+    color: var(--ink-muted)
+    padding: 0
+
+  .club-lineup-letters
+    display: grid
+    gap: var(--space-xs) var(--space-m)
+    grid-template-columns: repeat(auto-fill, minmax(12rem, 1fr))
+
+    > .field
+      align-items: center
+      column-gap: var(--space-xs)
+      display: grid
+      grid-template-columns: 1.5rem minmax(0, 1fr)
+
+      > .field-label
+        @include typography.figure
+
+        color: var(--ink)
+        font-size: var(--text-l)
+        text-align: center

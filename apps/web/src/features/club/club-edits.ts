@@ -6,7 +6,9 @@ import type {
   DirectoryTeam
 } from '@scoreboard/protocol/club-record'
 import { encounterFormatIds } from '@scoreboard/protocol/encounter-format-id'
+import type { HallPlan } from '@scoreboard/protocol/hall-plan'
 import type { PlayerId, TeamId } from '@scoreboard/protocol/identifiers'
+import type { LogoUrl } from '@scoreboard/protocol/logo'
 import { DEFAULT_MATCH_POINTS_RULE } from '@scoreboard/protocol/match-points-rule'
 
 import { nextTeamColour } from '@scoreboard/core/club/team-colours'
@@ -146,7 +148,14 @@ export const addOpponentClub = ({
   ...record,
   opponents: [
     ...record.opponents,
-    { id: newClubId(), name, number: null, players: [], teams: [] }
+    {
+      id: newClubId(),
+      logoUrl: null,
+      name,
+      number: null,
+      players: [],
+      teams: []
+    }
   ]
 })
 
@@ -181,3 +190,50 @@ export const seatPlayer = ({
 
   return { ...team, lineup: seats }
 }
+
+export const changeClubLogo = ({
+  clubId,
+  logoUrl,
+  record
+}: {
+  clubId: DirectoryClubId
+  logoUrl: LogoUrl | null
+  record: ClubRecord
+}): ClubRecord => editClub(record, clubId, (club) => ({ ...club, logoUrl }))
+
+const withTeamLineup = (
+  club: DirectoryClub,
+  teamId: TeamId,
+  lineup: readonly (PlayerId | null)[]
+): DirectoryClub => ({
+  ...club,
+  teams: club.teams.map((team) =>
+    team.id === teamId ? { ...team, lineup: [...lineup] } : team
+  )
+})
+
+/** The day's composition becomes the team's last one: its next encounter starts from it. */
+export const keepLineup = ({
+  lineup,
+  record,
+  teamId
+}: {
+  lineup: readonly (PlayerId | null)[]
+  record: ClubRecord
+  teamId: TeamId
+}): ClubRecord => ({
+  ...record,
+  opponents: record.opponents.map((club) =>
+    withTeamLineup(club, teamId, lineup)
+  ),
+  own: withTeamLineup(record.own, teamId, lineup)
+})
+
+/** The club's hall as an event drew it: where each table stands and its number; a table put away was put away for that day only. */
+export const keepHallPlan = (
+  record: ClubRecord,
+  plan: HallPlan
+): ClubRecord => ({
+  ...record,
+  hall: { tables: plan.tables.map((table) => ({ ...table, isHidden: false })) }
+})

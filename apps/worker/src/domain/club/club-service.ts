@@ -21,10 +21,12 @@ const emptyRecordFor = (
   input: CreateClubInput,
   newClubId: () => string
 ): ClubRecord => ({
+  hall: null,
   opponentColour: DEFAULT_OPPONENT_COLOUR,
   opponents: [],
   own: {
     id: newClubId(),
+    logoUrl: null,
     name: input.name,
     number: null,
     players: [],

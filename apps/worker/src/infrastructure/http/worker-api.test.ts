@@ -8,16 +8,21 @@ import {
   clubRecordSchema,
   createdClubSchema
 } from '@scoreboard/protocol/club-record'
+import { MAX_LOGO_BYTES, uploadedLogoSchema } from '@scoreboard/protocol/logo'
 import {
   API_ROUTES,
   apiErrorResponseSchema,
+  type CreatedEvent,
   createdEventSchema,
   EVENT_SOCKET_ROUTE,
   fillRoute,
   openedWallPairingSchema,
   wallPairingStatusSchema
 } from '@scoreboard/protocol/routes'
-import { serverMessageSchema } from '@scoreboard/protocol/server-message'
+import {
+  organiserSnapshotMessageSchema,
+  serverMessageSchema
+} from '@scoreboard/protocol/server-message'
 import { BEST_OF_3 } from '@scoreboard/protocol/testing/match-formats'
 import { PROTOCOL_VERSION } from '@scoreboard/protocol/version'
 
@@ -42,6 +47,40 @@ const postEvent = (body: string) =>
 
 const errorCodeOf = async (response: { json: () => Promise<unknown> }) =>
   apiErrorResponseSchema.parse(await response.json()).code
+
+/** The first message the event's socket sends its organiser once they say hello. */
+const firstMessageToOrganiser = async ({
+  eventId,
+  organiserCode
+}: CreatedEvent): Promise<unknown> => {
+  const upgraded = await server.fetch(
+    fillRoute(EVENT_SOCKET_ROUTE, { eventId }),
+    { headers: { Upgrade: 'websocket' } }
+  )
+  const socket = upgraded.webSocket
+
+  if (upgraded.status !== 101 || socket === null) {
+    throw new Error('The upgrade carried no socket')
+  }
+
+  socket.accept()
+  const firstMessage = new Promise<unknown>((resolve) => {
+    socket.addEventListener('message', (message) => {
+      resolve(JSON.parse(String(message.data)))
+    })
+  })
+  socket.send(
+    JSON.stringify({
+      credentials: { code: organiserCode, role: 'organiser' },
+      protocolVersion: PROTOCOL_VERSION,
+      type: 'hello'
+    })
+  )
+  const message = await firstMessage
+  socket.close()
+
+  return message
+}
 
 beforeAll(() => server.listen(), WORKERD_START_TIMEOUT_MS)
 beforeEach(() => server.reset(), WORKERD_START_TIMEOUT_MS)
@@ -102,36 +141,42 @@ describe('the worker', () => {
       ).json()
     )
 
-    const upgraded = await server.fetch(
-      fillRoute(EVENT_SOCKET_ROUTE, { eventId: created.eventId }),
-      { headers: { Upgrade: 'websocket' } }
-    )
-    const socket = upgraded.webSocket
+    expect(
+      serverMessageSchema.parse(await firstMessageToOrganiser(created)).type
+    ).toBe('snapshot.organiser')
+  })
 
-    expect(upgraded.status).toBe(101)
-
-    if (socket === null) {
-      throw new Error('The upgrade carried no socket')
+  it("opens an event with the club's name, logo and hall the device sends", async () => {
+    const club = {
+      colours: null,
+      logoUrl: '/api/logos/room/logo',
+      name: 'PPC Angles'
     }
-
-    socket.accept()
-    const firstMessage = new Promise<unknown>((resolve) => {
-      socket.addEventListener('message', (message) => {
-        resolve(JSON.parse(String(message.data)))
-      })
-    })
-    socket.send(
-      JSON.stringify({
-        credentials: { code: created.organiserCode, role: 'organiser' },
-        protocolVersion: PROTOCOL_VERSION,
-        type: 'hello'
-      })
+    const hall = {
+      tables: [
+        { column: 0, isHidden: false, row: 0, table: 1 },
+        { column: 1, isHidden: true, row: 0, table: 2 }
+      ]
+    }
+    const created = createdEventSchema.parse(
+      await (
+        await postEvent(
+          JSON.stringify({
+            club,
+            format: BEST_OF_3,
+            hall,
+            name: 'Club day',
+            tableCount: 2
+          })
+        )
+      ).json()
     )
+    const { setup } = organiserSnapshotMessageSchema.parse(
+      await firstMessageToOrganiser(created)
+    ).snapshot
 
-    expect(serverMessageSchema.parse(await firstMessage).type).toBe(
-      'snapshot.organiser'
-    )
-    socket.close()
+    expect(setup.club).toEqual(club)
+    expect(setup.hall).toEqual(hall)
   })
 })
 
@@ -271,5 +316,121 @@ describe('the club store', () => {
 
   it('answers 404 on a code no club holds', async () => {
     expect((await readClub('ABCDEFGHJKLM')).status).toBe(404)
+  })
+})
+
+describe('the club logos', () => {
+  const pngBytes = new Uint8Array([137, 80, 78, 71, 13, 10, 26, 10, 1, 2, 3])
+
+  const openClub = async () =>
+    createdClubSchema.parse(
+      await (
+        await server.fetch(API_ROUTES.clubs, {
+          body: JSON.stringify({ name: 'PPC Angles' }),
+          headers: { 'Content-Type': 'application/json' },
+          method: 'POST'
+        })
+      ).json()
+    ).clubCode
+
+  const upload = (
+    clubCode: string,
+    body: Uint8Array,
+    contentType = 'image/png'
+  ) =>
+    server.fetch(fillRoute(API_ROUTES.clubLogos, { clubCode }), {
+      body,
+      headers: { 'Content-Type': contentType },
+      method: 'POST'
+    })
+
+  const uploadedLogoUrl = async (clubCode: string) =>
+    uploadedLogoSchema.parse(await (await upload(clubCode, pngBytes)).json())
+      .logoUrl
+
+  const showLogo = async (clubCode: string, logoUrl: string) => {
+    const club = fillRoute(API_ROUTES.club, { clubCode })
+    const record = clubRecordSchema.parse(
+      await (await server.fetch(club)).json()
+    )
+
+    await server.fetch(club, {
+      body: JSON.stringify({ ...record, own: { ...record.own, logoUrl } }),
+      headers: { 'Content-Type': 'application/json' },
+      method: 'PUT'
+    })
+  }
+
+  it('keeps an uploaded logo and serves it to anyone, cached for good', async () => {
+    const clubCode = await openClub()
+    const uploaded = await upload(clubCode, pngBytes)
+
+    expect(uploaded.status).toBe(201)
+
+    const { logoUrl } = uploadedLogoSchema.parse(await uploaded.json())
+
+    expect(logoUrl).not.toContain(clubCode)
+
+    const served = await server.fetch(logoUrl)
+
+    expect(served.status).toBe(200)
+    expect(served.headers.get('Content-Type')).toBe('image/png')
+    expect(served.headers.get('Cache-Control')).toBe(
+      'public, max-age=31536000, immutable'
+    )
+    expect(served.headers.get('X-Content-Type-Options')).toBe('nosniff')
+    expect(new Uint8Array(await served.arrayBuffer())).toEqual(pngBytes)
+  })
+
+  it.each([
+    ['an image type the wall does not take', pngBytes, 'image/svg+xml'],
+    ['an empty image', new Uint8Array(), 'image/png'],
+    [
+      'an image over the size limit',
+      new Uint8Array(MAX_LOGO_BYTES + 1),
+      'image/png'
+    ]
+  ])('refuses %s', async (_, body, contentType) => {
+    const refused = await upload(await openClub(), body, contentType)
+
+    expect(refused.status).toBe(400)
+    expect(await errorCodeOf(refused)).toBe('invalid_input')
+  })
+
+  it('answers 404 on an upload to a code no club holds', async () => {
+    const refused = await upload('ABCDEFGHJKLM', pngBytes)
+
+    expect(refused.status).toBe(404)
+    expect(await errorCodeOf(refused)).toBe('not_found')
+  })
+
+  it.each([
+    ['a malformed room id', 'not-a-room'],
+    ['a room id no club drew', '0'.repeat(64)]
+  ])('answers 404 on a logo behind %s', async (_, roomId) => {
+    const served = await server.fetch(
+      fillRoute(API_ROUTES.logo, { logoId: crypto.randomUUID(), roomId })
+    )
+
+    expect(served.status).toBe(404)
+  })
+
+  it('answers 404 on a logo its club never stored', async () => {
+    const logoUrl = await uploadedLogoUrl(await openClub())
+    const unknownLogoUrl = logoUrl.replace(/[^/]+$/, crypto.randomUUID())
+
+    expect((await server.fetch(unknownLogoUrl)).status).toBe(404)
+  })
+
+  it('keeps a fresh logo the record does not show yet beside the one it shows', async () => {
+    const clubCode = await openClub()
+    const shown = await uploadedLogoUrl(clubCode)
+    await showLogo(clubCode, shown)
+    const unsaved = await uploadedLogoUrl(clubCode)
+    const latest = await uploadedLogoUrl(clubCode)
+
+    expect((await server.fetch(shown)).status).toBe(200)
+    expect((await server.fetch(unsaved)).status).toBe(200)
+    expect((await server.fetch(latest)).status).toBe(200)
   })
 })

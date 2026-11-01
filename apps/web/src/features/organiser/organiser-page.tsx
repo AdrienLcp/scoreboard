@@ -11,6 +11,7 @@ import { FeedMessage } from '@/features/event/feed-message'
 import { useCurrentSnapshot } from '@/features/event/use-current-snapshot'
 import {
   displayPathFor,
+  paths,
   spectatorPathFor,
   useEventIdParam,
   usePairingSearchParam
@@ -174,6 +175,10 @@ const OrganiserConsole: React.FC<{ code: OrganiserCode; eventId: EventId }> = ({
           </p>
         </div>
         <div className='organiser-links'>
+          <ButtonLink href={paths.club}>
+            <Icon name='club' />
+            {translate('organiser.club')}
+          </ButtonLink>
           <ButtonLink href={displayPathFor(eventId)} target='_blank'>
             <Icon name='display' />
             {translate('organiser.access.display')}

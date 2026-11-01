@@ -22,7 +22,11 @@
 
   .club-head
     display: grid
-    gap: var(--space-xs)
+    gap: var(--space-s)
+    justify-items: start
+
+    > .logo-picker
+      align-items: center
 
   .club-heading
     @include typography.strong
@@ -50,24 +54,37 @@
     display: flex
     gap: var(--space-xs)
 
-  .club-code
-    align-items: baseline
-    display: flex
-    flex-wrap: wrap
-    gap: var(--space-s)
-
-  .club-code-value
-    @include typography.code
-
   .club-code-input
     @include typography.code-entry
 
   .club-welcome
     display: grid
-    gap: var(--space-l)
+    gap: var(--space-s)
+    max-width: 28rem
 
-    @container page (width >= 53.75rem)
-      grid-template-columns: 1fr 1fr
+  .club-join-trigger, .club-share-trigger
+    > .icon:last-child
+      transition: rotate var(--transition-fast, 0s) var(--ease-out)
+
+  .club-join, .club-share
+    &[data-expanded] > .button > .icon:last-child
+      rotate: 180deg
+
+  .club-share
+    justify-self: stretch
+    max-width: 40rem
+
+  .club-share-body
+    background: var(--surface)
+    display: grid
+    gap: var(--space-s)
+    padding: var(--space-m)
+
+  .club-hall-section
+    display: grid
+    gap: var(--space-s)
+    justify-items: start
+    max-width: 40rem
 
   .club-panel
     align-content: start

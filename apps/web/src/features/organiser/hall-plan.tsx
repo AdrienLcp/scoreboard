@@ -29,6 +29,8 @@ import {
   placeHallTable
 } from '@scoreboard/core/hall/hall-plan'
 
+import { keepHallPlan } from '@/features/club/club-edits'
+import { useClub } from '@/features/club/use-club'
 import {
   type EncounterLine,
   encounterLinesFor
@@ -93,7 +95,13 @@ export const HallPlanBoard: React.FC<HallPlanBoardProps> = ({
   const [picking, setPicking] = useState<Picking>({ kind: 'none' })
   const [previous, setPrevious] = useState<EventSetup | null>(null)
   const sheet = useRef<HTMLDivElement>(null)
+  const club = useClub()
   const plan = hallPlanOf(setup)
+  const clubRecord = club.state.status === 'ready' ? club.state.record : null
+  const isKeptForClub =
+    clubRecord !== null &&
+    JSON.stringify(keepHallPlan(clubRecord, plan).hall) ===
+      JSON.stringify(clubRecord.hall)
   const lines = encounterLinesFor(event)
   const isPlacing = picking.kind === 'moving-table'
   const columns = Math.min(
@@ -373,6 +381,33 @@ export const HallPlanBoard: React.FC<HallPlanBoardProps> = ({
           })}
           <p className='hall-stands'>{translate('organiser.hall.stands')}</p>
         </section>
+        {clubRecord === null ? null : (
+          <div className='hall-club'>
+            {isKeptForClub ? (
+              <p className='hall-club-kept'>
+                <Icon name='check' />
+                {translate('organiser.hall.keptForClub')}
+              </p>
+            ) : (
+              <Button
+                onPress={() =>
+                  club.edit((record) => keepHallPlan(record, plan))
+                }
+              >
+                <Icon name='club' />
+                {translate('organiser.hall.keepForClub')}
+              </Button>
+            )}
+            {isKeptForClub &&
+            club.state.status === 'ready' &&
+            club.state.previous !== null ? (
+              <Button onPress={club.undo} variant='quiet'>
+                <Icon name='undo' />
+                {translate('organiser.hall.undo')}
+              </Button>
+            ) : null}
+          </div>
+        )}
       </section>
       <div className='hall-side' ref={sheet}>
         {selectedTable === null ? null : (

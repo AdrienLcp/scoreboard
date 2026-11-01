@@ -1,6 +1,6 @@
 import { z } from 'zod'
 
-import { MAX_TABLES, tableNumberSchema } from './identifiers'
+import { MAX_TABLES, tableNumberSchema } from './identifiers.ts'
 
 /** The plan's grid is this many places wide and deep: a hall rarely holds more than a dozen tables. */
 export const HALL_GRID_SIZE = 12
