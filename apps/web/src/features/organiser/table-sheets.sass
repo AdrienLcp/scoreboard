@@ -1,0 +1,72 @@
+@use '../../presentation/styles/typography'
+
+/// A4 sheets in rem: at print scale one rem is about 4.2 mm, so the QR code
+/// covers most of the page width.
+@layer components
+  .table-sheets
+    display: none
+
+  @media print
+    @page
+      margin: 3rem
+      size: A4 portrait
+
+    body > :not(.table-sheets)
+      display: none
+
+    body
+      background: var(--qr-paper)
+
+    .table-sheets
+      color: var(--ink)
+      display: block
+
+    .table-sheet
+      align-items: center
+      break-after: page
+      display: flex
+      flex-direction: column
+      gap: var(--space-xl)
+      text-align: center
+
+      &:last-child
+        break-after: auto
+
+      h1
+        @include typography.display-title
+
+        font-size: var(--text-sheet-table)
+
+      .qr-code
+        width: 26rem
+
+    .table-sheet-event
+      @include typography.hint
+
+      font-size: var(--text-l)
+
+    .table-sheet-scan
+      @include typography.prompt
+
+      font-size: var(--text-2xl)
+
+    .table-sheet-code
+      align-items: center
+      display: flex
+      flex-direction: column
+      gap: var(--space-xs)
+      margin-top: var(--space-l)
+
+      p
+        @include typography.hint
+
+        font-size: var(--text-xl)
+
+      strong
+        @include typography.code
+
+        font-size: var(--text-sheet-code)
+
+      small
+        color: var(--ink-muted)
+        font-size: var(--text-l)

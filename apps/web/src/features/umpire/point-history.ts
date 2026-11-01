@@ -15,7 +15,7 @@ export type ScoredPoint = {
 
 /**
  * The events an undo may take back, oldest first: every one but the start and
- * the undos themselves, each undo popping the latest still standing.
+ * the undo events themselves, each undo popping the latest still standing.
  */
 const standingEventsOf = (events: readonly ScoringEvent[]): ScoringEvent[] => {
   const standing: ScoringEvent[] = []

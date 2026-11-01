@@ -1,12 +1,22 @@
 import type React from 'react'
+import { useEffect, useState } from 'react'
+
+import type { PairedWall } from '@scoreboard/protocol/routes'
 
 import { pageOrigin } from '@/infrastructure/browser'
+import { warnOnFailure } from '@/infrastructure/diagnostics'
 import {
   displayOfPathFor,
   displayPathFor,
+  useIsNewWallPairingAsked,
   useReplaceWith,
   wallPairingPathFor
 } from '@/infrastructure/router/navigation'
+import {
+  forgetPairedWall,
+  readPairedWall,
+  rememberPairedWall
+} from '@/infrastructure/storage/paired-wall-storage'
 import { BrandMark } from '@/presentation/components/brand-mark'
 import { CodeAndQr } from '@/presentation/components/code-and-qr'
 import { Main } from '@/presentation/components/main'
@@ -17,21 +27,36 @@ import { useWallPairing } from './use-wall-pairing'
 
 import './wall-page.sass'
 
-/**
- * What a TV opens first: a code and a QR code for the organiser, then the
- * event's display as soon as they claim it. Several screens pair the same
- * event one after the other.
- */
-export const WallPage: React.FC = () => {
+const pathOfWall = ({ displayId, eventId }: PairedWall): string =>
+  displayId === null
+    ? displayPathFor(eventId)
+    : displayOfPathFor({ displayId, eventId })
+
+/** The display this TV remembers, unless `?new` asks for a fresh code, which also forgets it. */
+const rememberedWallOrNone = (
+  isNewPairingAsked: boolean
+): PairedWall | null => {
+  if (isNewPairingAsked) {
+    forgetPairedWall()
+
+    return null
+  }
+
+  const stored = readPairedWall()
+
+  return stored.status === 'success' ? stored.data : null
+}
+
+const WaitingWall: React.FC = () => {
   const translate = useTranslate()
   const replaceWith = useReplaceWith()
-  const view = useWallPairing(({ displayId, eventId }) =>
-    replaceWith(
-      displayId === null
-        ? displayPathFor(eventId)
-        : displayOfPathFor({ displayId, eventId })
+  const view = useWallPairing((wall) => {
+    warnOnFailure(
+      rememberPairedWall(wall),
+      'Paired display not kept on this TV'
     )
-  )
+    replaceWith(pathOfWall(wall))
+  })
 
   return (
     <Main className='wall-page'>
@@ -59,4 +84,24 @@ export const WallPage: React.FC = () => {
       </div>
     </Main>
   )
+}
+
+/**
+ * What a TV opens first: a code and a QR code for the organiser, then the
+ * event's display as soon as they claim it. Several screens pair the same
+ * event one after the other. A TV paired once goes straight back to its
+ * display on the next visit.
+ */
+export const WallPage: React.FC = () => {
+  const replaceWith = useReplaceWith()
+  const isNewPairingAsked = useIsNewWallPairingAsked()
+  const [remembered] = useState(() => rememberedWallOrNone(isNewPairingAsked))
+
+  useEffect(() => {
+    if (remembered !== null) {
+      replaceWith(pathOfWall(remembered))
+    }
+  }, [remembered, replaceWith])
+
+  return remembered === null ? <WaitingWall /> : null
 }

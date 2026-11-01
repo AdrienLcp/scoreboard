@@ -38,6 +38,7 @@ export const FR_DICTIONARY = defineDictionary({
     noResults: 'Aucun match terminé',
     nothingNext: 'rien de prévu',
     page: 'Tables {first:number}–{last:number} · {index:number}/{count:number}',
+    pairAgain: 'Brancher cet écran sur une autre rencontre',
     qrLabel: 'QR code vers la page des matchs',
     resultDetail: defineTranslation('contre {loser} · fini à {at:date}', {
       date: { at: { timeStyle: 'short' } }
@@ -232,14 +233,25 @@ export const FR_DICTIONARY = defineDictionary({
   },
   organiser: {
     access: {
+      codeHint: 'L’arbitre tape ce code',
       copied: 'Lien copié',
       copy: 'Copier le lien',
       display: 'Grand écran',
       explain:
         'Chaque arbitre scanne le QR code de sa table, ou tape son code sur',
+      next: 'Table suivante',
       openConsole: 'Ouvrir la console',
+      previous: 'Table précédente',
+      print: 'Imprimer',
       qrLabel: 'QR code de la console d’arbitrage de la table {table:number}',
+      scanHint: 'ou scanne ce QR code avec son téléphone',
+      sheet: {
+        scan: 'Arbitre : scannez ce QR code avec votre téléphone',
+        type: 'ou tapez ce code sur'
+      },
       spectator: 'Page des spectateurs',
+      table: 'Table {table:number}',
+      tables: 'Tables',
       title: 'Codes des tables'
     },
     choosePlayer: 'Choisir un joueur',
@@ -609,7 +621,11 @@ export const FR_DICTIONARY = defineDictionary({
   wallPairing: {
     choose: 'Sur quelle rencontre brancher l’écran {code} ?',
     invalid: 'Ce lien ne contient pas de code d’écran valable.',
-    none: 'Ce téléphone n’organise aucune rencontre. Ouvrez l’organisation sur l’appareil qui l’a créée, onglet Tables, et tapez le code {code}.',
+    none: {
+      detail: 'Ce téléphone n’a créé aucune rencontre.',
+      scan: 'Scannez l’écran avec le téléphone qui a créé la rencontre.',
+      type: 'Ou, dans l’organisation de la rencontre, onglet Tables et écrans, tapez le code :'
+    },
     title: 'Brancher un écran'
   }
 })

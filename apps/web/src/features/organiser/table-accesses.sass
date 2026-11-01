@@ -1,0 +1,102 @@
+@use '../../presentation/styles/layout'
+@use '../../presentation/styles/typography'
+
+@layer components
+  .table-accesses
+    container-type: inline-size
+    display: grid
+    gap: var(--space-m)
+    min-width: 0
+
+  .access-intro
+    align-items: center
+    display: flex
+    flex-wrap: wrap
+    gap: var(--space-s) var(--space-xl)
+    justify-content: space-between
+
+    .organiser-note
+      flex: 1 1 20rem
+
+  .access-layout
+    display: grid
+    gap: var(--space-m)
+
+  .access-tables
+    display: grid
+    gap: var(--space-2xs)
+    grid-template-columns: repeat(auto-fill, minmax(6.5rem, 1fr))
+
+  .access-table
+    align-items: start
+    background: var(--surface)
+    box-shadow: var(--inset-hairline)
+    display: flex
+    flex-direction: column
+    gap: var(--space-4xs)
+    padding: var(--space-xs) var(--space-s)
+    text-align: start
+
+    &[data-hovered]:not([data-selected])
+      background: var(--surface-raised)
+
+    &[data-selected]
+      box-shadow: none
+
+  .access-table-name
+    @include typography.name
+
+    font-size: var(--text-m)
+
+  .access-table-code
+    @include typography.code
+
+    font-size: var(--text-s)
+    opacity: 0.8
+
+  .access-focus
+    background: var(--surface)
+    display: grid
+    gap: var(--space-l)
+    max-width: 56rem
+    padding: var(--space-m) var(--space-l) var(--space-l)
+
+    .code-and-qr-square
+      background: var(--field)
+
+  .access-focus-head
+    align-items: center
+    display: grid
+    gap: var(--space-s)
+    grid-template-columns: auto minmax(0, 1fr) auto
+
+    h3
+      @include typography.page-title
+
+      text-align: center
+
+    .button
+      min-width: var(--control-height)
+      padding-inline: 0
+
+  .access-focus-actions
+    display: flex
+    flex-wrap: wrap
+    gap: var(--space-2xs) var(--space-s)
+
+  @include layout.container-wide(46rem)
+    .access-layout
+      align-items: start
+      grid-template-columns: minmax(13rem, 17rem) minmax(0, 1fr)
+
+    .access-tables
+      grid-template-columns: minmax(0, 1fr)
+
+    .access-table
+      align-items: baseline
+      flex-direction: row
+      justify-content: space-between
+      min-height: var(--control-height)
+
+      .access-table-code
+        font-size: var(--text-m)

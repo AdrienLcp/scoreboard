@@ -1,5 +1,5 @@
 import type React from 'react'
-import { useState } from 'react'
+import { useEffect, useRef, useState } from 'react'
 
 import type { EventSetup } from '@scoreboard/protocol/event-setup'
 import type {
@@ -43,7 +43,11 @@ type Outcome =
   | { error: ClaimWallError; status: 'failed' }
   | { name: string; status: 'paired' }
 
-/** Puts a screen waiting on `/wall` onto this event, on every table or on one of its displays. */
+/**
+ * Puts a screen waiting on `/wall` onto this event, on every table or on one
+ * of its displays. A scanned screen with nothing to choose is put on every
+ * table at once: the organiser only reads the confirmation.
+ */
 export const WallPairingForm: React.FC<WallPairingFormProps> = ({
   code,
   eventId,
@@ -64,35 +68,54 @@ export const WallPairingForm: React.FC<WallPairingFormProps> = ({
   ]
   const wallUrl = `${pageOrigin()}${PAGE_ROUTES.wall}`
 
+  const claim = async (claimed: WallPairingCode, choice: string) => {
+    const display = setup.displays.find(({ id }) => id === choice)
+    setOutcome({ status: 'sending' })
+    const sent = await claimWallPairing(claimed, {
+      displayId: display?.id ?? null,
+      eventId,
+      organiserCode: code
+    })
+
+    if (sent.status === 'failure') {
+      setOutcome({ error: sent.error, status: 'failed' })
+
+      return
+    }
+
+    setTyped('')
+    setOutcome({
+      name: display?.name ?? translate('organiser.displays.all'),
+      status: 'paired'
+    })
+  }
+  const claimRef = useRef(claim)
+  claimRef.current = claim
+  const hasClaimedScanned = useRef(false)
+  const hasNothingToChoose = setup.displays.length === 0
+
+  useEffect(() => {
+    if (
+      scannedCode === null ||
+      !hasNothingToChoose ||
+      hasClaimedScanned.current
+    ) {
+      return
+    }
+
+    hasClaimedScanned.current = true
+    void claimRef.current(scannedCode, ALL_TABLES)
+  }, [hasNothingToChoose, scannedCode])
+
   return (
     <Form
       className='organiser-panel organiser-inline-form'
-      onSubmit={async (event) => {
+      onSubmit={(event) => {
         event.preventDefault()
 
-        if (pairingCode === null) {
-          return
+        if (pairingCode !== null) {
+          void claim(pairingCode, displayChoice)
         }
-
-        const display = setup.displays.find(({ id }) => id === displayChoice)
-        setOutcome({ status: 'sending' })
-        const claimed = await claimWallPairing(pairingCode, {
-          displayId: display?.id ?? null,
-          eventId,
-          organiserCode: code
-        })
-
-        if (claimed.status === 'failure') {
-          setOutcome({ error: claimed.error, status: 'failed' })
-
-          return
-        }
-
-        setTyped('')
-        setOutcome({
-          name: display?.name ?? translate('organiser.displays.all'),
-          status: 'paired'
-        })
       }}
     >
       <h3>{translate('organiser.displays.pair.title')}</h3>
@@ -141,7 +164,7 @@ export const WallPairingForm: React.FC<WallPairingFormProps> = ({
         </p>
       ) : null}
       {outcome.status === 'paired' ? (
-        <p className='organiser-note' role='status'>
+        <p className='organiser-done' role='status'>
           <Icon name='check' />
           {translate('organiser.displays.pair.done', { name: outcome.name })}
         </p>

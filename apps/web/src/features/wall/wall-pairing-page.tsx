@@ -53,10 +53,22 @@ export const WallPairingPage: React.FC = () => {
   if (events.length === 0) {
     return (
       <MessagePage
-        detail={translate('wallPairing.none', { code: pairingCode })}
+        detail={translate('wallPairing.none.detail')}
         title={translate('wallPairing.title')}
       >
-        {null}
+        <ul className='wall-pairing-ways'>
+          <li>
+            <Icon name='phone' />
+            <p>{translate('wallPairing.none.scan')}</p>
+          </li>
+          <li>
+            <Icon name='keyboard' />
+            <p>
+              {translate('wallPairing.none.type')}{' '}
+              <strong translate='no'>{pairingCode}</strong>
+            </p>
+          </li>
+        </ul>
       </MessagePage>
     )
   }

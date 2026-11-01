@@ -8,6 +8,7 @@ import {
   encounterLinesFor,
   encounterTitleOf
 } from '@/features/event/encounter-lines'
+import { isEventGone } from '@/features/event/event-gone'
 import { FeedMessage } from '@/features/event/feed-message'
 import { useCurrentSnapshot } from '@/features/event/use-current-snapshot'
 import { usePublicFeed } from '@/features/event/use-public-feed'
@@ -21,6 +22,7 @@ import { Main } from '@/presentation/components/main'
 import { DocumentTitle } from '@/presentation/head/document-title'
 import { useTranslate } from '@/presentation/i18n/i18n-context'
 
+import { useForgetGoneWall } from '../wall/use-forget-gone-wall'
 import { DisplayHeader, type PageIndicator } from './display-header'
 import { firstStartOf, hasNotStarted } from './display-summary'
 import { LiveBoard } from './live-board'
@@ -40,6 +42,19 @@ const DisplayBoard: React.FC<{
   })
   const { error, status } = feed
   const { nowMs, snapshot } = useCurrentSnapshot(feed.snapshot)
+  const tables =
+    snapshot === null
+      ? null
+      : tablesShownOn({
+          displayId,
+          displays: snapshot.displays,
+          tableCount: snapshot.tableCount
+        })
+  const isPairedWall = useForgetGoneWall({
+    displayId,
+    eventId,
+    isGone: isEventGone(error) || (snapshot !== null && tables === null)
+  })
 
   if (snapshot === null) {
     return (
@@ -50,12 +65,6 @@ const DisplayBoard: React.FC<{
       />
     )
   }
-
-  const tables = tablesShownOn({
-    displayId,
-    displays: snapshot.displays,
-    tableCount: snapshot.tableCount
-  })
 
   if (tables === null) {
     return (
@@ -90,6 +99,7 @@ const DisplayBoard: React.FC<{
   const header = (page: PageIndicator | null) => (
     <DisplayHeader
       eventName={snapshot.name}
+      isPairedWall={isPairedWall}
       nowMs={nowMs}
       owner={snapshot.club?.name ?? translate('app.name')}
       page={page}

@@ -82,6 +82,17 @@ export const usePairingSearchParam = (): WallPairingCode | null => {
   return typed === null ? null : parseWallPairingCode(typed)
 }
 
+const NEW_PAIRING_SEARCH_PARAM = 'new'
+
+/** `/wall` showing a fresh code even on a TV that remembers its display: how a screen is paired again. */
+export const newWallPairingPath = `${paths.wall}?${NEW_PAIRING_SEARCH_PARAM}`
+
+export const useIsNewWallPairingAsked = (): boolean => {
+  const [search] = useSearchParams()
+
+  return search.has(NEW_PAIRING_SEARCH_PARAM)
+}
+
 export const useWallPairingCodeParam = (): WallPairingCode | null => {
   const { pairingCode } = useParams<PathParam<typeof paths.wallPairing>>()
 

@@ -248,6 +248,7 @@ const OrganiserConsole: React.FC<{ code: OrganiserCode; eventId: EventId }> = ({
             <TableAccesses
               accesses={snapshot.tableAccesses}
               eventId={eventId}
+              eventName={setup.name}
             />
             <h2 className='organiser-subheading'>
               {translate('organiser.displays.title')}

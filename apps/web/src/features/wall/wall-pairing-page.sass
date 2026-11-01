@@ -1,3 +1,5 @@
+@use '../../presentation/styles/typography'
+
 @layer components
   .wall-pairing-events
     display: grid
@@ -7,3 +9,28 @@
     a
       justify-content: flex-start
       width: 100%
+
+  .wall-pairing-ways
+    display: grid
+    gap: var(--space-s)
+    width: 100%
+
+    li
+      align-items: center
+      background: var(--surface)
+      display: grid
+      gap: var(--space-m)
+      grid-template-columns: auto minmax(0, 1fr)
+      padding: var(--space-m)
+
+    .icon
+      font-size: var(--text-2xl)
+
+    p
+      color: var(--ink)
+
+    strong
+      @include typography.code
+
+      display: block
+      font-size: var(--text-code)

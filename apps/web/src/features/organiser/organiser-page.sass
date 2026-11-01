@@ -70,6 +70,16 @@
     gap: var(--space-xs)
     padding: var(--space-s) var(--space-m)
 
+  .organiser-done
+    @include typography.strong
+
+    align-items: center
+    background: var(--surface-raised)
+    display: flex
+    flex-basis: 100%
+    gap: var(--space-xs)
+    padding: var(--space-s) var(--space-m)
+
   // Scrolls sideways on a phone with no scrollbar chrome: a shade of the
   // field covers each edge that still hides tabs, faded in by the scroll
   // position itself.
@@ -396,40 +406,6 @@
 
     &:empty
       display: none
-
-  .access-grid
-    display: grid
-    gap: var(--space-s)
-    grid-template-columns: repeat(auto-fill, minmax(min(100%, 19rem), 1fr))
-
-  .access-row
-    align-items: center
-    background: var(--surface)
-    display: grid
-    gap: var(--space-s)
-    grid-template-columns: auto 4.5rem minmax(0, 1fr)
-    padding: var(--space-s) var(--space-m)
-
-    .table-number
-      font-size: var(--text-2xl)
-
-  .access-text
-    min-width: 0
-
-  .access-actions
-    align-items: center
-    display: flex
-    flex-wrap: wrap
-    gap: 0 var(--space-s)
-
-    .button
-      min-height: var(--target)
-      padding-inline: var(--space-2xs)
-
-  .access-code
-    @include typography.code
-
-    font-size: var(--text-code)
 
   .settings-form
     display: grid

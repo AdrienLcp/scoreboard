@@ -4,7 +4,9 @@ import type { InstantMs } from '@scoreboard/protocol/scoring-event'
 
 import { toDate } from '@/infrastructure/dates'
 import type { SocketStatus } from '@/infrastructure/messaging/use-event-socket'
+import { newWallPairingPath } from '@/infrastructure/router/navigation'
 import { Icon } from '@/presentation/components/icon'
+import { Link } from '@/presentation/components/link'
 import { useTranslate } from '@/presentation/i18n/i18n-context'
 import { socketStatusKey } from '@/presentation/i18n/translation'
 
@@ -22,6 +24,8 @@ export type PageIndicator = {
 
 type DisplayHeaderProps = {
   eventName: string
+  /** This TV was paired from `/wall`: it offers to be paired again. */
+  isPairedWall: boolean
   nowMs: InstantMs
   owner: string
   page: PageIndicator | null
@@ -33,6 +37,7 @@ type DisplayHeaderProps = {
 /** Who runs the day, which tables this screen shows, and the hall's time. */
 export const DisplayHeader: React.FC<DisplayHeaderProps> = ({
   eventName,
+  isPairedWall,
   nowMs,
   owner,
   page,
@@ -90,6 +95,15 @@ export const DisplayHeader: React.FC<DisplayHeaderProps> = ({
         <time className='display-clock'>
           {translate('display.clock', { at: toDate(nowMs) })}
         </time>
+        {isPairedWall ? (
+          <Link
+            aria-label={translate('display.pairAgain')}
+            className='display-pair-again'
+            href={newWallPairingPath}
+          >
+            <Icon name='unpair' />
+          </Link>
+        ) : null}
       </div>
     </header>
   )

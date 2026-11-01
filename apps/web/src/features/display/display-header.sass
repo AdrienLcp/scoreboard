@@ -82,3 +82,18 @@
     @include typography.figure
 
     font-size: calc(var(--cu) * 4.4)
+
+  .display-pair-again
+    align-items: center
+    color: var(--ink-dim)
+    display: inline-flex
+    font-size: calc(var(--cu) * 2.4)
+    justify-content: center
+    min-height: calc(var(--cu) * 4.4)
+    min-width: calc(var(--cu) * 4.4)
+    opacity: 0.55
+    transition: opacity var(--transition-base) var(--ease-move)
+
+    &[data-hovered], &[data-focus-visible]
+      color: var(--ink)
+      opacity: 1
