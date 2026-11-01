@@ -71,8 +71,27 @@ another sport can adopt it.
   and finish stamped by the server, durations, and an estimated start for
   queued matches derived from what is still being played on that table.
 - Scoring rules are a pluggable ruleset per sport. Table tennis: games to 11,
-  two clear points, best of 3 or 5 configurable, serve changes every 2 points
+  two clear points, best of 3, 5 or 7 set per match, serve changes every 2 points
   then every point from 10-10.
+- Team encounters (FFTT championship) and their defaults, each one a setting
+  the organiser can change in the UI:
+  - the 6-player, 20-match sheet is the default format; the encounter score
+    counts matches won (11–9 on a real sheet);
+  - team N plays on tables 2N−1 and 2N; a hall's tables pair by consecutive
+    numbers (2k−1, 2k host one encounter), the club's 8-table hall numbering
+    the stacked pair 1–2 then rows 3–4, 5–6, 7–8;
+  - a forfeit gives a walkover on every match of the absent player not yet
+    started;
+  - a penalty point that wins a game drops the rest of the penalty;
+  - opponents' teams are white unless set otherwise.
+- The yearly Top 12 is an individual tournament: two pools seeded without
+  clubmates, 2 points a win and 1 a loss, crossed semi-finals and a final.
+  Ties: two players are parted by their own match; three or more by games
+  then points ratio over the matches between them only (FFTT practice), then
+  a draw.
+- A club's store (teams, players, opponents) is opened by its club code and
+  erased two years after its last change; an event is kept 30 days after its
+  last change or its start, whichever is later.
 - Multi-club: each club has its own events and its own identity.
 - Offline-tolerant umpire console: queued points are resent on reconnect, and
   duplicates are ignored by event id.
