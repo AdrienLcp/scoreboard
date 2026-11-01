@@ -707,9 +707,18 @@ export const FR_DICTIONARY = defineDictionary({
         wins: 'V'
       }
     },
+    room: {
+      free: 'Libre',
+      hint: 'Touchez une table pour voir son match.',
+      label: 'Plan de la salle',
+      next: 'Puis {call}',
+      noMatch: 'Aucun match prévu sur la table {table:number}.',
+      stands: 'Gradins'
+    },
     section: {
       encounters: 'Rencontres',
       finished: 'Résultats',
+      hall: 'Salle',
       live: 'En cours',
       pools: 'Poules',
       upcoming: 'À venir'

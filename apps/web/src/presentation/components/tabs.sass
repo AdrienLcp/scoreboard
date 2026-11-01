@@ -44,3 +44,18 @@
 
   .tab-panel
     @include focus.ring-inset
+
+  /// The shades of a scrolling tab bar (`tab-bar.scrolling`), timed by its scroll.
+  @keyframes tab-shade-start
+    from
+      opacity: 0
+
+    8%, to
+      opacity: 1
+
+  @keyframes tab-shade-end
+    from, 92%
+      opacity: 1
+
+    to
+      opacity: 0

@@ -2,13 +2,20 @@ import { randomUUID } from 'node:crypto'
 
 import { describe, expect, it } from 'vitest'
 
+import type { MatchSetup } from '@scoreboard/protocol/event-setup'
 import type { MatchView } from '@scoreboard/protocol/event-snapshot'
+import type { HallPlan } from '@scoreboard/protocol/hall-plan'
 import { scheduledMatchState } from '@scoreboard/protocol/match-state'
-import { matchOn } from '@scoreboard/protocol/testing/event-setups'
+import { matchOn, setupWith } from '@scoreboard/protocol/testing/event-setups'
+import { stampedAt, started } from '@scoreboard/protocol/testing/scoring-events'
+
+import { publicSnapshotFor } from '@scoreboard/core/event/public-snapshot'
+import { defaultHallPlan } from '@scoreboard/core/hall/hall-plan'
 
 import { encounterTotalsOf } from './encounter-totals'
 import { followedFirst } from './followed-first'
 import { whereaboutsOf } from './player-whereabouts'
+import { roomLayoutOf } from './room-layout'
 
 const camille = randomUUID()
 const louis = randomUUID()
@@ -89,5 +96,77 @@ describe('encounter totals', () => {
       away: { games: 1, parties: 0, points: 31 },
       home: { games: 3, parties: 1, points: 42 }
     })
+  })
+})
+
+const CLUB_HALL = defaultHallPlan(8)
+
+const putAway = (...tables: number[]): HallPlan => ({
+  tables: CLUB_HALL.tables.map((table) => ({
+    ...table,
+    isHidden: tables.includes(table.table)
+  }))
+})
+
+const hallDay = ({
+  hall,
+  live = [],
+  matches,
+  tableCount = 8
+}: {
+  hall: HallPlan | null
+  live?: MatchSetup[]
+  matches: MatchSetup[]
+  tableCount?: number
+}) =>
+  publicSnapshotFor({
+    logs: new Map(live.map((match) => [match.id, [stampedAt(1, started())]])),
+    nowMs: 1000,
+    setup: setupWith(matches, { hall, tableCount })
+  })
+
+describe('room layout', () => {
+  it('[spectator] draws the club’s hall without a table put away, its aisle kept', () => {
+    const layout = roomLayoutOf(hallDay({ hall: putAway(8), matches: [] }))
+
+    expect(layout.columns).toEqual([true, false, true, true])
+    expect(layout.rows).toBe(3)
+    expect(layout.tables.map((table) => table.table)).toEqual([
+      1, 2, 3, 4, 5, 6, 7
+    ])
+    expect(layout.tables[2]).toMatchObject({ column: 3, row: 1, table: 3 })
+  })
+
+  it('[spectator] closes up a row and an edge column nobody stands on', () => {
+    const layout = roomLayoutOf(
+      hallDay({ hall: putAway(1, 2, 5, 6), matches: [] })
+    )
+
+    expect(layout.columns).toEqual([true, true])
+    expect(layout.rows).toBe(2)
+    expect(layout.tables).toMatchObject([
+      { column: 1, row: 1, table: 3 },
+      { column: 2, row: 1, table: 4 },
+      { column: 1, row: 2, table: 7 },
+      { column: 2, row: 2, table: 8 }
+    ])
+  })
+
+  it('[spectator] gives a table the match played on it, a free one the match it waits for', () => {
+    const playing = matchOn(1)
+    const awaited = matchOn(2)
+    const layout = roomLayoutOf(
+      hallDay({ hall: null, live: [playing], matches: [playing, awaited] })
+    )
+
+    expect(layout.tables[0]).toMatchObject({
+      live: { id: playing.id },
+      next: null
+    })
+    expect(layout.tables[1]).toMatchObject({
+      live: null,
+      next: { id: awaited.id }
+    })
+    expect(layout.tables[2]).toMatchObject({ live: null, next: null })
   })
 })

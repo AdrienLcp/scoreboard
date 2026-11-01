@@ -1,4 +1,5 @@
 import type React from 'react'
+import { useRef } from 'react'
 
 import type { MatchView } from '@scoreboard/protocol/event-snapshot'
 import type { EventId, PlayerId } from '@scoreboard/protocol/identifiers'
@@ -21,7 +22,13 @@ import { BrandMark } from '@/presentation/components/brand-mark'
 import { Icon } from '@/presentation/components/icon'
 import { Main } from '@/presentation/components/main'
 import { TableNumber } from '@/presentation/components/table-number'
-import { Tab, TabList, TabPanel, Tabs } from '@/presentation/components/tabs'
+import {
+  keepSelectedTabInView,
+  Tab,
+  TabList,
+  TabPanel,
+  Tabs
+} from '@/presentation/components/tabs'
 import { DocumentTitle } from '@/presentation/head/document-title'
 import { useTranslate } from '@/presentation/i18n/i18n-context'
 import { socketStatusKey } from '@/presentation/i18n/translation'
@@ -31,6 +38,8 @@ import { FollowField } from './follow-field'
 import { followedFirst, involvesAnyOf } from './followed-first'
 import { MatchCard } from './match-card'
 import { whereaboutsOf } from './player-whereabouts'
+import { roomLayoutOf } from './room-layout'
+import { RoomPlan } from './room-plan'
 import { TournamentPanel } from './tournament-panel'
 import { useFollowedPlayers } from './use-followed-players'
 
@@ -55,6 +64,7 @@ const SpectatorProgramme: React.FC<{ eventId: EventId }> = ({ eventId }) => {
   const { error, status } = feed
   const { nowMs, snapshot } = useCurrentSnapshot(feed.snapshot)
   const { follow, followed, unfollow } = useFollowedPlayers(eventId)
+  const tabBar = useRef<HTMLDivElement>(null)
 
   if (snapshot === null) {
     return (
@@ -78,6 +88,8 @@ const SpectatorProgramme: React.FC<{ eventId: EventId }> = ({ eventId }) => {
   )
   const matchesOf = { finished, live: programme.live, upcoming }
   const encounters = encounterLinesFor(snapshot)
+  const room = roomLayoutOf(snapshot)
+  const hasRoomPlan = room.tables.length > 1
   const { tournament } = snapshot
   const dayTab: DayTab | null =
     snapshot.encounters.length > 0
@@ -120,11 +132,12 @@ const SpectatorProgramme: React.FC<{ eventId: EventId }> = ({ eventId }) => {
   const namesOf = (match: MatchView): string =>
     versusText(fullName(match.home), fullName(match.away))
 
-  const card = (match: MatchView) => (
+  const cardOf = (match: MatchView, isOpenAtFirst: boolean) => (
     <MatchCard
       encounterMatches={encounterMatchesOf(match)}
       encounterTitle={encounterTitleFor(match)}
       followed={followed}
+      isOpenAtFirst={isOpenAtFirst}
       key={match.id}
       match={match}
       nowMs={nowMs}
@@ -132,6 +145,7 @@ const SpectatorProgramme: React.FC<{ eventId: EventId }> = ({ eventId }) => {
       players={snapshot.players}
     />
   )
+  const card = (match: MatchView) => cardOf(match, false)
   const upcomingItem = (match: MatchView) => {
     const start = startOf(match)
 
@@ -182,6 +196,9 @@ const SpectatorProgramme: React.FC<{ eventId: EventId }> = ({ eventId }) => {
         </p>
       </header>
       <section className='spectator-event'>
+        {snapshot.club === null || snapshot.club.logoUrl === null ? null : (
+          <img alt='' className='spectator-logo' src={snapshot.club.logoUrl} />
+        )}
         <h1>{snapshot.club?.name ?? snapshot.name}</h1>
         <p>
           {snapshot.club === null ? null : (
@@ -200,12 +217,19 @@ const SpectatorProgramme: React.FC<{ eventId: EventId }> = ({ eventId }) => {
         players={snapshot.players}
         whereIs={whereIs}
       />
-      <Tabs className='spectator-tabs' defaultSelectedKey={dayTab ?? 'live'}>
-        <div className='spectator-tab-bar'>
+      <Tabs
+        className='spectator-tabs'
+        defaultSelectedKey={dayTab ?? 'live'}
+        onSelectionChange={() => keepSelectedTabInView(tabBar.current)}
+      >
+        <div className='spectator-tab-bar' ref={tabBar}>
           <TabList aria-label={translate('spectator.title')}>
             {dayTab === null ? null : (
               <Tab id={dayTab}>{translate(`spectator.section.${dayTab}`)}</Tab>
             )}
+            {hasRoomPlan ? (
+              <Tab id='hall'>{translate('spectator.section.hall')}</Tab>
+            ) : null}
             {PROGRAMME_TABS.map((tab) => (
               <Tab id={tab} key={tab}>
                 {translate(`spectator.section.${tab}`)}
@@ -254,6 +278,16 @@ const SpectatorProgramme: React.FC<{ eventId: EventId }> = ({ eventId }) => {
               players={snapshot.players}
               teams={snapshot.teams}
               tournament={tournament}
+            />
+          </TabPanel>
+        ) : null}
+        {hasRoomPlan ? (
+          <TabPanel id='hall'>
+            <RoomPlan
+              followed={followed}
+              layout={room}
+              renderMatch={(match) => cardOf(match, true)}
+              snapshot={snapshot}
             />
           </TabPanel>
         ) : null}

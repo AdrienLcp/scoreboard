@@ -58,7 +58,11 @@ another sport can adopt it.
 
 - Four surfaces: the display, the umpire console, the organiser console, and a
   spectator view on visitors' phones (reached from a QR code shown on the
-  display) listing past, live and upcoming matches with their details.
+  display) listing past, live and upcoming matches with their details, and,
+  when more than one table stands in the hall, the hall plan with each
+  table's live score, a tap opening its match. Tables put away for the day
+  are not drawn; up to eight tables the plan reads at phone width without
+  zooming, past eight it shrinks whole and the visitor pinches.
 - The display gives live matches the space; finished, idle and upcoming ones
   collapse into a compact summary. Tiles stay ordered by table number and only
   reflow when a match starts or ends. Paging is a last resort, used only when

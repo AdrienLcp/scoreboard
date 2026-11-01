@@ -1,0 +1,62 @@
+/// A tab bar that scrolls sideways on a phone with no scrollbar chrome, out to
+/// the screen's edges over the page gutters: a shade of its ground covers each
+/// edge that still hides tabs, faded in by the scroll position itself. Tabs
+/// share the width while they fit, each held to its label once they do not.
+/// The shades' keyframes live with the tabs (`tab-shade-start`, `tab-shade-end`).
+@mixin scrolling($ground: var(--field))
+  --tab-shade-start: calc(var(--gutter-left) + var(--space-2xl))
+  --tab-shade-end: calc(var(--gutter-right) + var(--space-2xl))
+
+  background: $ground
+  display: flex
+  margin-inline: calc(-1 * var(--gutter-left)) calc(-1 * var(--gutter-right))
+  overflow-x: auto
+  overscroll-behavior-x: contain
+  padding-inline: var(--gutter-left) var(--gutter-right)
+  scroll-padding-inline: var(--tab-shade-start) var(--tab-shade-end)
+  scrollbar-width: none
+
+  &::-webkit-scrollbar
+    display: none
+
+  &::before, &::after
+    content: ''
+    flex: none
+    opacity: 0
+    pointer-events: none
+    position: sticky
+    z-index: 1
+
+  &::before
+    background: linear-gradient(to right, $ground var(--gutter-left), transparent)
+    // A sticky child sticks to the scroller's content edge: out over the gutter.
+    inset-inline-start: calc(-1 * var(--gutter-left))
+    margin-inline-end: calc(-1 * var(--tab-shade-start))
+    width: var(--tab-shade-start)
+
+  &::after
+    background: linear-gradient(to left, $ground var(--gutter-right), transparent)
+    inset-inline-end: calc(-1 * var(--gutter-right))
+    margin-inline-start: calc(-1 * var(--tab-shade-end))
+    width: var(--tab-shade-end)
+
+  @supports (animation-timeline: scroll())
+    &::before, &::after
+      animation-fill-mode: both
+      animation-timeline: scroll(nearest inline)
+      animation-timing-function: linear
+      --reduced-motion-duration: auto
+
+    &::before
+      animation-name: tab-shade-start
+
+    &::after
+      animation-name: tab-shade-end
+
+  .tab-list
+    display: flex
+    flex: 1 0 auto
+
+  .tab
+    flex: 1 1 0
+    min-width: max-content

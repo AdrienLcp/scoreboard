@@ -33,15 +33,15 @@ const familyName = (name: string): string => words(name).at(-1) ?? name
 const DOUBLES_SEPARATOR = ' / '
 
 /**
- * One side's name, `null` while nobody is named: a singles player in full or
- * shortened, a doubles pair by family names in the short form.
+ * One side's name, `null` while nobody is named: a singles player in full,
+ * shortened or by family name, a doubles pair by family names unless in full.
  */
 export const sideName = ({
   form,
   participant,
   players
 }: {
-  form: 'full' | 'short'
+  form: 'family' | 'full' | 'short'
   participant: Participant
   players: readonly Player[]
 }): string | null => {
@@ -54,6 +54,10 @@ export const sideName = ({
 
   if (form === 'full') {
     return names.join(DOUBLES_SEPARATOR)
+  }
+
+  if (form === 'family') {
+    return names.map(familyName).join(DOUBLES_SEPARATOR)
   }
 
   return names.length === 1

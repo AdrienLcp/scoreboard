@@ -1,3 +1,4 @@
+@use '../../presentation/styles/tab-bar'
 @use '../../presentation/styles/typography'
 
 @layer components
@@ -31,31 +32,41 @@
     width: 0.5rem
 
   .spectator-event
+    column-gap: var(--space-s)
+    display: grid
+    grid-template-columns: auto minmax(0, 1fr)
     padding: var(--space-xs) var(--space-4xs) var(--space-l)
 
     h1
       @include typography.page-title
 
+      align-self: center
+      grid-column: 2
+
     p
       @include typography.hint
 
+      grid-column: 2
       margin-top: var(--space-3xs)
 
+  .spectator-logo
+    block-size: 3.5rem
+    grid-row: 1 / span 2
+    inline-size: 3.5rem
+    object-fit: contain
+
   .spectator-tab-bar
-    background: var(--field)
+    @include tab-bar.scrolling
+
     margin-top: var(--space-2xs)
-    padding: var(--space-s) 0 var(--space-xs)
+    padding-block: var(--space-s) var(--space-xs)
     position: sticky
     top: var(--safe-area-top)
     z-index: 2
 
-  .spectator-tab-bar
-    .tab-list
-      grid-auto-columns: minmax(max-content, 1fr)
-
     .tab
       gap: var(--space-2xs)
-      padding-inline: var(--space-2xs)
+      padding-inline: var(--space-s)
       white-space: nowrap
 
   @container page (width < 26rem)

@@ -1,0 +1,46 @@
+@use '../../presentation/styles/layout'
+@use '../../presentation/styles/typography'
+
+/// The hall from above, as the organiser's plan draws it: a mist-grey floor,
+/// the tables on white where they stand, the stands along the bottom. It
+/// always fits the page's width; past eight tables a visitor pinches to read.
+@layer components
+  .room-plan
+    display: grid
+    gap: var(--space-s)
+
+  .room-floor
+    background: var(--surface-raised)
+    display: grid
+    gap: var(--space-2xs)
+    grid-template-columns: var(--room-columns)
+    padding: var(--space-xs) var(--space-xs) 0
+
+    @include layout.container-wide(30rem, page)
+      gap: var(--space-s)
+      padding: var(--space-m) var(--space-m) 0
+
+  .room-stands
+    @include typography.label
+
+    background: var(--floor-shade)
+    color: var(--ink-muted)
+    grid-column: 1 / -1
+    grid-row: var(--room-row)
+    margin: var(--space-3xs) calc(var(--space-xs) * -1) 0
+    padding: var(--space-xs)
+    text-align: center
+
+    @include layout.container-wide(30rem, page)
+      margin-inline: calc(var(--space-m) * -1)
+
+  .room-detail
+    scroll-margin-block: 5rem var(--space-m)
+
+    .match-card
+      margin-bottom: 0
+
+  .room-hint
+    @include typography.hint
+
+    padding: var(--space-2xs) var(--space-4xs)

@@ -30,4 +30,16 @@ export const TabPanel: React.FC<TabPanelProps> = ({ className, ...props }) => (
   />
 )
 
+/**
+ * On a phone a tab bar scrolls sideways: a tab picked half under its edge
+ * slides fully into view once react-aria has marked it selected.
+ */
+export const keepSelectedTabInView = (tabBar: HTMLElement | null) => {
+  requestAnimationFrame(() => {
+    tabBar
+      ?.querySelector('[role="tab"][aria-selected="true"]')
+      ?.scrollIntoView({ block: 'nearest', inline: 'nearest' })
+  })
+}
+
 export { Tabs, type TabsProps } from 'react-aria-components'

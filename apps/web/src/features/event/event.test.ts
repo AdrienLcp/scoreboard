@@ -43,6 +43,18 @@ describe('names', () => {
       })
     ).toBe('Pineau / Roux')
   })
+
+  it('[names] names a singles player by family name alone for a narrow plan', () => {
+    const pineau = aPlayer('Inès Pineau')
+
+    expect(
+      sideName({
+        form: 'family',
+        participant: { playerIds: [pineau.id] },
+        players: [pineau]
+      })
+    ).toBe('Pineau')
+  })
 })
 
 describe('match call', () => {

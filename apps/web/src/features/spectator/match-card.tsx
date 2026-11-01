@@ -33,6 +33,8 @@ type MatchCardProps = {
   /** Every match of its encounter, so a card follows a player from one match to the next. */
   encounterMatches: readonly MatchView[]
   followed: readonly PlayerId[]
+  /** Opened from the start, when the visitor asked for this very match. */
+  isOpenAtFirst?: boolean
   match: MatchView
   nowMs: InstantMs
   onFollow: (playerId: PlayerId, isFollowing: boolean) => void
@@ -46,6 +48,7 @@ export const MatchCard: React.FC<MatchCardProps> = ({
   encounterMatches,
   encounterTitle,
   followed,
+  isOpenAtFirst = false,
   match,
   nowMs,
   onFollow,
@@ -76,6 +79,7 @@ export const MatchCard: React.FC<MatchCardProps> = ({
       className='match-card'
       data-finished={!isLive || undefined}
       data-scheduled={isScheduled || undefined}
+      defaultExpanded={isOpenAtFirst}
     >
       <PlainButton className='match-card-head' slot='trigger'>
         <span className='match-card-top'>

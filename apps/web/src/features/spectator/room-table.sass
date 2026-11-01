@@ -1,0 +1,189 @@
+@use '../../presentation/styles/focus'
+@use '../../presentation/styles/layout'
+@use '../../presentation/styles/motion'
+@use '../../presentation/styles/typography'
+
+/// A table on the visitor's plan, drawn on its own width: the drawing small,
+/// the point score the biggest thing on it. Up to eight tables every size
+/// keeps a legible floor; past eight they all shrink with the table, and a
+/// visitor pinches to read.
+@layer components
+  .room-table
+    @include focus.ring-inset
+    @include motion.press-transition
+
+    --room-floor: 1
+    --room-score-size: clamp(calc(1.75rem * var(--room-floor)), 30cqi, 3.5rem)
+
+    align-content: start
+    background: var(--surface)
+    border: 0
+    color: var(--ink)
+    container-type: inline-size
+    cursor: pointer
+    display: grid
+    gap: var(--space-4xs)
+    grid-column: var(--room-column)
+    grid-row: var(--room-row)
+    min-width: 0
+    padding: var(--space-3xs) var(--space-3xs) var(--space-2xs)
+    text-align: start
+
+    &[data-hovered]
+      background: var(--field)
+
+    &[data-pressed]
+      scale: 0.985
+
+    &[aria-pressed='true']
+      box-shadow: inset 0 0 0 var(--outline-thick) var(--ink)
+
+    [data-crowded] > &
+      --room-floor: 0
+
+  .room-table-head
+    align-items: center
+    display: flex
+    gap: var(--space-3xs)
+    min-width: 0
+
+  .room-plate
+    @include typography.wall-plate
+
+    background: var(--ink)
+    color: var(--on-ink)
+    flex: none
+    font-size: clamp(calc(var(--text-xs) * var(--room-floor)), 12cqi, var(--text-l))
+    min-width: 1.6em
+    padding: 0.18em 0.32em
+    text-align: center
+
+  .room-call
+    @include typography.emphasis
+    @include typography.single-line
+
+    color: var(--ink-muted)
+    flex: 1
+    font-size: clamp(calc(var(--text-2xs) * var(--room-floor)), 10cqi, var(--text-s))
+    min-width: 0
+
+  .room-followed
+    color: var(--live-ink)
+    display: inline-flex
+    flex: none
+
+    .icon
+      font-size: var(--icon-xs)
+
+  .room-court
+    aspect-ratio: 2.7
+    width: 100%
+
+  /// Each side's games won, in the wall's dark pill, on its half of the blue.
+  .room-games
+    align-items: center
+    background: var(--scrim-strong)
+    border-radius: var(--radius-full)
+    display: flex
+    gap: clamp(calc(0.125rem * var(--room-floor)), 1.6cqw, 0.3125rem)
+    left: 26%
+    padding: clamp(calc(0.125rem * var(--room-floor)), 1.4cqw, 0.25rem) clamp(calc(0.1875rem * var(--room-floor)), 2.2cqw, 0.375rem)
+    position: absolute
+    top: 58%
+    translate: -50% -50%
+
+    &[data-side='away']
+      left: 74%
+
+    i
+      block-size: clamp(calc(0.3125rem * var(--room-floor)), 4cqw, 0.625rem)
+      border-radius: 50%
+      box-shadow: inset 0 0 0 1.5px var(--on-ink)
+      inline-size: clamp(calc(0.3125rem * var(--room-floor)), 4cqw, 0.625rem)
+
+      &[data-won]
+        background: var(--on-ink)
+
+  .room-scores,
+  .room-names
+    display: grid
+    gap: var(--space-2xs)
+    grid-template-columns: repeat(2, minmax(0, 1fr))
+
+  .room-scores,
+  .room-free
+    min-height: calc(var(--room-score-size) * 0.86)
+
+  .room-score
+    @include typography.score
+
+    --room-serve-room: clamp(calc(0.625rem * var(--room-floor)), 9cqi, 1.125rem)
+
+    display: grid
+    font-size: var(--room-score-size)
+    place-items: center
+    position: relative
+    transition: opacity var(--transition-base) var(--ease-move)
+
+    &[data-dimmed]
+      opacity: 0.4
+
+    .icon
+      color: var(--live-ink)
+      font-size: clamp(calc(0.5rem * var(--room-floor)), 7cqi, 0.875rem)
+      position: absolute
+      top: 50%
+      translate: 0 -50%
+
+    // The serve mark keeps its own room at the net end, so it never touches a "10".
+    &[data-side='home']
+      padding-right: var(--room-serve-room)
+
+    &[data-side='away']
+      padding-left: var(--room-serve-room)
+
+    &[data-side='home'] .icon
+      right: 0
+
+    &[data-side='away'] .icon
+      left: 0
+      scale: -1 1
+
+  .room-free
+    @include typography.label
+
+    align-items: center
+    color: var(--ink-muted)
+    display: grid
+    font-size: clamp(calc(var(--text-2xs) * var(--room-floor)), 11cqi, var(--text-m))
+    justify-items: center
+
+  .room-names
+    min-height: calc(1.5rem * var(--room-floor))
+
+  .room-name
+    @include typography.name
+    @include typography.single-line
+
+    box-shadow: inset 0 calc(var(--stroke-bold) * -1) 0 var(--team)
+    font-size: clamp(calc(var(--text-2xs) * var(--room-floor)), 10.5cqi, var(--text-s))
+    padding-bottom: 0.2em
+
+    &[data-side='away']
+      text-align: end
+
+    &[data-white]
+      box-shadow: inset 0 calc(var(--stroke-bold) * -1) 0 var(--surface-high)
+
+    [data-awaited] > &
+      color: var(--ink-dim)
+
+  .room-name-short
+    display: none
+
+  @include layout.container-wide(9rem)
+    .room-name-family
+      display: none
+
+    .room-name-short
+      display: inline

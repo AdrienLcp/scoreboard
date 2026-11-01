@@ -30,7 +30,13 @@ import { Form } from '@/presentation/components/form'
 import { Icon } from '@/presentation/components/icon'
 import { ButtonLink } from '@/presentation/components/link'
 import { Main } from '@/presentation/components/main'
-import { Tab, TabList, TabPanel, Tabs } from '@/presentation/components/tabs'
+import {
+  keepSelectedTabInView,
+  Tab,
+  TabList,
+  TabPanel,
+  Tabs
+} from '@/presentation/components/tabs'
 import { Input, Label, TextField } from '@/presentation/components/text-field'
 import { DocumentTitle } from '@/presentation/head/document-title'
 import { useTranslate } from '@/presentation/i18n/i18n-context'
@@ -83,18 +89,6 @@ const storedCodeOrNull = (eventId: EventId): OrganiserCode | null => {
   const stored = readOrganiserCode(eventId)
 
   return stored.status === 'success' ? stored.data : null
-}
-
-/**
- * On a phone the tab bar scrolls sideways: a tab picked half under its edge
- * slides fully into view once react-aria has marked it selected.
- */
-const keepSelectedTabInView = (tabBar: HTMLElement | null) => {
-  requestAnimationFrame(() => {
-    tabBar
-      ?.querySelector('[role="tab"][aria-selected="true"]')
-      ?.scrollIntoView({ block: 'nearest', inline: 'nearest' })
-  })
 }
 
 const OrganiserConsole: React.FC<{ code: OrganiserCode; eventId: EventId }> = ({

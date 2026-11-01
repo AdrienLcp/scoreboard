@@ -293,6 +293,7 @@ Plain and confident, one obvious action per screen.
 - **Live tile:** white, square, no border, no shadow; enters with a fade and scale from 0.95 (640ms). The score stays ink; the losing side dims after the match.
 - **Summary column:** one white panel; blocks for team encounters, results with finish times, free tables with next-match ETA, "à suivre" (each start in muted figures above the names, so a doubles pair keeps the full width), and the QR.
 - **Match card (spectator):** white, square, the header row is the disclosure trigger; expanded detail sits below a hairline with a per-game table.
+- **Hall plan (spectator):** the organiser's plan, read-only (`features/spectator/room-*`): a mist-grey floor, a column without tables kept as a narrow aisle, a row without tables closed up, the stands ("Gradins") in a floor-shade band along the bottom. One white card per standing table, drawn on its own width: an ink plate with the table number, the line's call ("Puis B – Y" on a free table) and a Burnt Orange star for a followed player; the drawn table, idle grey when free, with each side's games-won dots in the wall's dark pill on its half; the point score below it in the score voice at 30% of the card's width, never under 1.75rem up to eight tables, the loser at 40% while a won game awaits validation; the serve triangle in Burnt Orange at the net end of the server's score; the family names (initial and name once the card reaches 9rem) on a 2px team-colour underline, silver for a white team, dusk for the match a free table waits for. A tap rings the card in ink and opens its match card below the plan. Past eight tables every size shrinks with its card and the visitor pinches.
 - **Internal padding:** tool cards 0.75 to 1rem; display panels in cu.
 
 ### Inputs / Fields
@@ -304,7 +305,7 @@ Plain and confident, one obvious action per screen.
 - **Code inputs:** figure voice, large, centred, uppercase with wide tracking (literal codes only).
 
 ### Navigation
-- **Tabs:** a white track with 0.25rem padding; tabs are muted text at 3rem, the selected tab fills ink with white text. Counts inside tabs use the figure voice.
+- **Tabs:** a white track with 0.25rem padding; tabs are muted text at 3rem, the selected tab fills ink with white text. Counts inside tabs use the figure voice. A bar whose tabs no longer fit (organiser, spectator) scrolls sideways out over the gutters with no scrollbar, a shade of the paper fading in over each edge that still hides tabs, the selected tab kept in view (`tab-bar.scrolling`).
 - **Toggle groups:** mist grey chips, silver on hover; the selected one fills ink with white text.
 - **Links:** ink text with a dusk 1px underline at 0.22em offset.
 
