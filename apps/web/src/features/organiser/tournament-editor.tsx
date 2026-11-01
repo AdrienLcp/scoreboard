@@ -23,7 +23,7 @@ import {
   newMatchId,
   newPlayerId
 } from '@/infrastructure/ids'
-import { paths } from '@/infrastructure/router/navigation'
+import { useClubPath } from '@/infrastructure/router/navigation'
 import { Button } from '@/presentation/components/button'
 import { Icon } from '@/presentation/components/icon'
 import { ButtonLink } from '@/presentation/components/link'
@@ -197,6 +197,7 @@ export const TournamentEditor: React.FC<TournamentEditorProps> = ({
   setup
 }) => {
   const translate = useTranslate()
+  const clubPath = useClubPath()
   const club = useClub()
   const { state } = club
   const record = state.status === 'ready' ? state.record : null
@@ -400,7 +401,7 @@ export const TournamentEditor: React.FC<TournamentEditorProps> = ({
             <p className='organiser-empty'>
               {translate('organiser.tournament.noClub')}
             </p>
-            <ButtonLink href={paths.club}>
+            <ButtonLink href={clubPath}>
               <Icon name='open' />
               {translate('organiser.clubEncounter.prepare')}
             </ButtonLink>

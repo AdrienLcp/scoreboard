@@ -10,6 +10,7 @@ export const FR_DICTIONARY = defineDictionary({
     name: 'Scoreboard'
   },
   club: {
+    backToEvent: 'Retour à la rencontre',
     championship: {
       composer: {
         dates: 'Dates des journées',
@@ -304,16 +305,12 @@ export const FR_DICTIONARY = defineDictionary({
     wrong_code: 'Ce code ne correspond à aucune table.'
   },
   home: {
-    bestOf: 'Manches à gagner',
-    bestOfHelp:
-      'Chaque manche se joue en {points:number} points. Le premier à remporter ce nombre de manches gagne le match.',
-    bestOfOption: '{toWin:number} manches gagnantes',
-    bestOfOptionDetail: 'au meilleur des {count:number}',
     club: 'Mon club',
     create: 'Créer la rencontre',
     createNote:
       'Vous recevrez un code organisateur\u00a0: il ouvre la préparation et les corrections.',
     creating: 'Création…',
+    display: 'Grand écran',
     headline: 'Chaque match en direct, sur grand écran et dans la poche.',
     join: {
       code: 'Code de la rencontre',
@@ -327,10 +324,9 @@ export const FR_DICTIONARY = defineDictionary({
     lead: 'Les arbitres comptent les points depuis leur téléphone, la salle lit les scores de loin, et l’organisateur garde la main sur toute la journée.',
     name: 'Nom de la rencontre',
     namePlaceholder: 'Tournoi interne d’automne',
+    resume: 'Vos rencontres',
     shareImageAlt:
       'Le logo Scoreboard à côté de son nom, en blanc sur fond nuit.',
-    tableCount: 'Nombre de tables',
-    tableCountFromClub: 'Comme la salle de {name}',
     title: 'Nouvelle rencontre'
   },
   legal: {
@@ -451,6 +447,7 @@ export const FR_DICTIONARY = defineDictionary({
       copied: 'Lien copié',
       copy: 'Copier le lien',
       display: 'Grand écran',
+      displayHere: 'Afficher sur cet appareil',
       explain:
         'Chaque arbitre scanne le QR code de sa table, ou tape son code sur',
       next: 'Table suivante',
@@ -1070,7 +1067,7 @@ export const FR_DICTIONARY = defineDictionary({
   },
   wall: {
     codeHint:
-      'Tapez ce code dans l’organisation de la rencontre, onglet Tables',
+      'Tapez ce code dans l’organisation de la rencontre, bouton Grand écran',
     offline: 'Pas de connexion. Nouvel essai dans un instant…',
     opening: 'Préparation du code…',
     qrLabel: 'QR code pour brancher cet écran',
@@ -1083,7 +1080,7 @@ export const FR_DICTIONARY = defineDictionary({
     none: {
       detail: 'Ce téléphone n’a créé aucune rencontre.',
       scan: 'Scannez l’écran avec le téléphone qui a créé la rencontre.',
-      type: 'Ou, dans l’organisation de la rencontre, onglet Tables et écrans, tapez le code\u00a0:'
+      type: 'Ou, dans l’organisation de la rencontre, touchez Grand écran et tapez le code\u00a0:'
     },
     title: 'Brancher un écran'
   }

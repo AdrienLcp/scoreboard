@@ -16,6 +16,26 @@
     height: var(--top-bar-height)
     justify-content: space-between
 
+  .home-bar-links
+    display: flex
+    flex-wrap: wrap
+    gap: var(--space-2xs)
+    justify-content: flex-end
+
+  .home-resume-list
+    display: grid
+    gap: var(--space-xs)
+    grid-template-columns: repeat(auto-fill, minmax(min(100%, 16rem), 1fr))
+
+    .button
+      justify-content: space-between
+      width: 100%
+
+  .home-resume-name
+    overflow: hidden
+    text-overflow: ellipsis
+    white-space: nowrap
+
   .home-intro
     padding-top: var(--space-2xl)
 
@@ -50,11 +70,6 @@
       @include typography.strong
 
       font-size: var(--text-2xl)
-
-  .home-pair
-    display: grid
-    gap: var(--space-m)
-    grid-template-columns: repeat(auto-fit, minmax(11rem, 1fr))
 
   .home-note
     @include typography.hint

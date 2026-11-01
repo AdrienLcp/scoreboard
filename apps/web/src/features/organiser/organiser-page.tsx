@@ -10,8 +10,8 @@ import { isEventGone } from '@/features/event/event-gone'
 import { FeedMessage } from '@/features/event/feed-message'
 import { useCurrentSnapshot } from '@/features/event/use-current-snapshot'
 import {
+  clubPathFrom,
   displayPathFor,
-  paths,
   spectatorPathFor,
   useEventIdParam,
   usePairingSearchParam
@@ -106,6 +106,9 @@ const OrganiserConsole: React.FC<{ code: OrganiserCode; eventId: EventId }> = ({
   useSheetResults({ event, eventId })
   const isGone = isEventGone(organiser.error)
   const scannedPairingCode = usePairingSearchParam()
+  const [isPairingOpen, setIsPairingOpen] = useState(
+    scannedPairingCode !== null
+  )
   const eventName = snapshot?.setup.name ?? null
 
   useEffect(() => {
@@ -178,20 +181,42 @@ const OrganiserConsole: React.FC<{ code: OrganiserCode; eventId: EventId }> = ({
           </p>
         </div>
         <div className='organiser-links'>
-          <ButtonLink href={paths.club}>
+          <ButtonLink href={clubPathFrom(eventId)}>
             <Icon name='club' />
             {translate('organiser.club')}
           </ButtonLink>
-          <ButtonLink href={displayPathFor(eventId)} target='_blank'>
+          <Button
+            aria-expanded={isPairingOpen}
+            onPress={() => setIsPairingOpen((isOpen) => !isOpen)}
+            variant={isPairingOpen ? 'primary' : 'secondary'}
+          >
             <Icon name='display' />
             {translate('organiser.access.display')}
-          </ButtonLink>
+          </Button>
           <ButtonLink href={spectatorPathFor(eventId)} target='_blank'>
             <Icon name='open' />
             {translate('organiser.access.spectator')}
           </ButtonLink>
         </div>
       </div>
+      {isPairingOpen ? (
+        <div className='organiser-wall-pairing'>
+          <WallPairingForm
+            code={code}
+            eventId={eventId}
+            scannedCode={scannedPairingCode}
+            setup={setup}
+          />
+          <ButtonLink
+            href={displayPathFor(eventId)}
+            target='_blank'
+            variant='quiet'
+          >
+            <Icon name='open' />
+            {translate('organiser.access.displayHere')}
+          </ButtonLink>
+        </div>
+      ) : null}
       {refusal === null ? null : (
         <p className='organiser-alert' role='alert'>
           <Icon name='alert' />
@@ -200,7 +225,7 @@ const OrganiserConsole: React.FC<{ code: OrganiserCode; eventId: EventId }> = ({
       )}
       <Tabs
         className='organiser-tabs'
-        defaultSelectedKey={scannedPairingCode === null ? 'live' : 'tables'}
+        defaultSelectedKey='live'
         onSelectionChange={() => keepSelectedTabInView(tabBar.current)}
       >
         <div className='organiser-tab-bar' ref={tabBar}>
@@ -275,12 +300,6 @@ const OrganiserConsole: React.FC<{ code: OrganiserCode; eventId: EventId }> = ({
         </TabPanel>
         <TabPanel id='tables'>
           <div className='organiser-stack'>
-            <WallPairingForm
-              code={code}
-              eventId={eventId}
-              scannedCode={scannedPairingCode}
-              setup={setup}
-            />
             <h2 className='organiser-subheading'>
               {translate('organiser.access.title')}
             </h2>

@@ -29,7 +29,7 @@ import {
   newPlayerId,
   newTeamId
 } from '@/infrastructure/ids'
-import { paths } from '@/infrastructure/router/navigation'
+import { useClubPath } from '@/infrastructure/router/navigation'
 import { Button } from '@/presentation/components/button'
 import {
   Disclosure,
@@ -102,6 +102,7 @@ export const ClubEncounterForm: React.FC<ClubEncounterFormProps> = ({
   setup
 }) => {
   const translate = useTranslate()
+  const clubPath = useClubPath()
   const club = useClub()
   const { state } = club
   const [homeId, setHomeId] = useState<string | null>(null)
@@ -120,7 +121,7 @@ export const ClubEncounterForm: React.FC<ClubEncounterFormProps> = ({
               : 'organiser.clubEncounter.noClub'
           )}
         </p>
-        <ButtonLink href={paths.club}>
+        <ButtonLink href={clubPath}>
           <Icon name='open' />
           {translate('organiser.clubEncounter.prepare')}
         </ButtonLink>
@@ -342,7 +343,7 @@ export const ClubEncounterForm: React.FC<ClubEncounterFormProps> = ({
           <Icon name='plus' />
           {translate('organiser.clubEncounter.add')}
         </Button>
-        <ButtonLink href={paths.club} variant='quiet'>
+        <ButtonLink href={clubPath} variant='quiet'>
           <Icon name='open' />
           {translate('organiser.clubEncounter.edit')}
         </ButtonLink>

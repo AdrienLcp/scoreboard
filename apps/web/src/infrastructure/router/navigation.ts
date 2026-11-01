@@ -98,6 +98,21 @@ export const useClubCodeSearchParam = (): ClubCode | null => {
   return typed.success ? typed.data : null
 }
 
+const CLUB_RETURN_SEARCH_PARAM = 'from'
+
+/** `/club` opened from an event's console: its back button leads to that console again. */
+export const clubPathFrom = (eventId: EventId): string =>
+  `${paths.club}?${CLUB_RETURN_SEARCH_PARAM}=${eventId}`
+
+export const useClubReturnEventParam = (): EventId | null => {
+  const [search] = useSearchParams()
+  const parsed = eventIdSchema.safeParse(
+    search.get(CLUB_RETURN_SEARCH_PARAM)?.toLowerCase()
+  )
+
+  return parsed.success ? parsed.data : null
+}
+
 const NEW_PAIRING_SEARCH_PARAM = 'new'
 
 /** `/wall` showing a fresh code even on a TV that remembers its display: how a screen is paired again. */
@@ -121,6 +136,13 @@ export const useEventIdParam = (): EventId | null => {
   const parsed = eventIdSchema.safeParse(eventId?.toLowerCase())
 
   return parsed.success ? parsed.data : null
+}
+
+/** The club page's address from wherever it is offered: inside an event, it remembers the event. */
+export const useClubPath = (): string => {
+  const eventId = useEventIdParam()
+
+  return eventId === null ? paths.club : clubPathFrom(eventId)
 }
 
 /** `null` on the default display, which has no id and shows every table. */

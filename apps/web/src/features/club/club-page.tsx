@@ -12,8 +12,10 @@ import { pageOrigin } from '@/infrastructure/browser'
 import { newDirectoryClubId, newTeamId } from '@/infrastructure/ids'
 import {
   clubJoinPathFor,
+  organiserPathFor,
   paths,
   useClubCodeSearchParam,
+  useClubReturnEventParam,
   useReplaceWith
 } from '@/infrastructure/router/navigation'
 import { Button } from '@/presentation/components/button'
@@ -257,6 +259,7 @@ const ClubShare: React.FC<{ code: ClubCode }> = ({ code }) => {
 export const ClubPage: React.FC = () => {
   const translate = useTranslate()
   const scannedCode = useClubCodeSearchParam()
+  const returnEventId = useClubReturnEventParam()
   const replaceWith = useReplaceWith()
   const club = useClub(scannedCode)
   const { state } = club
@@ -286,9 +289,16 @@ export const ClubPage: React.FC = () => {
     <Main className='club-page'>
       <DocumentTitle>{translate('club.title')}</DocumentTitle>
       <header className='club-bar'>
-        <ButtonLink href={paths.home} variant='quiet'>
+        <ButtonLink
+          href={
+            returnEventId === null
+              ? paths.home
+              : organiserPathFor(returnEventId)
+          }
+          variant='quiet'
+        >
           <Icon name='arrowLeft' />
-          {translate('club.home')}
+          {translate(returnEventId === null ? 'club.home' : 'club.backToEvent')}
         </ButtonLink>
         {state.status === 'ready' && state.previous !== null ? (
           <Button onPress={club.undo} variant='quiet'>

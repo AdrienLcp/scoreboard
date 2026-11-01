@@ -45,12 +45,18 @@ another sport can adopt it.
 
 - A sports hall: large, bright, noisy, with unreliable Wi-Fi. Umpires may be on
   4G, and a device can drop off the network mid-match.
-- Up to 12 tables at once in the first club, but the number of courts or
-  tables is configurable per event and the display must scale to it.
+- 8 tables in the first club's hall, and a new event starts with 8 until
+  the club keeps a plan; the number of courts or tables is configurable per
+  event and the display must scale to it.
 - The display runs in a browser on whatever drives the screen: most likely a PC
   plugged into a TV or projector, but it must work on any screen size.
 - An umpire joins a match by scanning the QR code on the table or by typing a
-  short code on any device.
+  short code on any device. A TV joins the way Melee's screens do: the
+  computer behind it opens `/wall` (home's "Grand écran"), which shows a code
+  and a QR; the organiser types or scans it from the console's "Grand écran"
+  button.
+- Home lists the events this device organises, latest first, so leaving the
+  console never loses one; a new event asks only its name.
 - Both formats exist: individual tournaments and team fixtures (FFTT-style
   team encounters with singles and doubles).
 
@@ -110,7 +116,8 @@ another sport can adopt it.
 - A club's store (teams, players, opponents) is opened by its club code and
   erased two years after its last change; an event is kept 30 days after its
   last change or its start, whichever is later.
-- The club page is reached from home ("Mon club") and the organiser console.
+- The club page is reached from home ("Mon club") and the organiser console;
+  opened from an event's console, its back button returns to that console.
   The first visit asks only the club's name and the device keeps the code; a
   second device opens the club by scanning its QR code or typing the code.
   Defaults, each one changeable:

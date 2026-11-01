@@ -2,32 +2,25 @@ import type React from 'react'
 import { useState } from 'react'
 
 import { eventIdSchema } from '@scoreboard/protocol/identifiers'
-import { tableTennisBestOfs } from '@scoreboard/protocol/match-format'
-
-import { gamesToWinMatch } from '@scoreboard/core/table-tennis/table-tennis-game'
 
 import { useClub } from '@/features/club/use-club'
 import {
+  organiserPathFor,
   paths,
   spectatorPathFor,
   umpireEntryPathFor,
   useNavigateTo
 } from '@/infrastructure/router/navigation'
+import {
+  type OrganisedEvent,
+  readOrganisedEvents
+} from '@/infrastructure/storage/organised-events-storage'
 import { BrandMark } from '@/presentation/components/brand-mark'
 import { Button } from '@/presentation/components/button'
 import { Form } from '@/presentation/components/form'
 import { Icon } from '@/presentation/components/icon'
 import { ButtonLink } from '@/presentation/components/link'
 import { Main } from '@/presentation/components/main'
-import { Group, NumberField } from '@/presentation/components/number-field'
-import {
-  ListBox,
-  ListBoxItem,
-  OptionDetail,
-  Popover,
-  Select,
-  SelectTrigger
-} from '@/presentation/components/select'
 import {
   Description,
   FieldError,
@@ -44,14 +37,12 @@ import { useCreateEvent } from './use-create-event'
 
 import './home-page.sass'
 
-const DEFAULT_TABLE_COUNT = 12
+/** The club's own hall, until it keeps a plan: tables are added or put away in the event's plan. */
+const DEFAULT_TABLE_COUNT = 8
+/** Three games to win, the federation's usual match; each match can be set otherwise in the programme. */
 const DEFAULT_BEST_OF = 5
 const POINTS_PER_GAME = 11
-
-type BestOf = (typeof tableTennisBestOfs)[number]
-
-const isBestOf = (value: unknown): value is BestOf =>
-  tableTennisBestOfs.some((bestOf) => bestOf === value)
+const SHOWN_ORGANISED_EVENTS = 4
 
 /** An event link pasted whole works as well as its code alone. */
 const eventCodeIn = (typed: string): string =>
@@ -65,10 +56,7 @@ const CreateEventForm: React.FC = () => {
   const record = club.status === 'ready' ? club.record : null
   const clubHall = record?.hall ?? null
   const [name, setName] = useState('')
-  const [typedTableCount, setTypedTableCount] = useState<number | null>(null)
-  const [bestOf, setBestOf] = useState<BestOf>(DEFAULT_BEST_OF)
-  const tableCount =
-    typedTableCount ?? clubHall?.tables.length ?? DEFAULT_TABLE_COUNT
+  const tableCount = clubHall?.tables.length ?? DEFAULT_TABLE_COUNT
 
   return (
     <Form
@@ -85,7 +73,7 @@ const CreateEventForm: React.FC = () => {
                   name: record.own.name
                 },
           format: {
-            bestOf,
+            bestOf: DEFAULT_BEST_OF,
             pointsPerGame: POINTS_PER_GAME,
             sport: 'table-tennis'
           },
@@ -100,59 +88,6 @@ const CreateEventForm: React.FC = () => {
         <Label>{translate('home.name')}</Label>
         <Input placeholder={translate('home.namePlaceholder')} />
       </TextField>
-      <div className='home-pair'>
-        <NumberField
-          maxValue={64}
-          minValue={1}
-          onChange={setTypedTableCount}
-          value={tableCount}
-        >
-          <Label>{translate('home.tableCount')}</Label>
-          <Group>
-            <Input />
-          </Group>
-          {record !== null && clubHall !== null && typedTableCount === null ? (
-            <Description>
-              {translate('home.tableCountFromClub', { name: record.own.name })}
-            </Description>
-          ) : null}
-        </NumberField>
-        <Select
-          onSelectionChange={(key) => {
-            if (isBestOf(key)) {
-              setBestOf(key)
-            }
-          }}
-          selectedKey={bestOf}
-        >
-          <Label>{translate('home.bestOf')}</Label>
-          <SelectTrigger />
-          <Description>
-            {translate('home.bestOfHelp', { points: POINTS_PER_GAME })}
-          </Description>
-          <Popover>
-            <ListBox>
-              {tableTennisBestOfs.map((count) => {
-                const option = translate('home.bestOfOption', {
-                  toWin: gamesToWinMatch(count)
-                })
-                const detail = translate('home.bestOfOptionDetail', { count })
-
-                return (
-                  <ListBoxItem
-                    id={count}
-                    key={count}
-                    textValue={`${option} (${detail})`}
-                  >
-                    {option}
-                    <OptionDetail>{detail}</OptionDetail>
-                  </ListBoxItem>
-                )
-              })}
-            </ListBox>
-          </Popover>
-        </Select>
-      </div>
       <Button
         isDisabled={state.status === 'creating'}
         type='submit'
@@ -227,24 +162,63 @@ const JoinEventForm: React.FC = () => {
   )
 }
 
-/** The way in: open a new event, or join one by its code. */
+/** The events this device organises, latest first: closing the tab or leaving for the club page never loses one. */
+const OrganisedEvents: React.FC<{ events: OrganisedEvent[] }> = ({
+  events
+}) => {
+  const translate = useTranslate()
+
+  return (
+    <section className='home-card home-resume'>
+      <h2>{translate('home.resume')}</h2>
+      <ul className='home-resume-list'>
+        {events.slice(0, SHOWN_ORGANISED_EVENTS).map((event) => (
+          <li key={event.eventId}>
+            <ButtonLink href={organiserPathFor(event.eventId)}>
+              <span className='home-resume-name'>{event.name}</span>
+              <Icon name='arrowRight' />
+            </ButtonLink>
+          </li>
+        ))}
+      </ul>
+    </section>
+  )
+}
+
+const organisedEventsOrNone = (): OrganisedEvent[] => {
+  const stored = readOrganisedEvents()
+
+  return stored.status === 'success' ? stored.data : []
+}
+
+/** The way in: open a new event, pick one up again, or join one by its code. */
 export const HomePage: React.FC = () => {
   const translate = useTranslate()
+  const [organisedEvents] = useState(organisedEventsOrNone)
 
   return (
     <Main className='home-page'>
       <DocumentTitle>{homeDocumentTitle(translate)}</DocumentTitle>
       <header className='home-bar'>
         <BrandMark />
-        <ButtonLink href={paths.club} variant='quiet'>
-          <Icon name='club' />
-          {translate('home.club')}
-        </ButtonLink>
+        <nav className='home-bar-links'>
+          <ButtonLink href={paths.wall} variant='quiet'>
+            <Icon name='display' />
+            {translate('home.display')}
+          </ButtonLink>
+          <ButtonLink href={paths.club} variant='quiet'>
+            <Icon name='club' />
+            {translate('home.club')}
+          </ButtonLink>
+        </nav>
       </header>
       <div className='home-intro'>
         <h1>{translate('home.headline')}</h1>
         <p>{translate('home.lead')}</p>
       </div>
+      {organisedEvents.length === 0 ? null : (
+        <OrganisedEvents events={organisedEvents} />
+      )}
       <div className='home-forms'>
         <CreateEventForm />
         <JoinEventForm />
