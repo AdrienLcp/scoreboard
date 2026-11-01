@@ -184,6 +184,7 @@ export const FR_DICTIONARY = defineDictionary({
       timeout: 'Temps mort pris',
       timeoutLeft: 'Temps mort, {seconds:number} secondes',
       timeoutRunning: 'Temps mort en cours',
+      umpire: 'Arbitre : <b>{name}</b>',
       waiting: 'En attente'
     }
   },
@@ -271,7 +272,6 @@ export const FR_DICTIONARY = defineDictionary({
       deletion:
         'Son organisateur peut aussi l’effacer tout de suite, depuis l’onglet Réglages de l’organisation.',
       heading: 'Ce que le serveur garde d’une rencontre',
-      umpire: 'Arbitre : <b>{name}</b>',
       logs: defineTranslation(
         'Pour diagnostiquer les pannes, l’hébergeur journalise chaque requête\u00a0: son adresse, son heure et l’adresse IP d’où elle vient. Ces journaux ne contiennent aucun nom et sont effacés au bout de {days:plural}.',
         DAYS_PLURAL
@@ -352,6 +352,7 @@ export const FR_DICTIONARY = defineDictionary({
       live: 'En cours',
       scheduled: 'À venir'
     },
+    umpire: 'Arbitre : {name}',
     unnamedSide: 'À désigner',
     winner: 'vainqueur'
   },
@@ -422,7 +423,13 @@ export const FR_DICTIONARY = defineDictionary({
       less: 'Un point de moins pour {name}',
       more: 'Un point de plus pour {name}',
       open: 'Corriger',
+      openScore: 'Corriger le score',
+      playing: 'En cours',
+      points: 'Manche {game:number}, points de {name}',
+      removeGame: 'Retirer la dernière manche',
+      rule: 'Une manche se gagne à {points:number} points avec 2 points d’écart, seule la dernière peut être en cours, et le match s’arrête dès qu’il est gagné.',
       submit: 'Enregistrer le score',
+      swap: 'Inverser les points de la manche {game:number}',
       undo: 'Annuler la dernière action',
       walkover: {
         away: 'Forfait de l’extérieur',
@@ -443,7 +450,6 @@ export const FR_DICTIONARY = defineDictionary({
         DAYS_PLURAL
       ),
       label: 'Effacer la rencontre',
-    umpire: 'Arbitre : {name}',
       title: 'Effacement de la rencontre'
     },
     displays: {
@@ -511,13 +517,7 @@ export const FR_DICTIONARY = defineDictionary({
       emptyPlace: 'Mettre la table ici',
       encounters: 'Rencontres',
       free: 'Libre',
-      openScore: 'Corriger le score',
-      playing: 'En cours',
-      points: 'Manche {game:number}, points de {name}',
-      removeGame: 'Retirer la dernière manche',
-      rule: 'Une manche se gagne à {points:number} points avec 2 points d’écart, seule la dernière peut être en cours, et le match s’arrête dès qu’il est gagné.',
       freeLong: 'Aucune rencontre sur cette table.',
-      swap: 'Inverser les points de la manche {game:number}',
       hidden: 'Rangée',
       hintEncounter:
         'Touchez la table où installer {encounter}\u00a0: elle prend aussi sa voisine.',
@@ -598,6 +598,11 @@ export const FR_DICTIONARY = defineDictionary({
       tableCount: 'Nombre de tables'
     },
     summary: '{tables:number} tables · {matches:number} matchs',
+    tableMatch: {
+      closeCorrection: 'Fermer la correction',
+      correctPrevious: 'Corriger le score de {call}',
+      undoCorrection: 'Annuler la correction'
+    },
     tabs: {
       encounters: 'Équipes',
       live: 'En direct',
@@ -683,6 +688,13 @@ export const FR_DICTIONARY = defineDictionary({
         'Le tournoi a commencé\u00a0: les poules et les règles ne changent plus.',
       undo: 'Annuler la dernière modification',
       winPoints: 'Points pour une victoire'
+    },
+    umpireChoice: {
+      candidate: '{name} · {team}',
+      label: 'Arbitre',
+      nobody: 'Pas d’arbitre',
+      sheet: '{name}, à son tour',
+      sheetNobody: 'À tour de rôle, personne de libre'
     }
   },
   record: {
@@ -703,11 +715,6 @@ export const FR_DICTIONARY = defineDictionary({
     }
   },
   setup: {
-    tableMatch: {
-      closeCorrection: 'Fermer la correction',
-      correctPrevious: 'Corriger le score de {call}',
-      undoCorrection: 'Annuler la correction'
-    },
     refused: {
       duplicate_id: 'Un élément apparaît deux fois.',
       player_twice_in_match: 'Un joueur est des deux côtés d’un match.',
@@ -793,13 +800,6 @@ export const FR_DICTIONARY = defineDictionary({
     },
     section: {
       encounters: 'Rencontres',
-    },
-    umpireChoice: {
-      candidate: '{name} · {team}',
-      label: 'Arbitre',
-      nobody: 'Pas d’arbitre',
-      sheet: '{name}, à son tour',
-      sheetNobody: 'À tour de rôle, personne de libre'
       finished: 'Résultats',
       hall: 'Salle',
       live: 'En cours',

@@ -4,13 +4,14 @@ import { describe, expect, it } from 'vitest'
 
 import { matchOn, setupWith } from '@scoreboard/protocol/testing/event-setups'
 import { BEST_OF_5 } from '@scoreboard/protocol/testing/match-formats'
-import { LOUIS } from '@scoreboard/protocol/testing/players'
+import { CAMILLE, LOUIS } from '@scoreboard/protocol/testing/players'
 
-import { parsePeriodsText, periodsText } from './periods-text'
+import { draftGamesOf, isDraftAccepted } from './score-draft'
 import {
   addEncounter,
   changeBestOf,
   changeTableCount,
+  chooseUmpire,
   encounterTablesOf,
   removePlayer,
   seatEncounterOnBlock,
@@ -22,30 +23,61 @@ const setup = setupWith([matchOn(3, { format: BEST_OF_5 })], {
   tableCount: 3
 })
 
-describe('parsePeriodsText', () => {
-  it('[organiser] reads games separated by spaces', () => {
-    expect(parsePeriodsText(' 11-7  6–4 ')).toEqual([
-      { away: 7, home: 11 },
-      { away: 4, home: 6 }
+describe('score draft', () => {
+  it('[organiser] reads each game as won, still on, or impossible where it stands', () => {
+    expect(
+      draftGamesOf(BEST_OF_5, [
+        { away: 9, home: 11 },
+        { away: 13, home: 11 },
+        { away: 4, home: 6 }
+      ])
+    ).toEqual([
+      { kind: 'won', side: 'home' },
+      { kind: 'won', side: 'away' },
+      { kind: 'playing' }
     ])
+    expect(
+      draftGamesOf(BEST_OF_5, [
+        { away: 7, home: 6 },
+        { away: 3, home: 11 }
+      ])
+    ).toEqual([{ kind: 'impossible' }, { kind: 'won', side: 'home' }])
   })
 
-  it('[organiser] reads nothing typed as no game at all', () => {
-    expect(parsePeriodsText('')).toEqual([])
-  })
+  it('[organiser] refuses a game after the match was won', () => {
+    const won = [
+      { away: 5, home: 11 },
+      { away: 5, home: 11 },
+      { away: 5, home: 11 }
+    ]
 
-  it('[organiser] refuses a part that is not a score', () => {
-    expect(parsePeriodsText('11-7 six-four')).toBeNull()
-  })
-
-  it('[organiser] writes games back the way they are typed', () => {
-    expect(periodsText([{ away: 7, home: 11 }])).toBe('11-7')
+    expect(isDraftAccepted(BEST_OF_5, won)).toBe(true)
+    expect(isDraftAccepted(BEST_OF_5, [...won, { away: 1, home: 0 }])).toBe(
+      false
+    )
+    expect(
+      draftGamesOf(BEST_OF_5, [...won, { away: 1, home: 0 }]).at(-1)
+    ).toEqual({ kind: 'impossible' })
   })
 })
 
 describe('setup edits', () => {
   it('[organiser] frees the seat of a removed player', () => {
     expect(removePlayer(setup, LOUIS.id).matches[0]?.away.playerIds).toEqual([])
+  })
+
+  it('[organiser] names an umpire, then hands the match back to the turn when he leaves', () => {
+    const matchId = setup.matches[0]?.id ?? randomUUID()
+    const chosen = chooseUmpire({ matchId, setup, umpireId: CAMILLE.id })
+
+    expect(chosen.matches[0]?.umpireId).toBe(CAMILLE.id)
+    expect(
+      chooseUmpire({ matchId, setup: chosen, umpireId: null }).matches[0]
+        ?.umpireId
+    ).toBeNull()
+    expect(
+      removePlayer(chosen, CAMILLE.id).matches[0]?.umpireId
+    ).toBeUndefined()
   })
 
   it('[organiser] drops a display whose tables are all gone', () => {

@@ -217,10 +217,10 @@ const OrganiserConsole: React.FC<{ code: OrganiserCode; eventId: EventId }> = ({
             accesses={snapshot.tableAccesses}
             event={event}
             eventId={eventId}
+            onRecord={organiser.record}
             onSave={organiser.saveSetup}
             setup={setup}
           />
-            onRecord={organiser.record}
         </TabPanel>
         <TabPanel id='matches'>
           <MatchesEditor

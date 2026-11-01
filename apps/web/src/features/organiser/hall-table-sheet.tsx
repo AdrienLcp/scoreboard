@@ -1,12 +1,18 @@
 import type React from 'react'
 
-import type { TableAccess } from '@scoreboard/protocol/event-snapshot'
+import type { EventSetup } from '@scoreboard/protocol/event-setup'
+import type {
+  PublicSnapshot,
+  TableAccess
+} from '@scoreboard/protocol/event-snapshot'
 import type { HallPlan } from '@scoreboard/protocol/hall-plan'
 import type {
   EncounterId,
   EventId,
+  MatchId,
   TableNumber
 } from '@scoreboard/protocol/identifiers'
+import type { ScoringEvent } from '@scoreboard/protocol/scoring-event'
 
 import {
   isHiddenIn,
@@ -25,38 +31,47 @@ import { Switch } from '@/presentation/components/switch'
 import { useTranslate } from '@/presentation/i18n/i18n-context'
 
 import { ChoiceField } from './choice-field'
+import { TableMatchPanel } from './table-match-panel'
 
 import './hall-table-sheet.sass'
 
 type HallTableSheetProps = {
   access: TableAccess | undefined
   encounter: EncounterLine | undefined
+  event: PublicSnapshot
   eventId: EventId
   onClose: () => void
   onMoveEncounter: (encounterId: EncounterId) => void
   onMoveTable: () => void
+  onRecord: (matchId: MatchId, event: ScoringEvent) => void
   /** Saves the plan, the sheet staying open on the table now numbered `table`. */
   onSaveHall: (hall: HallPlan, table: TableNumber) => void
+  /** Saves any other change to the setup, the sheet staying open. */
+  onSaveSetup: (setup: EventSetup) => void
   plan: HallPlan
+  setup: EventSetup
   table: TableNumber
-  tableCount: number
 }
 
 /**
- * One table of the plan, opened: its encounter and score, its umpire QR and
- * code big enough to show the umpire who arrives, and what can change.
+ * One table of the plan, opened: its encounter and score, the match on it with
+ * its umpire and its score to correct, its umpire QR and code big enough to
+ * show the umpire who arrives, and what can change.
  */
 export const HallTableSheet: React.FC<HallTableSheetProps> = ({
   access,
   encounter,
+  event,
   eventId,
   onClose,
   onMoveEncounter,
   onMoveTable,
+  onRecord,
   onSaveHall,
+  onSaveSetup,
   plan,
-  table,
-  tableCount
+  setup,
+  table
 }) => {
   const translate = useTranslate()
   const isHidden = isHiddenIn(plan, table)
@@ -80,6 +95,16 @@ export const HallTableSheet: React.FC<HallTableSheetProps> = ({
       ) : (
         <EncounterScore encounter={encounter} />
       )}
+      {isHidden ? null : (
+        <TableMatchPanel
+          event={event}
+          key={table}
+          onRecord={onRecord}
+          onSaveSetup={onSaveSetup}
+          setup={setup}
+          table={table}
+        />
+      )}
       {access === undefined || isHidden ? null : (
         <CodeAndQr
           code={access.code}
@@ -101,7 +126,7 @@ export const HallTableSheet: React.FC<HallTableSheetProps> = ({
           {translate('organiser.hall.moveTable')}
         </Button>
         <ChoiceField
-          choices={Array.from({ length: tableCount }, (_, index) => ({
+          choices={Array.from({ length: setup.tableCount }, (_, index) => ({
             id: String(index + 1),
             label: translate('organiser.access.table', { table: index + 1 })
           }))}

@@ -23,6 +23,8 @@ type MatchDetailProps = {
   match: MatchView
   onFollow: (playerId: PlayerId, isFollowing: boolean) => void
   players: readonly Player[]
+  /** Who umpires it, when its encounter's sheet says so. */
+  umpireName: string | null
 }
 
 /** A match opened on a visitor's phone: game by game, its times, its cards and time-outs. */
@@ -30,7 +32,8 @@ export const MatchDetail: React.FC<MatchDetailProps> = ({
   followed,
   match,
   onFollow,
-  players
+  players,
+  umpireName
 }) => {
   const translate = useTranslate()
   const { state, timing } = match
@@ -142,6 +145,9 @@ export const MatchDetail: React.FC<MatchDetailProps> = ({
       )}
       <p className='match-detail-meta'>
         {[
+          umpireName === null
+            ? null
+            : translate('match.umpire', { name: umpireName }),
           timing.startedAtMs === null
             ? null
             : timing.finishedAtMs === null

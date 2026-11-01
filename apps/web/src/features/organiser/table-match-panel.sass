@@ -1,0 +1,61 @@
+@use '../../presentation/styles/typography'
+
+/// The match a table is on, inside the table's sheet: who plays, the umpire,
+/// and the correction, which takes the sheet's whole width once opened.
+@layer components
+  .table-match
+    border-top: var(--hairline)
+    display: grid
+    gap: var(--space-m)
+    padding-top: var(--space-m)
+
+  .table-match-head
+    column-gap: var(--space-s)
+    display: grid
+    grid-template-columns: minmax(0, 1fr) auto
+
+  .table-match-call
+    @include typography.label
+
+    grid-column: 1 / -1
+    margin: 0
+
+  .table-match-names
+    @include typography.name
+
+    margin: 0
+
+  .table-match-score
+    @include typography.figure
+
+    align-self: end
+    font-size: var(--text-figure)
+    margin: 0
+
+  .table-match-actions
+    display: grid
+    gap: var(--space-xs)
+
+  .table-match-corrected
+    @include typography.emphasis
+
+    align-items: center
+    display: flex
+    flex-wrap: wrap
+    gap: var(--space-3xs) var(--space-xs)
+    margin: 0
+
+  .table-match-correction
+    display: grid
+    gap: var(--space-s)
+
+  .table-match-correction-head
+    align-items: center
+    display: flex
+    justify-content: space-between
+
+    h4
+      @include typography.strong
+
+      font-size: var(--text-l)
+      margin: 0

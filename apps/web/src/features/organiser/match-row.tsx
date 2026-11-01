@@ -91,7 +91,11 @@ export const MatchRow: React.FC<MatchRowProps> = ({
       </div>
       <DisclosurePanel>
         <div className='match-row-correction'>
-          <ScoreCorrection match={match} onRecord={onRecord} />
+          <ScoreCorrection
+            match={match}
+            onRecord={onRecord}
+            players={players}
+          />
           {removal === undefined ? null : (
             <div className='match-row-removal'>{removal}</div>
           )}

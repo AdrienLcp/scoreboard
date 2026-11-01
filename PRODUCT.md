@@ -93,6 +93,13 @@ another sport can adopt it.
     an empty seat of the first group is offered behind the second, the
     players kept in their order, in one tap;
   - a penalty point that wins a game drops the rest of the penalty;
+  - the players umpire, shown on the wall and the spectators' phone: the
+    two clubs take turns on each table, the second table starting with the
+    other club, and when it is his club's turn the player who has just
+    played on the table umpires the next match there; never a player of
+    the match or of the one played meanwhile on the other table. In the
+    table's sheet of the plan the organiser picks another player of the
+    encounter, or nobody, and corrects the score game by game;
   - opponents' teams are white unless set otherwise.
 - The yearly Top 12 is an individual tournament: two pools seeded without
   clubmates, 2 points a win and 1 a loss, crossed semi-finals and a final.

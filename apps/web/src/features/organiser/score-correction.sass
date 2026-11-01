@@ -1,0 +1,147 @@
+@use '../../presentation/styles/typography'
+
+/// A score rewritten game by game with a finger: the minus and plus targets
+/// stay at least the control height, a step taller once the editor has room.
+@layer components
+  .score-correction
+    --step-size: var(--control-height)
+
+    container: correction / inline-size
+    display: grid
+    gap: var(--space-s)
+    min-width: 0
+
+  .correction-names,
+  .correction-game
+    display: grid
+    gap: var(--space-2xs) var(--space-s)
+    grid-template-areas: 'home away'
+    grid-template-columns: repeat(2, minmax(0, 1fr))
+
+  .correction-names
+    @include typography.label
+
+    span
+      @include typography.single-line
+
+      text-align: center
+
+  .correction-games
+    display: grid
+    gap: var(--space-xs)
+    list-style: none
+    margin: 0
+    padding: 0
+
+  .correction-game
+    background: var(--field)
+    grid-template-areas: 'label swap' 'home away' 'status status'
+    padding: var(--space-3xs) var(--space-s) var(--space-s)
+
+    &[data-impossible]
+      box-shadow: inset 0 0 0 var(--outline-thick) var(--ink)
+
+  .correction-game-label
+    @include typography.label
+
+    align-self: center
+    grid-area: label
+    margin: 0
+
+  .point-stepper
+    align-items: center
+    background: var(--surface)
+    border: 0
+    display: grid
+    gap: var(--space-3xs)
+    grid-template-columns: var(--step-size) minmax(2rem, 1fr) var(--step-size)
+    margin: 0
+    min-width: 0
+    padding: var(--space-3xs)
+
+    &[data-side='home']
+      grid-area: home
+
+    &[data-side='away']
+      grid-area: away
+
+    .button
+      min-height: var(--step-size)
+      min-width: 0
+      padding: 0
+
+  .point-stepper-value
+    @include typography.figure
+
+    font-size: var(--text-figure)
+    text-align: center
+
+  .correction-swap
+    grid-area: swap
+    justify-self: end
+    width: var(--control-height)
+
+  .correction-game-status
+    @include typography.label
+
+    align-items: center
+    display: flex
+    gap: var(--space-3xs)
+    grid-area: status
+    margin: 0
+
+    &[data-impossible]
+      color: var(--ink)
+
+  .correction-rule
+    @include typography.emphasis
+
+    align-items: start
+    display: flex
+    gap: var(--space-2xs)
+    margin: 0
+
+    .icon
+      flex: none
+      margin-top: 0.15em
+
+  .correction-actions
+    align-items: center
+    display: flex
+    flex-wrap: wrap
+    gap: var(--space-xs)
+
+  .correction-submit
+    border-top: var(--hairline)
+    justify-content: space-between
+    padding-top: var(--space-s)
+
+  .correction-walkover
+    display: grid
+    gap: var(--space-s)
+
+    p
+      @include typography.hint
+
+      margin: 0
+
+  @container correction (width >= 30rem)
+    .score-correction
+      --step-size: 3.5rem
+
+    .correction-names,
+    .correction-game
+      grid-template-areas: 'label home away swap' '. status status status'
+      grid-template-columns: 5.5rem repeat(2, minmax(0, 1fr)) var(--control-height)
+
+    .correction-names
+      grid-template-areas: '. home away .'
+
+      span:first-child
+        grid-area: home
+
+      span:last-child
+        grid-area: away
+
+    .correction-game
+      padding-block: var(--space-xs)

@@ -15,8 +15,10 @@ import {
 import type {
   EncounterId,
   EventId,
+  MatchId,
   TableNumber
 } from '@scoreboard/protocol/identifiers'
+import type { ScoringEvent } from '@scoreboard/protocol/scoring-event'
 
 import {
   DEFAULT_OPPONENT_COLOUR,
@@ -59,6 +61,7 @@ type HallPlanBoardProps = {
   accesses: readonly TableAccess[]
   event: PublicSnapshot
   eventId: EventId
+  onRecord: (matchId: MatchId, event: ScoringEvent) => void
   onSave: (setup: EventSetup) => boolean
   setup: EventSetup
 }
@@ -88,6 +91,7 @@ export const HallPlanBoard: React.FC<HallPlanBoardProps> = ({
   accesses,
   event,
   eventId,
+  onRecord,
   onSave,
   setup
 }) => {
@@ -414,6 +418,7 @@ export const HallPlanBoard: React.FC<HallPlanBoardProps> = ({
           <HallTableSheet
             access={accesses.find((access) => access.table === selectedTable)}
             encounter={encounterOn(lines, selectedTable)}
+            event={event}
             eventId={eventId}
             onClose={() => setPicking({ kind: 'none' })}
             onMoveEncounter={(encounterId) =>
@@ -422,6 +427,7 @@ export const HallPlanBoard: React.FC<HallPlanBoardProps> = ({
             onMoveTable={() =>
               setPicking({ kind: 'moving-table', table: selectedTable })
             }
+            onRecord={onRecord}
             onSaveHall={(hall, table) => {
               if (onSave(changeHall(setup, hall))) {
                 setPrevious(setup)
@@ -429,9 +435,14 @@ export const HallPlanBoard: React.FC<HallPlanBoardProps> = ({
 
               setPicking({ kind: 'table', table })
             }}
+            onSaveSetup={(next) => {
+              if (onSave(next)) {
+                setPrevious(setup)
+              }
+            }}
             plan={plan}
+            setup={setup}
             table={selectedTable}
-            tableCount={setup.tableCount}
           />
         )}
       </div>

@@ -68,7 +68,12 @@ export const matchSetupSchema = z.object({
   plannedAtMs: instantMsSchema.nullable().default(null),
   /** Its place in an individual tournament's pools or bracket; absent outside one. */
   stage: matchStageSchema.nullable().optional(),
-  table: tableNumberSchema.nullable()
+  table: tableNumberSchema.nullable(),
+  /**
+   * The organiser's choice of umpire: absent lets the sheet's turn pick a
+   * player of the encounter, `null` shows nobody.
+   */
+  umpireId: playerIdSchema.nullable().optional()
 })
 export type MatchSetup = z.infer<typeof matchSetupSchema>
 

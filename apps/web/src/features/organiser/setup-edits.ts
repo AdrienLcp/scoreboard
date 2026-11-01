@@ -43,11 +43,28 @@ export const removePlayer = (
     matches: setup.matches.map((match) => ({
       ...match,
       away: without(match, 'away'),
-      home: without(match, 'home')
+      home: without(match, 'home'),
+      umpireId: match.umpireId === playerId ? undefined : match.umpireId
     })),
     players: setup.players.filter((player) => player.id !== playerId)
   }
 }
+
+/** The organiser naming a match's umpire: `null` for nobody, `undefined` to leave it to the clubs' turn. */
+export const chooseUmpire = ({
+  matchId,
+  setup,
+  umpireId
+}: {
+  matchId: MatchId
+  setup: EventSetup
+  umpireId: PlayerId | null | undefined
+}): EventSetup => ({
+  ...setup,
+  matches: setup.matches.map((match) =>
+    match.id === matchId ? { ...match, umpireId } : match
+  )
+})
 
 export const addTeam = (setup: EventSetup, team: Team): EventSetup => ({
   ...setup,

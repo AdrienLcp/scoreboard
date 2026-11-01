@@ -14,6 +14,7 @@ import { scoreText } from '@/features/event/score-text'
 import { wallCallOf } from '@/features/event/sheet-call'
 import { type ChipPlayer, wallSideOf } from '@/features/event/sheet-side'
 import type { TeamPaint } from '@/features/event/team-paint'
+import { umpireNameOf } from '@/features/event/umpire-name'
 import { DrawnTable } from '@/presentation/components/drawn-table'
 import { Icon } from '@/presentation/components/icon'
 import { useTranslate } from '@/presentation/i18n/i18n-context'
@@ -303,6 +304,18 @@ export const WallTable: React.FC<WallTableProps> = ({
     live === null || isOver
       ? null
       : runningTimeoutOf({ lastTimeout: live.timing.lastTimeout, nowMs })
+  const umpireLine = (match: MatchView | null): React.ReactNode => {
+    const name =
+      match === null ? null : umpireNameOf({ encounterMatches, match, players })
+
+    return name === null ? null : (
+      <RichText
+        parts={translate.rich('display.wall.umpire', { b: strong, name })}
+      />
+    )
+  }
+  const liveUmpire = isOver ? null : umpireLine(live)
+  const nextUmpire = umpireLine(next)
 
   return (
     <section
@@ -317,6 +330,9 @@ export const WallTable: React.FC<WallTableProps> = ({
           {live === null ? translate('display.wall.waiting') : callOf(live)}
         </span>
         {live === null ? null : <WallPill isOver={isOver} match={live} />}
+        {liveUmpire === null ? null : (
+          <span className='wall-umpire'>{liveUmpire}</span>
+        )}
       </header>
       <DrawnTable className='wall-court' isIdle={live === null}>
         {live === null ? (
@@ -338,6 +354,7 @@ export const WallTable: React.FC<WallTableProps> = ({
                     })}
                   />
                 </span>
+                {nextUmpire === null ? null : <span>{nextUmpire}</span>}
               </>
             )}
           </div>

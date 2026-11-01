@@ -12,6 +12,7 @@ import { MatchCallPill } from '@/features/event/match-call-pill'
 import { sideName } from '@/features/event/participant-names'
 import { wallCallOf } from '@/features/event/sheet-call'
 import { startLabel } from '@/features/event/start-label'
+import { umpireNameOf } from '@/features/event/umpire-name'
 import { toDate } from '@/infrastructure/dates'
 import { PlainButton } from '@/presentation/components/button'
 import {
@@ -200,6 +201,7 @@ export const MatchCard: React.FC<MatchCardProps> = ({
           match={match}
           onFollow={onFollow}
           players={players}
+          umpireName={umpireNameOf({ encounterMatches, match, players })}
         />
       </DisclosurePanel>
     </Disclosure>
