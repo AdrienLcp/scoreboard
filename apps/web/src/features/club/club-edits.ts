@@ -34,16 +34,18 @@ const editClub = (
 })
 
 /**
- * A new team named after its club and numbered ("Angles 3"), in the next
- * colour nobody wears, on the club's format; our own teams also take the next
- * free pair of tables, team 1 on tables 1–2.
+ * A new team named after its club and numbered ("Angles 3") unless named, in
+ * the next colour nobody wears, on the club's format; our own teams also take
+ * the next free pair of tables, team 1 on tables 1–2.
  */
 export const addTeam = ({
   clubId,
+  name,
   newTeamId,
   record
 }: {
   clubId: DirectoryClubId
+  name?: string
   newTeamId: () => TeamId
   record: ClubRecord
 }): ClubRecord => {
@@ -63,7 +65,7 @@ export const addTeam = ({
     id: newTeamId(),
     lineup: [],
     matchPoints: DEFAULT_MATCH_POINTS_RULE,
-    name: `${club?.name ?? ''} ${number}`.trim(),
+    name: name ?? `${club?.name ?? ''} ${number}`.trim(),
     tables: isOwn
       ? Array.from({ length: groupCount }, (_, index) => firstTable + index)
       : []
@@ -276,6 +278,20 @@ export const addTypedPlayer = ({
   }
 }
 
+/** "Riverside 4" belongs to the club named "Riverside", or to "TT Riverside" whose teams are named "Riverside 1", "Riverside 2". */
+const isClubOfTeamName = (club: DirectoryClub, clubName: string): boolean =>
+  isSameName(club.name, clubName) ||
+  club.teams.some((team) => isSameName(clubNameOfTeam(team.name), clubName))
+
+type TypedTeamEdit = {
+  newClubId: () => DirectoryClubId
+  newTeamId: () => TeamId
+  record: ClubRecord
+  typed: string
+}
+
+type AddedTeam = { record: ClubRecord; teamId: TeamId }
+
 /**
  * An opposing team typed where the search found none ("Rivals 4"): it joins
  * the club its name starts with, which is created when the club is new, in
@@ -286,15 +302,12 @@ export const addTypedOpponentTeam = ({
   newTeamId,
   record,
   typed
-}: {
-  newClubId: () => DirectoryClubId
-  newTeamId: () => TeamId
-  record: ClubRecord
-  typed: string
-}): { record: ClubRecord; teamId: TeamId } => {
+}: TypedTeamEdit): AddedTeam => {
   const name = typed.trim()
   const clubName = clubNameOfTeam(name)
-  const known = record.opponents.find((club) => isSameName(club.name, clubName))
+  const known = record.opponents.find((club) =>
+    isClubOfTeamName(club, clubName)
+  )
   const clubId = known?.id ?? newClubId()
   const withClub =
     known === undefined
@@ -317,6 +330,31 @@ export const addTypedOpponentTeam = ({
       teams: [...club.teams, team]
     })),
     teamId: team.id
+  }
+}
+
+/**
+ * A team typed where the search found none, ours or theirs: named after our
+ * club, it joins our teams on the next free tables, as the club page adds one;
+ * any other name joins its opposing club.
+ */
+export const addTypedTeam = (edit: TypedTeamEdit): AddedTeam => {
+  const name = edit.typed.trim()
+
+  if (!isClubOfTeamName(edit.record.own, clubNameOfTeam(name))) {
+    return addTypedOpponentTeam(edit)
+  }
+
+  const teamId = edit.newTeamId()
+
+  return {
+    record: addTeam({
+      clubId: edit.record.own.id,
+      name,
+      newTeamId: () => teamId,
+      record: edit.record
+    }),
+    teamId
   }
 }
 

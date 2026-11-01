@@ -3,6 +3,7 @@ import { useState } from 'react'
 
 import {
   ComboBox,
+  Group,
   Input,
   Label,
   ListBox,
@@ -124,7 +125,7 @@ export const PickField: React.FC<PickFieldProps> = ({
           selectedKey={selectedId}
         >
           <Label>{label}</Label>
-          <div className='pick-field-box'>
+          <Group className='pick-field-box'>
             <Icon name='search' />
             <Input
               className='pick-field-input'
@@ -135,7 +136,7 @@ export const PickField: React.FC<PickFieldProps> = ({
               }}
               placeholder={placeholder}
             />
-          </div>
+          </Group>
           <Popover className='pick-field-popover'>
             <ListBox<Item>
               renderEmptyState={() => (

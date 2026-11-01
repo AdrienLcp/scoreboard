@@ -126,7 +126,9 @@ another sport can adopt it.
     first letters of any word of a name, accents aside, the club's own
     first, then the most recently played; a name it does not find is added
     once, as typed, to the club's directory (a typed team joins the club its
-    name starts with, a typed player needs a first and a family name);
+    name starts with, known by its name or its teams' names, ours included
+    where a pool is composed; a typed player needs a first and a family
+    name);
   - a logo is resized on the device to a 256-pixel square and kept with the
     club, erased with it; a replaced logo stays reachable for the 30 days an
     event may still show it.

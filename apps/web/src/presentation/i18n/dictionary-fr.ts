@@ -15,8 +15,6 @@ export const FR_DICTIONARY = defineDictionary({
         dates: 'Dates des journées',
         datesHelp:
           'Une date posée place les journées suivantes deux semaines plus tard ; chacune se corrige ensuite.',
-        missingClub:
-          'Une équipe manque ? Ajoutez son club et l’équipe dans Clubs adverses, plus bas.',
         noNumber: 'Pas encore connu',
         number: 'Numéro de poule',
         outcome: {
@@ -26,7 +24,6 @@ export const FR_DICTIONARY = defineDictionary({
           win: 'Victoire'
         },
         phase: 'Phase',
-        pick: 'À choisir',
         points: 'Points au classement',
         pointsChoice: defineTranslation('{count:plural}', {
           plural: { count: { one: '{?} point', other: '{?} points' } }

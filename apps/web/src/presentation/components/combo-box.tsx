@@ -18,5 +18,8 @@ export const ComboBox = <T extends object>({
   />
 )
 
+/** Wraps the input and what stands beside it, so the list opens under the whole box at its width. */
+export { Group } from 'react-aria-components'
+
 export { Input, Label } from './field'
 export { ListBox, ListBoxItem, Popover } from './select'

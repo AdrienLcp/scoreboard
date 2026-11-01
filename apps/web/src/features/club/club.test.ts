@@ -15,6 +15,7 @@ import {
   absentSeatsLast,
   addTypedOpponentTeam,
   addTypedPlayer,
+  addTypedTeam,
   changeClubLogo,
   keepHallPlan,
   keepLineup,
@@ -168,6 +169,49 @@ describe('club record edits', () => {
     expect(intoNew.record.opponents.at(-1)).toMatchObject({
       name: 'Riverside',
       teams: [{ id: intoNew.teamId, name: 'Riverside 4' }]
+    })
+  })
+
+  it('[club] knows a club by its teams names, "Riverside 4" joining the "TT Riverside" of "Riverside 1"', () => {
+    const riverside = recordWith(
+      clubOf('PPC Angles', [angles]),
+      clubOf('TT Riverside', [teamOf('Riverside 1')])
+    )
+    const added = addTypedOpponentTeam({
+      newClubId: randomUUID,
+      newTeamId: randomUUID,
+      record: riverside,
+      typed: 'Riverside 4'
+    })
+
+    expect(added.record.opponents).toHaveLength(1)
+    expect(added.record.opponents[0]?.teams.at(-1)?.id).toBe(added.teamId)
+  })
+
+  it('[club] puts a typed team named after our club in our teams, on the next free tables', () => {
+    const ours = addTypedTeam({
+      newClubId: randomUUID,
+      newTeamId: randomUUID,
+      record,
+      typed: 'Angles 3 '
+    })
+    const theirs = addTypedTeam({
+      newClubId: randomUUID,
+      newTeamId: randomUUID,
+      record,
+      typed: 'Rivals 5'
+    })
+
+    expect(ours.record.opponents).toEqual(record.opponents)
+    expect(ours.record.own.teams.at(-1)).toMatchObject({
+      id: ours.teamId,
+      name: 'Angles 3',
+      tables: [3, 4]
+    })
+    expect(theirs.record.own).toEqual(record.own)
+    expect(theirs.record.opponents[0]?.teams.at(-1)).toMatchObject({
+      id: theirs.teamId,
+      name: 'Rivals 5'
     })
   })
 

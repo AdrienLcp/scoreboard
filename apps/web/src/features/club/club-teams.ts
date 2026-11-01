@@ -1,7 +1,4 @@
-import type {
-  ClubRecord,
-  DirectoryTeam
-} from '@scoreboard/protocol/club-record'
+import type { ClubRecord } from '@scoreboard/protocol/club-record'
 import type { TeamId } from '@scoreboard/protocol/identifiers'
 
 import type { ClubSide } from '@scoreboard/core/club/club-encounter'
@@ -24,9 +21,3 @@ export const clubSideOf = (
 
 export const isOwnTeam = (record: ClubRecord, teamId: TeamId | null): boolean =>
   record.own.teams.some((team) => team.id === teamId)
-
-/** Every team a pool can hold: ours first, then each opponent club's. */
-export const directoryTeamsOf = (record: ClubRecord): DirectoryTeam[] => [
-  ...record.own.teams,
-  ...record.opponents.flatMap((club) => club.teams)
-]

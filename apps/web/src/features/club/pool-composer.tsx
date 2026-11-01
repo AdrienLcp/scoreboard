@@ -7,12 +7,16 @@ import {
   SEASON_PHASES,
   type StandingsPoints
 } from '@scoreboard/protocol/championship'
-import type { ClubRecord } from '@scoreboard/protocol/club-record'
+import type {
+  ClubRecord,
+  DirectoryTeam
+} from '@scoreboard/protocol/club-record'
 
 import { resizedPool } from '@scoreboard/core/championship/championship-calendar'
 
 import { ChoiceField } from '@/features/organiser/choice-field'
 import { ConfirmButton } from '@/features/organiser/confirm-button'
+import { newDirectoryClubId, newTeamId } from '@/infrastructure/ids'
 import { Button } from '@/presentation/components/button'
 import {
   Disclosure,
@@ -28,8 +32,10 @@ import {
   seatPoolTeam,
   updatePool
 } from './championship-edits'
-import { directoryTeamsOf } from './club-teams'
+import { addTypedTeam } from './club-edits'
+import { byRecentThenName } from './directory-search'
 import { numbered } from './numbered'
+import { type Pick, PickField } from './pick-field'
 
 type PoolComposerProps = {
   onChange: (record: ClubRecord) => void
@@ -47,6 +53,14 @@ const range = (from: number, to: number): number[] =>
 
 const phaseId = (season: number, phase: number) => `${season}-${phase}`
 
+/** Our teams first, in their own order, then the opponents met most recently. */
+const poolTeamsOf = (record: ClubRecord): DirectoryTeam[] => [
+  ...record.own.teams,
+  ...record.opponents
+    .flatMap((club) => club.teams)
+    .toSorted(byRecentThenName((team: DirectoryTeam) => team))
+]
+
 /**
  * Everything the federation's calendar gives, copied once: the pool's number
  * and phase, its teams in the calendar's order, the date of each round, and
@@ -59,10 +73,20 @@ export const PoolComposer: React.FC<PoolComposerProps> = ({
 }) => {
   const translate = useTranslate()
   const save = (next: ChampionshipPool) => onChange(updatePool(record, next))
-  const teamChoices = directoryTeamsOf(record).map((team) => ({
-    id: team.id,
-    label: team.name
-  }))
+  const numberLabel = (number: number) =>
+    translate('club.championship.composer.teamNumber', {
+      number: String(number)
+    })
+  const teamPicks: Pick[] = poolTeamsOf(record).map((team) => {
+    const seat = pool.teams.indexOf(team.id)
+
+    return {
+      detail:
+        seat === -1 ? (team.division ?? undefined) : numberLabel(seat + 1),
+      id: team.id,
+      label: team.name
+    }
+  })
   const phases = range(pool.season - 1, pool.season + 1).flatMap((season) =>
     SEASON_PHASES.map((phase) => ({
       id: phaseId(season, phase),
@@ -151,23 +175,41 @@ export const PoolComposer: React.FC<PoolComposerProps> = ({
             </p>
             <div className='pool-composer-grid'>
               {numbered(pool.teams).map(({ entry: teamId, number }) => (
-                <ChoiceField
-                  choices={teamChoices}
+                <PickField
+                  addLabel={(typed) =>
+                    translate('organiser.pick.addTeam', { name: typed.trim() })
+                  }
+                  emptyLabel={(typed) =>
+                    translate('organiser.pick.none', { typed })
+                  }
                   key={number}
-                  label={translate('club.championship.composer.teamNumber', {
-                    number: String(number)
-                  })}
+                  label={numberLabel(number)}
+                  onAdd={(typed) => {
+                    const added = addTypedTeam({
+                      newClubId: newDirectoryClubId,
+                      newTeamId,
+                      record,
+                      typed
+                    })
+
+                    onChange(
+                      updatePool(
+                        added.record,
+                        seatPoolTeam({ number, pool, teamId: added.teamId })
+                      )
+                    )
+
+                    return null
+                  }}
                   onChange={(picked) =>
                     save(seatPoolTeam({ number, pool, teamId: picked }))
                   }
-                  placeholder={translate('club.championship.composer.pick')}
+                  picks={teamPicks}
+                  placeholder={translate('organiser.pick.teamPlaceholder')}
                   selectedId={teamId}
                 />
               ))}
             </div>
-            <p className='club-note'>
-              {translate('club.championship.composer.missingClub')}
-            </p>
           </div>
           <div className='pool-composer-group'>
             <p className='club-label'>
