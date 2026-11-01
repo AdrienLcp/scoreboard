@@ -14,13 +14,7 @@ export const BrandMark: React.FC = () => {
   return (
     <span className='brand-mark'>
       <svg aria-hidden='true' focusable='false' viewBox='0 0 24 24'>
-        <rect
-          className='frame'
-          height='15'
-          width='19'
-          x='2.5'
-          y='4.5'
-        />
+        <rect className='frame' height='15' width='19' x='2.5' y='4.5' />
         <path className='frame' d='M12 8.5v7' />
         <path className='lit' d='M6.5 12h2.5' />
         <path className='frame' d='M15 12h2.5' />
