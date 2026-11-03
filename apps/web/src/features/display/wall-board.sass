@@ -154,7 +154,7 @@
     font-size: calc(var(--cu) * 4.3)
     padding: calc(var(--cu) * 0.6) calc(var(--cu) * 1.3) calc(var(--cu) * 0.75)
 
-  /// The legal footer would push the wall into a scroll a TV cannot use; a
+  /// The footer would push the wall into a scroll a TV cannot use; a
   /// phone, which scrolls anyway, keeps it.
   body:has(.display-page[data-wall]) .site-footer
     display: none
@@ -164,7 +164,7 @@
 
   @include stacked.stacked
     body:has(.display-page[data-wall]) .site-footer
-      display: block
+      display: flex
 
     .wall-board
       grid-template-columns: minmax(0, 1fr)

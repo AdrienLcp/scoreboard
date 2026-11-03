@@ -1174,7 +1174,9 @@ export const FR_DICTIONARY = defineDictionary({
   },
   shell: {
     footer: {
-      legal: 'Mentions légales et confidentialité'
+      credit: 'Réalisé par <author>{name}</author>',
+      legal: 'Mentions légales et confidentialité',
+      source: 'Code source'
     }
   },
   spectator: {
