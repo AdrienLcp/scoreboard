@@ -25,12 +25,12 @@ Cloudflare's free tier.
 
 ## Layout
 
-| Path | What it holds |
-| --- | --- |
-| `apps/web` | The four screens: Vite, React, react-router, indented Sass |
-| `apps/worker` | The Cloudflare Worker, with one Durable Object per event holding its ordered scoring events and fanning them out over WebSocket |
-| `packages/core` | Scoring rules and everything derived from the events: scores, server, timing |
-| `packages/protocol` | The contract the web app and the worker share: schemas, routes, messages |
+| Path                | What it holds                                                                                                                   |
+| ------------------- | ------------------------------------------------------------------------------------------------------------------------------- |
+| `apps/web`          | The four screens: Vite, React, react-router, indented Sass                                                                      |
+| `apps/worker`       | The Cloudflare Worker, with one Durable Object per event holding its ordered scoring events and fanning them out over WebSocket |
+| `packages/core`     | Scoring rules and everything derived from the events: scores, server, timing                                                    |
+| `packages/protocol` | The contract the web app and the worker share: schemas, routes, messages                                                        |
 
 `PRODUCT.md` describes who it is for and what it must do; `DESIGN.md` holds the
 visual system.

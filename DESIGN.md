@@ -193,17 +193,21 @@ Tone is factual and sentence-case. Headings are quiet and muted; the figures do 
 A cool paper-and-navy ground, one saturated orange, and the table's blue. All tokens are authored in hex in `apps/web/src/presentation/styles/_tokens.sass` (`color-scheme: light`); the frontmatter mirrors them.
 
 ### Primary
+
 - **Decision Orange** (live): the only warm hue, and always a **fill**: the match-point pill, the running time-out tile, the live dots (connection, organiser, spectator), the countdown arc. Text and icons on it are **Hall Ink** (on-live), at about 6:1. Orange on white sits near 2.7:1, so it is never a text or thin-icon colour on a light ground.
 - **Burnt Orange** (live-ink): the orange's text voice. Small orange text and icons on paper or white (the umpire's "serving" marker, the waiting stage's live line, spectator and organiser live labels, the text caret), at about 7:1 on white.
 
 ### Secondary
+
 - **Table Blue** (focus, table): the focus colour of every control (ring and focused field border) and, on the wall, the drawn table's playing surface. **Table Edge** (table-dark) is the table's front edge and the shadow under its white score digits; **Idle Table** (table-idle) greys a free table.
 
 ### Tertiary
+
 - **Hall Sky** (sky): text selection today; on the wall, the QR column's ground.
 - **Card Yellow** (card-yellow): the yellow card mark only, never a status colour.
 
 ### Neutral
+
 - **Paper** (field): the page background on every surface.
 - **White** (surface): live tiles, summary column, match cards, inputs, tab tracks, point targets, select triggers.
 - **Mist Grey** (surface-raised): table-number chips, games-won wells, popovers, toggle chips, hover on white.
@@ -216,6 +220,7 @@ A cool paper-and-navy ground, one saturated orange, and the table's blue. All to
 - **QR Paper** (qr-paper): the QR code's own background only, for scanner contrast.
 
 ### Named Rules
+
 **The Orange Asks Rule.** Orange marks what needs a decision or is running right now (match point, game or match won awaiting validation, a running time-out, a live connection). If removing it would not lose that information, it is not orange. It is a fill with ink on it; as text or a small icon it becomes Burnt Orange.
 
 **The Ink Alarm Rule.** Errors, offline and refusal states are drawn in ink: an ink fill with white text (offline and refused badges) or an ink border with an ink error line and an icon. Never red, never orange. The palette has no warning hue; urgency comes from the heaviest neutral.
@@ -232,6 +237,7 @@ A cool paper-and-navy ground, one saturated orange, and the table's blue. All to
 **Character:** one family, three widths. Running text at the normal width, names a little condensed (84%), figures narrow (72%) and the point score narrowest and heaviest (64%, 800), so the hall reads one voice that tightens as the information gets more urgent. Archivo has no `lnum`; its default figures are already lining and `tnum` keeps them fixed-width.
 
 ### Hierarchy
+
 - **Display** (800, width 64%, 37 units of a tile, line-height 0.86, -0.01em): the point score in a live tile. The umpire's point target uses the same voice fitted to its target, `clamp(var(--text-score), min(52cqi, 116cqh - 5rem), 20.625rem)`, never below `--text-score` (4rem). Always the largest element on the surface.
 - **Headline** (700, width 84%, 1.75rem, 1.15): page titles on tool pages; on the display, the club name at 3cu. The home hero grows from 2rem to 3.25rem at 1.05 with -0.01em.
 - **Title** (600, width 84%, 1.25): player and team names in cards and lists. In tiles, names scale with the tile (10 units, 8 when long) and truncate with an ellipsis.
@@ -242,6 +248,7 @@ A cool paper-and-navy ground, one saturated orange, and the table's blue. All to
 UI and body text take the steps `--text-2xs` to `--text-3xl` (0.75rem to 1.5rem), `--text-m` (1rem) being the body. A display size takes a role name: `--text-title` (1.75rem), `--text-code` (1.75rem), `--text-code-entry` (3.375rem), `--text-figure` (2.25rem), `--text-score` (4rem), and two fluid ones, `--text-hero` (2rem to 3.25rem) and `--text-player` (1.25rem to 2rem, a name on a point target). The big numbers come from container units, not from this scale. Weight, width, leading and tracking live only in the `_typography.sass` mixins; widths through `--stretch-name`, `--stretch-figure`, `--stretch-score`.
 
 ### Named Rules
+
 **The Every Number Is A Figure Rule.** Any number the room reads (score, games, table, time, clock, count) uses the figure voice: Archivo at 72% width with tabular figures, so digits never shift width as they change. The point score narrows to 64% and 800.
 
 **The Quiet Heading Rule.** Section headings are sentence case, muted, 600 and small. No uppercase tracking, no kickers or eyebrows above titles. Wide tracking is reserved for literal join codes typed or read by umpires and organisers (0.08em, 0.22em on the umpire's entry field).
@@ -261,10 +268,12 @@ The summary column clips lists to whole rows (never a half-visible item) and giv
 UI chrome is flat: tiles, cards, panels and controls sit on the paper without shadows, separated by the white/paper step and the grey wells. Edges are inset rings (`--inset-hairline` 1px silver, 2px ink on secondary buttons, 2px orange or muted on outlined pills) rather than outer borders, so they never change layout. The drawn table on the wall is the one place with modelled depth, and that depth belongs to the drawing (see Committed, not yet built).
 
 ### Shadow Vocabulary
+
 - **Overlay** (`box-shadow: 0 14px 34px rgb(14 34 56 / 40%)`): popovers and list-box menus only.
 - **Key cap** (`box-shadow: inset 0 -2px 0 var(--field)`): keyboard-shortcut hints on the umpire console on laptops.
 
 ### Named Rules
+
 **The Flat Chrome Rule.** Resting UI surfaces never cast shadows. To set something apart, put it on white over paper or in a grey well; the overlay shadow is for content that floats.
 
 ## Shapes
@@ -272,11 +281,13 @@ UI chrome is flat: tiles, cards, panels and controls sit on the paper without sh
 Square corners everywhere: tiles, the summary column, cards, buttons, inputs, tabs, toggles, pills, table-number chips, popovers. No radius tokens remain except `--radius-full`. Circles are a separate shape, not a softened corner: the switch track and thumb, the live dots (`50%`), and on the wall the games-won dots and their pill. Serving is a small solid triangle, the only pictorial shape inside a tile.
 
 ### Named Rules
+
 **The Square Block Rule.** A rectangle is square-cornered. Roundness only appears as a full circle or a full pill, and only where the world draws one: a dot, a switch, the games-won pill.
 
 ## Components
 
 ### Buttons
+
 Plain and confident, one obvious action per screen.
 - **Shape:** square.
 - **Secondary (default):** no fill (it shows the ground it sits on), a 2px ink inset edge, ink text 600, 3rem minimum height; hover inverts to an ink fill with white text; pressed scales to 0.985; disabled swaps the edge to silver and the text to dusk.
@@ -286,10 +297,12 @@ Plain and confident, one obvious action per screen.
 - **Focus:** 3px Table Blue ring at 3px offset, shared by every focusable control.
 
 ### Chips (state pills)
+
 - **Style:** square, 700 at line-height 1.05, sized in em so it scales with the tile; enters with a fade and scale from 0.9 (340ms, ease-out).
 - **Tones (built):** match point = orange fill, ink text; game point = 2px orange inset outline, ink text; deuce = 2px muted inset outline, ink text; over = silver fill, ink text, with a check icon. At most one per tile.
 
 ### Cards / Containers
+
 - **Live tile:** white, square, no border, no shadow; enters with a fade and scale from 0.95 (640ms). The score stays ink; the losing side dims after the match.
 - **Summary column:** one white panel; blocks for team encounters, results with finish times, free tables with next-match ETA, "à suivre" (each start in muted figures above the names, so a doubles pair keeps the full width), and the QR.
 - **Match card (spectator):** white, square, the header row is the disclosure trigger; expanded detail sits below a hairline with a per-game table.
@@ -299,6 +312,7 @@ Plain and confident, one obvious action per screen.
 - **Internal padding:** tool cards 0.75 to 1rem; display panels in cu.
 
 ### Inputs / Fields
+
 - **Style:** white fill, 2px slate-edge border, square, 3rem minimum height, 600 value text; label above in muted 0.875rem 600; placeholder in dusk 500.
 - **Hover / Focus:** hover turns the border ink; focus turns it Table Blue (no glow).
 - **Error:** ink border plus a 1px ink inset ring; error line in ink 600 with an icon. **Disabled:** dusk text.
@@ -308,15 +322,18 @@ Plain and confident, one obvious action per screen.
 - **Pick field** (`features/club/pick-field.tsx`): a field's box with a muted search glass, suggesting as soon as it is touched (the select's popover, each entry's detail in muted small text on its right) and narrowing on the first letters of any word; "Ajouter …" with a plus icon is the last entry, and only when nothing matches. A handful of entries stand as toggle chips under it, one tap away; when the chips hold every entry, they are the whole field.
 
 ### Navigation
+
 - **Tabs:** a white track with 0.25rem padding; tabs are muted text at 3rem, the selected tab fills ink with white text. Counts inside tabs use the figure voice. A bar whose tabs no longer fit (organiser, spectator) scrolls sideways out over the gutters with no scrollbar, a shade of the paper fading in over each edge that still hides tabs, the selected tab kept in view (`tab-bar.scrolling`).
 - **Console steps (organiser):** the day as three steps on one white track (`console-step-bar.tsx`): Salle, Rencontres, En direct, each an icon, its name and, from 43.75rem, a muted line of its state ("8 tables · 1 écran", "2 compos à faire", "3 matchs en cours"); the current step fills ink. Nothing locks: every step is a link, the step lives in the address (`?step=`), and the console opens on En direct once a match has begun, else on Salle. Réglages sits apart in the header (settings, players, programme, table codes) with "Retour à la journée". The header carries a back link to home (the club's name), the event's name over its format (and the connection, only once it drops), "Grand écran" and "Réglages", labels hidden under 53.75rem. A step's side column ends with its primary "Suivant : …".
 - **Toggle groups:** mist grey chips, silver on hover; the selected one fills ink with white text.
 - **Links:** ink text with a dusk 1px underline at 0.22em offset.
 
 ### Live Tile (signature, display)
+
 Table number chip, muted single-line label, optional single state pill; two rows of serve triangle, name, games-won well (mist grey, figure 600) and point score (display voice, right-aligned); a foot with the game history in dusk figures (won games in muted) and elapsed time. Every dimension is a multiple of the tile's own unit, so the score keeps its share at any grid size.
 
 ### Point Target (signature, umpire)
+
 A half-screen tap target per side: white, square, 1px silver inset edge; name (width 84%, 700) with a Burnt Orange "serving" marker, a giant centred score, and a foot with games won. Hover fills mist grey; on tap it scales to 0.988 and flashes a 3px orange inset ring.
 
 ## The wall (built 2026-11-01)
@@ -324,6 +341,7 @@ A half-screen tap target per side: white, square, 1px silver inset edge; name (w
 The wall mockup (`.handoff/ping-club/assets/wall-mockup/wall.html`, validated 2026-10-31) is built: `features/display/wall-*.tsx`, shown automatically on a display whose tables all belong to team encounters of at most two tables each (up to six rows); any other day keeps the open board. The drawn table is `presentation/components/drawn-table.tsx`, reused by the printed table sheet and meant for the hall plan (06) and the spectator's table card (08). Sizes below are pixels on the mockup's 1920×1080 stage; on the wall they are `--cu` (1cu = 10.8px on that stage). The mockup's in-between weights snap to the weights the fallback faces cover (700 and 800) in the `wall-*` mixins of `_typography.sass`. Tokens: `--table`, `--table-dark`, `--table-idle`, `--floor-shade` (the floor's lower part), `--sky`, `--card-yellow`, `--card-red` (the red half of a yellow-red card), `--scrim-strong` (the games-won pill), `--team-shade` (the darker score cell on a team colour), `--band`. A white team (the opponents' default) keeps a 2px silver inset on its block, an ink ring on its letter square and a silver chip underline. The legal footer and the scrollbar gutter are dropped on the wall above phone width; on a phone the rows stack and scroll.
 
 ### Wall page
+
 - **Header** (84px, white): club logo (72px) + club name (width 78%, ~780, 46px, -0.01em) + event line (500, 26px, ink-muted). No date, clock or app name.
 - **Seven-stripe band** (21px) under the header: seven equal hard-stopped horizontal stripes, top to bottom #1C5A9E, #2F7FC1, #8FCBEF, #00894A, #6DBE45, #BADF9B, #F07F1E (`--band`). Hard stops only; it is the one multi-colour element.
 - **Body grid:** `minmax(0, 1fr) 250px`, one row per encounter (a pair of tables), the QR column spanning all rows on Hall Sky. Each row is a white group with a 2px silver inset: the encounter block (340px) then its two table cells.
@@ -332,6 +350,7 @@ The wall mockup (`.handoff/ping-club/assets/wall-mockup/wall.html`, validated 20
 - **QR column:** QR on white with 12px padding, prompt, join code in a white box (width 75%, ~820, 54px, 0.12em tracking), full URL.
 
 ### Table cell
+
 - **Head:** an ink plate with white "Table N" (width 78%, ~760, 26px), the call ("B – X", "Double", never the sheet's "Double 1") in ink-muted 600, one state pill, and against the outer edge the umpire, "Arbitre : " in ink-muted 600 then the name in ink 700 (~19px, one line, ellipsis), while the match is on.
 - **Drawn table, in perspective:** an SVG trapezoid in Table Blue with a Table Edge front strip, white edges and centre line, an ink net and ink legs, at a fixed ~2.7:1 proportion, centred, never stretched; the floor (mist grey, the lower 38% a step darker, #D3DADF) shows on both sides. A free table turns Idle Table and carries a white card "Table libre / Prochain match A – Y / names / Arbitre : name", lifted by `0 6px 14px -6px rgb(14 34 56 / 40%)`.
 - **Scores:** big white digits (width 62%, ~820, `min(124px, 47cqh)`, line-height 0.86, -0.02em) centred in each blue half at 58% height, with a hard `0 3px 0` Table Edge text shadow. While a game or match win awaits validation, the loser's score drops to 40% opacity.
@@ -345,6 +364,7 @@ The wall mockup (`.handoff/ping-club/assets/wall-mockup/wall.html`, validated 20
 - **Running time-out countdown:** a 66px white disc with a 60s orange arc and the seconds in ink (width 70%, ~820), above the net, never over a score.
 
 ### State pills (wall)
+
 Square, ~720, ink text, with these words only (no "à valider"):
 - **"Manche gagnée"** and **"Match gagné 3–1"**: Decision Orange fill with a check icon.
 - **"Égalité"** (10–10 and beyond): 3px ink inset outline.
@@ -352,28 +372,31 @@ Square, ~720, ink text, with these words only (no "à valider"):
 - **"Terminé"** (or "Forfait", "Abandon"), only while a finished match is held: Silver fill with a check icon, as the open board's over pill; nothing is left to decide, so no orange.
 
 ### Tournament wall (Top 12)
+
 One row per pool: an ink plate "Poule N" over its table (rank, a square in the player's club colour with his pool number or the club logo, name over club, pool points in figures; the two going through on mist grey), then the pool's tables. A pool on more than four tables takes as many lines (four side by side at most), its table spanning them; past six lines in all, the open board takes over. The final phase gets its own row once its matches hold tables.
 - **As the hall:** when the plan places every table shown in at most three columns and three rows, the pools stack down the left (sharing the height by their length), each table stands at its place in its own white frame, its call starting with its pool ("Poule 1 · 2 – 5"), and the QR takes the free place nearest the stands on the left, or its own column when the tables fill the hall.
 
 ### Team colours
+
 A colour per team, not per club (Angles 1 is not Angles 2), set in the team settings, editable with a colour picker, each paired with a text colour chosen for contrast. Used on the encounter block, the player letter square and the chip underline; never on a pill, a mark or a score. Defaults the club gave:
 
-| Team | Colour | Text | Contrast |
-|---|---|---|---|
-| Angles 1, sky blue | #8FCBEF | ink #0E2238 | 9.2:1 |
-| Angles 2, orange | #F4A259 | ink #0E2238 | 7.8:1 |
-| Angles 3, yellow | #E9C46A | ink #0E2238 | 9.6:1 |
-| Angles 4, green | #007A42 | white #FFFFFF | 5.4:1 |
-| Angles 5, salmon | #F4A08C | ink #0E2238 | 7.9:1 |
-| Angles 6, blue-grey | #8DA4BA | ink #0E2238 | 6.2:1 |
-| Angles 7, green-grey | #8FA89A | ink #0E2238 | 6.3:1 |
-| Opponents (default) | #FFFFFF | ink #0E2238 | 16:1 |
+| Team                 | Colour  | Text          | Contrast |
+| -------------------- | ------- | ------------- | -------- |
+| Angles 1, sky blue   | #8FCBEF | ink #0E2238   | 9.2:1    |
+| Angles 2, orange     | #F4A259 | ink #0E2238   | 7.8:1    |
+| Angles 3, yellow     | #E9C46A | ink #0E2238   | 9.6:1    |
+| Angles 4, green      | #007A42 | white #FFFFFF | 5.4:1    |
+| Angles 5, salmon     | #F4A08C | ink #0E2238   | 7.9:1    |
+| Angles 6, blue-grey  | #8DA4BA | ink #0E2238   | 6.2:1    |
+| Angles 7, green-grey | #8FA89A | ink #0E2238   | 6.3:1    |
+| Opponents (default)  | #FFFFFF | ink #0E2238   | 16:1     |
 
 Angles 2's orange is a lighter tangerine than Decision Orange and Angles 3's yellow a deeper mustard than Card Yellow, so a team never reads as a state; the picker should warn when a chosen colour comes within reach of `--live` or `--card-yellow`. A white opponent block keeps a 2px silver inset so it holds on the white group. The text colour is computed (ink or white, whichever passes 4.5:1) and can be overridden.
 
 ## Do's and Don'ts
 
 ### Do:
+
 - **Do** make the point score the largest element of any surface that shows a live score, in the score voice (width 64%, 800).
 - **Do** set every number in the figure voice with tabular figures.
 - **Do** use orange as a fill with ink on it, for what needs a decision or is running; use Burnt Orange (`--live-ink`) for small orange text and icons.
@@ -386,6 +409,7 @@ Angles 2's orange is a lighter tangerine than Decision Orange and Angles 3's yel
 - **Do** keep one primary action per screen.
 
 ### Don't:
+
 - **Don't** colour a score to signal game or match point; the pill carries it.
 - **Don't** set text or thin icons in `--live` on paper or white.
 - **Don't** introduce red, green or a second warm hue for status; team colours stay on team positions.

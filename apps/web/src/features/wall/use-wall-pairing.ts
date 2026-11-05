@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState } from 'react'
+import { useEffect, useEffectEvent, useState } from 'react'
 
 import type { WallPairingCode } from '@scoreboard/protocol/identifiers'
 import type { PairedWall } from '@scoreboard/protocol/routes'
@@ -26,8 +26,7 @@ export const useWallPairing = (
   onPaired: (wall: PairedWall) => void
 ): WallPairingView => {
   const [view, setView] = useState<WallPairingView>({ status: 'opening' })
-  const onPairedRef = useRef(onPaired)
-  onPairedRef.current = onPaired
+  const announcePaired = useEffectEvent(onPaired)
 
   useEffect(() => {
     let isActive = true
@@ -45,7 +44,7 @@ export const useWallPairing = (
       }
 
       if (read.status === 'success' && read.data.status === 'paired') {
-        onPairedRef.current({
+        announcePaired({
           displayId: read.data.displayId,
           eventId: read.data.eventId
         })

@@ -16,7 +16,7 @@
       "!/sitemap.xml"
     ]
   },
-  "compatibility_date": "2026-09-01",
+  "compatibility_date": "2026-11-05",
   "dev": {
     "port": 8788
   },

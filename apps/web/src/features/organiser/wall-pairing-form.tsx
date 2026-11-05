@@ -1,5 +1,5 @@
 import type React from 'react'
-import { useEffect, useRef, useState } from 'react'
+import { useEffect, useEffectEvent, useRef, useState } from 'react'
 
 import type { EventSetup } from '@scoreboard/protocol/event-setup'
 import type {
@@ -89,8 +89,7 @@ export const WallPairingForm: React.FC<WallPairingFormProps> = ({
       status: 'paired'
     })
   }
-  const claimRef = useRef(claim)
-  claimRef.current = claim
+  const claimScanned = useEffectEvent(claim)
   const hasClaimedScanned = useRef(false)
   const hasNothingToChoose = setup.displays.length === 0
 
@@ -104,7 +103,7 @@ export const WallPairingForm: React.FC<WallPairingFormProps> = ({
     }
 
     hasClaimedScanned.current = true
-    void claimRef.current(scannedCode, ALL_TABLES)
+    void claimScanned(scannedCode, ALL_TABLES)
   }, [hasNothingToChoose, scannedCode])
 
   return (
