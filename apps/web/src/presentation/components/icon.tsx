@@ -7,7 +7,7 @@ import {
   Check,
   ChevronDown,
   ChevronRight,
-  CircleAlert,
+  CircleExclamationPoint,
   Copy,
   ExternalLink,
   Flag,
@@ -38,7 +38,7 @@ import {
   Smartphone,
   Star,
   Timer,
-  Trash2,
+  Trash,
   Undo2,
   Unplug,
   Users,
@@ -50,7 +50,7 @@ import type React from 'react'
 import './icon.sass'
 
 const OUTLINED = {
-  alert: CircleAlert,
+  alert: CircleExclamationPoint,
   arrowLeft: ArrowLeft,
   arrowRight: ArrowRight,
   away: Car,
@@ -88,7 +88,7 @@ const OUTLINED = {
   sync: RefreshCw,
   teams: Users,
   timer: Timer,
-  trash: Trash2,
+  trash: Trash,
   undo: Undo2,
   unpair: Unplug,
   wifiOff: WifiOff
