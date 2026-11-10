@@ -1,0 +1,17 @@
+{
+  "detector": {
+    "ignoreRules": [],
+    "ignoreFiles": [],
+    "ignoreValues": [
+      {
+        "rule": "cramped-padding",
+        "value": "*",
+        "files": [
+          ".handoff/onboarding/*.html"
+        ],
+        "createdAt": "2026-11-10T19:28:24.930Z",
+        "reason": "Claude: .device in the onboarding mocks is the simulated browser viewport; the app's .home-page gutters inset its content, verified in the rendered screenshots"
+      }
+    ]
+  }
+}
