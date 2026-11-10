@@ -52,9 +52,10 @@ another sport can adopt it.
   plugged into a TV or projector, but it must work on any screen size.
 - An umpire joins a match by scanning the QR code on the table or by typing a
   short code on any device. A TV joins the way Melee's screens do: the
-  computer behind it opens `/wall` (home's "Grand écran"), which shows a code
-  and a QR; the organiser types or scans it from the console's "Grand écran"
-  button.
+  computer behind it opens `/wall` (home's "Grand écran", or "Afficher
+  l'écran de la salle" on a device with no club), which shows a code and a QR;
+  the organiser types or scans it from the console's "Grand écran" button. A
+  visitor who reached `/wall` by mistake goes back home from its header.
 - Home is the club. It leads with the next championship round (the one dated
   today, else the next to come): our home encounters on the tables the
   console would give them, the away ones in a line, and "Préparer la
@@ -64,9 +65,15 @@ another sport can adopt it.
   events this device organises, latest first, so leaving the console never
   loses one, and a new event that asks only its name; then the season (teams,
   pools, directory) leading to the club page, with the club code. With no
-  round to come, the new event is the main action; with no club on the
-  device, home asks the club's name or its code first. Anyone joins an event
-  by its code from home.
+  round to come, the new event is the main action. On a device with no club
+  (a first visit, almost always the organiser's: umpires and spectators come
+  by a QR code), home says what the app does in one sentence and asks one
+  thing first, "Pour commencer, le nom de votre club", the club's code folded
+  under it; every other way is named by the situation it serves: "Vous
+  arbitrez ou vous regardez les matchs" (scan the table's or the TV's QR
+  code, the event's code folded away, on every home) and "Cet ordinateur est
+  branché sur la télé de la salle" (to `/wall`), with no event list until
+  this device organises one.
 - Both formats exist: individual tournaments and team fixtures (FFTT-style
   team encounters with singles and doubles).
 

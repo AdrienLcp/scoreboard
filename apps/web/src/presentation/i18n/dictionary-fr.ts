@@ -348,10 +348,10 @@ export const FR_DICTIONARY = defineDictionary({
       create: 'Continuer',
       join: 'Ouvrir le club',
       joinHelp:
-        'Sur l’autre appareil, la page du club montre son QR code : scannez-le, ou tapez le code ici.',
+        'Sur l’appareil où le club est déjà ouvert : « Mon club », puis « Ouvrir sur un autre appareil ». Scannez son QR code avec l’appareil photo, ou tapez son code ici.',
       joinTitle: 'Ouvrez-le avec son code',
-      known: 'Le club existe déjà sur un autre appareil ?',
-      name: 'Le nom de votre club',
+      known: 'Le club est déjà ouvert sur un autre appareil ?',
+      name: 'Pour commencer, le nom de votre club',
       nameMissing: 'Tapez le nom de votre club pour commencer.'
     },
     free: {
@@ -367,9 +367,11 @@ export const FR_DICTIONARY = defineDictionary({
     join: {
       code: 'Code de la rencontre',
       follow: 'Suivre les matchs',
-      hint: 'Les dix caractères après /e/ dans le lien, ou le lien entier.',
+      hint: 'Il s’affiche sur la télé de la salle, sous son QR code.',
       invalid: 'Ce code ne correspond à aucune rencontre : vérifiez le lien.',
-      title: 'Rejoindre une rencontre',
+      open: 'Pas de QR code ? Tapez le code',
+      scan: 'Scannez avec l’appareil photo de votre téléphone le QR code collé sur la table, ou celui de la télé de la salle.',
+      title: 'Vous arbitrez ou vous regardez les matchs',
       umpire: 'Arbitrer une table'
     },
     lead: 'Les arbitres comptent les points depuis leur téléphone, la salle lit les scores de loin, et l’organisateur garde la main sur toute la journée.',
@@ -413,6 +415,11 @@ export const FR_DICTIONARY = defineDictionary({
         date: { at: { day: 'numeric', month: 'long', weekday: 'long' } }
       }),
       titleOpen: 'Prochaines rencontres du championnat'
+    },
+    screen: {
+      hint: 'Il affichera un code : tapez-le sur votre téléphone, dans la journée, bouton « Grand écran ».',
+      open: 'Afficher l’écran de la salle',
+      title: 'Cet ordinateur est branché sur la télé de la salle'
     },
     season: {
       code: 'Code du club <b>{code}</b> : il ouvre le club sur un autre appareil.',

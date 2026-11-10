@@ -25,6 +25,7 @@ import { ClubRoundSection } from './club-round'
 import { ClubSeason } from './club-season'
 import { FirstRun } from './first-run'
 import { FreeDaySection } from './free-day'
+import { HallScreenSection } from './hall-screen-section'
 import { homeDocumentTitle } from './home-document-title'
 import { JoinEventForm } from './join-event-form'
 import { OrganisedEvents } from './organised-events'
@@ -37,8 +38,15 @@ const organisedEventsOrNone = (): OrganisedEvent[] => {
   return stored.status === 'success' ? stored.data : []
 }
 
-/** The club's own name and logo heading its home, over the hall's seven stripes; the app's mark until a club is here. */
-const HomeBar: React.FC<{ club: DirectoryClub | null }> = ({ club }) => {
+/**
+ * The club's own name and logo heading its home, over the hall's seven
+ * stripes; the app's mark until a club is here, when the TV's way lives in
+ * the side column instead.
+ */
+const HomeBar: React.FC<{
+  club: DirectoryClub | null
+  hasScreenLink: boolean
+}> = ({ club, hasScreenLink }) => {
   const translate = useTranslate()
 
   return (
@@ -54,10 +62,12 @@ const HomeBar: React.FC<{ club: DirectoryClub | null }> = ({ club }) => {
             <span className='home-club-name'>{club.name}</span>
           </span>
         )}
-        <ButtonLink href={paths.wall} variant='quiet'>
-          <Icon name='display' />
-          {translate('home.display')}
-        </ButtonLink>
+        {hasScreenLink ? (
+          <ButtonLink href={paths.wall} variant='quiet'>
+            <Icon name='display' />
+            {translate('home.display')}
+          </ButtonLink>
+        ) : null}
       </div>
     </header>
   )
@@ -80,14 +90,15 @@ export const HomePage: React.FC = () => {
     record === null
       ? null
       : clubRoundOf(record, toLocalDay(nowMs()), federationPools)
+  const isFirstVisit = state.status === 'none'
 
   return (
     <Main className='home-page'>
       <DocumentTitle>{homeDocumentTitle(translate)}</DocumentTitle>
-      <HomeBar club={record?.own ?? null} />
+      <HomeBar club={record?.own ?? null} hasScreenLink={!isFirstVisit} />
       <div className='home-layout'>
         <div className='home-lead'>
-          {state.status === 'none' ? (
+          {isFirstVisit ? (
             <FirstRun onCreate={club.create} onJoin={club.join} />
           ) : null}
           {state.status === 'loading' ? (
@@ -126,7 +137,11 @@ export const HomePage: React.FC = () => {
         </div>
         <div className='home-side'>
           <OrganisedEvents
-            canCreate={!(state.status === 'ready' && round === null)}
+            canCreate={
+              isFirstVisit
+                ? organisedEvents.length > 0
+                : !(state.status === 'ready' && round === null)
+            }
             events={organisedEvents}
             record={record}
           />
@@ -138,6 +153,7 @@ export const HomePage: React.FC = () => {
             />
           ) : null}
           <JoinEventForm />
+          {isFirstVisit ? <HallScreenSection /> : null}
         </div>
       </div>
     </Main>

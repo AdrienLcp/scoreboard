@@ -18,7 +18,11 @@ type FirstRunProps = {
   onJoin: (code: ClubCode) => void
 }
 
-/** No club on this device yet: its name is the one thing asked; a club opened elsewhere comes by its code. */
+/**
+ * No club on this device yet: what the app does in one sentence, then the
+ * club's name as the one thing to do first; a club opened elsewhere comes by
+ * its code.
+ */
 export const FirstRun: React.FC<FirstRunProps> = ({ onCreate, onJoin }) => {
   const translate = useTranslate()
   const [name, setName] = useState('')
@@ -32,9 +36,12 @@ export const FirstRun: React.FC<FirstRunProps> = ({ onCreate, onJoin }) => {
 
   return (
     <section aria-labelledby='first-run-title' className='first-run'>
-      <h1 className='home-hero' id='first-run-title'>
-        {translate('home.headline')}
-      </h1>
+      <div>
+        <h1 className='home-hero' id='first-run-title'>
+          {translate('home.headline')}
+        </h1>
+        <p className='home-summary'>{translate('home.lead')}</p>
+      </div>
       <Form
         className='first-run-form'
         onSubmit={async (event) => {
@@ -51,23 +58,23 @@ export const FirstRun: React.FC<FirstRunProps> = ({ onCreate, onJoin }) => {
           setIsCreating(false)
         }}
       >
-        <div className='home-inline-field'>
-          <TextField
-            isInvalid={isNameMissing}
-            onChange={(value) => {
-              setName(value)
-              setIsNameMissing(false)
-            }}
-            value={name}
-          >
-            <Label>{translate('home.firstRun.name')}</Label>
+        <TextField
+          isInvalid={isNameMissing}
+          onChange={(value) => {
+            setName(value)
+            setIsNameMissing(false)
+          }}
+          value={name}
+        >
+          <Label>{translate('home.firstRun.name')}</Label>
+          <div className='home-inline-field'>
             <Input autoComplete='organization' />
-          </TextField>
-          <Button isPending={isCreating} type='submit' variant='primary'>
-            {translate('home.firstRun.create')}
-            <Icon name='arrowRight' />
-          </Button>
-        </div>
+            <Button isPending={isCreating} type='submit' variant='primary'>
+              {translate('home.firstRun.create')}
+              <Icon name='arrowRight' />
+            </Button>
+          </div>
+        </TextField>
         {isNameMissing ? (
           <p className='home-alert' role='alert'>
             <Icon name='alert' />
@@ -81,13 +88,9 @@ export const FirstRun: React.FC<FirstRunProps> = ({ onCreate, onJoin }) => {
           </p>
         ) : null}
       </Form>
-      <Disclosure className='first-run-join'>
+      <Disclosure className='first-run-join home-fold'>
         <p className='home-hint'>{translate('home.firstRun.known')}</p>
-        <Button
-          className='first-run-join-trigger'
-          slot='trigger'
-          variant='quiet'
-        >
+        <Button className='home-fold-trigger' slot='trigger' variant='quiet'>
           <Icon name='qr' />
           {translate('home.firstRun.joinTitle')}
           <Icon name='chevronDown' />

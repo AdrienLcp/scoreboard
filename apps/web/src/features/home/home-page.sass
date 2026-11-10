@@ -171,9 +171,24 @@
     display: flex
     gap: var(--space-xs)
 
-    .field
+    .field, > .field-input
       flex: 1
       min-width: 0
+
+  /// A quiet line that opens what only some visitors need, its chevron turning.
+  .home-fold
+    display: grid
+    gap: var(--space-2xs)
+    justify-items: start
+
+    .disclosure-panel
+      justify-self: stretch
+
+  .home-fold-trigger > .icon:last-child
+    transition: rotate var(--transition-fast, 0s) var(--ease-out)
+
+  .home-fold[data-expanded] > .home-fold-trigger > .icon:last-child
+    rotate: 180deg
 
   .home-new-event
     display: grid
@@ -191,6 +206,7 @@
   .home-join
     display: grid
     gap: var(--space-s)
+    padding-top: var(--space-xs)
 
   .field-input.home-join-input
     @include typography.code-entry
@@ -226,11 +242,6 @@
 
     .field-input
       min-height: calc(var(--control-height) + var(--space-s))
-
-  .first-run-join
-    display: grid
-    gap: var(--space-2xs)
-    justify-items: start
 
   .first-run-code
     display: grid
