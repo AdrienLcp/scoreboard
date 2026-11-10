@@ -1,0 +1,11 @@
+# Copy to .dev.vars (gitignored) for `wrangler dev`. In production the three
+# SMARTPING_ secrets are set with `wrangler secret put`; SMARTPING_FAKE never is.
+
+# The app ID the FFTT issues with the Smartping key.
+SMARTPING_APP_ID=
+# The password (key) the FFTT mails: the worker hashes it to MD5 itself.
+SMARTPING_PASSWORD=
+# The worker's 15-character serial, drawn and registered once by `pnpm smartping:init`.
+SMARTPING_SERIAL=
+# 1 serves invented players, clubs, teams and one pool instead of calling the FFTT.
+SMARTPING_FAKE=1

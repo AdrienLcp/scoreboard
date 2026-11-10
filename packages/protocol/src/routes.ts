@@ -21,6 +21,14 @@ export const API_ROUTES = {
   clubLogos: `${API_PREFIX}/clubs/:clubCode/logos`,
   clubs: `${API_PREFIX}/clubs`,
   events: `${API_PREFIX}/events`,
+  /** The federation's data, open to all as its terms of use require (art. 3), read through the worker's cache. */
+  federationClubPlayers: `${API_PREFIX}/federation/clubs/:clubNumber/players`,
+  federationClubs: `${API_PREFIX}/federation/clubs`,
+  federationClubTeams: `${API_PREFIX}/federation/clubs/:clubNumber/teams`,
+  federationEncounter: `${API_PREFIX}/federation/encounter`,
+  federationPlayer: `${API_PREFIX}/federation/players/:licence`,
+  federationPlayers: `${API_PREFIX}/federation/players`,
+  federationPool: `${API_PREFIX}/federation/pool`,
   /** A logo a club uploaded, by its club's room and its own id: public, it never holds the club code. */
   logo: `${API_PREFIX}/logos/:roomId/:logoId`,
   wallPairing: `${API_PREFIX}/wall-pairings/:pairingCode`,
@@ -111,7 +119,11 @@ export const apiErrorCodes = [
   'no_free_pairing_code',
   'no_free_club_code',
   'wrong_code',
-  'unknown_display'
+  'unknown_display',
+  /** The worker holds no FFTT credentials: the app hides what comes from the federation. */
+  'federation_not_configured',
+  /** The FFTT failed or refused the call. */
+  'federation_unavailable'
 ] as const
 export const apiErrorResponseSchema = z.object({
   code: z.enum(apiErrorCodes),

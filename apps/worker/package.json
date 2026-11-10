@@ -4,6 +4,7 @@
     "@hono/zod-validator": "^0.9.1",
     "@scoreboard/core": "workspace:*",
     "@scoreboard/protocol": "workspace:*",
+    "fast-xml-parser": "^5.12.0",
     "hono": "^4.13.16",
     "nanoid": "^6.0.2",
     "zod": "^4.6.7"
@@ -15,10 +16,11 @@
   "name": "@scoreboard/worker",
   "private": true,
   "scripts": {
-    "build": "wrangler types --check && tsc --noEmit && wrangler deploy --dry-run --outdir dist",
-    "cf-typegen": "wrangler types",
+    "build": "wrangler types --check --env-file .dev.vars.example && tsc --noEmit && wrangler deploy --dry-run --outdir dist",
+    "cf-typegen": "wrangler types --env-file .dev.vars.example",
     "deploy": "wrangler deploy",
     "dev": "node -e \"require('node:fs').mkdirSync('../web/dist', { recursive: true })\" && wrangler dev",
+    "smartping:init": "node --env-file-if-exists=.dev.vars scripts/smartping-init.ts",
     "test": "vitest run",
     "test:watch": "vitest"
   },
