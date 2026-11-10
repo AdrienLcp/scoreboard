@@ -1,3 +1,4 @@
+@use '../../presentation/styles/focus'
 @use '../../presentation/styles/layout'
 @use '../../presentation/styles/typography'
 
@@ -7,8 +8,20 @@
   .encounter-lineup
     @include layout.container
 
+    align-items: start
+    display: grid
+    gap: var(--space-l)
+
+    &[data-roster]
+      @include layout.container-wide(43.75rem)
+        grid-template-columns: minmax(0, 1fr) minmax(18rem, 22rem)
+
+  .encounter-lineup-sheet
+    @include layout.container
+
     display: grid
     gap: var(--space-m)
+    min-width: 0
 
   .encounter-lineup-tables
     display: grid
@@ -45,25 +58,6 @@
     gap: var(--space-2xs)
     min-width: 0
 
-    .combo-box
-      align-items: center
-      column-gap: var(--space-2xs)
-      display: grid
-      grid-template-columns: 2rem minmax(0, 1fr)
-
-      > .field-label
-        @include typography.figure
-
-        align-items: center
-        align-self: stretch
-        background: var(--team)
-        color: var(--team-ink)
-        display: flex
-        font-size: var(--text-l)
-        justify-content: center
-
-    &[data-white] .combo-box > .field-label
-      box-shadow: inset 0 0 0 var(--stroke-bold) var(--surface-high)
 
   .encounter-lineup-team
     @include typography.label
@@ -77,3 +71,260 @@
 
     font-size: var(--text-s)
     margin: 0
+
+  /// A letter to fill: its square in the team's colour, the family name over
+  /// the first name, the points in slate at the end; the letter being filled
+  /// carries an ink ring.
+  .lineup-slot
+    @include focus.ring
+
+    align-items: center
+    background: var(--surface)
+    border: 0
+    box-shadow: var(--inset-hairline)
+    color: var(--ink)
+    cursor: pointer
+    display: grid
+    font: inherit
+    font-size: var(--text-m)
+    gap: var(--space-xs)
+    grid-template-columns: 2.25rem minmax(0, 1fr) auto
+    min-height: 3.5rem
+    padding: var(--space-2xs) var(--space-s) var(--space-2xs) var(--space-2xs)
+    text-align: start
+
+    &[data-hovered]
+      background: var(--surface-raised)
+
+    &[aria-current]
+      box-shadow: inset 0 0 0 var(--outline-thick) var(--ink)
+
+  .lineup-slot-letter
+    @include typography.figure
+
+    align-items: center
+    align-self: stretch
+    background: var(--team)
+    color: var(--team-ink)
+    display: flex
+    font-size: var(--text-xl)
+    justify-content: center
+
+    [data-white] > &
+      box-shadow: inset 0 0 0 var(--stroke-bold) var(--surface-high)
+
+  .lineup-slot-name
+    display: grid
+    min-width: 0
+
+  .lineup-slot-last
+    @include typography.name
+    @include typography.single-line
+
+  .lineup-slot-first
+    @include typography.single-line
+
+    color: var(--ink-muted)
+    font-size: var(--text-xs)
+
+  .lineup-slot-empty
+    @include typography.plain
+
+    color: var(--ink-dim)
+
+  .lineup-slot-points
+    @include typography.figure
+
+    color: var(--edge)
+    font-size: var(--text-l)
+
+  /// The team's roster for the letter being filled: beside the sheet on a
+  /// wide screen, a sheet risen from the bottom on a narrow one.
+  .lineup-roster
+    background: var(--surface)
+    box-shadow: var(--shadow-overlay)
+    display: grid
+    grid-template-rows: auto auto minmax(0, 1fr) auto
+    inset: auto 0 0
+    max-height: 72dvh
+    position: fixed
+    z-index: 20
+
+    @include layout.container-wide(43.75rem)
+      box-shadow: var(--inset-hairline)
+      inset: auto
+      max-height: min(44rem, 100dvh - 2 * var(--space-m))
+      position: sticky
+      top: var(--space-m)
+      z-index: auto
+
+  .lineup-roster-head
+    align-items: center
+    display: flex
+    gap: var(--space-xs)
+    padding: var(--space-s) var(--space-2xs) var(--space-xs) var(--space-m)
+
+  .lineup-roster-letter
+    @include typography.figure
+
+    align-items: center
+    background: var(--team)
+    color: var(--team-ink)
+    display: flex
+    flex: none
+    font-size: var(--text-2xl)
+    height: 2.5rem
+    justify-content: center
+    width: 2.5rem
+
+    [data-white] > .lineup-roster-head > &
+      box-shadow: inset 0 0 0 var(--stroke-bold) var(--surface-high)
+
+  .lineup-roster-team
+    @include typography.name
+    @include typography.single-line
+
+    flex: 1
+    font-size: var(--text-2xl)
+    margin: 0
+
+  .lineup-roster-search
+    padding: 0 var(--space-m) var(--space-s)
+
+  .lineup-roster-list
+    min-height: 0
+    overflow: auto
+    overscroll-behavior: contain
+    padding-bottom: var(--space-s)
+
+    > .federation-link
+      max-width: none
+
+  .lineup-roster-heading
+    @include typography.label
+
+    align-items: center
+    background: var(--surface)
+    box-shadow: inset 0 -1px 0 var(--rule)
+    color: var(--ink-muted)
+    display: flex
+    gap: var(--space-xs)
+    margin: 0
+    padding: var(--space-xs) var(--space-m)
+    position: sticky
+    top: 0
+    z-index: 1
+
+  .lineup-roster-count
+    @include typography.figure
+
+    margin-inline-start: auto
+
+  .lineup-roster-row
+    align-items: center
+    background: none
+    border: 0
+    box-shadow: inset 0 -1px 0 var(--rule)
+    color: var(--ink)
+    cursor: pointer
+    display: grid
+    font: inherit
+    font-size: var(--text-m)
+    gap: var(--space-s)
+    grid-template-columns: 3.75rem minmax(0, 1fr) auto
+    min-height: 3.5rem
+    padding: var(--space-3xs) var(--space-m)
+    text-align: start
+    width: 100%
+
+    &[data-hovered]
+      background: var(--surface-high)
+
+    &[data-focus-visible]
+      outline: var(--outline-thick) solid var(--focus)
+      outline-offset: -3px
+
+    &[data-disabled]
+      color: var(--ink-dim)
+      cursor: default
+
+      .lineup-roster-points
+        color: var(--ink-dim)
+
+  .lineup-roster-points
+    @include typography.figure
+
+    font-size: var(--text-3xl)
+    text-align: end
+
+  .lineup-roster-who
+    display: grid
+    min-width: 0
+
+  .lineup-roster-name
+    @include typography.name
+    @include typography.single-line
+
+    font-size: var(--text-l)
+
+  .lineup-roster-detail
+    align-items: center
+    color: var(--ink-muted)
+    display: flex
+    font-size: var(--text-xs)
+    gap: var(--space-xs)
+
+    > span
+      align-items: center
+      display: inline-flex
+      gap: var(--space-3xs)
+
+  .lineup-roster-licence
+    @include typography.figure
+
+  .lineup-roster-seat
+    @include typography.figure
+
+    align-items: center
+    background: var(--ink)
+    color: var(--on-ink)
+    display: flex
+    height: 2rem
+    justify-content: center
+    width: 2rem
+
+  .lineup-roster-notice
+    @include typography.hint
+
+    align-items: center
+    color: var(--ink-muted)
+    display: flex
+    gap: var(--space-xs)
+    margin: 0 var(--space-m) var(--space-s)
+
+    &[data-alarm]
+      @include typography.emphasis
+
+      box-shadow: inset 0 0 0 var(--stroke-bold) var(--ink)
+      color: var(--ink)
+      padding: var(--space-xs) var(--space-s)
+
+  .lineup-roster-empty
+    display: grid
+    gap: var(--space-s)
+    justify-items: start
+    padding: var(--space-s) var(--space-m)
+
+    > p
+      @include typography.hint
+
+      margin: 0
+
+  .lineup-roster-source
+    @include typography.hint
+
+    box-shadow: inset 0 1px 0 var(--rule)
+    color: var(--ink-muted)
+    font-size: var(--text-xs)
+    margin: 0
+    padding: var(--space-2xs) var(--space-m)

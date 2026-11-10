@@ -96,6 +96,19 @@ export const FR_DICTIONARY = defineDictionary({
       unknownTeam: 'Équipe {number}'
     },
     code: 'Code du club',
+    federation: {
+      down: 'La FFTT ne répond pas pour l’instant. Rien n’est perdu : réessayez plus tard.',
+      noClub:
+        'Aucun club FFTT ne répond à « {typed} ». Essayez un autre mot du nom, ou le numéro à 8 chiffres du club.',
+      offline: 'La recherche FFTT attend le réseau.',
+      ourQuestion: 'Est-ce votre club à la FFTT ?',
+      searching: 'Recherche à la FFTT…',
+      searchLabel: 'Nom ou numéro du club',
+      source: 'Source : FFTT',
+      theirQuestion: 'Quel est {club} à la FFTT ?',
+      unlink: 'Délier de la FFTT',
+      why: 'Un toucher, et ses licenciés arrivent avec leurs points.'
+    },
     forget: 'Changer de club',
     hall: {
       default: 'Plan des prochains événements',
@@ -482,6 +495,8 @@ export const FR_DICTIONARY = defineDictionary({
     },
     thirdParties: {
       body: 'Votre navigateur ne communique qu’avec ce site et avec l’outil de mesure d’audience, analytics.adrienlcp.com, que j’héberge aussi chez Cloudflare. Cloudflare reçoit votre adresse IP à chaque requête, pour servir la page et protéger le site des abus. Les polices et les QR codes sont servis par le site lui-même.',
+      federation:
+        'Les licenciés, leurs points, les clubs et les poules viennent de la Fédération française de tennis de table (FFTT) : le site les lui demande et les garde en cache {hours} heures au plus, comme ses conditions d’utilisation le permettent, sans les enregistrer. Seul le numéro FFTT d’un club relié est gardé avec le club. Pour corriger une licence ou des points, adressez-vous à votre club ou à la FFTT.',
       heading: 'Qui d’autre reçoit vos données'
     },
     title: 'Mentions légales et confidentialité'
@@ -851,6 +866,21 @@ export const FR_DICTIONARY = defineDictionary({
       none: 'Rien ne commence par « {typed} ».',
       nothing: 'Rien à choisir.',
       playerPlaceholder: 'Nom ou premières lettres',
+      roster: {
+        choose: 'Choisir',
+        close: 'Fermer la liste',
+        down: 'La FFTT ne répond pas : seuls les joueurs déjà saisis sont proposés.',
+        free: 'Libérer la lettre',
+        licensees: 'Licenciés de {club}',
+        loading: 'Licenciés de {club}…',
+        noMatch:
+          'Personne ne commence par « {typed} ». Une licence marche aussi.',
+        offline: 'Hors ligne : seuls les joueurs déjà saisis sont proposés.',
+        playedFor: 'Ont joué pour {team}',
+        search: 'Premières lettres ou licence',
+        typed: 'Saisis à la main',
+        typedMark: 'saisi à la main'
+      },
       teamPlaceholder: 'Équipe ou club',
       typeToAdd: 'Tapez un nom pour l’ajouter.'
     },

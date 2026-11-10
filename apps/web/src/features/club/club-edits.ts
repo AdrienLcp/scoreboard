@@ -171,6 +171,21 @@ export const removeOpponentClub = (
   opponents: record.opponents.filter((club) => club.id !== clubId)
 })
 
+/**
+ * Ties a club of the directory to its FFTT number, the key its licensees and
+ * teams are read by, or unties it with `null`. Only the number is kept: the
+ * federation's data itself stays in its 24-hour cache (terms of use, art. 4.2).
+ */
+export const linkFederationClub = ({
+  clubId,
+  number,
+  record
+}: {
+  clubId: DirectoryClubId
+  number: DirectoryClub['number']
+  record: ClubRecord
+}): ClubRecord => editClub(record, clubId, (club) => ({ ...club, number }))
+
 /** Seats a player on a letter, leaving the letter he held before empty. */
 export const seatPlayer = ({
   index,

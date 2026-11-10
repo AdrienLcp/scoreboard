@@ -37,9 +37,11 @@ import {
   addOpponentClub,
   addTeam,
   changeClubLogo,
+  linkFederationClub,
   removeOpponentClub
 } from './club-edits'
 import { ClubPlans } from './club-plans'
+import { FederationLink, FederationTag } from './federation-link'
 import { LicenseeList } from './licensee-list'
 import { LogoPicker } from './logo-picker'
 import { TeamEditor } from './team-editor'
@@ -285,6 +287,11 @@ export const ClubPage: React.FC = () => {
     </LogoPicker>
   )
 
+  const linkClub = (
+    clubId: DirectoryClub['id'],
+    number: DirectoryClub['number']
+  ) => club.edit((record) => linkFederationClub({ clubId, number, record }))
+
   return (
     <Main className='club-page'>
       <DocumentTitle>{translate('club.title')}</DocumentTitle>
@@ -348,8 +355,21 @@ export const ClubPage: React.FC = () => {
                 {translate('club.unsaved')}
               </p>
             ) : null}
+            {state.record.own.number === null ? null : (
+              <FederationTag
+                number={state.record.own.number}
+                onUnlink={() => linkClub(state.record.own.id, null)}
+              />
+            )}
             <ClubShare code={state.code} />
           </div>
+          {state.record.own.number === null ? (
+            <FederationLink
+              club={state.record.own}
+              isOwn
+              onLink={(number) => linkClub(state.record.own.id, number)}
+            />
+          ) : null}
           <section className='club-section'>
             <ClubTeamsAndPlayers
               club={state.record.own}
@@ -391,6 +411,18 @@ export const ClubPage: React.FC = () => {
                       <p className='club-label'>
                         {translate('club.logo.title')}
                       </p>
+                    )}
+                    {opponent.number === null ? (
+                      <FederationLink
+                        club={opponent}
+                        isOwn={false}
+                        onLink={(number) => linkClub(opponent.id, number)}
+                      />
+                    ) : (
+                      <FederationTag
+                        number={opponent.number}
+                        onUnlink={() => linkClub(opponent.id, null)}
+                      />
                     )}
                     <ClubTeamsAndPlayers
                       club={opponent}

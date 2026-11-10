@@ -1,0 +1,81 @@
+@use '../../presentation/styles/typography'
+
+/// The FFTT search that ties a club: a white panel, the question, the field,
+/// then one quiet line per club found, its number in the figure voice.
+@layer components
+  .federation-link
+    align-content: start
+    background: var(--surface)
+    display: grid
+    gap: var(--space-s)
+    max-width: 36rem
+    padding: var(--space-m)
+
+  .federation-link-question
+    @include typography.strong
+
+    font-size: var(--text-l)
+    margin: 0
+
+  .federation-link-search
+    max-width: 28rem
+
+  .federation-link-note, .federation-link-why
+    @include typography.hint
+
+    align-items: center
+    color: var(--ink-muted)
+    display: flex
+    gap: var(--space-xs)
+    margin: 0
+
+  .federation-link-alert
+    @include typography.emphasis
+
+    align-items: center
+    box-shadow: inset 0 0 0 var(--stroke-bold) var(--ink)
+    display: flex
+    gap: var(--space-xs)
+    margin: 0
+    padding: var(--space-xs) var(--space-s)
+
+  .federation-link-hits
+    display: grid
+
+  .button.federation-link-hit
+    box-shadow: inset 0 -1px 0 var(--rule)
+    color: var(--ink)
+    display: grid
+    gap: var(--space-s)
+    grid-template-columns: minmax(0, 1fr) auto auto
+    justify-content: stretch
+    min-height: 3.5rem
+    text-align: start
+
+  .federation-link-name
+    @include typography.name
+    @include typography.single-line
+
+  .federation-link-number, .federation-tag-number
+    @include typography.figure
+
+    color: var(--ink-muted)
+
+  .federation-tag
+    align-items: center
+    display: flex
+    gap: var(--space-xs)
+    margin: 0
+
+  .federation-tag-source
+    @include typography.figure
+
+    background: var(--ink)
+    color: var(--on-ink)
+    font-size: var(--text-s)
+    padding: var(--space-3xs) var(--space-2xs)
+
+  .button.federation-tag-unlink
+    min-height: 2.25rem
+    min-width: 2.25rem
+    padding: 0

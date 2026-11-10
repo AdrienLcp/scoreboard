@@ -3,6 +3,7 @@ import { useId } from 'react'
 
 import { CLUB_RETENTION_DAYS } from '@scoreboard/protocol/club-retention'
 import { EVENT_RETENTION_DAYS } from '@scoreboard/protocol/event-retention'
+import { FEDERATION_CACHE_HOURS } from '@scoreboard/protocol/federation'
 
 import { paths } from '@/infrastructure/router/navigation'
 import { ANALYTICS_OPT_OUT_KEY } from '@/infrastructure/storage/analytics-opt-out-storage'
@@ -181,6 +182,11 @@ export const LegalPage: React.FC = () => {
 
         <LegalSection heading={translate('legal.thirdParties.heading')}>
           <p>{translate('legal.thirdParties.body')}</p>
+          <p>
+            {translate('legal.thirdParties.federation', {
+              hours: String(FEDERATION_CACHE_HOURS)
+            })}
+          </p>
         </LegalSection>
 
         <LegalSection heading={translate('legal.rights.heading')}>
