@@ -8,6 +8,7 @@ import { warnOnFailure } from '@/infrastructure/diagnostics'
 import {
   displayOfPathFor,
   displayPathFor,
+  paths,
   useIsNewWallPairingAsked,
   useReplaceWith,
   wallPairingPathFor
@@ -19,6 +20,7 @@ import {
 } from '@/infrastructure/storage/paired-wall-storage'
 import { BrandMark } from '@/presentation/components/brand-mark'
 import { CodeAndQr } from '@/presentation/components/code-and-qr'
+import { TextLink } from '@/presentation/components/link'
 import { Main } from '@/presentation/components/main'
 import { DocumentTitle } from '@/presentation/head/document-title'
 import { useTranslate } from '@/presentation/i18n/i18n-context'
@@ -63,6 +65,10 @@ const WaitingWall: React.FC = () => {
       <DocumentTitle>{translate('wall.title')}</DocumentTitle>
       <header className='wall-header'>
         <BrandMark />
+        <p className='wall-leave'>
+          {translate('wall.notTheTv')}{' '}
+          <TextLink href={paths.home}>{translate('wall.home')}</TextLink>
+        </p>
       </header>
       <div className='wall-body'>
         <h1>{translate('wall.title')}</h1>

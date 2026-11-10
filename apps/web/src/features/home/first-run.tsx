@@ -25,6 +25,7 @@ export const FirstRun: React.FC<FirstRunProps> = ({ onCreate, onJoin }) => {
   const [code, setCode] = useState('')
   const [isCreating, setIsCreating] = useState(false)
   const [isRefused, setIsRefused] = useState(false)
+  const [isNameMissing, setIsNameMissing] = useState(false)
   const typedCode = clubCodeSchema.safeParse(
     code.replace(/[\s-]/g, '').toUpperCase()
   )
@@ -38,24 +39,41 @@ export const FirstRun: React.FC<FirstRunProps> = ({ onCreate, onJoin }) => {
         className='first-run-form'
         onSubmit={async (event) => {
           event.preventDefault()
+
+          if (name.trim() === '') {
+            setIsNameMissing(true)
+
+            return
+          }
+
           setIsCreating(true)
           setIsRefused(!(await onCreate(name.trim())))
           setIsCreating(false)
         }}
       >
         <div className='home-inline-field'>
-          <TextField isRequired onChange={setName} value={name}>
+          <TextField
+            isInvalid={isNameMissing}
+            onChange={(value) => {
+              setName(value)
+              setIsNameMissing(false)
+            }}
+            value={name}
+          >
             <Label>{translate('home.firstRun.name')}</Label>
-            <Input
-              autoComplete='organization'
-              placeholder={translate('home.firstRun.namePlaceholder')}
-            />
+            <Input autoComplete='organization' />
           </TextField>
           <Button isPending={isCreating} type='submit' variant='primary'>
             {translate('home.firstRun.create')}
             <Icon name='arrowRight' />
           </Button>
         </div>
+        {isNameMissing ? (
+          <p className='home-alert' role='alert'>
+            <Icon name='alert' />
+            {translate('home.firstRun.nameMissing')}
+          </p>
+        ) : null}
         {isRefused ? (
           <p className='home-alert' role='alert'>
             <Icon name='wifiOff' />

@@ -167,10 +167,7 @@ const ClubWelcome: React.FC<{
         <p className='club-note'>{translate('club.welcome.createHelp')}</p>
         <TextField onChange={setName} value={name}>
           <Label>{translate('club.welcome.name')}</Label>
-          <Input
-            autoComplete='organization'
-            placeholder={translate('club.welcome.namePlaceholder')}
-          />
+          <Input autoComplete='organization' />
         </TextField>
         {isRefused ? (
           <p className='club-alert' role='alert'>

@@ -215,7 +215,6 @@ export const FR_DICTIONARY = defineDictionary({
         'Sur l’appareil où le club est déjà ouvert\u00a0: « Mon club », puis « Ouvrir sur un autre appareil ». Scannez son QR code, ou tapez son code ici.',
       joinTitle: 'Le club est déjà ouvert ailleurs',
       name: 'Nom du club',
-      namePlaceholder: 'PPC Angles',
       title: 'Votre club'
     }
   },
@@ -353,7 +352,7 @@ export const FR_DICTIONARY = defineDictionary({
       joinTitle: 'Ouvrez-le avec son code',
       known: 'Le club existe déjà sur un autre appareil ?',
       name: 'Le nom de votre club',
-      namePlaceholder: 'PPC Angles'
+      nameMissing: 'Tapez le nom de votre club pour commencer.'
     },
     free: {
       pools:
@@ -1464,6 +1463,8 @@ export const FR_DICTIONARY = defineDictionary({
   wall: {
     codeHint:
       'Tapez ce code dans l’organisation de la rencontre, bouton Grand écran',
+    home: 'Retour à l’accueil',
+    notTheTv: 'Ce n’est pas l’écran de la salle ?',
     offline: 'Pas de connexion. Nouvel essai dans un instant…',
     opening: 'Préparation du code…',
     qrLabel: 'QR code pour brancher cet écran',
