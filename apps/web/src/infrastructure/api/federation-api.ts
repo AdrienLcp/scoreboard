@@ -4,11 +4,14 @@ import { z } from 'zod'
 import {
   type FederationClub,
   type FederationClubNumber,
+  type FederationEncounter,
+  type FederationEncounterReference,
   type FederationPlayer,
   type FederationPool,
   type FederationPoolReference,
   type FederationTeam,
   federationClubSchema,
+  federationEncounterSchema,
   federationPlayerSchema,
   federationPoolSchema,
   federationTeamSchema
@@ -92,4 +95,13 @@ export const readFederationPool = (reference: FederationPoolReference) =>
         : { organiser: reference.organiser })
     }),
     federationPoolSchema
+  )
+
+/** An encounter's sheet, by the link its pool's calendar gives. */
+export const readFederationEncounter = (
+  reference: FederationEncounterReference
+) =>
+  readFederation<FederationEncounter>(
+    withQuery(API_ROUTES.federationEncounter, reference),
+    federationEncounterSchema
   )

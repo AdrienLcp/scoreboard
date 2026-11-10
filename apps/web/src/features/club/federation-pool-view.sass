@@ -1,0 +1,123 @@
+@use '../../presentation/styles/typography'
+
+/// A pool read from the FFTT inside its card: the hand-kept pool's table and
+/// calendar voice, a sheet opening under a played round, the source last.
+@layer components
+  .federation-mark-gap
+    flex: none
+    height: 1.75rem
+    width: 1.75rem
+
+  .pool-round-trigger.federation-round-line
+    min-height: var(--control-height)
+    padding: var(--space-s)
+
+  .federation-round-score
+    display: grid
+    justify-items: end
+
+  .federation-round-provisional
+    @include typography.label
+
+    color: var(--ink-muted)
+    font-size: var(--text-2xs)
+
+  .federation-season-source
+    @include typography.hint
+
+    color: var(--ink-muted)
+    font-size: var(--text-xs)
+    margin: 0
+
+  .federation-season-notice
+    @include typography.hint
+
+    align-items: center
+    color: var(--ink-muted)
+    display: flex
+    gap: var(--space-xs)
+    margin: 0
+
+    &[role='alert']
+      @include typography.emphasis
+
+      box-shadow: inset 0 0 0 var(--stroke-bold) var(--ink)
+      color: var(--ink)
+      padding: var(--space-xs) var(--space-s)
+
+    > .icon
+      flex: none
+
+  .federation-season-loading
+    display: grid
+    gap: var(--space-s)
+
+  .federation-season-skeleton
+    display: grid
+    gap: var(--space-4xs)
+
+    > i
+      background: var(--surface-raised)
+      display: block
+      height: 2.75rem
+
+  .federation-sheet
+    display: grid
+    gap: var(--space-xs)
+    padding: var(--space-xs) 0 var(--space-l) calc(2.75rem + var(--space-s))
+
+    ol
+      display: grid
+      list-style: none
+      margin: 0
+      padding: 0
+
+    li
+      align-items: center
+      box-shadow: inset 0 -1px 0 var(--rule)
+      column-gap: var(--space-s)
+      display: grid
+      grid-template-columns: minmax(0, 1fr) 3rem minmax(0, 1fr)
+      min-height: 2.75rem
+      padding-block: var(--space-3xs)
+
+    @container page (width < 30rem)
+      padding-inline-start: 0
+
+  .federation-sheet-teams
+    @include typography.label
+
+    color: var(--ink-muted)
+    column-gap: var(--space-s)
+    display: grid
+    grid-template-columns: minmax(0, 1fr) 3rem minmax(0, 1fr)
+    margin: 0
+
+    > :last-child
+      text-align: end
+
+  .federation-sheet-sets
+    @include typography.figure
+
+    color: var(--ink)
+    text-align: center
+
+  .federation-sheet-players
+    color: var(--ink-dim)
+    display: grid
+    font-size: var(--text-s)
+    min-width: 0
+
+    &[data-won]
+      @include typography.name
+
+      color: var(--ink)
+
+    &:last-child
+      text-align: end
+
+  .federation-sheet-points
+    @include typography.figure-secondary
+
+    color: var(--ink-muted)
+    font-size: var(--text-xs)

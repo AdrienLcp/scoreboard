@@ -54,44 +54,6 @@
     gap: var(--space-m)
     padding: var(--space-xs) var(--space-s) var(--space-m)
 
-    @container page (width >= 53.75rem)
-      grid-template-columns: 1fr 1fr
-
-      > .switch
-        grid-column: 1 / -1
-
-  .club-lineup
-    border: 0
-    display: grid
-    gap: var(--space-xs)
-    margin: 0
-    min-inline-size: 0
-    padding: 0
-
-  .club-lineup-team
-    @include typography.label
-
-    color: var(--ink-muted)
-    padding: 0
-
-  .club-lineup-letters
-    display: grid
-    gap: var(--space-xs) var(--space-m)
-    grid-template-columns: repeat(auto-fill, minmax(12rem, 1fr))
-
-    .combo-box
-      align-items: center
-      column-gap: var(--space-xs)
-      display: grid
-      grid-template-columns: 1.5rem minmax(0, 1fr)
-
-      > .field-label
-        @include typography.figure
-
-        color: var(--ink)
-        font-size: var(--text-l)
-        text-align: center
-
   .club-lineup-absent
     align-items: center
     background: var(--surface)

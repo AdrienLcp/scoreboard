@@ -68,6 +68,7 @@ export const ChampionshipSection: React.FC<ChampionshipSectionProps> = ({
       <p className='club-note'>{translate('club.championship.help')}</p>
       {current.map((pool) => (
         <PoolCard
+          isCurrent
           key={pool.id}
           onChange={onChange}
           pool={pool}
@@ -88,6 +89,7 @@ export const ChampionshipSection: React.FC<ChampionshipSectionProps> = ({
             <div className='pool-history-body'>
               {earlier.map((pool) => (
                 <PoolCard
+                  isCurrent={false}
                   key={pool.id}
                   onChange={onChange}
                   pool={pool}

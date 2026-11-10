@@ -2,7 +2,8 @@ import type React from 'react'
 import { useState } from 'react'
 
 import type { ClubRecord } from '@scoreboard/protocol/club-record'
-import type { EventSetup } from '@scoreboard/protocol/event-setup'
+import type { EventSetup, Player } from '@scoreboard/protocol/event-setup'
+import type { PlayerId } from '@scoreboard/protocol/identifiers'
 
 import {
   addClubEncounter,
@@ -15,6 +16,7 @@ import {
   addTypedOpponentTeam,
   addTypedPlayer,
   keepLineup,
+  linkFederationClub,
   markPlayed
 } from '@/features/club/club-edits'
 import { byRecentThenName } from '@/features/club/directory-search'
@@ -42,7 +44,12 @@ import { Switch } from '@/presentation/components/switch'
 import { useTranslate } from '@/presentation/i18n/i18n-context'
 
 import { ChoiceField } from './choice-field'
-import { ClubLineup, lineupSummaryOf, type SeatedLineup } from './club-lineup'
+import {
+  ClubEncounterLineup,
+  type DayPlayers,
+  lineupSummaryOf,
+  type SeatedLineup
+} from './club-lineup'
 
 import './club-encounter-form.sass'
 
@@ -92,6 +99,36 @@ const teamPicksOf = (sides: readonly ClubSide[]) =>
 const isSameLineup = (one: SeatedLineup, other: SeatedLineup): boolean =>
   JSON.stringify(one) === JSON.stringify(other)
 
+const NO_DAY_PLAYERS: DayPlayers = new Map()
+
+/** Only the club's own players are kept with a team: a licensee taken from the FFTT plays the day alone. */
+const directoryOnly = (side: ClubSide, lineup: SeatedLineup): SeatedLineup =>
+  lineup.map((playerId) =>
+    side.club.players.some((player) => player.id === playerId) ? playerId : null
+  )
+
+/** The FFTT's licensees seated today join the day, a typed twin taking the FFTT's points. */
+const withDayPlayers = (
+  setup: EventSetup,
+  dayPlayers: DayPlayers,
+  seated: readonly (PlayerId | null)[]
+): EventSetup => {
+  const joining = seated.flatMap((playerId) => {
+    const player = playerId === null ? undefined : dayPlayers.get(playerId)
+
+    return player === undefined ? [] : [player]
+  })
+  const joiningIds = new Set(joining.map((player) => player.id))
+
+  return {
+    ...setup,
+    players: [
+      ...setup.players.filter((player) => !joiningIds.has(player.id)),
+      ...joining
+    ]
+  }
+}
+
 /**
  * The Sunday morning in a few taps: one of our teams, the club it meets, and
  * the encounter lands on its own tables with the last composition seated.
@@ -110,6 +147,7 @@ export const ClubEncounterForm: React.FC<ClubEncounterFormProps> = ({
   const [firstTable, setFirstTable] = useState<string | null>(null)
   const [dayLineups, setDayLineups] = useState<DayLineups>(NO_CHANGE)
   const [keepsLineup, setKeepsLineup] = useState(true)
+  const [dayPlayers, setDayPlayers] = useState<DayPlayers>(NO_DAY_PLAYERS)
 
   if (state.status !== 'ready') {
     return (
@@ -186,28 +224,40 @@ export const ClubEncounterForm: React.FC<ClubEncounterFormProps> = ({
         }
 
         onSave(
-          addClubEncounter({
-            away: { ...away, team: { ...away.team, lineup: [...awayLineup] } },
-            awayColour: away.team.colour,
-            encounterId: newEncounterId(),
-            home: { ...home, team: { ...home.team, lineup: [...homeLineup] } },
-            newMatchId,
-            setup,
-            tables
-          })
+          withDayPlayers(
+            addClubEncounter({
+              away: {
+                ...away,
+                team: { ...away.team, lineup: [...awayLineup] }
+              },
+              awayColour: away.team.colour,
+              encounterId: newEncounterId(),
+              home: {
+                ...home,
+                team: { ...home.team, lineup: [...homeLineup] }
+              },
+              newMatchId,
+              setup,
+              tables
+            }),
+            dayPlayers,
+            [...homeLineup, ...awayLineup]
+          )
         )
 
+        const keptHome = directoryOnly(home, homeLineup)
+        const keptAway = directoryOnly(away, awayLineup)
         const keeps =
           keepsLineup &&
           !(
-            isSameLineup(homeLineup, home.team.lineup) &&
-            isSameLineup(awayLineup, away.team.lineup)
+            isSameLineup(keptHome, home.team.lineup) &&
+            isSameLineup(keptAway, away.team.lineup)
           )
 
         club.edit((current) => {
           const played = markPlayed({
             on: toLocalDay(nowMs()),
-            playerIds: [...homeLineup, ...awayLineup].filter(
+            playerIds: [...keptHome, ...keptAway].filter(
               (playerId) => playerId !== null
             ),
             record: current,
@@ -216,9 +266,9 @@ export const ClubEncounterForm: React.FC<ClubEncounterFormProps> = ({
 
           return keeps
             ? keepLineup({
-                lineup: awayLineup,
+                lineup: keptAway,
                 record: keepLineup({
-                  lineup: homeLineup,
+                  lineup: keptHome,
                   record: played,
                   teamId: home.team.id
                 }),
@@ -231,6 +281,7 @@ export const ClubEncounterForm: React.FC<ClubEncounterFormProps> = ({
         setAwayId(null)
         setFirstTable(null)
         setDayLineups(NO_CHANGE)
+        setDayPlayers(NO_DAY_PLAYERS)
       }}
     >
       <h3>{translate('organiser.clubEncounter.title')}</h3>
@@ -306,6 +357,7 @@ export const ClubEncounterForm: React.FC<ClubEncounterFormProps> = ({
             {translate('organiser.clubEncounter.lineup')}
             <span className='club-encounter-lineup-summary'>
               {lineupSummaryOf({
+                dayPlayers,
                 letters: format.homeLetters,
                 lineup: homeLineup,
                 side: home
@@ -315,25 +367,28 @@ export const ClubEncounterForm: React.FC<ClubEncounterFormProps> = ({
           </Button>
           <DisclosurePanel>
             <div className='club-encounter-lineup-body'>
-              <ClubLineup
-                groupCount={format.groupCount}
-                letters={format.homeLetters}
-                lineup={homeLineup}
-                onAddPlayer={(typed) => addPlayerTo(home, typed)}
-                onChange={(lineup) =>
-                  setDayLineups((current) => ({ ...current, home: lineup }))
+              <ClubEncounterLineup
+                away={away}
+                dayPlayers={dayPlayers}
+                format={format}
+                home={home}
+                lineups={{ away: awayLineup, home: homeLineup }}
+                onAddPlayer={addPlayerTo}
+                onChange={(side, lineup) =>
+                  setDayLineups((current) => ({ ...current, [side]: lineup }))
                 }
-                side={home}
-              />
-              <ClubLineup
-                groupCount={format.groupCount}
-                letters={format.awayLetters}
-                lineup={awayLineup}
-                onAddPlayer={(typed) => addPlayerTo(away, typed)}
-                onChange={(lineup) =>
-                  setDayLineups((current) => ({ ...current, away: lineup }))
+                onDayPlayer={(player: Player) =>
+                  setDayPlayers((current) =>
+                    new Map(current).set(player.id, player)
+                  )
                 }
-                side={away}
+                onLink={(clubId, number) =>
+                  club.edit((current) =>
+                    linkFederationClub({ clubId, number, record: current })
+                  )
+                }
+                record={record}
+                tables={tables}
               />
               <Switch isSelected={keepsLineup} onChange={setKeepsLineup}>
                 {translate('organiser.clubEncounter.keepLineup')}

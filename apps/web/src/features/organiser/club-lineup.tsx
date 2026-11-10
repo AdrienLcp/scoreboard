@@ -1,171 +1,218 @@
 import type React from 'react'
 
-import type { DirectoryPlayer } from '@scoreboard/protocol/club-record'
-import type { PlayerId } from '@scoreboard/protocol/identifiers'
+import type { ClubRecord } from '@scoreboard/protocol/club-record'
+import type { Player } from '@scoreboard/protocol/event-setup'
+import type {
+  FederationClubNumber,
+  FederationPlayer
+} from '@scoreboard/protocol/federation'
+import type { PlayerId, TableNumber } from '@scoreboard/protocol/identifiers'
+import type { Side } from '@scoreboard/protocol/side'
 
 import type { ClubSide } from '@scoreboard/core/club/club-encounter'
+import type { EncounterFormat } from '@scoreboard/core/encounter/encounter-format'
 
-import { absentSeatsLast, seatPlayer } from '@/features/club/club-edits'
-import {
-  byRecentThenName,
-  familyFirst,
-  splitTypedName
-} from '@/features/club/directory-search'
-import { type Pick, PickField } from '@/features/club/pick-field'
-import { Button } from '@/presentation/components/button'
-import { Icon } from '@/presentation/components/icon'
+import { splitTypedName } from '@/features/club/directory-search'
+import { FederationLink } from '@/features/club/federation-link'
+import { useFederationClubPlayers } from '@/features/club/federation-queries'
+import type { FederationState } from '@/features/club/use-federation'
+import { newPlayerId } from '@/infrastructure/ids'
 import { useTranslate } from '@/presentation/i18n/i18n-context'
+
+import {
+  EncounterLineup,
+  type LineupSide,
+  type RosterNotice
+} from './encounter-lineup'
+import { eventPlayerFrom, seatLetter } from './encounter-lineups'
+import { clubRosterOf, seatingOfPick } from './encounter-roster'
+import { useSheetOrderHint } from './sheet-order-hint'
 
 export type SeatedLineup = readonly (PlayerId | null)[]
 
-type ClubLineupProps = {
-  groupCount: number
-  letters: readonly string[]
-  lineup: SeatedLineup
-  /** Adds a typed licensee to the side's club; his id, or `null` when the name will not do. */
-  onAddPlayer: (typed: string) => PlayerId | null
-  onChange: (lineup: SeatedLineup) => void
-  side: ClubSide
-}
+/** Licensees picked from the FFTT before the encounter exists, by the id they will play under. */
+export type DayPlayers = ReadonlyMap<PlayerId, Player>
 
-const fullNameOf = (player: DirectoryPlayer): string =>
-  `${player.firstName} ${player.lastName}`
+/** Who holds a letter as the day will show him: the FFTT's entry when one was picked, else the club's. */
+const dayPlayerOf = (
+  side: ClubSide,
+  dayPlayers: DayPlayers,
+  playerId: PlayerId | null
+): Player | null => {
+  if (playerId === null) {
+    return null
+  }
+
+  const directoryPlayer = side.club.players.find(
+    (player) => player.id === playerId
+  )
+
+  return (
+    dayPlayers.get(playerId) ??
+    (directoryPlayer === undefined
+      ? null
+      : eventPlayerFrom(directoryPlayer, side.team.id))
+  )
+}
 
 /** How a side's composition reads folded: each letter and who holds it. */
 export const lineupSummaryOf = ({
+  dayPlayers,
   letters,
   lineup,
   side
 }: {
+  dayPlayers: DayPlayers
   letters: readonly string[]
   lineup: SeatedLineup
   side: ClubSide
 }): string =>
   letters
     .map((letter, index) => {
-      const player = side.club.players.find(
-        (candidate) => candidate.id === lineup.at(index)
-      )
+      const name = dayPlayerOf(side, dayPlayers, lineup.at(index) ?? null)?.name
+      const [first = '–', ...family] = name?.split(' ') ?? []
 
-      return `${letter} ${player?.lastName ?? '–'}`
+      return `${letter} ${family.length === 0 ? first : family.join(' ')}`
     })
     .join(' · ')
 
-/**
- * The club's players a letter offers: the team's last composition first, in
- * its order, then the most recently played; each with the letter he already
- * holds today and his ranking points.
- */
-const playerPicksOf = ({
-  letters,
-  lineup,
-  side
-}: {
-  letters: readonly string[]
-  lineup: SeatedLineup
-  side: ClubSide
-}): Pick[] => {
-  const lastTime = side.team.lineup
-  const rankOf = (player: DirectoryPlayer) => {
-    const seat = lastTime.indexOf(player.id)
+const noticeOf = (
+  answer: FederationState<FederationPlayer[]> | null
+): RosterNotice | null =>
+  answer === null || answer.status === 'ready' || answer.status === 'off'
+    ? null
+    : answer.status
 
-    return seat === -1 ? lastTime.length : seat
-  }
-
-  return side.club.players
-    .toSorted(
-      (one, other) =>
-        rankOf(one) - rankOf(other) || byRecentThenName(familyFirst)(one, other)
-    )
-    .map((player) => {
-      const seat = lineup.indexOf(player.id)
-      const detail = [
-        seat === -1 ? null : letters.at(seat),
-        player.points === null ? null : String(player.points)
-      ]
-        .filter((part) => part != null)
-        .join(' · ')
-
-      return {
-        detail: detail === '' ? undefined : detail,
-        id: player.id,
-        label: fullNameOf(player)
-      }
-    })
+type ClubEncounterLineupProps = {
+  away: ClubSide
+  dayPlayers: DayPlayers
+  format: EncounterFormat
+  home: ClubSide
+  lineups: Readonly<Record<Side, SeatedLineup>>
+  /** Adds a typed licensee to a side's club; his id, or `null` when the name will not do. */
+  onAddPlayer: (side: ClubSide, typed: string) => PlayerId | null
+  onChange: (side: Side, lineup: SeatedLineup) => void
+  /** A licensee picked from the FFTT, to join the day with the encounter. */
+  onDayPlayer: (player: Player) => void
+  onLink: (clubId: string, number: FederationClubNumber) => void
+  record: ClubRecord
+  tables: readonly TableNumber[]
 }
 
 /**
- * One side of the day's sheet, letter by letter, picked from its club's
- * players by their first letters, a newcomer typed in once. A seat left empty
- * in the first group is offered behind the second, where the club puts a
- * player away for the day.
+ * The compositions of an encounter still to add, letter by letter as the
+ * encounter's own sheet picks them: each letter opens its team's roster,
+ * played for the team first, then the club's FFTT licensees, then the
+ * players only typed; one tap seats a player and the next empty letter
+ * comes up.
  */
-export const ClubLineup: React.FC<ClubLineupProps> = ({
-  groupCount,
-  letters,
-  lineup,
+export const ClubEncounterLineup: React.FC<ClubEncounterLineupProps> = ({
+  away,
+  dayPlayers,
+  format,
+  home,
+  lineups,
   onAddPlayer,
   onChange,
-  side
+  onDayPlayer,
+  onLink,
+  record,
+  tables
 }) => {
   const translate = useTranslate()
-  const picks = playerPicksOf({ letters, lineup, side })
-  const groupSize = letters.length / Math.max(groupCount, 1)
-  const absentLast = absentSeatsLast({
-    groupSize,
-    letterCount: letters.length,
-    lineup
-  })
-  const emptyFirstLetters = letters
-    .slice(0, groupSize)
-    .filter((_, index) => (lineup.at(index) ?? null) === null)
+  const hint = useSheetOrderHint({ format, tables })
+  const sides = { away, home }
+  const letters = { away: format.awayLetters, home: format.homeLetters }
+  const licensees = {
+    away: useFederationClubPlayers(away.club.number),
+    home: useFederationClubPlayers(home.club.number)
+  }
+  const licenseesOf = (side: Side) => {
+    const answer = licensees[side]
+
+    return answer?.status === 'ready' ? answer.data : null
+  }
+
+  const rosterOf = (side: Side, typed: string) =>
+    clubRosterOf({
+      directory: sides[side].club.players,
+      letters: letters[side],
+      licensees: licenseesOf(side),
+      players: [...dayPlayers.values()],
+      seats: lineups[side],
+      teamLineup: sides[side].team.lineup,
+      typed
+    })
+
+  const pickFor = (side: Side, index: number, pick: string | null) => {
+    const seat = (playerId: PlayerId | null) =>
+      onChange(side, seatLetter({ index, lineup: lineups[side], playerId }))
+
+    if (pick === null) {
+      seat(null)
+      return
+    }
+
+    const seating = seatingOfPick({
+      dayPlayers: [...dayPlayers.values()],
+      licensees: licenseesOf(side) ?? [],
+      newPlayerId,
+      pick,
+      rows: rosterOf(side, '').flatMap((group) => group.rows),
+      teamId: sides[side].team.id
+    })
+
+    if (seating.player !== null) {
+      onDayPlayer(seating.player)
+    }
+
+    seat(seating.id)
+  }
+
+  const lineupSideOf = (side: Side): LineupSide => {
+    const clubSide = sides[side]
+
+    return {
+      addLabel: (typed) =>
+        splitTypedName(typed) === null
+          ? null
+          : translate('organiser.pick.addPlayer', { name: typed.trim() }),
+      clubName: clubSide.club.name,
+      colour: clubSide.team.colour,
+      hasFederation: licensees[side]?.status === 'ready',
+      letters: letters[side],
+      lineup: lineups[side],
+      link:
+        clubSide.club.number === null ? (
+          <FederationLink
+            club={clubSide.club}
+            isOwn={record.own.id === clubSide.club.id}
+            onLink={(number) => onLink(clubSide.club.id, number)}
+          />
+        ) : null,
+      notice: noticeOf(licensees[side]),
+      onAdd: (typed) => onAddPlayer(clubSide, typed),
+      onChange: (next) => onChange(side, next),
+      onPick: (index, pick) => pickFor(side, index, pick),
+      roster: (typed) => rosterOf(side, typed),
+      seated: lineups[side].map((playerId) => {
+        const player = dayPlayerOf(clubSide, dayPlayers, playerId)
+
+        return player === null
+          ? null
+          : { name: player.name, points: player.points }
+      }),
+      teamName: clubSide.team.name
+    }
+  }
 
   return (
-    <fieldset className='club-lineup'>
-      <legend className='club-lineup-team'>{side.team.name}</legend>
-      <div className='club-lineup-letters'>
-        {letters.map((letter, index) => (
-          <PickField
-            addLabel={(typed) =>
-              splitTypedName(typed) === null
-                ? null
-                : translate('organiser.pick.addPlayer', { name: typed.trim() })
-            }
-            emptyLabel={(typed) =>
-              translate('organiser.pick.fullName', { typed })
-            }
-            key={letter}
-            label={letter}
-            onAdd={onAddPlayer}
-            onChange={(playerId) =>
-              onChange(
-                seatPlayer({
-                  index,
-                  playerId,
-                  team: { ...side.team, lineup: [...lineup] }
-                }).lineup
-              )
-            }
-            picks={picks}
-            placeholder={translate('club.team.nobody')}
-            selectedId={lineup.at(index) ?? null}
-          />
-        ))}
-      </div>
-      {absentLast === null ? null : (
-        <div className='club-lineup-absent'>
-          <Icon name='move' />
-          <p>
-            {translate('organiser.clubEncounter.absentHint', {
-              empty: emptyFirstLetters.join(', '),
-              later: `${letters.at(groupSize) ?? ''}–${letters.at(-1) ?? ''}`
-            })}
-          </p>
-          <Button onPress={() => onChange(absentLast)} variant='quiet'>
-            {translate('organiser.clubEncounter.absentMove')}
-          </Button>
-        </div>
-      )}
-    </fieldset>
+    <EncounterLineup
+      away={lineupSideOf('away')}
+      groupCount={format.groupCount}
+      hint={hint}
+      home={lineupSideOf('home')}
+      tables={tables}
+    />
   )
 }

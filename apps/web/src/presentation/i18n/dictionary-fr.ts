@@ -104,7 +104,20 @@ export const FR_DICTIONARY = defineDictionary({
       ourQuestion: 'Est-ce votre club à la FFTT ?',
       searching: 'Recherche à la FFTT…',
       searchLabel: 'Nom ou numéro du club',
+      season: {
+        byHand: 'Résultats saisis à la main',
+        byHandSummary:
+          'Ce que vos feuilles ont donné, gardé pour la console et pour quand la FFTT ne répond pas.',
+        down: 'La FFTT ne répond pas : voici la poule recopiée à la main. Son classement reviendra dès qu’elle répondra.',
+        loading: 'Classement et calendrier à la FFTT…',
+        offline: 'Hors ligne : voici la poule recopiée à la main.',
+        ourSheet: 'notre feuille',
+        sheetDown: 'La FFTT ne donne pas cette feuille pour l’instant.',
+        sheetLoading: 'Feuille de la rencontre à la FFTT…',
+        sheetOffline: 'Hors ligne : la feuille attend le réseau.'
+      },
       source: 'Source : FFTT',
+      tag: 'FFTT',
       theirQuestion: 'Quel est {club} à la FFTT ?',
       unlink: 'Délier de la FFTT',
       why: 'Un toucher, et ses licenciés arrivent avec leurs points.'

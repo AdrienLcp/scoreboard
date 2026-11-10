@@ -1,11 +1,13 @@
 import type {
   FederationClubNumber,
+  FederationEncounterReference,
   FederationPoolReference
 } from '@scoreboard/protocol/federation'
 
 import {
   readFederationClubPlayers,
   readFederationClubTeams,
+  readFederationEncounter,
   readFederationPool,
   searchFederationClubs
 } from '@/infrastructure/api/federation-api'
@@ -40,4 +42,9 @@ export const useFederationPool = federationQuery({
   keyOf: (reference: FederationPoolReference) =>
     [reference.division, reference.pool, reference.organiser ?? ''].join(':'),
   load: readFederationPool
+})
+
+export const useFederationEncounter = federationQuery({
+  keyOf: (reference: FederationEncounterReference) => reference.encounterId,
+  load: readFederationEncounter
 })

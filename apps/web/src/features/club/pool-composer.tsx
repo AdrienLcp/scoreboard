@@ -38,6 +38,8 @@ import { numbered } from './numbered'
 import { type Pick, PickField } from './pick-field'
 
 type PoolComposerProps = {
+  /** The FFTT publishes this pool: nothing here asks to be filled first. */
+  isFederal: boolean
   onChange: (record: ClubRecord) => void
   pool: ChampionshipPool
   record: ClubRecord
@@ -67,6 +69,7 @@ const poolTeamsOf = (record: ClubRecord): DirectoryTeam[] => [
  * what an encounter is worth in the standings.
  */
 export const PoolComposer: React.FC<PoolComposerProps> = ({
+  isFederal,
   onChange,
   pool,
   record
@@ -102,7 +105,10 @@ export const PoolComposer: React.FC<PoolComposerProps> = ({
   const isComplete = pool.teams.every((teamId) => teamId !== null)
 
   return (
-    <Disclosure className='pool-composer' defaultExpanded={!isComplete}>
+    <Disclosure
+      className='pool-composer'
+      defaultExpanded={!(isComplete || isFederal)}
+    >
       <Button className='pool-composer-trigger' slot='trigger' variant='quiet'>
         <Icon name='edit' />
         <span>{translate('club.championship.composer.title')}</span>

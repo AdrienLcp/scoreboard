@@ -249,3 +249,46 @@ export const dayRosterOf = ({
 
   return rows.length === 0 ? [] : [{ kind: 'day', rows }]
 }
+
+/**
+ * Who a roster pick seats: a licensee straight from the FFTT becomes a day's
+ * player, under the id he already has today or a new one; a typed player the
+ * FFTT also lists keeps his directory id and brings the FFTT's points.
+ */
+export const seatingOfPick = ({
+  dayPlayers,
+  licensees,
+  newPlayerId,
+  pick,
+  rows,
+  teamId
+}: {
+  dayPlayers: readonly Player[]
+  licensees: readonly FederationPlayer[]
+  newPlayerId: () => PlayerId
+  pick: string
+  rows: readonly RosterRow[]
+  teamId: Player['teamId']
+}): { id: PlayerId; player: Player | null } => {
+  const row = rows.find((candidate) => candidate.id === pick)
+  const licence = licenceOfPick(pick)
+  const licensee = licensees.find(
+    (player) => player.licence === (licence ?? row?.licence)
+  )
+
+  if (licensee === undefined || row?.source !== 'fftt') {
+    return { id: pick, player: null }
+  }
+
+  const known = dayPlayers.find(
+    (player) =>
+      player.teamId === teamId &&
+      (player.id === pick || player.licence === licensee.licence)
+  )
+  const id = licence === null ? pick : (known?.id ?? newPlayerId())
+
+  return {
+    id,
+    player: eventPlayerFromFederation({ id, player: licensee, teamId })
+  }
+}

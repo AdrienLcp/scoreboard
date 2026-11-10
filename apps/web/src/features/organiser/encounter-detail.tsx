@@ -42,14 +42,10 @@ import {
   sideLettersOf,
   withEncounterLineup
 } from './encounter-lineups'
-import {
-  clubRosterOf,
-  dayRosterOf,
-  eventPlayerFromFederation,
-  licenceOfPick
-} from './encounter-roster'
+import { clubRosterOf, dayRosterOf, seatingOfPick } from './encounter-roster'
 import { PlayerForfeit } from './player-forfeit'
 import { encounterTablesOf } from './setup-edits'
+import { useSheetOrderHint } from './sheet-order-hint'
 import { teamColourOf } from './team-chip'
 
 import './club-encounter-form.sass'
@@ -234,37 +230,20 @@ export const EncounterDetail: React.FC<EncounterDetailProps> = ({
     }
 
     const answer = licensees[side]
-    const fromFederation =
-      answer?.status === 'ready' ? answer.data : ([] as const)
-    const row = rosterOf(side, '')
-      .flatMap((group) => group.rows)
-      .find((candidate) => candidate.id === pick)
-    const licensee = fromFederation.find(
-      (player) => player.licence === (licenceOfPick(pick) ?? row?.licence)
-    )
+    const seating = seatingOfPick({
+      dayPlayers: dayPlayers(),
+      licensees: answer?.status === 'ready' ? answer.data : [],
+      newPlayerId,
+      pick,
+      rows: rosterOf(side, '').flatMap((group) => group.rows),
+      teamId: encounter[side]
+    })
 
-    if (licensee === undefined || row?.source !== 'fftt') {
-      seat(pick)
-      return
+    if (seating.player !== null) {
+      added.current.set(seating.id, seating.player)
     }
 
-    const known = dayPlayers().find(
-      (player) =>
-        player.teamId === encounter[side] &&
-        (player.id === pick || player.licence === licensee.licence)
-    )
-    const id =
-      licenceOfPick(pick) === null ? pick : (known?.id ?? newPlayerId())
-
-    added.current.set(
-      id,
-      eventPlayerFromFederation({
-        id,
-        player: licensee,
-        teamId: encounter[side]
-      })
-    )
-    seat(id)
+    seat(seating.id)
   }
 
   const noticeOf = (side: Side): RosterNotice | null => {
@@ -329,25 +308,7 @@ export const EncounterDetail: React.FC<EncounterDetailProps> = ({
     }
   }
 
-  const tableOf = (group: number) => {
-    const table = tables.at(group)
-
-    return table === undefined
-      ? translate(
-          group === 0
-            ? 'organiser.encountersStep.theFirstTable'
-            : 'organiser.encountersStep.theSecondTable'
-        )
-      : translate('organiser.encountersStep.theTable', { table })
-  }
-  const openingOf = (group: number) => {
-    const opening = format.sheet.find(
-      (sheetLine) =>
-        sheetLine.group === group + 1 && sheetLine.kind === 'singles'
-    )
-
-    return opening?.kind === 'singles' ? `${opening.home}–${opening.away}` : ''
-  }
+  const hint = useSheetOrderHint({ format, tables })
 
   return (
     <div className='encounter-detail'>
@@ -357,20 +318,7 @@ export const EncounterDetail: React.FC<EncounterDetailProps> = ({
       <EncounterLineup
         away={lineupSideOf('away')}
         groupCount={format.groupCount}
-        hint={
-          format.groupCount === 1
-            ? translate('organiser.encountersStep.orderOneTable', {
-                count: format.sheet.length,
-                first: openingOf(0)
-              })
-            : translate('organiser.encountersStep.orderTwoTables', {
-                count: format.sheet.length,
-                first: openingOf(0),
-                firstTable: tableOf(0),
-                second: openingOf(1),
-                secondTable: tableOf(1)
-              })
-        }
+        hint={hint}
         home={lineupSideOf('home')}
         tables={tables}
       />

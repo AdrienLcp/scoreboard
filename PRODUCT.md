@@ -189,7 +189,12 @@ another sport can adopt it.
     event may still show it.
 - The club page keeps each of our teams' championship pool, phase after
   phase, copied once from the federation's calendar (its number, its teams by
-  number, the date of each round). Defaults, each one changeable:
+  number, the date of each round). Once the club is tied to the FFTT, a pool
+  of this phase whose team the FFTT lists (matched by the number ending both
+  names) shows the FFTT's standings and calendar instead, read-only, each
+  played round opening its sheet, our sheet's score standing in until the
+  FFTT publishes one; the hand-kept results stay folded under it and take
+  over while the FFTT does not answer. Defaults, each one changeable:
   - a pool holds eight teams over seven rounds on the federation's grid
     (Berger's tables: 1–8, 2–7, 3–6, 4–5, then 8–5, 6–4…), the first team
     named receiving; a fixture can be inverted;
