@@ -151,7 +151,13 @@ describe('federationScoreOf', () => {
 
 describe('nextFederationRoundOf', () => {
   it('is the first round of ours the FFTT has no score for', () => {
-    expect(nextFederationRoundOf(self, pool)?.number).toBe(2)
+    expect(
+      nextFederationRoundOf({ day: '2026-09-01', pool, self })?.number
+    ).toBe(2)
+  })
+
+  it('passes over a round played but not scored yet', () => {
+    expect(nextFederationRoundOf({ day: '2026-10-10', pool, self })).toBeNull()
   })
 })
 

@@ -33,6 +33,7 @@ import {
   selfFixtureOf,
   sheetScoreOf
 } from './federation-season'
+import { FederationSource } from './federation-source'
 import { numbered } from './numbered'
 import { PoolTeamMark } from './pool-team-mark'
 
@@ -88,9 +89,7 @@ export const FederationPoolView: React.FC<FederationPoolViewProps> = ({
           ))}
         </ol>
       </div>
-      <p className='federation-season-source'>
-        {translate('club.federation.source')}
-      </p>
+      <FederationSource />
     </>
   )
 }

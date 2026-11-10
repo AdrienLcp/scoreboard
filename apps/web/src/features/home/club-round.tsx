@@ -6,6 +6,7 @@ import type {
 } from '@scoreboard/protocol/club-record'
 import type { EventId } from '@scoreboard/protocol/identifiers'
 
+import { FederationSource } from '@/features/club/federation-source'
 import type { RoundEntry } from '@/features/club/round-entries'
 import { withPlayedEntries } from '@/features/club/round-entries'
 import { useClub } from '@/features/club/use-club'
@@ -120,7 +121,8 @@ export const ClubRoundSection: React.FC<ClubRoundProps> = ({
   }
 
   const sideOf = (entry: RoundEntry): React.ReactNode => {
-    const { playedAs, result } = entry.fixture
+    const playedAs = entry.kept?.fixture.playedAs
+    const result = entry.kept?.fixture.result ?? null
 
     if (result !== null) {
       return `${result.score.home}–${result.score.away}`
@@ -175,7 +177,9 @@ export const ClubRoundSection: React.FC<ClubRoundProps> = ({
       {round.home.length === 0 ? null : (
         <ul className='club-round-list'>
           {round.home.map((entry) => (
-            <li key={`${entry.poolId}-${entry.at.fixtureIndex}`}>
+            <li
+              key={`${entry.poolId}-${entry.home?.team.id}-${entry.away?.team.id}`}
+            >
               {entry.home === null ? null : <TeamChip team={entry.home.team} />}
               <span className='club-round-receives'>
                 {translate('home.round.receives')}
@@ -195,6 +199,7 @@ export const ClubRoundSection: React.FC<ClubRoundProps> = ({
       {round.away.length === 0 ? null : (
         <p className='club-round-away'>{awayLineOf(translate, round.away)}</p>
       )}
+      {round.isFromFederation ? <FederationSource /> : null}
       {eventId !== null && progress !== null ? (
         <div className='club-round-actions'>
           <ButtonLink href={organiserPathFor(eventId)} variant='primary'>

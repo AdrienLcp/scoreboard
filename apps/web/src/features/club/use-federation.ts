@@ -17,9 +17,12 @@ const KEEP_MS = FEDERATION_BROWSER_CACHE_SECONDS * 1000
 
 const LOADING = { status: 'loading' } as const
 
+const KEY_SEPARATOR = '|'
+
 /**
- * One of the federation's routes as a hook: each answer shared by every
- * component asking the same arguments, `null` while there is nothing to ask.
+ * One of the federation's routes as hooks: each answer shared by every
+ * component asking the same arguments; `one` is `null` while there is nothing
+ * to ask.
  * A failed answer is asked again the next time a component mounts.
  */
 export const federationQuery = <TArgs, TData extends object>({
@@ -43,8 +46,11 @@ export const federationQuery = <TArgs, TData extends object>({
     return () => listeners.delete(listener)
   }
 
+  let version = 0
+
   const settle = (key: string, state: FederationState<TData>) => {
     entries.set(key, { loadedAtMs: nowMs(), state })
+    version += 1
 
     for (const listener of listeners) {
       listener()
@@ -56,33 +62,69 @@ export const federationQuery = <TArgs, TData extends object>({
     (entry.state.status !== 'loading' &&
       (entry.state.status !== 'ready' || nowMs() - entry.loadedAtMs > KEEP_MS))
 
-  return (args: TArgs | null): FederationState<TData> | null => {
+  const ask = (key: string, args: TArgs) => {
+    if (!isStale(entries.get(key))) {
+      return
+    }
+
+    settle(key, LOADING)
+    void load(args).then((result) =>
+      settle(
+        key,
+        result.status === 'success'
+          ? { data: result.data, status: 'ready' }
+          : { status: result.error }
+      )
+    )
+  }
+
+  const stateOf = (key: string) => entries.get(key)?.state ?? LOADING
+
+  const one = (args: TArgs | null): FederationState<TData> | null => {
     const key = args === null ? null : keyOf(args)
     const state = useSyncExternalStore(subscribe, () =>
-      key === null ? null : (entries.get(key)?.state ?? LOADING)
+      key === null ? null : stateOf(key)
     )
-    const ask = useEffectEvent((asked: string) => {
-      if (args === null || !isStale(entries.get(asked))) {
-        return
+    const askNow = useEffectEvent((asked: string) => {
+      if (args !== null) {
+        ask(asked, args)
       }
-
-      settle(asked, LOADING)
-      void load(args).then((result) =>
-        settle(
-          asked,
-          result.status === 'success'
-            ? { data: result.data, status: 'ready' }
-            : { status: result.error }
-        )
-      )
     })
 
     useEffect(() => {
       if (key !== null) {
-        ask(key)
+        askNow(key)
       }
     }, [key])
 
     return state
   }
+
+  /** Several arguments at once, each answer in the order they were asked. */
+  const many = (argsList: readonly TArgs[]): FederationState<TData>[] => {
+    const keys = argsList.map(keyOf)
+    const joinedKeys = keys.join(KEY_SEPARATOR)
+
+    useSyncExternalStore(subscribe, () => version)
+
+    const askAll = useEffectEvent(() => {
+      argsList.forEach((args, index) => {
+        const key = keys[index]
+
+        if (key !== undefined) {
+          ask(key, args)
+        }
+      })
+    })
+
+    useEffect(() => {
+      if (joinedKeys !== '') {
+        askAll()
+      }
+    }, [joinedKeys])
+
+    return keys.map(stateOf)
+  }
+
+  return { many, one }
 }

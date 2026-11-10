@@ -114,11 +114,18 @@ export const FAKE_PLAYERS: readonly FederationPlayer[] = [
   ...FAKE_OPPONENT_PLAYERS
 ]
 
-/** The pool both clubs' first teams play in: the one pool the fake fills. */
+/** The pool both clubs' first teams play in. */
 export const FAKE_POOL_REFERENCE: FederationPoolReference = {
   division: '200001',
   organiser: '85',
   pool: '300001'
+}
+
+/** The pool our second team plays in, with Luçon's third. */
+export const FAKE_SECOND_POOL_REFERENCE: FederationPoolReference = {
+  division: '200003',
+  organiser: '85',
+  pool: '300031'
 }
 
 const COMPETITION = 'FED_Championnat de France par Equipes Masculin'
@@ -145,11 +152,12 @@ export const FAKE_TEAMS: Readonly<Record<string, readonly FederationTeam[]>> = {
       'D85_DÉPARTEMENTALE_1_Ph1 Poule A',
       FAKE_POOL_REFERENCE
     ),
-    teamOf('9002', 'PPC ANGLES 2', 'D85_DÉPARTEMENTALE_3_Ph1 Poule C', {
-      division: '200003',
-      organiser: '85',
-      pool: '300031'
-    }),
+    teamOf(
+      '9002',
+      'PPC ANGLES 2',
+      'D85_DÉPARTEMENTALE_3_Ph1 Poule C',
+      FAKE_SECOND_POOL_REFERENCE
+    ),
     teamOf('9003', 'PPC ANGLES 3', 'D85_DÉPARTEMENTALE_4_Ph1 Poule F', null)
   ],
   [FAKE_OPPONENT_CLUB.number]: [
@@ -163,7 +171,13 @@ export const FAKE_TEAMS: Readonly<Record<string, readonly FederationTeam[]>> = {
       division: '200002',
       organiser: '85',
       pool: '300022'
-    })
+    }),
+    teamOf(
+      '9013',
+      'LUCON TT 3',
+      'D85_DÉPARTEMENTALE_3_Ph1 Poule C',
+      FAKE_SECOND_POOL_REFERENCE
+    )
   ]
 }
 
@@ -185,30 +199,43 @@ const FAKE_POOL_TEAM_NAMES = [
   'CPTT GRAND LARGE'
 ] as const
 
-/** Strongest first: the results follow this order. */
-const POOL_TEAMS: readonly PoolTeam[] = [
-  {
-    club: FAKE_OPPONENT_CLUB,
-    id: '9011',
-    label: 'LUCON TT (1)',
-    name: 'LUCON TT 1'
-  },
-  {
-    club: FAKE_HOME_CLUB,
-    id: '9001',
-    label: 'PPC ANGLES (1)',
-    name: 'PPC ANGLES 1'
-  },
-  ...FAKE_POOL_CLUBS.map((club, index) => {
-    const short = FAKE_POOL_TEAM_NAMES[index] ?? club.name
+const poolTeamOf = (
+  club: FederationClub,
+  id: string,
+  short: string,
+  number: number
+): PoolTeam => ({
+  club,
+  id,
+  label: `${short} (${number})`,
+  name: `${short} ${number}`
+})
 
-    return {
+/** The six other clubs' teams numbered `number`, their ids from `firstId`. */
+const otherClubsTeams = (number: number, firstId: number) =>
+  FAKE_POOL_CLUBS.map((club, index) =>
+    poolTeamOf(
       club,
-      id: String(9021 + index),
-      label: `${short} (1)`,
-      name: `${short} 1`
-    }
-  })
+      String(firstId + index),
+      FAKE_POOL_TEAM_NAMES[index] ?? club.name,
+      number
+    )
+  )
+
+/** Strongest first: the results follow this order. */
+const FIRST_POOL_TEAMS: readonly PoolTeam[] = [
+  poolTeamOf(FAKE_OPPONENT_CLUB, '9011', 'LUCON TT', 1),
+  poolTeamOf(FAKE_HOME_CLUB, '9001', 'PPC ANGLES', 1),
+  ...otherClubsTeams(1, 9021)
+]
+
+const SECOND_POOL_OTHERS = otherClubsTeams(2, 9031)
+
+const SECOND_POOL_TEAMS: readonly PoolTeam[] = [
+  ...SECOND_POOL_OTHERS.slice(0, 3),
+  poolTeamOf(FAKE_HOME_CLUB, '9002', 'PPC ANGLES', 2),
+  poolTeamOf(FAKE_OPPONENT_CLUB, '9013', 'LUCON TT', 3),
+  ...SECOND_POOL_OTHERS.slice(3)
 ]
 
 /** Saturdays a fortnight apart; the first four are played. */
@@ -235,8 +262,8 @@ const homeScoreOf = (home: number, away: number) =>
   )
 
 /** The round-robin circle: the first team stays, the others turn one seat per round. */
-const pairingsOf = (round: number): [number, number][] => {
-  const others = POOL_TEAMS.slice(1).map((_, index) => index + 1)
+const pairingsOf = (teams: number, round: number): [number, number][] => {
+  const others = Array.from({ length: teams - 1 }, (_, index) => index + 1)
   const turned = [
     0,
     ...others.slice(others.length - round),
@@ -254,20 +281,31 @@ const pairingsOf = (round: number): [number, number][] => {
   })
 }
 
+type FakePoolSpec = {
+  /** The pool's encounter ids count up from it. */
+  encounterIdBase: number
+  /** A played fixture the FFTT has not scored yet, its sheet still on the way. */
+  isUnscored: (roundNumber: number, home: PoolTeam, away: PoolTeam) => boolean
+  reference: FederationPoolReference
+  teams: readonly PoolTeam[]
+}
+
 const fixtureOf = (
+  spec: FakePoolSpec,
   round: number,
   index: number,
   [home, away]: [number, number]
 ): FederationFixture => {
-  const homeTeam = POOL_TEAMS[home] ?? POOL_TEAMS[0]
-  const awayTeam = POOL_TEAMS[away] ?? POOL_TEAMS[0]
+  const homeTeam = spec.teams[home]
+  const awayTeam = spec.teams[away]
 
   if (homeTeam === undefined || awayTeam === undefined) {
-    throw new Error('The fake pool has no team')
+    throw new Error('The fake pool has no such team')
   }
 
-  const played = round < PLAYED_ROUNDS
-  const homeScore = played ? homeScoreOf(home, away) : null
+  const scored =
+    round < PLAYED_ROUNDS && !spec.isUnscored(round + 1, homeTeam, awayTeam)
+  const homeScore = scored ? homeScoreOf(home, away) : null
   const awayScore =
     homeScore === null ? null : FAKE_GAMES_PER_ENCOUNTER - homeScore
 
@@ -280,7 +318,7 @@ const fixtureOf = (
       awayScore: awayScore === null ? '' : String(awayScore),
       awayTeam: awayTeam.label,
       awayTeamId: awayTeam.id,
-      encounterId: String(400_000 + round * 10 + index),
+      encounterId: String(spec.encounterIdBase + round * 10 + index),
       homeClubNumber: homeTeam.club.number,
       homeScore: homeScore === null ? '' : String(homeScore),
       homeTeam: homeTeam.label,
@@ -294,22 +332,15 @@ const fixtureOf = (
   }
 }
 
-const FAKE_ROUNDS: readonly FederationRound[] = ROUND_DATES.map(
-  (date, round) => ({
-    date,
-    fixtures: pairingsOf(round).map((pair, index) =>
-      fixtureOf(round, index, pair)
-    ),
-    number: round + 1
-  })
-)
-
 /** Win 3, draw 2, loss 1: the championship's standings points. */
 const standingsPointsOf = (scored: number, conceded: number) =>
   scored > conceded ? 3 : scored === conceded ? 2 : 1
 
-const standingsOf = (): FederationStanding[] => {
-  const rows = POOL_TEAMS.map((team) => ({
+const standingsOf = (
+  teams: readonly PoolTeam[],
+  rounds: readonly FederationRound[]
+): FederationStanding[] => {
+  const rows = teams.map((team) => ({
     gamesLost: 0,
     gamesWon: 0,
     played: 0,
@@ -317,7 +348,7 @@ const standingsOf = (): FederationStanding[] => {
     team
   }))
 
-  for (const fixture of FAKE_ROUNDS.flatMap((round) => round.fixtures)) {
+  for (const fixture of rounds.flatMap((round) => round.fixtures)) {
     if (fixture.homeScore === null || fixture.awayScore === null) {
       continue
     }
@@ -355,11 +386,47 @@ const standingsOf = (): FederationStanding[] => {
     }))
 }
 
-export const FAKE_POOL: FederationPool = {
-  reference: FAKE_POOL_REFERENCE,
-  rounds: [...FAKE_ROUNDS],
-  standings: standingsOf()
+const poolOf = (spec: FakePoolSpec): FederationPool => {
+  const rounds = ROUND_DATES.map((date, round) => ({
+    date,
+    fixtures: pairingsOf(spec.teams.length, round).map((pair, index) =>
+      fixtureOf(spec, round, index, pair)
+    ),
+    number: round + 1
+  }))
+
+  return {
+    reference: spec.reference,
+    rounds,
+    standings: standingsOf(spec.teams, rounds)
+  }
 }
+
+/** The played round whose encounter of our first team the FFTT has not scored yet. */
+export const FAKE_UNSCORED_ROUND = 4
+
+const isOurs = (team: PoolTeam) => team.club === FAKE_HOME_CLUB
+
+export const FAKE_POOL: FederationPool = poolOf({
+  encounterIdBase: 400_000,
+  isUnscored: (roundNumber, home, away) =>
+    roundNumber === FAKE_UNSCORED_ROUND && (isOurs(home) || isOurs(away)),
+  reference: FAKE_POOL_REFERENCE,
+  teams: FIRST_POOL_TEAMS
+})
+
+export const FAKE_SECOND_POOL: FederationPool = poolOf({
+  encounterIdBase: 410_000,
+  isUnscored: () => false,
+  reference: FAKE_SECOND_POOL_REFERENCE,
+  teams: SECOND_POOL_TEAMS
+})
+
+/** The pools the fake fills; any other pool answers empty. */
+export const FAKE_POOLS: readonly FederationPool[] = [
+  FAKE_POOL,
+  FAKE_SECOND_POOL
+]
 
 /** Invented sheet names for the clubs the fake keeps no roster of. */
 export const FAKE_SHEET_NAMES: readonly string[] = [

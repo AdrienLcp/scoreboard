@@ -4,6 +4,7 @@ import { useState } from 'react'
 import type { DirectoryClub } from '@scoreboard/protocol/club-record'
 
 import { useClub } from '@/features/club/use-club'
+import { useCurrentFederationPools } from '@/features/club/use-federation-pools'
 import { nowMs } from '@/infrastructure/clock'
 import { toLocalDay } from '@/infrastructure/dates'
 import { paths } from '@/infrastructure/router/navigation'
@@ -74,8 +75,11 @@ export const HomePage: React.FC = () => {
   const { state } = club
   const [organisedEvents] = useState(organisedEventsOrNone)
   const record = state.status === 'ready' ? state.record : null
+  const federationPools = useCurrentFederationPools(record)
   const round =
-    record === null ? null : clubRoundOf(record, toLocalDay(nowMs()))
+    record === null
+      ? null
+      : clubRoundOf(record, toLocalDay(nowMs()), federationPools)
 
   return (
     <Main className='home-page'>
@@ -127,7 +131,11 @@ export const HomePage: React.FC = () => {
             record={record}
           />
           {state.status === 'ready' ? (
-            <ClubSeason code={state.code} record={state.record} />
+            <ClubSeason
+              code={state.code}
+              federationPools={federationPools}
+              record={state.record}
+            />
           ) : null}
           <JoinEventForm />
         </div>

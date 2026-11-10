@@ -25,7 +25,8 @@
         "**/infrastructure/smartping/**",
         "**/scripts/smartping-init.ts",
         "**/protocol/src/federation.ts",
-        "**/.dev.vars.example"
+        "**/.dev.vars.example",
+        "**/features/club/federation-*.test.ts"
       ],
       "language": "en,en-GB,fr"
     }
@@ -166,6 +167,7 @@
     "totvic",
     "typeclub",
     "unconfigured",
+    "unscored",
     "wdth",
     "workerd",
     "Yanis",

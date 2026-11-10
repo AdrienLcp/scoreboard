@@ -82,6 +82,42 @@ describe('the club standing on home', () => {
     expect(standing?.rank).toBeGreaterThan(1)
   })
 
+  it('takes the FFTT’s rank when it answered for the pool, before any hand result', () => {
+    const pool = poolOf(angles1.id, false)
+    const record = recordWith([pool])
+    const ownNumber = '12850078'
+    const row = (team: string, clubNumber: string, rank: number) => ({
+      clubNumber,
+      gamesLost: null,
+      gamesWon: null,
+      played: 4,
+      points: 12 - rank,
+      rank,
+      team,
+      teamId: null
+    })
+    const standing = leadingStandingOf(
+      { ...record, own: { ...record.own, number: ownNumber } },
+      new Map([
+        [
+          pool.id,
+          {
+            reference: { division: '200001', pool: '300001' },
+            rounds: [],
+            standings: [
+              row('LUCON TT 1', '12850097', 1),
+              row('PPC ANGLES 2', ownNumber, 2),
+              row('PPC ANGLES 1', ownNumber, 3)
+            ]
+          }
+        ]
+      ])
+    )
+
+    expect(standing?.team.name).toBe('Angles 1')
+    expect(standing?.rank).toBe(3)
+  })
+
   it('names nobody before the first result', () => {
     expect(
       leadingStandingOf(

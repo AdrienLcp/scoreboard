@@ -3,8 +3,10 @@ import type React from 'react'
 import type { EventSetup } from '@scoreboard/protocol/event-setup'
 import type { EventId } from '@scoreboard/protocol/identifiers'
 
+import { FederationSource } from '@/features/club/federation-source'
 import { PoolTeamMark } from '@/features/club/pool-team-mark'
 import {
+  isEntryInTheDay,
   isPlayedAtHome,
   placeEntries,
   type RoundEntry,
@@ -12,6 +14,7 @@ import {
   withPlayedEntries
 } from '@/features/club/round-entries'
 import { useClub } from '@/features/club/use-club'
+import type { FederationPoolsById } from '@/features/club/use-federation-pools'
 import { nowMs } from '@/infrastructure/clock'
 import { dayAsDate, toLocalDay } from '@/infrastructure/dates'
 import { newEncounterId, newMatchId } from '@/infrastructure/ids'
@@ -23,6 +26,8 @@ import './round-encounters.sass'
 
 type RoundEncountersProps = {
   eventId: EventId
+  /** The FFTT's pools that answered: their calendar gives the round, the hand-kept pools stand in for the others. */
+  federationPools: FederationPoolsById
   onSave: (setup: EventSetup) => void
   setup: EventSetup
 }
@@ -39,6 +44,7 @@ const placeEncounters = (entries: readonly RoundEntry[], setup: EventSetup) =>
  */
 export const RoundEncounters: React.FC<RoundEncountersProps> = ({
   eventId,
+  federationPools,
   onSave,
   setup
 }) => {
@@ -51,7 +57,8 @@ export const RoundEncounters: React.FC<RoundEncountersProps> = ({
 
   const entries = roundEntriesOf(
     state.record,
-    toLocalDay(setup.startsAtMs ?? nowMs())
+    toLocalDay(setup.startsAtMs ?? nowMs()),
+    federationPools
   ).filter(isPlayedAtHome)
 
   if (entries.length === 0) {
@@ -59,16 +66,11 @@ export const RoundEncounters: React.FC<RoundEncountersProps> = ({
   }
 
   const isAdded = (entry: RoundEntry) =>
-    entry.fixture.playedAs?.eventId === eventId &&
-    setup.encounters.some(
-      (encounter) => encounter.id === entry.fixture.playedAs?.encounterId
-    )
+    isEntryInTheDay({ entry, eventId, setup })
   const pending = entries.filter((entry) => !isAdded(entry))
   const preview = placeEncounters(pending, setup)
   const pendingHome = pending.filter((entry) => entry.away !== null)
-  const roundNumbers = [
-    ...new Set(entries.map((entry) => entry.at.roundIndex + 1))
-  ]
+  const roundNumbers = [...new Set(entries.map((entry) => entry.roundNumber))]
   const dates = [...new Set(entries.map((entry) => entry.date))]
   const date = dates.length === 1 ? (dates[0] ?? null) : null
 
@@ -115,9 +117,17 @@ export const RoundEncounters: React.FC<RoundEncountersProps> = ({
           return (
             <li
               data-added={wasAdded || undefined}
-              key={`${entry.poolId}-${entry.at.roundIndex}-${entry.at.fixtureIndex}`}
+              key={`${entry.poolId}-${entry.roundNumber}-${own?.team.id}-${other?.team.id}`}
             >
-              <PoolTeamMark number={entry.fixture.home} team={own?.team} />
+              {entry.ownNumber === null ? (
+                <span
+                  aria-hidden='true'
+                  className='pool-team-mark'
+                  data-empty
+                />
+              ) : (
+                <PoolTeamMark number={entry.ownNumber} team={own?.team} />
+              )}
               <span className='round-encounter-teams'>
                 <span className='round-encounter-own'>{own?.team.name}</span>
                 <span className='round-encounter-other'>
@@ -151,6 +161,9 @@ export const RoundEncounters: React.FC<RoundEncountersProps> = ({
           )
         })}
       </ul>
+      {entries.some((entry) => entry.isFromFederation) ? (
+        <FederationSource />
+      ) : null}
       {pendingHome.length < 2 ? null : (
         <Button onPress={() => add(pendingHome)} variant='primary'>
           <Icon name='plus' />

@@ -21,6 +21,7 @@ import {
   type RoundEntry,
   roundEntriesOf
 } from '@/features/club/round-entries'
+import type { FederationPoolsById } from '@/features/club/use-federation-pools'
 
 /** The club's own hall, until it keeps a plan: tables are added or put away in the event's plan. */
 export const DEFAULT_TABLE_COUNT = 8
@@ -76,6 +77,8 @@ export type ClubRound = {
   /** Shared by every pool's round, otherwise `null`. */
   date: CalendarDate | null
   home: RoundEntry[]
+  /** Whether the FFTT's calendar gave one of its encounters: its source is then named. */
+  isFromFederation: boolean
   /** The round's number when every pool plays the same one, otherwise `null`. */
   number: number | null
   phase: ChampionshipPool['phase'] | null
@@ -90,9 +93,10 @@ const onlyValueOf = <TValue>(values: readonly TValue[]): TValue | null => {
 /** The round dated today, else the next one to come, as the console's teams step offers it; `null` when none is left. */
 export const clubRoundOf = (
   record: ClubRecord,
-  today: CalendarDate
+  today: CalendarDate,
+  federationPools?: FederationPoolsById
 ): ClubRound | null => {
-  const entries = roundEntriesOf(record, today)
+  const entries = roundEntriesOf(record, today, federationPools)
 
   if (entries.length === 0) {
     return null
@@ -102,7 +106,8 @@ export const clubRoundOf = (
     away: entries.filter((entry) => !isPlayedAtHome(entry)),
     date: onlyValueOf(entries.map((entry) => entry.date)),
     home: entries.filter(isPlayedAtHome),
-    number: onlyValueOf(entries.map((entry) => entry.at.roundIndex + 1)),
+    isFromFederation: entries.some((entry) => entry.isFromFederation),
+    number: onlyValueOf(entries.map((entry) => entry.roundNumber)),
     phase: onlyValueOf(entries.map((entry) => entry.phase))
   }
 }
@@ -113,7 +118,7 @@ export const roundEventOf = (
   organisedEventIds: readonly EventId[]
 ): EventId | null =>
   round.home
-    .map((entry) => entry.fixture.playedAs?.eventId)
+    .map((entry) => entry.kept?.fixture.playedAs?.eventId)
     .find(
       (eventId): eventId is EventId =>
         eventId !== undefined && organisedEventIds.includes(eventId)
@@ -125,11 +130,12 @@ export const roundProgressIn = (
   eventId: EventId
 ): { finished: number; total: number } => {
   const prepared = round.home.filter(
-    (entry) => entry.fixture.playedAs?.eventId === eventId
+    (entry) => entry.kept?.fixture.playedAs?.eventId === eventId
   )
 
   return {
-    finished: prepared.filter((entry) => entry.fixture.result !== null).length,
+    finished: prepared.filter((entry) => entry.kept?.fixture.result != null)
+      .length,
     total: prepared.length
   }
 }

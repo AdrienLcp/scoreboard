@@ -18,7 +18,9 @@ import { fakeFederation } from '@/infrastructure/smartping/fake-federation'
 import {
   FAKE_HOME_CLUB,
   FAKE_POOL,
-  FAKE_POOL_REFERENCE
+  FAKE_POOL_REFERENCE,
+  FAKE_SECOND_POOL_REFERENCE,
+  FAKE_UNSCORED_ROUND
 } from '@/infrastructure/smartping/fake-federation-data'
 import { unconfiguredFederation } from '@/infrastructure/smartping/federation-of-settings'
 
@@ -137,6 +139,30 @@ describe('the federation routes', () => {
         )
       ).status
     ).toBe(404)
+  })
+
+  it('[federation] serve our second team’s pool, and our first team’s encounter of a played round not yet scored', async () => {
+    const app = appWith(fakeFederation)
+    const secondPoolResponse = await app.request(
+      `${API_ROUTES.federationPool}?${new URLSearchParams(FAKE_SECOND_POOL_REFERENCE)}`
+    )
+    const secondPool = federationPoolSchema.parse(
+      await secondPoolResponse.json()
+    )
+    const ourFixtures = FAKE_POOL.rounds
+      .find((round) => round.number === FAKE_UNSCORED_ROUND)
+      ?.fixtures.filter(
+        (fixture) =>
+          fixture.homeClubNumber === FAKE_HOME_CLUB.number ||
+          fixture.awayClubNumber === FAKE_HOME_CLUB.number
+      )
+
+    expect(secondPool.standings.map((row) => row.team)).toContain(
+      'PPC ANGLES 2'
+    )
+    expect(secondPool.rounds[0]?.fixtures[0]?.homeScore).not.toBeNull()
+    expect(ourFixtures).toHaveLength(1)
+    expect(ourFixtures?.[0]?.homeScore).toBeNull()
   })
 
   it('[federation] search clubs by name, without accents', async () => {

@@ -211,7 +211,17 @@ another sport can adopt it.
     in one tap with its opponent, who receives, its tables and each team's
     last composition, all the home ones at once; a finished sheet writes its
     result into the standings, again after a correction, until a result is
-    picked by hand.
+    picked by hand;
+  - when the FFTT answers for a pool, home's next round, its rank line and
+    the console's round read the FFTT's calendar live, nothing of it stored:
+    the round played that weekend (the FFTT's date, a day either side), else
+    the next one ahead with an encounter of ours it has not scored, a round
+    played but not scored yet counting as past. Each opponent is the club's
+    team ending in the same number, of the club tied to its FFTT number, else
+    of the club its name points to; otherwise it stands in that day only,
+    under the FFTT's name, and never joins the directory. The sheet's result
+    still goes to the hand-kept pool's fixture of that round. "Source : FFTT"
+    closes each block it fills.
 - Multi-club: each club has its own events and its own identity.
 - Offline-tolerant umpire console: queued points are resent on reconnect, and
   duplicates are ignored by event id.

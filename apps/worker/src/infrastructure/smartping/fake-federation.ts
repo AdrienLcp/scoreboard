@@ -18,7 +18,7 @@ import {
   FAKE_DEPARTMENT,
   FAKE_GAMES_PER_ENCOUNTER,
   FAKE_PLAYERS,
-  FAKE_POOL,
+  FAKE_POOLS,
   FAKE_SHEET_NAMES,
   FAKE_TEAMS
 } from './fake-federation-data'
@@ -169,7 +169,7 @@ const encounterOf = (
 }
 
 const fixtureOf = (reference: FederationEncounterReference) =>
-  FAKE_POOL.rounds
+  FAKE_POOLS.flatMap((pool) => pool.rounds)
     .flatMap((round) => round.fixtures)
     .find((fixture) => fixture.encounter?.encounterId === reference.encounterId)
 
@@ -180,8 +180,8 @@ const samePool = (
 
 /**
  * The federation as the fixtures of `fake-federation-data.ts` tell it: two
- * clubs with their rosters and teams, one pool of eight with its calendar
- * and its first results. Plugged in by `SMARTPING_FAKE=1`, for local work only.
+ * clubs with their rosters and teams, two pools of eight with their calendars
+ * and their first results. Plugged in by `SMARTPING_FAKE=1`, for local work only.
  */
 export const fakeFederation: Federation = {
   clubPlayers: async (club) =>
@@ -198,9 +198,11 @@ export const fakeFederation: Federation = {
     ),
   pool: async (reference) =>
     Result.success(
-      samePool(reference, FAKE_POOL.reference)
-        ? FAKE_POOL
-        : { reference, rounds: [], standings: [] }
+      FAKE_POOLS.find((pool) => samePool(reference, pool.reference)) ?? {
+        reference,
+        rounds: [],
+        standings: []
+      }
     ),
   searchClubs: async (search) =>
     Result.success(FAKE_CLUBS.filter(clubMatches(search))),

@@ -3,10 +3,11 @@ import type { EventSetup } from '@scoreboard/protocol/event-setup'
 import type { EventId } from '@scoreboard/protocol/identifiers'
 
 import {
+  isEntryInTheDay,
   isPlayedAtHome,
-  type RoundEntry,
   roundEntriesOf
 } from '@/features/club/round-entries'
+import type { FederationPoolsById } from '@/features/club/use-federation-pools'
 
 /** One of our teams playing the day's round away: its name and the club it visits. */
 export type AwayEncounter = { at: string; team: string }
@@ -17,6 +18,8 @@ export type DayRound = {
   away: AwayEncounter[]
   /** Whether one of the round's home encounters is not in the day yet. */
   hasHomeToAdd: boolean
+  /** Whether the FFTT's calendar gave one of its encounters: its source is then named. */
+  isFromFederation: boolean
   /** The round's number when every pool plays the same one; `null` otherwise. */
   number: number | null
 }
@@ -25,21 +28,18 @@ export type DayRound = {
 export const dayRoundOf = ({
   day,
   eventId,
+  federationPools,
   record,
   setup
 }: {
   day: string
   eventId: EventId
+  federationPools?: FederationPoolsById
   record: ClubRecord
   setup: EventSetup
 }): DayRound => {
-  const entries = roundEntriesOf(record, day)
-  const numbers = [...new Set(entries.map((entry) => entry.at.roundIndex + 1))]
-  const isInTheDay = ({ fixture }: RoundEntry) =>
-    fixture.playedAs?.eventId === eventId &&
-    setup.encounters.some(
-      (encounter) => encounter.id === fixture.playedAs?.encounterId
-    )
+  const entries = roundEntriesOf(record, day, federationPools)
+  const numbers = [...new Set(entries.map((entry) => entry.roundNumber))]
 
   return {
     away: entries.flatMap((entry) =>
@@ -52,8 +52,11 @@ export const dayRoundOf = ({
     ),
     hasHomeToAdd: entries.some(
       (entry) =>
-        isPlayedAtHome(entry) && entry.away !== null && !isInTheDay(entry)
+        isPlayedAtHome(entry) &&
+        entry.away !== null &&
+        !isEntryInTheDay({ entry, eventId, setup })
     ),
+    isFromFederation: entries.some((entry) => entry.isFromFederation),
     number: numbers.length === 1 ? (numbers[0] ?? null) : null
   }
 }

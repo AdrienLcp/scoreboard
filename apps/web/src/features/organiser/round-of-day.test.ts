@@ -73,6 +73,7 @@ describe('dayRoundOf', () => {
     ).toEqual({
       away: [{ at: 'Westfield', team: 'Angles 3' }],
       hasHomeToAdd: true,
+      isFromFederation: false,
       number: 2
     })
   })

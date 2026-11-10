@@ -20,7 +20,9 @@ import {
   standingTablesOf
 } from '@scoreboard/core/hall/hall-plan'
 
+import { FederationSource } from '@/features/club/federation-source'
 import { useClub } from '@/features/club/use-club'
+import { useCurrentFederationPools } from '@/features/club/use-federation-pools'
 import { encounterLinesFor } from '@/features/event/encounter-lines'
 import { nowMs } from '@/infrastructure/clock'
 import { toLocalDay } from '@/infrastructure/dates'
@@ -111,11 +113,15 @@ export const ChampionshipEncounters: React.FC<ChampionshipEncountersProps> = ({
   const [choosing, setChoosing] = useState<Choosing | null>(null)
   const [preview, setPreview] = useState<TableNumber | null>(null)
   const floorArea = useRef<HTMLDivElement>(null)
+  const federationPools = useCurrentFederationPools(
+    state.status === 'ready' ? state.record : null
+  )
   const round =
     state.status === 'ready'
       ? dayRoundOf({
           day: toLocalDay(setup.startsAtMs ?? nowMs()),
           eventId,
+          federationPools,
           record: state.record,
           setup
         })
@@ -315,10 +321,14 @@ export const ChampionshipEncounters: React.FC<ChampionshipEncountersProps> = ({
             })}
           </p>
         )}
+        {round?.isFromFederation === true && !round.hasHomeToAdd ? (
+          <FederationSource />
+        ) : null}
         <div className='encounters-step-add'>
           {round?.hasHomeToAdd === true ? (
             <RoundEncounters
               eventId={eventId}
+              federationPools={federationPools}
               onSave={saveAdded}
               setup={setup}
             />

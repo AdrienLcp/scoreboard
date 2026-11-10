@@ -158,7 +158,11 @@ export const PoolCard: React.FC<PoolCardProps> = ({
   const federationNext =
     federationPool === null || federationSelf === null
       ? null
-      : nextFederationRoundOf(federationSelf, federationPool)
+      : nextFederationRoundOf({
+          day: toLocalDay(nowMs()),
+          pool: federationPool,
+          self: federationSelf
+        })
   const handRounds = (
     <PoolRounds
       onChange={(next) => onChange(updatePool(record, next))}

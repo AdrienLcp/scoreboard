@@ -6,6 +6,7 @@ import {
   currentPoolsOf,
   poolsLatestFirst
 } from '@/features/club/championship-edits'
+import type { FederationPoolsById } from '@/features/club/use-federation-pools'
 import { paintOf } from '@/features/event/team-paint'
 import { paths } from '@/infrastructure/router/navigation'
 import { Icon } from '@/presentation/components/icon'
@@ -24,16 +25,21 @@ const strong = (children: string): React.ReactNode => (
 
 type ClubSeasonProps = {
   code: ClubCode
+  federationPools: FederationPoolsById
   record: ClubRecord
 }
 
 /** The club's season at a glance, each line opening the club page: its teams, its pools, its directory. */
-export const ClubSeason: React.FC<ClubSeasonProps> = ({ code, record }) => {
+export const ClubSeason: React.FC<ClubSeasonProps> = ({
+  code,
+  federationPools,
+  record
+}) => {
   const translate = useTranslate()
   const teams = record.own.teams
   const pools = currentPoolsOf(record)
   const latestPool = poolsLatestFirst(pools).at(0)
-  const standing = leadingStandingOf(record)
+  const standing = leadingStandingOf(record, federationPools)
   const directoryCount = [record.own, ...record.opponents].reduce(
     (count, club) => count + club.players.length,
     0

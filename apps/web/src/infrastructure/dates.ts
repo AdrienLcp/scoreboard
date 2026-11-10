@@ -61,3 +61,21 @@ export const dayWeeksAfter = (day: string, weeks: number): string =>
 /** A `YYYY-MM-DD` day at midnight on this device, for `Intl` to name it. */
 export const dayAsDate = (day: string): Date =>
   parseDate(day).toDate(getLocalTimeZone())
+
+/** Whether a `YYYY-MM-DD` day falls within some days either side of another. */
+export const isWithinDaysOf = ({
+  day,
+  days,
+  of
+}: {
+  day: string
+  days: number
+  of: string
+}): boolean => {
+  const around = parseDate(of)
+
+  return (
+    day >= around.subtract({ days }).toString() &&
+    day <= around.add({ days }).toString()
+  )
+}

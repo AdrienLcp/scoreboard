@@ -357,7 +357,10 @@ export const addTypedPlayer = ({
 }
 
 /** "Riverside 4" belongs to the club named "Riverside", or to "TT Riverside" whose teams are named "Riverside 1", "Riverside 2". */
-const isClubOfTeamName = (club: DirectoryClub, clubName: string): boolean =>
+export const isClubOfTeamName = (
+  club: DirectoryClub,
+  clubName: string
+): boolean =>
   isSameName(club.name, clubName) ||
   club.teams.some((team) => isSameName(clubNameOfTeam(team.name), clubName))
 

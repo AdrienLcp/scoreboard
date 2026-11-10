@@ -1,7 +1,8 @@
 import type {
   ChampionshipPool,
   ChampionshipPoolId,
-  Fixture
+  Fixture,
+  PoolNumber
 } from '@scoreboard/protocol/championship'
 import type { ClubRecord } from '@scoreboard/protocol/club-record'
 import type { EventSetup } from '@scoreboard/protocol/event-setup'
@@ -30,17 +31,27 @@ import {
   playedFixture
 } from './championship-edits'
 import { clubSideOf, isOwnTeam } from './club-teams'
+import { federationEntriesOf } from './federation-round-entries'
+import type { FederationPoolsById } from './use-federation-pools'
 
-/** One of our encounters on a match day's round, as the calendar gives it. */
+/** The hand-kept pool's fixture an entry is: its sheet's result is written there. */
+export type KeptFixture = { at: FixtureAt; fixture: Fixture }
+
+/** One of our encounters on a match day's round, as the FFTT's calendar or the hand-kept pool gives it. */
 export type RoundEntry = {
-  at: FixtureAt
   away: ClubSide | null
   date: string | null
-  fixture: Fixture
   home: ClubSide | null
+  /** Read live from the FFTT's calendar, never stored; otherwise from the hand-kept pool. */
+  isFromFederation: boolean
+  /** `null` when the hand-kept pool's round lacks it: the day plays it, no result goes back. */
+  kept: KeptFixture | null
+  /** Our team's number in the hand-kept pool, as its calendar names it. */
+  ownNumber: PoolNumber | null
   ownSide: Side
   phase: ChampionshipPool['phase']
   poolId: ChampionshipPoolId
+  roundNumber: number
 }
 
 /**
@@ -51,45 +62,86 @@ export type RoundEntry = {
 export const isPlayedAtHome = (entry: RoundEntry): boolean =>
   entry.ownSide === 'home'
 
-/** Our encounters of the round each current pool prepares on that day, pool after pool. */
-export const roundEntriesOf = (
+/** Our encounters of the round a hand-kept pool prepares on that day. */
+const keptEntriesOf = (
   record: ClubRecord,
+  pool: ChampionshipPool,
   day: string
 ): RoundEntry[] => {
   const ownTeamIds = record.own.teams.map((team) => team.id)
+  const roundIndex = roundIndexForDay({ day, ownTeamIds, pool })
+  const round = roundIndex === null ? undefined : pool.rounds[roundIndex]
 
-  return currentPoolsOf(record).flatMap((pool) => {
-    const roundIndex = roundIndexForDay({ day, ownTeamIds, pool })
-    const round = roundIndex === null ? undefined : pool.rounds[roundIndex]
+  if (roundIndex === null || round === undefined) {
+    return []
+  }
 
-    if (roundIndex === null || round === undefined) {
-      return []
-    }
+  return round.fixtures.flatMap((fixture, fixtureIndex): RoundEntry[] => {
+    const teams = fixtureTeamsOf(pool, fixture)
+    const ownSide: Side | null = isOwnTeam(record, teams.home)
+      ? 'home'
+      : isOwnTeam(record, teams.away)
+        ? 'away'
+        : null
 
-    return round.fixtures.flatMap((fixture, fixtureIndex): RoundEntry[] => {
-      const teams = fixtureTeamsOf(pool, fixture)
-      const ownSide: Side | null = isOwnTeam(record, teams.home)
-        ? 'home'
-        : isOwnTeam(record, teams.away)
-          ? 'away'
-          : null
-
-      return ownSide === null
-        ? []
-        : [
-            {
-              at: { fixtureIndex, roundIndex },
-              away: clubSideOf(record, teams.away),
-              date: round.date,
-              fixture,
-              home: clubSideOf(record, teams.home),
-              ownSide,
-              phase: pool.phase,
-              poolId: pool.id
-            }
-          ]
-    })
+    return ownSide === null
+      ? []
+      : [
+          {
+            away: clubSideOf(record, teams.away),
+            date: round.date,
+            home: clubSideOf(record, teams.home),
+            isFromFederation: false,
+            kept: { at: { fixtureIndex, roundIndex }, fixture },
+            ownNumber: ownSide === 'home' ? fixture.home : fixture.away,
+            ownSide,
+            phase: pool.phase,
+            poolId: pool.id,
+            roundNumber: roundIndex + 1
+          }
+        ]
   })
+}
+
+const NO_FEDERATION_POOLS: FederationPoolsById = new Map()
+
+/**
+ * Our encounters of the round each current pool prepares on that day, pool
+ * after pool: from the FFTT's calendar for a pool it answered for, from the
+ * hand-kept pool otherwise (FFTT off, down or offline, club not tied, no
+ * team of ours there).
+ */
+export const roundEntriesOf = (
+  record: ClubRecord,
+  day: string,
+  federationPools: FederationPoolsById = NO_FEDERATION_POOLS
+): RoundEntry[] =>
+  currentPoolsOf(record).flatMap((pool) => {
+    const federationPool = federationPools.get(pool.id)
+
+    return federationPool === undefined
+      ? keptEntriesOf(record, pool, day)
+      : federationEntriesOf({ day, federationPool, pool, record })
+  })
+
+/** Whether the day already holds an entry: the encounter its fixture is followed by, or one between the same two teams. */
+export const isEntryInTheDay = ({
+  entry,
+  eventId,
+  setup
+}: {
+  entry: RoundEntry
+  eventId: EventId
+  setup: EventSetup
+}): boolean => {
+  const playedAs = entry.kept?.fixture.playedAs
+
+  return setup.encounters.some((encounter) =>
+    playedAs?.eventId === eventId
+      ? encounter.id === playedAs.encounterId
+      : encounter.home === entry.home?.team.id &&
+        encounter.away === entry.away?.team.id
+  )
 }
 
 /** A round entry brought into the day as its own encounter, on these tables. */
@@ -154,7 +206,7 @@ export const placeEntries = ({
     { placed: [], setup }
   )
 
-/** Each placed entry's fixture now followed by its encounter in that event: its sheet will write the result. */
+/** Each placed entry's hand-kept fixture now followed by its encounter in that event: its sheet will write the result. */
 export const withPlayedEntries = ({
   eventId,
   placed,
@@ -166,11 +218,13 @@ export const withPlayedEntries = ({
 }): ClubRecord =>
   placed.reduce(
     (current, { encounterId, entry }) =>
-      playedFixture({
-        at: entry.at,
-        playedAs: { encounterId, eventId },
-        poolId: entry.poolId,
-        record: current
-      }),
+      entry.kept === null
+        ? current
+        : playedFixture({
+            at: entry.kept.at,
+            playedAs: { encounterId, eventId },
+            poolId: entry.poolId,
+            record: current
+          }),
     record
   )

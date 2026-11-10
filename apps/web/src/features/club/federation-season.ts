@@ -12,6 +12,8 @@ import type { Side } from '@scoreboard/protocol/side'
 
 import { fixtureTeamsOf } from '@scoreboard/core/championship/championship-calendar'
 
+import { isWithinDaysOf } from '@/infrastructure/dates'
+
 import { isOwnTeam } from './club-teams'
 
 /** "Angles 2", "PPC ANGLES 2", "PPC ANGLES (2)": the number a club gives its team, at the end of its name. */
@@ -154,13 +156,34 @@ export const sheetScoreOf = ({
   return null
 }
 
-/** The first round of ours the FFTT holds no score for: the one to prepare. */
-export const nextFederationRoundOf = (
-  self: FederationSelf,
+/** A round's encounters are played over its weekend: the day before or after the FFTT's date is still its day. */
+export const ROUND_WEEKEND_DAYS = 1
+
+/** Whether a round is still to come on that day, its weekend included. */
+export const isRoundAhead = (
+  date: FederationRound['date'],
+  day: string
+): boolean =>
+  date === null ||
+  date >= day ||
+  isWithinDaysOf({ day, days: ROUND_WEEKEND_DAYS, of: date })
+
+/** The first round of ours still ahead that the FFTT holds no score for: the one to prepare. One played but not scored yet is past. */
+export const nextFederationRoundOf = ({
+  day,
+  pool,
+  self
+}: {
+  day: string
   pool: FederationPool
-): FederationRound | null =>
+  self: FederationSelf
+}): FederationRound | null =>
   pool.rounds.find((round) => {
     const own = selfFixtureOf(self, round)
 
-    return own !== null && federationScoreOf(own.fixture, own.side) === null
+    return (
+      own !== null &&
+      isRoundAhead(round.date, day) &&
+      federationScoreOf(own.fixture, own.side) === null
+    )
   }) ?? null
