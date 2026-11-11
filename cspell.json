@@ -26,7 +26,8 @@
         "**/scripts/smartping-init.ts",
         "**/protocol/src/federation.ts",
         "**/.dev.vars.example",
-        "**/features/club/federation-*.test.ts"
+        "**/features/club/federation-*.test.ts",
+        "**/features/demo/demo-day.ts"
       ],
       "language": "en,en-GB,fr"
     }

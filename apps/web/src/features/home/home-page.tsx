@@ -62,12 +62,28 @@ const HomeBar: React.FC<{
             <span className='home-club-name'>{club.name}</span>
           </span>
         )}
-        {hasScreenLink ? (
-          <ButtonLink href={paths.wall} variant='quiet'>
-            <Icon name='display' />
-            {translate('home.display')}
+        <div className='home-bar-actions'>
+          <ButtonLink
+            aria-label={translate('home.guide')}
+            href={paths.guide}
+            variant='quiet'
+          >
+            <Icon name='guide' />
+            <span className='home-bar-label'>{translate('home.guide')}</span>
           </ButtonLink>
-        ) : null}
+          {hasScreenLink ? (
+            <ButtonLink
+              aria-label={translate('home.display')}
+              href={paths.wall}
+              variant='quiet'
+            >
+              <Icon name='display' />
+              <span className='home-bar-label'>
+                {translate('home.display')}
+              </span>
+            </ButtonLink>
+          ) : null}
+        </div>
       </div>
     </header>
   )

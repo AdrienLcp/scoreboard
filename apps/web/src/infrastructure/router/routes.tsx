@@ -12,11 +12,17 @@ const pageFor = {
   [paths.club]: async () => ({
     Component: (await import('@/features/club/club-page')).ClubPage
   }),
+  [paths.demo]: async () => ({
+    Component: (await import('@/features/demo/demo-page')).DemoPage
+  }),
   [paths.display]: async () => ({
     Component: (await import('@/features/display/display-page')).DisplayPage
   }),
   [paths.displayOf]: async () => ({
     Component: (await import('@/features/display/display-page')).DisplayPage
+  }),
+  [paths.guide]: async () => ({
+    Component: (await import('@/features/guide/guide-page')).GuidePage
   }),
   [paths.home]: async () => ({
     Component: (await import('@/features/home/home-page')).HomePage

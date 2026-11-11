@@ -224,6 +224,13 @@ export const FR_DICTIONARY = defineDictionary({
     open: 'En direct',
     refused: 'Déconnecté'
   },
+  demo: {
+    create: 'Créer mon club',
+    event: 'Démo · championnat par équipes, 4ᵉ journée',
+    title: 'Démo',
+    turn: 'Tournez le téléphone pour voir la télé en grand.',
+    what: 'Démo : une salle fictive, les scores tournent tout seuls'
+  },
   display: {
     around: defineTranslation('≈ {at:date}', {
       date: { at: { timeStyle: 'short' } }
@@ -332,6 +339,38 @@ export const FR_DICTIONARY = defineDictionary({
     },
     wrong_code: 'Ce code ne correspond à aucune table.'
   },
+  guide: {
+    back: 'Accueil',
+    create: 'Créer mon club',
+    demo: 'Voir la démo',
+    lead: 'Les arbitres comptent les points sur leur téléphone, et la télé de la salle affiche tous les scores en direct. Personne ne tape de code : les QR codes s’en chargent.',
+    print: 'Imprimer',
+    steps: {
+      club: {
+        aside:
+          'Sur un deuxième appareil : <b>Mon club</b>, puis « Ouvrir sur un autre appareil », et scannez le QR code qu’il affiche.',
+        body: 'Sur votre téléphone, tapez le nom du club sur l’accueil, puis <b>Continuer</b>. Dans <b>Mon club</b>, reliez-le à son numéro FFTT : les poules et les licenciés arrivent tout seuls.',
+        title: 'Votre club, une fois pour toutes'
+      },
+      day: {
+        aside:
+          'Un amical, un tournoi interne, un Top 12 : <b>Nouvel événement</b>. Tout se change pendant les matchs.',
+        body: 'L’accueil montre la journée de championnat. <b>Préparer la journée</b> pose chaque rencontre à domicile sur ses deux tables, avec la dernière composition de chaque équipe.',
+        title: 'Le jour du match'
+      },
+      room: {
+        aside:
+          'Rien à installer, aucun compte. Un point de trop s’annule d’un toucher.',
+        body: 'Imprimez les QR codes des tables (étape <b>Salle</b>) et posez-en un sur chaque table. L’arbitre scanne celui de sa table et compte les points ; le public scanne celui de la télé pour suivre les matchs.',
+        title: 'Les arbitres et le public'
+      },
+      screen: {
+        body: 'Sur l’ordinateur branché à la télé, ouvrez {site} et choisissez <b>Afficher l’écran de la salle</b>. Sur votre téléphone, dans la journée, touchez <b>Grand écran</b> et scannez le QR code de la télé.',
+        title: 'La télé de la salle'
+      }
+    },
+    title: 'Comment ça marche'
+  },
   home: {
     create: 'Créer',
     display: 'Grand écran',
@@ -363,6 +402,7 @@ export const FR_DICTIONARY = defineDictionary({
         'Une rencontre amicale, un tournoi interne, un Top 12 : donnez-lui un nom, le reste est déjà prêt.',
       title: 'Votre prochain événement'
     },
+    guide: 'Comment ça marche',
     headline: 'Les scores de votre club, en direct sur grand écran',
     join: {
       code: 'Code de la rencontre',
@@ -439,7 +479,12 @@ export const FR_DICTIONARY = defineDictionary({
       title: 'La saison du club'
     },
     shareImageAlt:
-      'Le logo Scoreboard à côté de son nom, en blanc sur fond nuit.'
+      'Le logo Scoreboard à côté de son nom, en blanc sur fond nuit.',
+    showcase: {
+      live: 'Démo en direct, salle fictive',
+      open: 'Voir en grand',
+      title: 'La télé d’une salle fictive, en direct'
+    }
   },
   legal: {
     device: {

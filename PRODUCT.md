@@ -67,13 +67,19 @@ another sport can adopt it.
   pools, directory) leading to the club page, with the club code. With no
   round to come, the new event is the main action. On a device with no club
   (a first visit, almost always the organiser's: umpires and spectators come
-  by a QR code), home says what the app does in one sentence and asks one
-  thing first, "Pour commencer, le nom de votre club", the club's code folded
+  by a QR code, or a portfolio visitor), home shows the hall's TV first: the
+  real wall over a fictional club's team day that plays itself in the
+  browser, live and shrunk, a tap opening it full size at `/demo` (nothing
+  reaches the server, the club and players are invented and the wall says
+  "Démo"). Under it, what the app does in one sentence and one thing to do
+  first, "Pour commencer, le nom de votre club", the club's code folded
   under it; every other way is named by the situation it serves: "Vous
   arbitrez ou vous regardez les matchs" (scan the table's or the TV's QR
   code, the event's code folded away, on every home) and "Cet ordinateur est
   branché sur la télé de la salle" (to `/wall`), with no event list until
-  this device organises one.
+  this device organises one. Every home's header links "Comment ça marche"
+  (`/guide`): the organiser's four steps (the club, the match day, the hall's
+  TV, the umpires and the room), to send as a link or print.
 - Both formats exist: individual tournaments and team fixtures (FFTT-style
   team encounters with singles and doubles).
 

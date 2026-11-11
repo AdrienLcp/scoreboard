@@ -1,3 +1,4 @@
+@use '@adrienlcp/styles/accessibility'
 @use '../../presentation/styles/layout'
 @use '../../presentation/styles/motion'
 @use '../../presentation/styles/typography'
@@ -36,6 +37,16 @@
     justify-content: space-between
     min-height: 4.5rem
     padding-block: var(--space-xs)
+
+  .home-bar-actions
+    display: flex
+    flex: none
+    gap: var(--space-4xs)
+
+  /// With the club's name in the bar, a phone keeps the links' icons only.
+  .home-bar[data-club] .home-bar-label
+    @include layout.container-narrow(43.75rem)
+      @include accessibility.visually-hidden
 
   .home-club
     align-items: center
@@ -166,10 +177,15 @@
       &[data-white]
         box-shadow: var(--inset-hairline)
 
+  /// A field and its button side by side, stacked full width on a phone.
   .home-inline-field
     align-items: end
     display: flex
     gap: var(--space-xs)
+
+    @include layout.container-narrow(36rem)
+      align-items: stretch
+      flex-direction: column
 
     .field, > .field-input
       flex: 1
@@ -235,6 +251,9 @@
     display: grid
     gap: var(--space-2xl)
     max-width: 40rem
+
+  .home-summary.first-run-summary
+    margin-top: calc(var(--space-s) - var(--space-2xl))
 
   .first-run-form
     display: grid

@@ -1,8 +1,10 @@
 /** Every page the web app routes: the client renders them, the worker answers 404 for any other address. */
 export const PAGE_ROUTES = {
   club: '/club',
+  demo: '/demo',
   display: '/e/:eventId/display',
   displayOf: '/e/:eventId/display/:displayId',
+  guide: '/guide',
   home: '/',
   legal: '/legal',
   organiser: '/e/:eventId/organiser',

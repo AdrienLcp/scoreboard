@@ -3,6 +3,7 @@ import { useState } from 'react'
 
 import { type ClubCode, clubCodeSchema } from '@scoreboard/protocol/club-record'
 
+import { DemoShowcase } from '@/features/demo/demo-showcase'
 import { Button } from '@/presentation/components/button'
 import {
   Disclosure,
@@ -19,9 +20,9 @@ type FirstRunProps = {
 }
 
 /**
- * No club on this device yet: what the app does in one sentence, then the
- * club's name as the one thing to do first; a club opened elsewhere comes by
- * its code.
+ * No club on this device yet: the hall's TV on a fictional day, live, then
+ * what the app does in one sentence and the club's name as the one thing to
+ * do first; a club opened elsewhere comes by its code.
  */
 export const FirstRun: React.FC<FirstRunProps> = ({ onCreate, onJoin }) => {
   const translate = useTranslate()
@@ -36,12 +37,11 @@ export const FirstRun: React.FC<FirstRunProps> = ({ onCreate, onJoin }) => {
 
   return (
     <section aria-labelledby='first-run-title' className='first-run'>
-      <div>
-        <h1 className='home-hero' id='first-run-title'>
-          {translate('home.headline')}
-        </h1>
-        <p className='home-summary'>{translate('home.lead')}</p>
-      </div>
+      <h1 className='home-hero' id='first-run-title'>
+        {translate('home.headline')}
+      </h1>
+      <DemoShowcase />
+      <p className='home-summary first-run-summary'>{translate('home.lead')}</p>
       <Form
         className='first-run-form'
         onSubmit={async (event) => {
