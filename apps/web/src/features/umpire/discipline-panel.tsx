@@ -10,9 +10,9 @@ import type { Side } from '@scoreboard/protocol/side'
 import { runningTimeoutOf } from '@scoreboard/core/discipline/timeout-clock'
 import { opponentOf } from '@scoreboard/core/match/opponent'
 
+import { useUmpireTranslate } from '@/features/umpire/use-umpire-translate'
 import { Button } from '@/presentation/components/button'
 import { Icon } from '@/presentation/components/icon'
-import { useTranslate } from '@/presentation/i18n/i18n-context'
 
 import './discipline-panel.sass'
 
@@ -57,7 +57,7 @@ export const DisciplinePanel: React.FC<DisciplinePanelProps> = ({
   playersOf,
   state
 }) => {
-  const translate = useTranslate()
+  const translate = useUmpireTranslate()
   const [cardSide, setCardSide] = useState<Side | null>(null)
   const running = runningTimeoutOf({ lastTimeout, nowMs })
   const isPlaying = state.status === 'live'
@@ -159,7 +159,7 @@ const CardConfirmation: React.FC<{
   players: readonly { id: PlayerId; name: string }[]
   side: Side
 }> = ({ nameOf, onCancel, onConfirm, penaltyFor, players, side }) => {
-  const translate = useTranslate()
+  const translate = useUmpireTranslate()
   const choices =
     players.length === 0
       ? [{ id: null, name: nameOf(side) }]

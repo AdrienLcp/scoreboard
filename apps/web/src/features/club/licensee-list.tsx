@@ -6,6 +6,7 @@ import type {
   DirectoryClub
 } from '@scoreboard/protocol/club-record'
 
+import { useClubTranslate } from '@/features/club/use-club-translate'
 import { ConfirmButton } from '@/features/organiser/confirm-button'
 import { newPlayerId } from '@/infrastructure/ids'
 import { Button } from '@/presentation/components/button'
@@ -13,7 +14,6 @@ import { Form } from '@/presentation/components/form'
 import { Icon } from '@/presentation/components/icon'
 import { NumberField } from '@/presentation/components/number-field'
 import { Input, Label, TextField } from '@/presentation/components/text-field'
-import { useTranslate } from '@/presentation/i18n/i18n-context'
 
 import { addLicensee, removeLicensee } from './club-edits'
 
@@ -29,7 +29,7 @@ export const LicenseeList: React.FC<LicenseeListProps> = ({
   onChange,
   record
 }) => {
-  const translate = useTranslate()
+  const translate = useClubTranslate()
   const [firstName, setFirstName] = useState('')
   const [lastName, setLastName] = useState('')
   const [points, setPoints] = useState<number>(Number.NaN)

@@ -1,6 +1,6 @@
 import type { InstantMs } from '@scoreboard/protocol/scoring-event'
 
-import { toDate } from '@/infrastructure/dates'
+import { toDate } from '@/infrastructure/clock'
 import type { Translate } from '@/presentation/i18n/translation'
 
 /** Under this, an estimate is the present: "≈ 23:08" at 23:08 tells the room nothing. */

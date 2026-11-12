@@ -14,7 +14,6 @@ import { BrandMark } from '@/presentation/components/brand-mark'
 import { Link, TextLink } from '@/presentation/components/link'
 import { Main } from '@/presentation/components/main'
 import { DocumentTitle } from '@/presentation/head/document-title'
-import { useTranslate } from '@/presentation/i18n/i18n-context'
 import { RichText } from '@/presentation/i18n/rich-text'
 
 import {
@@ -25,6 +24,7 @@ import {
   REQUEST_LOG_RETENTION_DAYS
 } from './legal-details'
 import { MeasurementSwitch } from './measurement-switch'
+import { useLegalTranslate } from './use-legal-translate'
 
 import './legal-page.sass'
 
@@ -74,7 +74,7 @@ const StoredKey: React.FC<StoredKeyProps> = ({ prefix, variablePart }) => (
  * long, how an event is erased, and how to refuse the audience measurement.
  */
 export const LegalPage: React.FC = () => {
-  const translate = useTranslate()
+  const translate = useLegalTranslate()
 
   return (
     <Main className='legal-page'>

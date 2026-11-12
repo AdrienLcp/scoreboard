@@ -15,13 +15,13 @@ import type { ScoringEvent } from '@scoreboard/protocol/scoring-event'
 
 import { hallPlanOf, standingTablesOf } from '@scoreboard/core/hall/hall-plan'
 
+import { useClubTranslate } from '@/features/club/use-club-translate'
 import { currentMatchOn } from '@/features/event/table-match'
 import { displayPathFor } from '@/infrastructure/router/navigation'
 import { Button } from '@/presentation/components/button'
 import { Icon } from '@/presentation/components/icon'
 import { ButtonLink } from '@/presentation/components/link'
 import { TableTop } from '@/presentation/components/table-top'
-import { useTranslate } from '@/presentation/i18n/i18n-context'
 
 import { LiveFloor } from './live-floor'
 import { LiveRows } from './live-rows'
@@ -46,7 +46,7 @@ const NothingStarted: React.FC<{
   eventId: EventId
   eventName: string
 }> = ({ accesses, eventId, eventName }) => {
-  const translate = useTranslate()
+  const translate = useClubTranslate()
 
   return (
     <section aria-labelledby='live-empty-title' className='live-empty'>
@@ -92,7 +92,7 @@ export const LiveStep: React.FC<LiveStepProps> = ({
   onSave,
   setup
 }) => {
-  const translate = useTranslate()
+  const translate = useClubTranslate()
   const [selected, setSelected] = useState<TableNumber | null>(null)
   const sheet = useRef<HTMLElement>(null)
   const standing = standingTablesOf(hallPlanOf(setup)).map(

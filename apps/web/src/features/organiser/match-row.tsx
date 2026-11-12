@@ -5,16 +5,16 @@ import type { MatchView } from '@scoreboard/protocol/event-snapshot'
 import type { MatchId } from '@scoreboard/protocol/identifiers'
 import type { ScoringEvent } from '@scoreboard/protocol/scoring-event'
 
+import { useClubTranslate } from '@/features/club/use-club-translate'
 import { sideName } from '@/features/event/participant-names'
 import { scoreText, versusText } from '@/features/event/score-text'
-import { toDate } from '@/infrastructure/dates'
+import { toDate } from '@/infrastructure/clock'
 import { PlainButton } from '@/presentation/components/button'
 import {
   Disclosure,
   DisclosurePanel
 } from '@/presentation/components/disclosure'
 import { Icon } from '@/presentation/components/icon'
-import { useTranslate } from '@/presentation/i18n/i18n-context'
 
 import { ScoreCorrection } from './score-correction'
 
@@ -36,7 +36,7 @@ export const MatchRow: React.FC<MatchRowProps> = ({
   players,
   removal
 }) => {
-  const translate = useTranslate()
+  const translate = useClubTranslate()
   const { state, timing } = match
   const fullName = (participant: MatchView['home']): string =>
     sideName({ form: 'full', participant, players }) ??

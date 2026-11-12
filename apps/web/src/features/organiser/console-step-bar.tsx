@@ -4,13 +4,13 @@ import type { EventSetup } from '@scoreboard/protocol/event-setup'
 import type { PublicSnapshot } from '@scoreboard/protocol/event-snapshot'
 import type { EventId } from '@scoreboard/protocol/identifiers'
 
+import { useClubTranslate } from '@/features/club/use-club-translate'
 import {
   type ConsoleStep,
   organiserStepPathFor
 } from '@/infrastructure/router/navigation'
 import { Icon, type IconName } from '@/presentation/components/icon'
 import { Link } from '@/presentation/components/link'
-import { useTranslate } from '@/presentation/i18n/i18n-context'
 
 import { type StepStatus, stepStatusOf } from './console-steps'
 import type { EventFormat } from './event-format'
@@ -26,7 +26,7 @@ const DAY_STEPS: readonly { icon: IconName; step: DayStep }[] = [
 ]
 
 const useStatusText = () => {
-  const translate = useTranslate()
+  const translate = useClubTranslate()
 
   return (status: StepStatus): string => {
     switch (status.kind) {
@@ -95,7 +95,7 @@ export const ConsoleStepBar: React.FC<ConsoleStepBarProps> = ({
   eventId,
   setup
 }) => {
-  const translate = useTranslate()
+  const translate = useClubTranslate()
   const statusText = useStatusText()
 
   return (

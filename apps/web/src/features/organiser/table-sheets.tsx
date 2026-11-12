@@ -3,10 +3,10 @@ import { createPortal } from 'react-dom'
 
 import type { TableAccess } from '@scoreboard/protocol/event-snapshot'
 
+import { useClubTranslate } from '@/features/club/use-club-translate'
 import { DrawnTable } from '@/presentation/components/drawn-table'
 import { LinkText } from '@/presentation/components/link-text'
 import { QrCode } from '@/presentation/components/qr-code'
-import { useTranslate } from '@/presentation/i18n/i18n-context'
 
 import './table-sheets.sass'
 
@@ -28,7 +28,7 @@ export const TableSheets: React.FC<TableSheetsProps> = ({
   eventName,
   urlOf
 }) => {
-  const translate = useTranslate()
+  const translate = useClubTranslate()
 
   return createPortal(
     <div className='table-sheets'>

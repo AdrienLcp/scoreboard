@@ -12,6 +12,7 @@ import type {
 } from '@scoreboard/protocol/identifiers'
 import type { ScoringEvent } from '@scoreboard/protocol/scoring-event'
 
+import { useClubTranslate } from '@/features/club/use-club-translate'
 import {
   clubPathFrom,
   organiserPathFor,
@@ -20,7 +21,6 @@ import {
 import { Icon } from '@/presentation/components/icon'
 import { ButtonLink } from '@/presentation/components/link'
 import { Tab, TabList, TabPanel, Tabs } from '@/presentation/components/tabs'
-import { useTranslate } from '@/presentation/i18n/i18n-context'
 
 import { EventDeletion } from './event-deletion'
 import { EventSettingsForm } from './event-settings-form'
@@ -54,7 +54,7 @@ export const SettingsStep: React.FC<SettingsStepProps> = ({
   onSave,
   setup
 }) => {
-  const translate = useTranslate()
+  const translate = useClubTranslate()
 
   return (
     <section aria-labelledby='settings-title' className='settings-step'>

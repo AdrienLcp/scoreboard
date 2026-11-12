@@ -10,6 +10,7 @@ import { FederationSource } from '@/features/club/federation-source'
 import type { RoundEntry } from '@/features/club/round-entries'
 import { withPlayedEntries } from '@/features/club/round-entries'
 import { useClub } from '@/features/club/use-club'
+import { useClubTranslate } from '@/features/club/use-club-translate'
 import { paintOf } from '@/features/event/team-paint'
 import { dayAsDate } from '@/infrastructure/dates'
 import { newEncounterId, newMatchId } from '@/infrastructure/ids'
@@ -17,7 +18,6 @@ import { organiserPathFor } from '@/infrastructure/router/navigation'
 import { Button } from '@/presentation/components/button'
 import { Icon } from '@/presentation/components/icon'
 import { ButtonLink } from '@/presentation/components/link'
-import { useTranslate } from '@/presentation/i18n/i18n-context'
 import type { Translate } from '@/presentation/i18n/translation'
 import { apiErrorKey } from '@/presentation/i18n/translation'
 
@@ -99,7 +99,7 @@ export const ClubRoundSection: React.FC<ClubRoundProps> = ({
   record,
   round
 }) => {
-  const translate = useTranslate()
+  const translate = useClubTranslate()
   const { edit } = useClub()
   const { create, state } = useCreateEvent()
   const planName = useDefaultPlanName(record)

@@ -4,6 +4,7 @@ import { useState } from 'react'
 import type { EventSetup } from '@scoreboard/protocol/event-setup'
 import { MAX_TABLES } from '@scoreboard/protocol/identifiers'
 
+import { useClubTranslate } from '@/features/club/use-club-translate'
 import { toLocalDateTime } from '@/infrastructure/dates'
 import { Button } from '@/presentation/components/button'
 import { Form } from '@/presentation/components/form'
@@ -14,7 +15,6 @@ import {
   Label,
   TextField
 } from '@/presentation/components/text-field'
-import { useTranslate } from '@/presentation/i18n/i18n-context'
 
 import { changeTableCount } from './setup-edits'
 import { readTypedInstant } from './typed-instant'
@@ -29,7 +29,7 @@ export const EventSettingsForm: React.FC<EventSettingsFormProps> = ({
   onSave,
   setup
 }) => {
-  const translate = useTranslate()
+  const translate = useClubTranslate()
   const [name, setName] = useState(setup.name)
   const [clubName, setClubName] = useState(setup.club?.name ?? '')
   const [tableCount, setTableCount] = useState(setup.tableCount)

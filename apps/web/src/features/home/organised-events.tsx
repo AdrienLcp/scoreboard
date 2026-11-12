@@ -3,12 +3,12 @@ import { useState } from 'react'
 
 import type { ClubRecord } from '@scoreboard/protocol/club-record'
 
+import { useClubTranslate } from '@/features/club/use-club-translate'
 import { organiserPathFor } from '@/infrastructure/router/navigation'
 import type { OrganisedEvent } from '@/infrastructure/storage/organised-events-storage'
 import { Button } from '@/presentation/components/button'
 import { Icon } from '@/presentation/components/icon'
 import { Link } from '@/presentation/components/link'
-import { useTranslate } from '@/presentation/i18n/i18n-context'
 
 import { NewEventForm } from './new-event-form'
 
@@ -27,7 +27,7 @@ export const OrganisedEvents: React.FC<OrganisedEventsProps> = ({
   events,
   record
 }) => {
-  const translate = useTranslate()
+  const translate = useClubTranslate()
   const [isCreating, setIsCreating] = useState(false)
 
   if (events.length === 0 && !canCreate) {

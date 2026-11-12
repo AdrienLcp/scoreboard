@@ -17,6 +17,7 @@ import {
 import { textColourOn } from '@scoreboard/core/club/team-colours'
 import { encounterFormatFor } from '@scoreboard/core/encounter/encounter-formats'
 
+import { useClubTranslate } from '@/features/club/use-club-translate'
 import { ChoiceField } from '@/features/organiser/choice-field'
 import { ConfirmButton } from '@/features/organiser/confirm-button'
 import { Button } from '@/presentation/components/button'
@@ -26,7 +27,6 @@ import {
 } from '@/presentation/components/disclosure'
 import { Icon } from '@/presentation/components/icon'
 import { Input, Label, TextField } from '@/presentation/components/text-field'
-import { useTranslate } from '@/presentation/i18n/i18n-context'
 import { encounterFormatKey } from '@/presentation/i18n/translation'
 
 import { removeTeam, seatPlayer, updateTeam } from './club-edits'
@@ -60,7 +60,7 @@ export const TeamEditor: React.FC<TeamEditorProps> = ({
   record,
   team
 }) => {
-  const translate = useTranslate()
+  const translate = useClubTranslate()
   const format = encounterFormatFor(team.formatId)
   const save = (next: DirectoryTeam) =>
     onChange(updateTeam({ clubId: club.id, record, team: next }))

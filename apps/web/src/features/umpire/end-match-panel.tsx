@@ -7,13 +7,13 @@ import { type Side, sides } from '@scoreboard/protocol/side'
 
 import { opponentOf } from '@scoreboard/core/match/opponent'
 
+import { useUmpireTranslate } from '@/features/umpire/use-umpire-translate'
 import { Button } from '@/presentation/components/button'
 import { Icon } from '@/presentation/components/icon'
 import {
   ToggleButton,
   ToggleButtonGroup
 } from '@/presentation/components/toggle-button-group'
-import { useTranslate } from '@/presentation/i18n/i18n-context'
 
 import './end-match-panel.sass'
 
@@ -40,7 +40,7 @@ export const EndMatchPanel: React.FC<EndMatchPanelProps> = ({
   nameOf,
   onConcede
 }) => {
-  const translate = useTranslate()
+  const translate = useUmpireTranslate()
   const [isOpen, setIsOpen] = useState(false)
   const [by, setBy] = useState<Side | null>(null)
   const [reason, setReason] = useState<ConcessionReason>('retirement')

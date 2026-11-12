@@ -4,10 +4,10 @@ import { useState } from 'react'
 import type { DirectoryClub } from '@scoreboard/protocol/club-record'
 import type { FederationClubNumber } from '@scoreboard/protocol/federation'
 
+import { useClubTranslate } from '@/features/club/use-club-translate'
 import { Button } from '@/presentation/components/button'
 import { Icon } from '@/presentation/components/icon'
 import { Input, Label, TextField } from '@/presentation/components/text-field'
-import { useTranslate } from '@/presentation/i18n/i18n-context'
 
 import {
   CLUB_SEARCH_MIN_LENGTH,
@@ -48,7 +48,7 @@ export const FederationLink: React.FC<FederationLinkProps> = ({
   isOwn,
   onLink
 }) => {
-  const translate = useTranslate()
+  const translate = useClubTranslate()
   const [typed, setTyped] = useState(() => firstQueryOf(club.name))
   const search = useFederationClubSearch(typed)
 
@@ -146,7 +146,7 @@ export const FederationTag: React.FC<FederationTagProps> = ({
   number,
   onUnlink
 }) => {
-  const translate = useTranslate()
+  const translate = useClubTranslate()
 
   return (
     <p className='federation-tag'>

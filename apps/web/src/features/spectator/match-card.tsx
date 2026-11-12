@@ -13,7 +13,8 @@ import { sideName } from '@/features/event/participant-names'
 import { wallCallOf } from '@/features/event/sheet-call'
 import { startLabel } from '@/features/event/start-label'
 import { umpireNameOf } from '@/features/event/umpire-name'
-import { toDate } from '@/infrastructure/dates'
+import { useSpectatorTranslate } from '@/features/spectator/use-spectator-translate'
+import { toDate } from '@/infrastructure/clock'
 import { PlainButton } from '@/presentation/components/button'
 import {
   Disclosure,
@@ -22,7 +23,6 @@ import {
 import { Icon } from '@/presentation/components/icon'
 import { RollingNumber } from '@/presentation/components/rolling-number'
 import { TableNumber } from '@/presentation/components/table-number'
-import { useTranslate } from '@/presentation/i18n/i18n-context'
 
 import { MatchDetail } from './match-detail'
 import { SideMarks, sideMarksOf } from './side-marks'
@@ -56,7 +56,7 @@ export const MatchCard: React.FC<MatchCardProps> = ({
   pendingNameOf,
   players
 }) => {
-  const translate = useTranslate()
+  const translate = useSpectatorTranslate()
   const { state, timing } = match
   const isLive = state.status === 'live'
   const isScheduled = state.status === 'scheduled'

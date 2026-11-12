@@ -2,7 +2,7 @@ import type { TableNumber } from '@scoreboard/protocol/identifiers'
 
 import type { EncounterFormat } from '@scoreboard/core/encounter/encounter-format'
 
-import { useTranslate } from '@/presentation/i18n/i18n-context'
+import { useClubTranslate } from '@/features/club/use-club-translate'
 
 /** "A–X on table 3, B–Y on table 4": the sheet's order under an encounter's letters. */
 export const useSheetOrderHint = ({
@@ -12,7 +12,7 @@ export const useSheetOrderHint = ({
   format: EncounterFormat
   tables: readonly TableNumber[]
 }): string => {
-  const translate = useTranslate()
+  const translate = useClubTranslate()
   const tableOf = (group: number) => {
     const table = tables.at(group)
 

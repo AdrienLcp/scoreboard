@@ -13,9 +13,9 @@ import {
   standingTablesOf
 } from '@scoreboard/core/hall/hall-plan'
 
+import { useClubTranslate } from '@/features/club/use-club-translate'
 import { Icon } from '@/presentation/components/icon'
 import { TableTop } from '@/presentation/components/table-top'
-import { useTranslate } from '@/presentation/i18n/i18n-context'
 
 import { type BlockLabel, blockNameOf } from './plan-blocks'
 import { floorStyleOf, percentOf, placedOn } from './plan-geometry'
@@ -71,7 +71,7 @@ export const PlanFloor: React.FC<PlanFloorProps> = ({
   playing,
   selected
 }) => {
-  const translate = useTranslate()
+  const translate = useClubTranslate()
   const floor = useRef<HTMLElement>(null)
   const reserve = useRef<HTMLElement>(null)
   const { drag, handlers } = usePlanDrag({ floor, gestures, plan, reserve })

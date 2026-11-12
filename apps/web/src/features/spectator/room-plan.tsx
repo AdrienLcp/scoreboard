@@ -7,7 +7,7 @@ import type {
 } from '@scoreboard/protocol/event-snapshot'
 import type { PlayerId, TableNumber } from '@scoreboard/protocol/identifiers'
 
-import { useTranslate } from '@/presentation/i18n/i18n-context'
+import { useSpectatorTranslate } from '@/features/spectator/use-spectator-translate'
 
 import type { RoomLayout } from './room-layout'
 import { RoomTable } from './room-table'
@@ -39,7 +39,7 @@ export const RoomPlan: React.FC<RoomPlanProps> = ({
   renderMatch,
   snapshot
 }) => {
-  const translate = useTranslate()
+  const translate = useSpectatorTranslate()
   const [selected, setSelected] = useState<TableNumber | null>(null)
   const detail = useRef<HTMLDivElement>(null)
   const selectedTable = layout.tables.find((table) => table.table === selected)

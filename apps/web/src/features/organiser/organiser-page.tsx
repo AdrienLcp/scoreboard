@@ -4,6 +4,7 @@ import { useState } from 'react'
 import type { EventId, OrganiserCode } from '@scoreboard/protocol/identifiers'
 import { organiserCodeSchema } from '@scoreboard/protocol/identifiers'
 
+import { useClubTranslate } from '@/features/club/use-club-translate'
 import { FeedMessage } from '@/features/event/feed-message'
 import { useEventIdParam } from '@/infrastructure/router/navigation'
 import {
@@ -16,7 +17,6 @@ import { Form } from '@/presentation/components/form'
 import { Main } from '@/presentation/components/main'
 import { Input, Label, TextField } from '@/presentation/components/text-field'
 import { DocumentTitle } from '@/presentation/head/document-title'
-import { useTranslate } from '@/presentation/i18n/i18n-context'
 
 import { OrganiserConsole } from './organiser-console'
 
@@ -32,7 +32,7 @@ const storedCodeOrNull = (eventId: EventId): OrganiserCode | null => {
 const OrganiserCodeForm: React.FC<{
   onCode: (code: OrganiserCode) => void
 }> = ({ onCode }) => {
-  const translate = useTranslate()
+  const translate = useClubTranslate()
   const [typed, setTyped] = useState('')
   const code = organiserCodeSchema.safeParse(typed.trim().toUpperCase())
 
@@ -70,7 +70,7 @@ const OrganiserCodeForm: React.FC<{
 
 /** The organiser's console: prepare the event and change anything while it runs. */
 export const OrganiserPage: React.FC = () => {
-  const translate = useTranslate()
+  const translate = useClubTranslate()
   const eventId = useEventIdParam()
   const [code, setCode] = useState(() =>
     eventId === null ? null : storedCodeOrNull(eventId)

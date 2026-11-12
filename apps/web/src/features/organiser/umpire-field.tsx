@@ -11,7 +11,7 @@ import {
   umpireOf
 } from '@scoreboard/core/encounter/umpire-turn'
 
-import { useTranslate } from '@/presentation/i18n/i18n-context'
+import { useClubTranslate } from '@/features/club/use-club-translate'
 
 import { ChoiceField } from './choice-field'
 import { chooseUmpire } from './setup-edits'
@@ -38,7 +38,7 @@ export const UmpireField: React.FC<UmpireFieldProps> = ({
   onSave,
   setup
 }) => {
-  const translate = useTranslate()
+  const translate = useClubTranslate()
   const encounter = event.encounters.find(({ id }) => id === match.encounterId)
   const encounterMatches = event.matches.filter(
     (other) => other.encounterId === match.encounterId

@@ -22,6 +22,7 @@ import {
 
 import { FederationSource } from '@/features/club/federation-source'
 import { useClub } from '@/features/club/use-club'
+import { useClubTranslate } from '@/features/club/use-club-translate'
 import { useCurrentFederationPools } from '@/features/club/use-federation-pools'
 import { encounterLinesFor } from '@/features/event/encounter-lines'
 import { nowMs } from '@/infrastructure/clock'
@@ -32,7 +33,6 @@ import {
   DisclosurePanel
 } from '@/presentation/components/disclosure'
 import { Icon } from '@/presentation/components/icon'
-import { useTranslate } from '@/presentation/i18n/i18n-context'
 
 import {
   BlockChooser,
@@ -107,7 +107,7 @@ export const ChampionshipEncounters: React.FC<ChampionshipEncountersProps> = ({
   onSave,
   setup
 }) => {
-  const translate = useTranslate()
+  const translate = useClubTranslate()
   const { state } = useClub()
   const [notice, setNotice] = useState<Notice | null>(null)
   const [choosing, setChoosing] = useState<Choosing | null>(null)

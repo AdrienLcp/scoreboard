@@ -18,6 +18,7 @@ import { encounterFormatFor } from '@scoreboard/core/encounter/encounter-formats
 import { matchPointsFor } from '@scoreboard/core/encounter/match-points'
 import { opponentOf } from '@scoreboard/core/match/opponent'
 
+import { useClubTranslate } from '@/features/club/use-club-translate'
 import { scoreText, versusText } from '@/features/event/score-text'
 import { ChoiceField } from '@/features/organiser/choice-field'
 import { dayAsDate } from '@/infrastructure/dates'
@@ -27,7 +28,6 @@ import {
   DisclosurePanel
 } from '@/presentation/components/disclosure'
 import { Icon } from '@/presentation/components/icon'
-import { useTranslate } from '@/presentation/i18n/i18n-context'
 
 import {
   type FixtureAt,
@@ -84,7 +84,7 @@ const RoundHead: React.FC<{ date: string | null; index: number }> = ({
   date,
   index
 }) => {
-  const translate = useTranslate()
+  const translate = useClubTranslate()
 
   return (
     <>
@@ -112,7 +112,7 @@ export const PoolRounds: React.FC<PoolRoundsProps> = ({
   pool,
   record
 }) => {
-  const translate = useTranslate()
+  const translate = useClubTranslate()
   const choices = resultChoicesFor(sheetOf(pool, record))
   const nameOf = (teamId: string | null, number: number) =>
     clubSideOf(record, teamId)?.team.name ??

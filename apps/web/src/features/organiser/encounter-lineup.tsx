@@ -11,10 +11,10 @@ import {
 } from '@scoreboard/core/club/team-colours'
 
 import { absentSeatsLast } from '@/features/club/club-edits'
+import { useClubTranslate } from '@/features/club/use-club-translate'
 import { Button } from '@/presentation/components/button'
 import { Icon } from '@/presentation/components/icon'
 import { Input, TextField } from '@/presentation/components/text-field'
-import { useTranslate } from '@/presentation/i18n/i18n-context'
 
 import type { RosterGroup, RosterRow } from './encounter-roster'
 
@@ -84,7 +84,7 @@ const LetterSlot: React.FC<{
   onPress: () => void
   seated: LineupSide['seated'][number]
 }> = ({ colour, isCurrent, letter, onPress, seated }) => {
-  const translate = useTranslate()
+  const translate = useClubTranslate()
   const name = seated === null ? null : slotNameOf(seated.name)
 
   return (
@@ -122,7 +122,7 @@ const RosterLine: React.FC<{
   onPick: () => void
   row: RosterRow
 }> = ({ isHeld, onPick, row }) => {
-  const translate = useTranslate()
+  const translate = useClubTranslate()
 
   return (
     <AriaButton
@@ -164,7 +164,7 @@ const LineupRoster: React.FC<{
   onPicked: (index: number, pick: string | null) => void
   side: LineupSide
 }> = ({ focus, onClose, onPicked, side }) => {
-  const translate = useTranslate()
+  const translate = useClubTranslate()
   const [typed, setTyped] = useState('')
   const letter = side.letters.at(focus.index) ?? ''
   const groups = side.roster(typed)
@@ -336,7 +336,7 @@ export const EncounterLineup: React.FC<EncounterLineupProps> = ({
   home,
   tables
 }) => {
-  const translate = useTranslate()
+  const translate = useClubTranslate()
   const [focus, setFocus] = useState<Focus | null>(null)
   const sides = { away, home }
   const groups = Array.from({ length: Math.max(groupCount, 1) }, (_, at) => at)

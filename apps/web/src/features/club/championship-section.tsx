@@ -3,6 +3,7 @@ import { useState } from 'react'
 
 import type { ClubRecord } from '@scoreboard/protocol/club-record'
 
+import { useClubTranslate } from '@/features/club/use-club-translate'
 import { ChoiceField } from '@/features/organiser/choice-field'
 import { nowMs } from '@/infrastructure/clock'
 import { toLocalDay } from '@/infrastructure/dates'
@@ -14,7 +15,6 @@ import {
 } from '@/presentation/components/disclosure'
 import { Form } from '@/presentation/components/form'
 import { Icon } from '@/presentation/components/icon'
-import { useTranslate } from '@/presentation/i18n/i18n-context'
 
 import { addPool, currentPoolsOf, poolsLatestFirst } from './championship-edits'
 import { PoolCard } from './pool-card'
@@ -54,7 +54,7 @@ export const ChampionshipSection: React.FC<ChampionshipSectionProps> = ({
   onChange,
   record
 }) => {
-  const translate = useTranslate()
+  const translate = useClubTranslate()
   const [teamId, setTeamId] = useState<string | null>(null)
   const current = currentPoolsOf(record)
   const earlier = poolsLatestFirst(record.pools).filter(

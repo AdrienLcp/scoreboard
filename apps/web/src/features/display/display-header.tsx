@@ -2,7 +2,7 @@ import type React from 'react'
 
 import type { InstantMs } from '@scoreboard/protocol/scoring-event'
 
-import { toDate } from '@/infrastructure/dates'
+import { toDate } from '@/infrastructure/clock'
 import type { SocketStatus } from '@/infrastructure/messaging/use-event-socket'
 import { newWallPairingPath } from '@/infrastructure/router/navigation'
 import { Icon } from '@/presentation/components/icon'

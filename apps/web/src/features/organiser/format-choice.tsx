@@ -2,9 +2,9 @@ import type React from 'react'
 
 import { TEAM_COLOURS } from '@scoreboard/core/club/team-colours'
 
+import { useClubTranslate } from '@/features/club/use-club-translate'
 import { PlainButton } from '@/presentation/components/button'
 import { Icon } from '@/presentation/components/icon'
-import { useTranslate } from '@/presentation/i18n/i18n-context'
 
 import { EVENT_FORMATS, type EventFormat } from './event-format'
 
@@ -65,7 +65,7 @@ export const FormatChoice: React.FC<FormatChoiceProps> = ({
   current,
   onChoose
 }) => {
-  const translate = useTranslate()
+  const translate = useClubTranslate()
 
   return (
     <section aria-labelledby='format-choice-title' className='format-choice'>

@@ -8,8 +8,8 @@ import type { Side } from '@scoreboard/protocol/side'
 import { runningTimeoutOf } from '@scoreboard/core/discipline/timeout-clock'
 
 import { wallSideOf } from '@/features/event/sheet-side'
+import { useSpectatorTranslate } from '@/features/spectator/use-spectator-translate'
 import { Icon } from '@/presentation/components/icon'
-import { useTranslate } from '@/presentation/i18n/i18n-context'
 
 import './side-marks.sass'
 
@@ -81,7 +81,7 @@ export const StopwatchMark: React.FC<{ isRunning: boolean }> = ({
 
 /** A side's card and time-out beside its name, each with a spoken label. */
 export const SideMarks: React.FC<SideMarksProps> = ({ card, timeout }) => {
-  const translate = useTranslate()
+  const translate = useSpectatorTranslate()
 
   if (card === null && timeout === 'none') {
     return null

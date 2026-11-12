@@ -5,11 +5,11 @@ import { useState } from 'react'
 import type { MatchView } from '@scoreboard/protocol/event-snapshot'
 import type { InstantMs } from '@scoreboard/protocol/scoring-event'
 
+import { useClubTranslate } from '@/features/club/use-club-translate'
 import { atTimeOfDay, toTimeOfDay } from '@/infrastructure/dates'
 import { Button } from '@/presentation/components/button'
 import { Form } from '@/presentation/components/form'
 import { TimeField } from '@/presentation/components/time-field'
-import { useTranslate } from '@/presentation/i18n/i18n-context'
 
 type PlannedTimeFormProps = {
   /** Any instant on the event's day: an event is one day, so only the time is typed. */
@@ -24,7 +24,7 @@ export const PlannedTimeForm: React.FC<PlannedTimeFormProps> = ({
   match,
   onPlan
 }) => {
-  const translate = useTranslate()
+  const translate = useClubTranslate()
   const [time, setTime] = useState<Time | null>(
     match.plannedAtMs === null ? null : toTimeOfDay(match.plannedAtMs)
   )

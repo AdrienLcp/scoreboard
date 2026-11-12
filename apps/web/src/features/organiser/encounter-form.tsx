@@ -11,11 +11,11 @@ import { DEFAULT_MATCH_POINTS_RULE } from '@scoreboard/protocol/match-points-rul
 import { encounterFormatFor } from '@scoreboard/core/encounter/encounter-formats'
 import type { Lineup } from '@scoreboard/core/encounter/encounter-sheet'
 
+import { useClubTranslate } from '@/features/club/use-club-translate'
 import { newEncounterId, newMatchId } from '@/infrastructure/ids'
 import { Button } from '@/presentation/components/button'
 import { Form } from '@/presentation/components/form'
 import { Icon } from '@/presentation/components/icon'
-import { useTranslate } from '@/presentation/i18n/i18n-context'
 import { encounterFormatKey } from '@/presentation/i18n/translation'
 
 import { ChoiceField } from './choice-field'
@@ -34,7 +34,7 @@ export const EncounterForm: React.FC<EncounterFormProps> = ({
   onSave,
   setup
 }) => {
-  const translate = useTranslate()
+  const translate = useClubTranslate()
   const [formatId, setFormatId] = useState<EncounterFormatId>(
     encounterFormatIds[0]
   )

@@ -16,7 +16,8 @@ import { versusText } from '@/features/event/score-text'
 import { startLabel } from '@/features/event/start-label'
 import { useCurrentSnapshot } from '@/features/event/use-current-snapshot'
 import { usePublicFeed } from '@/features/event/use-public-feed'
-import { toDate } from '@/infrastructure/dates'
+import { useSpectatorTranslate } from '@/features/spectator/use-spectator-translate'
+import { toDate } from '@/infrastructure/clock'
 import { useEventIdParam } from '@/infrastructure/router/navigation'
 import { BrandMark } from '@/presentation/components/brand-mark'
 import { Icon } from '@/presentation/components/icon'
@@ -30,7 +31,6 @@ import {
   Tabs
 } from '@/presentation/components/tabs'
 import { DocumentTitle } from '@/presentation/head/document-title'
-import { useTranslate } from '@/presentation/i18n/i18n-context'
 import { socketStatusKey } from '@/presentation/i18n/translation'
 
 import { EncounterSheetCard } from './encounter-sheet-card'
@@ -56,7 +56,7 @@ const startOf = (match: MatchView): number | null =>
   match.timing.estimatedStartMs ?? match.plannedAtMs
 
 const SpectatorProgramme: React.FC<{ eventId: EventId }> = ({ eventId }) => {
-  const translate = useTranslate()
+  const translate = useSpectatorTranslate()
   const feed = usePublicFeed({
     eventId,
     role: 'spectator'
@@ -334,7 +334,7 @@ const SpectatorProgramme: React.FC<{ eventId: EventId }> = ({ eventId }) => {
 
 /** A visitor's phone: the whole day, read-only, reached from the display's QR code. */
 export const SpectatorPage: React.FC = () => {
-  const translate = useTranslate()
+  const translate = useSpectatorTranslate()
   const eventId = useEventIdParam()
 
   if (eventId === null) {

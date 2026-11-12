@@ -11,6 +11,7 @@ import { PAGE_ROUTES } from '@scoreboard/protocol/page-routes'
 
 import { parseWallPairingCode } from '@scoreboard/core/access/access-codes'
 
+import { useClubTranslate } from '@/features/club/use-club-translate'
 import {
   type ClaimWallError,
   claimWallPairing
@@ -21,7 +22,6 @@ import { Form } from '@/presentation/components/form'
 import { Icon } from '@/presentation/components/icon'
 import { LinkText } from '@/presentation/components/link-text'
 import { Input, Label, TextField } from '@/presentation/components/text-field'
-import { useTranslate } from '@/presentation/i18n/i18n-context'
 import { RichText } from '@/presentation/i18n/rich-text'
 
 import { ChoiceField } from './choice-field'
@@ -54,7 +54,7 @@ export const WallPairingForm: React.FC<WallPairingFormProps> = ({
   scannedCode,
   setup
 }) => {
-  const translate = useTranslate()
+  const translate = useClubTranslate()
   const [typed, setTyped] = useState(scannedCode ?? '')
   const [displayChoice, setDisplayChoice] = useState(ALL_TABLES)
   const [outcome, setOutcome] = useState<Outcome>({ status: 'idle' })

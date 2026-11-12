@@ -8,6 +8,7 @@ import {
   type DirectoryClub
 } from '@scoreboard/protocol/club-record'
 
+import { useClubTranslate } from '@/features/club/use-club-translate'
 import { pageOrigin } from '@/infrastructure/browser'
 import { newDirectoryClubId, newTeamId } from '@/infrastructure/ids'
 import {
@@ -30,7 +31,6 @@ import { ButtonLink } from '@/presentation/components/link'
 import { Main } from '@/presentation/components/main'
 import { Input, Label, TextField } from '@/presentation/components/text-field'
 import { DocumentTitle } from '@/presentation/head/document-title'
-import { useTranslate } from '@/presentation/i18n/i18n-context'
 
 import { ChampionshipSection } from './championship-section'
 import {
@@ -63,7 +63,7 @@ const ClubTeamsAndPlayers: React.FC<ClubSectionProps> = ({
   onChange,
   record
 }) => {
-  const translate = useTranslate()
+  const translate = useClubTranslate()
 
   return (
     <>
@@ -104,7 +104,7 @@ const OpponentClubForm: React.FC<{
   onChange: (record: ClubRecord) => void
   record: ClubRecord
 }> = ({ onChange, record }) => {
-  const translate = useTranslate()
+  const translate = useClubTranslate()
   const [name, setName] = useState('')
 
   return (
@@ -144,7 +144,7 @@ const ClubWelcome: React.FC<{
   onCreate: (name: string) => Promise<boolean>
   onJoin: (code: ClubCode) => void
 }> = ({ onCreate, onJoin }) => {
-  const translate = useTranslate()
+  const translate = useClubTranslate()
   const [name, setName] = useState('')
   const [code, setCode] = useState('')
   const [isRefused, setIsRefused] = useState(false)
@@ -226,7 +226,7 @@ const groupedCode = (code: string): string =>
 
 /** Another organiser's phone or the hall's laptop opens the same club by scanning, or by typing the code. */
 const ClubShare: React.FC<{ code: ClubCode }> = ({ code }) => {
-  const translate = useTranslate()
+  const translate = useClubTranslate()
 
   return (
     <Disclosure className='club-share'>
@@ -256,7 +256,7 @@ const ClubShare: React.FC<{ code: ClubCode }> = ({ code }) => {
  * licensees, and the clubs it meets. Prepared once, picked from on every Sunday.
  */
 export const ClubPage: React.FC = () => {
-  const translate = useTranslate()
+  const translate = useClubTranslate()
   const scannedCode = useClubCodeSearchParam()
   const returnEventId = useClubReturnEventParam()
   const replaceWith = useReplaceWith()

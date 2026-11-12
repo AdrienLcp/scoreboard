@@ -5,6 +5,7 @@ import { useState } from 'react'
 import type { TableAccess } from '@scoreboard/protocol/event-snapshot'
 import type { EventId } from '@scoreboard/protocol/identifiers'
 
+import { useClubTranslate } from '@/features/club/use-club-translate'
 import { pageOrigin } from '@/infrastructure/browser'
 import {
   umpireEntryPathFor,
@@ -19,7 +20,6 @@ import {
   ToggleButton,
   ToggleButtonGroup
 } from '@/presentation/components/toggle-button-group'
-import { useTranslate } from '@/presentation/i18n/i18n-context'
 
 import { TableSheets } from './table-sheets'
 import { usePrinting } from './use-printing'
@@ -36,7 +36,7 @@ const umpireUrlOf = (access: TableAccess, eventId: EventId): string =>
   `${pageOrigin()}${umpirePathFor({ code: access.code, eventId })}`
 
 const CopyLinkButton: React.FC<{ url: string }> = ({ url }) => {
-  const translate = useTranslate()
+  const translate = useClubTranslate()
   const [copiedUrl, setCopiedUrl] = useState<string | null>(null)
   const isCopied = copiedUrl === url
 
@@ -63,7 +63,7 @@ const TableFocus: React.FC<{
   onStep: (table: number) => void
   previous: TableAccess | undefined
 }> = ({ access, eventId, next, onStep, previous }) => {
-  const translate = useTranslate()
+  const translate = useClubTranslate()
   const url = umpireUrlOf(access, eventId)
 
   return (
@@ -115,7 +115,7 @@ export const TableAccesses: React.FC<TableAccessesProps> = ({
   eventId,
   eventName
 }) => {
-  const translate = useTranslate()
+  const translate = useClubTranslate()
   const [pickedTable, setPickedTable] = useState(accesses[0]?.table ?? null)
   const printing = usePrinting()
   const index = Math.max(

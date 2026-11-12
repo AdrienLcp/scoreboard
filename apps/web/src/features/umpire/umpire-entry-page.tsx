@@ -5,6 +5,7 @@ import { UMPIRE_CODE_LENGTH } from '@scoreboard/protocol/identifiers'
 
 import { parseUmpireCode } from '@scoreboard/core/access/access-codes'
 
+import { useUmpireTranslate } from '@/features/umpire/use-umpire-translate'
 import {
   umpirePathFor,
   useEventIdParam,
@@ -23,7 +24,6 @@ import {
   TextField
 } from '@/presentation/components/text-field'
 import { DocumentTitle } from '@/presentation/head/document-title'
-import { useTranslate } from '@/presentation/i18n/i18n-context'
 
 import './umpire-entry-page.sass'
 
@@ -33,7 +33,7 @@ const codeCharacters = (typed: string): string =>
 
 /** Where an umpire without the table's QR code types its code instead. */
 export const UmpireEntryPage: React.FC = () => {
-  const translate = useTranslate()
+  const translate = useUmpireTranslate()
   const eventId = useEventIdParam()
   const navigateTo = useNavigateTo()
   const [typed, setTyped] = useState('')

@@ -11,13 +11,13 @@ import type { ClubHallPlan, HallPlan } from '@scoreboard/protocol/hall-plan'
 
 import { saveClubPlan, setDefaultClubPlan } from '@/features/club/club-edits'
 import { useClub } from '@/features/club/use-club'
+import { useClubTranslate } from '@/features/club/use-club-translate'
 import { Button } from '@/presentation/components/button'
 import { Form } from '@/presentation/components/form'
 import { Icon } from '@/presentation/components/icon'
 import { Popover } from '@/presentation/components/select'
 import { Switch } from '@/presentation/components/switch'
 import { Input, Label, TextField } from '@/presentation/components/text-field'
-import { useTranslate } from '@/presentation/i18n/i18n-context'
 
 import { PlanThumbnail } from './plan-thumbnail'
 
@@ -34,7 +34,7 @@ type SavedPlansProps = {
  * the plan on screen saved under a name.
  */
 export const SavedPlans: React.FC<SavedPlansProps> = ({ onUse, plan }) => {
-  const translate = useTranslate()
+  const translate = useClubTranslate()
   const club = useClub()
   const [isOpen, setIsOpen] = useState(false)
 
@@ -129,7 +129,7 @@ const SavePlanForm: React.FC<{
   defaultName: string
   onSave: (name: string, isDefault: boolean) => void
 }> = ({ defaultName, onSave }) => {
-  const translate = useTranslate()
+  const translate = useClubTranslate()
   const [name, setName] = useState(defaultName)
   const [isDefault, setIsDefault] = useState(true)
 

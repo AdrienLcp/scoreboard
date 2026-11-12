@@ -12,12 +12,12 @@ import type { ScoringEvent } from '@scoreboard/protocol/scoring-event'
 
 import { tableNumbers } from '@scoreboard/core/event/table-queue'
 
+import { useClubTranslate } from '@/features/club/use-club-translate'
 import { nowMs } from '@/infrastructure/clock'
 import { newMatchId } from '@/infrastructure/ids'
 import { Button } from '@/presentation/components/button'
 import { Form } from '@/presentation/components/form'
 import { Icon } from '@/presentation/components/icon'
-import { useTranslate } from '@/presentation/i18n/i18n-context'
 
 import { ChoiceField } from './choice-field'
 import { ConfirmButton } from './confirm-button'
@@ -50,7 +50,7 @@ export const MatchesEditor: React.FC<MatchesEditorProps> = ({
   onSave,
   setup
 }) => {
-  const translate = useTranslate()
+  const translate = useClubTranslate()
   const [homeId, setHomeId] = useState<string | null>(null)
   const [awayId, setAwayId] = useState<string | null>(null)
   const [table, setTable] = useState<string>(NO_TABLE)

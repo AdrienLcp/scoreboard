@@ -11,11 +11,11 @@ import { gamesToWinMatch } from '@scoreboard/core/table-tennis/table-tennis-game
 
 import { sideName } from '@/features/event/participant-names'
 import { wallCallOf } from '@/features/event/sheet-call'
+import { useSpectatorTranslate } from '@/features/spectator/use-spectator-translate'
 import { PlainButton } from '@/presentation/components/button'
 import { DrawnTable } from '@/presentation/components/drawn-table'
 import { Icon } from '@/presentation/components/icon'
 import { RollingNumber } from '@/presentation/components/rolling-number'
-import { useTranslate } from '@/presentation/i18n/i18n-context'
 
 import { type RoomTable as RoomTableModel, sidePaintOf } from './room-layout'
 
@@ -47,7 +47,7 @@ export const RoomTable: React.FC<RoomTableProps> = ({
   roomTable,
   snapshot
 }) => {
-  const translate = useTranslate()
+  const translate = useSpectatorTranslate()
   const { column, live, next, row, table } = roomTable
   const shown = live ?? next
   const call = shown === null ? null : wallCallOf(shown)

@@ -5,7 +5,7 @@ import type { ClubRecord } from '@scoreboard/protocol/club-record'
 
 import { poolStandingsFor } from '@scoreboard/core/championship/championship-standings'
 
-import { useTranslate } from '@/presentation/i18n/i18n-context'
+import { useClubTranslate } from '@/features/club/use-club-translate'
 
 import { clubSideOf, isOwnTeam } from './club-teams'
 import { PoolTeamMark } from './pool-team-mark'
@@ -20,7 +20,7 @@ export const PoolStandings: React.FC<PoolStandingsProps> = ({
   pool,
   record
 }) => {
-  const translate = useTranslate()
+  const translate = useClubTranslate()
   const rows = poolStandingsFor(pool)
   const hasResults = rows.some((row) => row.played > 0)
 

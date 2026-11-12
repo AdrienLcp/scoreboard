@@ -41,9 +41,6 @@ export const toLocalDateTime = (instant: InstantMs): string =>
 export const toLocalDay = (instant: InstantMs): string =>
   toCalendarDate(onThisDevice(instant)).toString()
 
-/** `Intl` formats a `Date`: this is where an instant becomes one. */
-export const toDate = (instant: InstantMs): Date => new Date(instant)
-
 /** The wall-clock time of day of an instant, on this device. */
 export const toTimeOfDay = (instant: InstantMs): Time =>
   toTime(onThisDevice(instant)).set({ millisecond: 0, second: 0 })

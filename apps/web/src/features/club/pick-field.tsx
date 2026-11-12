@@ -1,6 +1,7 @@
 import type React from 'react'
 import { useState } from 'react'
 
+import { useClubTranslate } from '@/features/club/use-club-translate'
 import {
   ComboBox,
   Group,
@@ -15,7 +16,6 @@ import {
   ToggleButton,
   ToggleButtonGroup
 } from '@/presentation/components/toggle-button-group'
-import { useTranslate } from '@/presentation/i18n/i18n-context'
 
 import { matchesTyped, NAME_MAX_LENGTH } from './directory-search'
 
@@ -67,7 +67,7 @@ export const PickField: React.FC<PickFieldProps> = ({
   quickPicks = 0,
   selectedId
 }) => {
-  const translate = useTranslate()
+  const translate = useClubTranslate()
   /** What is being typed; `null` while the field shows the picked entry. */
   const [typed, setTyped] = useState<string | null>(null)
   const selected = picks.find((pick) => pick.id === selectedId) ?? null

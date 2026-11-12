@@ -7,13 +7,13 @@ import type { MatchId } from '@scoreboard/protocol/identifiers'
 import type { ScoringEvent } from '@scoreboard/protocol/scoring-event'
 import type { Side } from '@scoreboard/protocol/side'
 
+import { useClubTranslate } from '@/features/club/use-club-translate'
 import { PlainButton } from '@/presentation/components/button'
 import {
   Disclosure,
   DisclosurePanel
 } from '@/presentation/components/disclosure'
 import { Icon } from '@/presentation/components/icon'
-import { useTranslate } from '@/presentation/i18n/i18n-context'
 
 import { type ChoosableEncounter, useTablesLabel } from './block-chooser'
 import { EncounterDetail } from './encounter-detail'
@@ -57,7 +57,7 @@ export const EncounterRow: React.FC<EncounterRowProps> = ({
   onSave,
   setup
 }) => {
-  const translate = useTranslate()
+  const translate = useClubTranslate()
   const tablesLabel = useTablesLabel()
   const tablesButton = useRef<HTMLButtonElement>(null)
   const name = `${choosable.homeName} – ${choosable.awayName}`

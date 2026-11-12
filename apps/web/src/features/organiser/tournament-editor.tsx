@@ -18,6 +18,7 @@ import {
 } from '@/features/club/directory-search'
 import { PickField } from '@/features/club/pick-field'
 import { useClub } from '@/features/club/use-club'
+import { useClubTranslate } from '@/features/club/use-club-translate'
 import {
   newDirectoryClubId,
   newMatchId,
@@ -32,7 +33,6 @@ import {
   ToggleButton,
   ToggleButtonGroup
 } from '@/presentation/components/toggle-button-group'
-import { useTranslate } from '@/presentation/i18n/i18n-context'
 
 import {
   canBuildTournament,
@@ -138,7 +138,7 @@ const TieDraw: React.FC<{
   playerOf: (playerId: PlayerId) => Player | undefined
   teamOf: (teamId: TeamId | null) => Team | undefined
 }> = ({ group, onDraw, playerOf, teamOf }) => {
-  const translate = useTranslate()
+  const translate = useClubTranslate()
   const lastRank = group.firstRank + group.playerIds.length - 1
 
   return (
@@ -196,7 +196,7 @@ export const TournamentEditor: React.FC<TournamentEditorProps> = ({
   onSave,
   setup
 }) => {
-  const translate = useTranslate()
+  const translate = useClubTranslate()
   const clubPath = useClubPath()
   const club = useClub()
   const { state } = club

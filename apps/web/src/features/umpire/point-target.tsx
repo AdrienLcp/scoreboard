@@ -2,10 +2,10 @@ import type React from 'react'
 
 import type { ServeTurn } from '@scoreboard/protocol/match-state'
 
+import { useUmpireTranslate } from '@/features/umpire/use-umpire-translate'
 import { PlainButton } from '@/presentation/components/button'
 import { Icon } from '@/presentation/components/icon'
 import { RollingNumber } from '@/presentation/components/rolling-number'
-import { useTranslate } from '@/presentation/i18n/i18n-context'
 
 import './point-target.sass'
 
@@ -51,7 +51,7 @@ export const PointTarget: React.FC<PointTargetProps> = ({
   score,
   serveTurn
 }) => {
-  const translate = useTranslate()
+  const translate = useUmpireTranslate()
 
   return (
     <PlainButton

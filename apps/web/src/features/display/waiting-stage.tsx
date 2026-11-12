@@ -3,7 +3,7 @@ import type React from 'react'
 import type { InstantMs } from '@scoreboard/protocol/scoring-event'
 
 import type { EncounterLine } from '@/features/event/encounter-lines'
-import { toDate } from '@/infrastructure/dates'
+import { toDate } from '@/infrastructure/clock'
 import { LinkText } from '@/presentation/components/link-text'
 import { QrCode } from '@/presentation/components/qr-code'
 import { useTranslate } from '@/presentation/i18n/i18n-context'

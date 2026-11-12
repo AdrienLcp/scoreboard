@@ -48,7 +48,7 @@
           "level": "error",
           "options": {
             "deniedGlobals": {
-              "Date": "Read the time through infrastructure/clock.ts, parse or build a Date through infrastructure/dates.ts."
+              "Date": "Read the time or turn an instant into a Date through infrastructure/clock.ts, parse or build a calendar date through infrastructure/dates.ts."
             }
           }
         }

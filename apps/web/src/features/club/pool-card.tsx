@@ -6,6 +6,7 @@ import type { ClubRecord } from '@scoreboard/protocol/club-record'
 import { roundIndexForDay } from '@scoreboard/core/championship/championship-calendar'
 import { poolStandingsFor } from '@scoreboard/core/championship/championship-standings'
 
+import { useClubTranslate } from '@/features/club/use-club-translate'
 import type { FederationError } from '@/infrastructure/api/federation-api'
 import { nowMs } from '@/infrastructure/clock'
 import { dayAsDate, toLocalDay } from '@/infrastructure/dates'
@@ -15,7 +16,6 @@ import {
   DisclosurePanel
 } from '@/presentation/components/disclosure'
 import { Icon } from '@/presentation/components/icon'
-import { useTranslate } from '@/presentation/i18n/i18n-context'
 
 import { updatePool } from './championship-edits'
 import { isOwnTeam } from './club-teams'
@@ -48,7 +48,7 @@ type FederationNoticeKind = Exclude<FederationError, 'off'> | 'loading'
 const FederationNotice: React.FC<{ notice: FederationNoticeKind }> = ({
   notice
 }) => {
-  const translate = useTranslate()
+  const translate = useClubTranslate()
 
   if (notice === 'loading') {
     return (
@@ -118,7 +118,7 @@ export const PoolCard: React.FC<PoolCardProps> = ({
   pool,
   record
 }) => {
-  const translate = useTranslate()
+  const translate = useClubTranslate()
   const ownTeams = record.own.teams.filter((team) =>
     pool.teams.includes(team.id)
   )

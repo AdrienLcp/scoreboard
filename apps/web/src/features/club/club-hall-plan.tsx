@@ -4,10 +4,10 @@ import type { HallPlan } from '@scoreboard/protocol/hall-plan'
 
 import { areaOf, standingTablesOf } from '@scoreboard/core/hall/hall-plan'
 
+import { useClubTranslate } from '@/features/club/use-club-translate'
 import { withClass } from '@/presentation/components/class-names'
 import { TableNumber } from '@/presentation/components/table-number'
 import { TableTop } from '@/presentation/components/table-top'
-import { useTranslate } from '@/presentation/i18n/i18n-context'
 
 import './club-hall-plan.sass'
 
@@ -23,7 +23,7 @@ export const ClubHallPlan: React.FC<{ className?: string; plan: HallPlan }> = ({
   className,
   plan
 }) => {
-  const translate = useTranslate()
+  const translate = useClubTranslate()
 
   return (
     <figure className={withClass('club-hall', className)}>

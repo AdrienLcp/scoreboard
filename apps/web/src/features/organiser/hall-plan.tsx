@@ -40,13 +40,13 @@ import {
   resumeWaitingMatchOn
 } from '@scoreboard/core/hall/table-put-away'
 
+import { useClubTranslate } from '@/features/club/use-club-translate'
 import {
   type EncounterLine,
   encounterLinesFor
 } from '@/features/event/encounter-lines'
 import { Button } from '@/presentation/components/button'
 import { Icon } from '@/presentation/components/icon'
-import { useTranslate } from '@/presentation/i18n/i18n-context'
 
 import { AwaySheet } from './away-sheet'
 import { BlockChooser, type ChoosableEncounter } from './block-chooser'
@@ -132,7 +132,7 @@ export const HallPlanBoard: React.FC<HallPlanBoardProps> = ({
   onSave,
   setup
 }) => {
-  const translate = useTranslate()
+  const translate = useClubTranslate()
   const [selected, setSelected] = useState<TableNumber | null>(null)
   const [choosing, setChoosing] = useState<{
     first: TableNumber

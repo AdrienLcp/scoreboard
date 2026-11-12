@@ -1,9 +1,9 @@
 import type React from 'react'
 import { useState } from 'react'
 
+import { useClubTranslate } from '@/features/club/use-club-translate'
 import { Button } from '@/presentation/components/button'
 import { Icon } from '@/presentation/components/icon'
-import { useTranslate } from '@/presentation/i18n/i18n-context'
 
 type ConfirmButtonProps = {
   /** What the second press does, named: "Retirer Camille Huet". */
@@ -21,7 +21,7 @@ export const ConfirmButton: React.FC<ConfirmButtonProps> = ({
   label,
   onConfirm
 }) => {
-  const translate = useTranslate()
+  const translate = useClubTranslate()
   const [isAsking, setIsAsking] = useState(false)
 
   if (!isAsking) {

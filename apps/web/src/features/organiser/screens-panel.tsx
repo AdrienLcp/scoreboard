@@ -16,6 +16,10 @@ import { type WallView, wallViewSchema } from '@scoreboard/protocol/wall-view'
 
 import { tablesShownOn } from '@scoreboard/core/event/display-board'
 
+import {
+  type ClubTranslate,
+  useClubTranslate
+} from '@/features/club/use-club-translate'
 import { tableScopeOf } from '@/features/display/table-scope'
 import { wallViewOf } from '@/features/display/wall-view'
 import { newDisplayId } from '@/infrastructure/ids'
@@ -28,8 +32,6 @@ import {
 import { Button } from '@/presentation/components/button'
 import { Icon } from '@/presentation/components/icon'
 import { ButtonLink } from '@/presentation/components/link'
-import { useTranslate } from '@/presentation/i18n/i18n-context'
-import type { Translate } from '@/presentation/i18n/translation'
 
 import { ChoiceField } from './choice-field'
 import { ConfirmButton } from './confirm-button'
@@ -63,7 +65,7 @@ const FIRST_ADDED_SCREEN = 2
 const shareKey = (tables: readonly TableNumber[]): string => tables.join('-')
 
 const shareLabel = (
-  translate: Translate,
+  translate: ClubTranslate,
   tables: readonly TableNumber[],
   tableCount: number
 ): string => {
@@ -82,7 +84,10 @@ const shareLabel = (
     : tableScopeOf(translate, tables)
 }
 
-const freeScreenName = (translate: Translate, setup: EventSetup): string => {
+const freeScreenName = (
+  translate: ClubTranslate,
+  setup: EventSetup
+): string => {
   const names = new Set(setup.displays.map((display) => display.name))
   let number = FIRST_ADDED_SCREEN + setup.displays.length
 
@@ -101,7 +106,7 @@ const ScreenBlock: React.FC<{
   onSave: (setup: EventSetup) => void
   setup: EventSetup
 }> = ({ display, event, eventId, isConnected, onSave, setup }) => {
-  const translate = useTranslate()
+  const translate = useClubTranslate()
   const name = display?.name ?? translate('organiser.displays.all')
   const tables =
     tablesShownOn({
@@ -245,7 +250,7 @@ export const ScreensPanel: React.FC<ScreensPanelProps> = ({
   onSave,
   setup
 }) => {
-  const translate = useTranslate()
+  const translate = useClubTranslate()
   const titleId = useId()
   const scannedCode = usePairingSearchParam()
   const connectAsk = useScreenConnectParam()

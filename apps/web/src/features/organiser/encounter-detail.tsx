@@ -24,11 +24,11 @@ import { splitTypedName } from '@/features/club/directory-search'
 import { FederationLink } from '@/features/club/federation-link'
 import { useFederationClubPlayers } from '@/features/club/federation-queries'
 import { useClub } from '@/features/club/use-club'
+import { useClubTranslate } from '@/features/club/use-club-translate'
 import { encounterLinesFor } from '@/features/event/encounter-lines'
 import { EncounterScore } from '@/features/event/encounter-score'
 import { newPlayerId } from '@/infrastructure/ids'
 import { Switch } from '@/presentation/components/switch'
-import { useTranslate } from '@/presentation/i18n/i18n-context'
 
 import {
   EncounterLineup,
@@ -73,7 +73,7 @@ export const EncounterDetail: React.FC<EncounterDetailProps> = ({
   onSave,
   setup
 }) => {
-  const translate = useTranslate()
+  const translate = useClubTranslate()
   const club = useClub()
   const record = club.state.status === 'ready' ? club.state.record : null
   const [keepsLineup, setKeepsLineup] = useState(true)

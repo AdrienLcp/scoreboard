@@ -9,13 +9,13 @@ import type { TableNumber as TableNumberValue } from '@scoreboard/protocol/ident
 import { isDoublesLabel } from '@scoreboard/core/encounter/encounter-sheet'
 import type { PutAwayDestination } from '@scoreboard/core/hall/table-put-away'
 
+import { useClubTranslate } from '@/features/club/use-club-translate'
 import { sideName } from '@/features/event/participant-names'
 import { scoreText, versusText } from '@/features/event/score-text'
 import { wallCallOf } from '@/features/event/sheet-call'
 import { Button, PlainButton } from '@/presentation/components/button'
 import { Icon } from '@/presentation/components/icon'
 import { TableNumber } from '@/presentation/components/table-number'
-import { useTranslate } from '@/presentation/i18n/i18n-context'
 
 import './away-sheet.sass'
 
@@ -71,7 +71,7 @@ export const AwaySheet: React.FC<AwaySheetProps> = ({
   onCancel,
   onChoose
 }) => {
-  const translate = useTranslate()
+  const translate = useClubTranslate()
   const callOf = (shown: MatchView): string | null =>
     isDoublesLabel(shown.label)
       ? translate('display.wall.doubles')

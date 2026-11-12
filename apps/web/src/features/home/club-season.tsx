@@ -6,12 +6,12 @@ import {
   currentPoolsOf,
   poolsLatestFirst
 } from '@/features/club/championship-edits'
+import { useClubTranslate } from '@/features/club/use-club-translate'
 import type { FederationPoolsById } from '@/features/club/use-federation-pools'
 import { paintOf } from '@/features/event/team-paint'
 import { paths } from '@/infrastructure/router/navigation'
 import { Icon } from '@/presentation/components/icon'
 import { Link } from '@/presentation/components/link'
-import { useTranslate } from '@/presentation/i18n/i18n-context'
 import { RichText } from '@/presentation/i18n/rich-text'
 
 import { leadingStandingOf } from './club-standing'
@@ -35,7 +35,7 @@ export const ClubSeason: React.FC<ClubSeasonProps> = ({
   federationPools,
   record
 }) => {
-  const translate = useTranslate()
+  const translate = useClubTranslate()
   const teams = record.own.teams
   const pools = currentPoolsOf(record)
   const latestPool = poolsLatestFirst(pools).at(0)

@@ -15,6 +15,7 @@ import type { ScoringEvent } from '@scoreboard/protocol/scoring-event'
 
 import { blockOf, isInTouchingBlock } from '@scoreboard/core/hall/hall-plan'
 
+import { useClubTranslate } from '@/features/club/use-club-translate'
 import type { EncounterLine } from '@/features/event/encounter-lines'
 import { EncounterScore } from '@/features/event/encounter-score'
 import { pageOrigin } from '@/infrastructure/browser'
@@ -22,7 +23,6 @@ import { umpirePathFor } from '@/infrastructure/router/navigation'
 import { Button } from '@/presentation/components/button'
 import { CodeAndQr } from '@/presentation/components/code-and-qr'
 import { Icon } from '@/presentation/components/icon'
-import { useTranslate } from '@/presentation/i18n/i18n-context'
 
 import { ConfirmButton } from './confirm-button'
 import { TableMatchPanel } from './table-match-panel'
@@ -74,7 +74,7 @@ export const HallTableSheet: React.FC<HallTableSheetProps> = ({
   setup,
   table
 }) => {
-  const translate = useTranslate()
+  const translate = useClubTranslate()
   const [first, second] = blockOf(table)
   const block = second <= setup.tableCount ? `${first}–${second}` : `${first}`
 

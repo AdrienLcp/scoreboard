@@ -1,8 +1,8 @@
 import type React from 'react'
 
+import { useUmpireTranslate } from '@/features/umpire/use-umpire-translate'
 import type { SocketStatus } from '@/infrastructure/messaging/use-event-socket'
 import { Icon } from '@/presentation/components/icon'
-import { useTranslate } from '@/presentation/i18n/i18n-context'
 import { socketStatusKey } from '@/presentation/i18n/translation'
 
 import { connectionStateOf } from './connection-state'
@@ -19,7 +19,7 @@ export const ConnectionBadge: React.FC<ConnectionBadgeProps> = ({
   pending,
   status
 }) => {
-  const translate = useTranslate()
+  const translate = useUmpireTranslate()
   const connection = connectionStateOf({ pending, status })
 
   return (

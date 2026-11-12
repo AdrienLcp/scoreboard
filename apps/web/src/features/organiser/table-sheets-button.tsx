@@ -3,6 +3,7 @@ import type React from 'react'
 import type { TableAccess } from '@scoreboard/protocol/event-snapshot'
 import type { EventId } from '@scoreboard/protocol/identifiers'
 
+import { useClubTranslate } from '@/features/club/use-club-translate'
 import { pageOrigin } from '@/infrastructure/browser'
 import {
   umpireEntryPathFor,
@@ -10,7 +11,6 @@ import {
 } from '@/infrastructure/router/navigation'
 import { Button } from '@/presentation/components/button'
 import { Icon } from '@/presentation/components/icon'
-import { useTranslate } from '@/presentation/i18n/i18n-context'
 
 import { TableSheets } from './table-sheets'
 import { usePrinting } from './use-printing'
@@ -27,7 +27,7 @@ export const TableSheetsButton: React.FC<TableSheetsButtonProps> = ({
   eventId,
   eventName
 }) => {
-  const translate = useTranslate()
+  const translate = useClubTranslate()
   const printing = usePrinting()
 
   return (

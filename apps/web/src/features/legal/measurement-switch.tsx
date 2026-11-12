@@ -3,8 +3,8 @@ import type React from 'react'
 import { useId } from 'react'
 
 import { Switch } from '@/presentation/components/switch'
-import { useTranslate } from '@/presentation/i18n/i18n-context'
 
+import { useLegalTranslate } from './use-legal-translate'
 import {
   type MeasurementChoice,
   useMeasurementChoice
@@ -21,7 +21,7 @@ const NOTE_KEY_FOR = {
 
 /** Lets a visitor refuse audience measurement for this browser, and says what holds now. */
 export const MeasurementSwitch: React.FC = () => {
-  const translate = useTranslate()
+  const translate = useLegalTranslate()
   const noteId = useId()
   const { choice, hasSaveFailed, setCounted } = useMeasurementChoice()
   const isDecidedElsewhere =

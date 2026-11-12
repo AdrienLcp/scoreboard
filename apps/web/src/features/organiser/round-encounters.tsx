@@ -14,13 +14,13 @@ import {
   withPlayedEntries
 } from '@/features/club/round-entries'
 import { useClub } from '@/features/club/use-club'
+import { useClubTranslate } from '@/features/club/use-club-translate'
 import type { FederationPoolsById } from '@/features/club/use-federation-pools'
 import { nowMs } from '@/infrastructure/clock'
 import { dayAsDate, toLocalDay } from '@/infrastructure/dates'
 import { newEncounterId, newMatchId } from '@/infrastructure/ids'
 import { Button } from '@/presentation/components/button'
 import { Icon } from '@/presentation/components/icon'
-import { useTranslate } from '@/presentation/i18n/i18n-context'
 
 import './round-encounters.sass'
 
@@ -48,7 +48,7 @@ export const RoundEncounters: React.FC<RoundEncountersProps> = ({
   onSave,
   setup
 }) => {
-  const translate = useTranslate()
+  const translate = useClubTranslate()
   const { edit, state } = useClub()
 
   if (state.status !== 'ready') {

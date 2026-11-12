@@ -10,8 +10,8 @@ import {
   Popover
 } from 'react-aria-components'
 
+import { useClubTranslate } from '@/features/club/use-club-translate'
 import { Icon } from '@/presentation/components/icon'
-import { useTranslate } from '@/presentation/i18n/i18n-context'
 
 import './chooser.sass'
 
@@ -53,7 +53,7 @@ export const Chooser: React.FC<ChooserProps> = ({
   title,
   trigger
 }) => {
-  const translate = useTranslate()
+  const translate = useClubTranslate()
   const isSheet = useIsSheet()
   const closeWhenDismissed = (isOpen: boolean) => {
     if (!isOpen) {
@@ -122,7 +122,7 @@ export const ChooserOption: React.FC<ChooserOptionProps> = ({
 
 /** The mark of the choice already in place. */
 export const HereMark: React.FC = () => {
-  const translate = useTranslate()
+  const translate = useClubTranslate()
 
   return (
     <span className='chooser-here'>

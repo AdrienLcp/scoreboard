@@ -3,11 +3,11 @@ import { useState } from 'react'
 
 import type { ClubRecord } from '@scoreboard/protocol/club-record'
 
+import { useClubTranslate } from '@/features/club/use-club-translate'
 import { Button } from '@/presentation/components/button'
 import { Form } from '@/presentation/components/form'
 import { Icon } from '@/presentation/components/icon'
 import { Input, Label, TextField } from '@/presentation/components/text-field'
-import { useTranslate } from '@/presentation/i18n/i18n-context'
 import { apiErrorKey } from '@/presentation/i18n/translation'
 
 import { eventInputFor } from './club-day'
@@ -28,7 +28,7 @@ export const NewEventForm: React.FC<NewEventFormProps> = ({
   isMain = false,
   record
 }) => {
-  const translate = useTranslate()
+  const translate = useClubTranslate()
   const { create, state } = useCreateEvent()
   const [name, setName] = useState('')
   const planName = useDefaultPlanName(record)

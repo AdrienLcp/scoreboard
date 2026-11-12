@@ -6,9 +6,9 @@ import type { PublicSnapshot } from '@scoreboard/protocol/event-snapshot'
 import type { EventId, MatchId } from '@scoreboard/protocol/identifiers'
 import type { ScoringEvent } from '@scoreboard/protocol/scoring-event'
 
+import { useClubTranslate } from '@/features/club/use-club-translate'
 import { Button } from '@/presentation/components/button'
 import { Icon } from '@/presentation/components/icon'
-import { useTranslate } from '@/presentation/i18n/i18n-context'
 
 import { ChampionshipEncounters } from './championship-encounters'
 import { type EventFormat, eventFormatOf } from './event-format'
@@ -46,7 +46,7 @@ export const EncountersStep: React.FC<EncountersStepProps> = ({
   onSave,
   setup
 }) => {
-  const translate = useTranslate()
+  const translate = useClubTranslate()
   const [isChoosing, setIsChoosing] = useState(false)
   const format = chosenFormat ?? eventFormatOf(setup)
 

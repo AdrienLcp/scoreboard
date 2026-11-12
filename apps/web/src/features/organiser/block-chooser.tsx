@@ -4,7 +4,7 @@ import type { EncounterId, TableNumber } from '@scoreboard/protocol/identifiers'
 
 import { DEFAULT_OPPONENT_COLOUR } from '@scoreboard/core/club/team-colours'
 
-import { useTranslate } from '@/presentation/i18n/i18n-context'
+import { useClubTranslate } from '@/features/club/use-club-translate'
 
 import { Chooser, ChooserOption, HereMark } from './chooser'
 import { TeamChip } from './team-chip'
@@ -30,7 +30,7 @@ type BlockChooserProps = {
 
 /** "Table 7" for a block of one, "Tables 3–4" for a run. */
 export const useTablesLabel = () => {
-  const translate = useTranslate()
+  const translate = useClubTranslate()
 
   return (tables: readonly TableNumber[]): string =>
     tables.length === 1
@@ -67,7 +67,7 @@ export const BlockChooser: React.FC<BlockChooserProps> = ({
   onClose,
   trigger
 }) => {
-  const translate = useTranslate()
+  const translate = useClubTranslate()
   const tablesLabel = useTablesLabel()
   const block = [first, first + 1]
   const current = encounters.find((encounter) =>

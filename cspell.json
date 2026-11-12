@@ -13,7 +13,7 @@
   "overrides": [
     {
       "filename": [
-        "**/i18n/dictionary-fr.ts",
+        "**/i18n/dictionary-fr*.ts",
         "PRODUCT.md",
         "DESIGN.md",
         "**/encounter/encounter-formats.ts"

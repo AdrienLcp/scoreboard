@@ -1,8 +1,8 @@
 import type React from 'react'
 
+import { useSpectatorTranslate } from '@/features/spectator/use-spectator-translate'
 import { Icon } from '@/presentation/components/icon'
 import { ToggleButton } from '@/presentation/components/toggle-button-group'
-import { useTranslate } from '@/presentation/i18n/i18n-context'
 
 import './follow-button.sass'
 
@@ -18,7 +18,7 @@ export const FollowButton: React.FC<FollowButtonProps> = ({
   name,
   onChange
 }) => {
-  const translate = useTranslate()
+  const translate = useSpectatorTranslate()
 
   return (
     <ToggleButton

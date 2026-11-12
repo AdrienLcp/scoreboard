@@ -20,7 +20,8 @@ import { shortName, sideName } from '@/features/event/participant-names'
 import { numberedPeriods } from '@/features/event/periods'
 import { SCORE_DASH, scoreText, versusText } from '@/features/event/score-text'
 import { useServerNow } from '@/features/event/use-server-now'
-import { toDate } from '@/infrastructure/dates'
+import { useUmpireTranslate } from '@/features/umpire/use-umpire-translate'
+import { toDate } from '@/infrastructure/clock'
 import {
   useEventIdParam,
   useUmpireCodeParam
@@ -31,7 +32,6 @@ import { Main } from '@/presentation/components/main'
 import { StatePill } from '@/presentation/components/state-pill'
 import { TableNumber } from '@/presentation/components/table-number'
 import { DocumentTitle } from '@/presentation/head/document-title'
-import { useTranslate } from '@/presentation/i18n/i18n-context'
 import { recordRefusalKey } from '@/presentation/i18n/translation'
 
 import { ConnectionBadge } from './connection-badge'
@@ -54,7 +54,7 @@ const UmpireConsole: React.FC<{ code: UmpireCode; eventId: EventId }> = ({
   code,
   eventId
 }) => {
-  const translate = useTranslate()
+  const translate = useUmpireTranslate()
   const umpire = useUmpireConsole({ code, eventId })
   const { events, match, snapshot, state } = umpire
   const nowMs = useServerNow(snapshot?.event.generatedAtMs ?? null)
@@ -409,7 +409,7 @@ const UmpireConsole: React.FC<{ code: UmpireCode; eventId: EventId }> = ({
 
 /** One table's console: an umpire scores the match on it, point by point. */
 export const UmpirePage: React.FC = () => {
-  const translate = useTranslate()
+  const translate = useUmpireTranslate()
   const eventId = useEventIdParam()
   const code = useUmpireCodeParam()
 

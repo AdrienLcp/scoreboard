@@ -13,10 +13,10 @@ import type {
 } from '@scoreboard/protocol/identifiers'
 import type { ScoringEvent } from '@scoreboard/protocol/scoring-event'
 
+import { useClubTranslate } from '@/features/club/use-club-translate'
 import { organiserStepPathFor } from '@/infrastructure/router/navigation'
 import { Icon } from '@/presentation/components/icon'
 import { ButtonLink } from '@/presentation/components/link'
-import { useTranslate } from '@/presentation/i18n/i18n-context'
 
 import { HallPlanBoard } from './hall-plan'
 import { ScreensPanel } from './screens-panel'
@@ -44,7 +44,7 @@ export const HallStep: React.FC<HallStepProps> = ({
   onSave,
   setup
 }) => {
-  const translate = useTranslate()
+  const translate = useClubTranslate()
   const standing = accesses.filter((access) =>
     (setup.hall?.tables ?? []).every(
       (table) => table.table !== access.table || !table.isHidden

@@ -17,12 +17,12 @@ import {
   standingTablesOf
 } from '@scoreboard/core/hall/hall-plan'
 
+import { useClubTranslate } from '@/features/club/use-club-translate'
 import { sideName } from '@/features/event/participant-names'
 import { wallCallOf } from '@/features/event/sheet-call'
 import { sidePaintOf } from '@/features/spectator/room-layout'
 import { Icon } from '@/presentation/components/icon'
 import { TableTop } from '@/presentation/components/table-top'
-import { useTranslate } from '@/presentation/i18n/i18n-context'
 
 import { LivePill } from './live-pill'
 import { type LiveTableState, liveTableStateOf } from './live-state'
@@ -70,7 +70,7 @@ const LiveCard: React.FC<LiveCardProps> = ({
   plan,
   state
 }) => {
-  const translate = useTranslate()
+  const translate = useClubTranslate()
   const { table } = hallTable
   const callOf = (match: MatchView): string =>
     isDoublesLabel(match.label)
@@ -208,7 +208,7 @@ export const LiveFloor: React.FC<LiveFloorProps> = ({
   setup,
   variant
 }) => {
-  const translate = useTranslate()
+  const translate = useClubTranslate()
   const plan = hallPlanOf(setup)
   const hasBlocks = (setup.tournament ?? null) === null
   const pairs = hasBlocks ? standingPairsOf(plan) : []

@@ -5,9 +5,9 @@ import { FileTrigger } from 'react-aria-components'
 
 import type { LogoUrl } from '@scoreboard/protocol/logo'
 
+import { useClubTranslate } from '@/features/club/use-club-translate'
 import { Button, PlainButton } from '@/presentation/components/button'
 import { Icon } from '@/presentation/components/icon'
-import { useTranslate } from '@/presentation/i18n/i18n-context'
 
 import type { LogoUploadError } from './use-club'
 
@@ -41,7 +41,7 @@ export const LogoPicker: React.FC<LogoPickerProps> = ({
   onPick,
   onRemove
 }) => {
-  const translate = useTranslate()
+  const translate = useClubTranslate()
   const [status, setStatus] = useState<PickStatus>('idle')
 
   return (

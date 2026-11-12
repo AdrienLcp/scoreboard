@@ -15,10 +15,10 @@ import {
   walkoversOf
 } from '@scoreboard/core/encounter/player-forfeit'
 
+import { useClubTranslate } from '@/features/club/use-club-translate'
 import { newScoringEventId } from '@/infrastructure/ids'
 import { Button } from '@/presentation/components/button'
 import { Icon } from '@/presentation/components/icon'
-import { useTranslate } from '@/presentation/i18n/i18n-context'
 
 import { ChoiceField } from './choice-field'
 import { ConfirmButton } from './confirm-button'
@@ -48,7 +48,7 @@ export const PlayerForfeit: React.FC<PlayerForfeitProps> = ({
   onRecord,
   setup
 }) => {
-  const translate = useTranslate()
+  const translate = useClubTranslate()
   const [seatId, setSeatId] = useState<string | null>(null)
   const encounterMatches = matches.filter(
     (match) => match.encounterId === encounterId

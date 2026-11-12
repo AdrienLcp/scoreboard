@@ -11,6 +11,7 @@ import type { InstantMs } from '@scoreboard/protocol/scoring-event'
 import { type Side, sides } from '@scoreboard/protocol/side'
 
 import { paintOf } from '@/features/event/team-paint'
+import { useSpectatorTranslate } from '@/features/spectator/use-spectator-translate'
 import { PlainButton } from '@/presentation/components/button'
 import {
   Disclosure,
@@ -18,7 +19,6 @@ import {
 } from '@/presentation/components/disclosure'
 import { Icon } from '@/presentation/components/icon'
 import { RollingNumber } from '@/presentation/components/rolling-number'
-import { useTranslate } from '@/presentation/i18n/i18n-context'
 
 import { encounterTotalsOf, type TeamTotals } from './encounter-totals'
 import { MatchCard } from './match-card'
@@ -54,7 +54,7 @@ export const EncounterSheetCard: React.FC<EncounterSheetCardProps> = ({
   teams,
   view
 }) => {
-  const translate = useTranslate()
+  const translate = useSpectatorTranslate()
   const [isExpanded, setIsExpanded] = useState(isOpenAtFirst)
   const points = view?.points ?? { away: 0, home: 0 }
   const live = matches.filter((match) => match.state.status === 'live')

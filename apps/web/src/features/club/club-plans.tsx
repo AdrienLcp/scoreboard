@@ -2,9 +2,9 @@ import type React from 'react'
 
 import type { ClubRecord } from '@scoreboard/protocol/club-record'
 
+import { useClubTranslate } from '@/features/club/use-club-translate'
 import { Button } from '@/presentation/components/button'
 import { Icon } from '@/presentation/components/icon'
-import { useTranslate } from '@/presentation/i18n/i18n-context'
 
 import { deleteClubPlan, setDefaultClubPlan } from './club-edits'
 import { ClubHallPlan } from './club-hall-plan'
@@ -18,7 +18,7 @@ type ClubPlansProps = {
 
 /** The ways the club sets its hall up, each drawn, the one new events start from starred. */
 export const ClubPlans: React.FC<ClubPlansProps> = ({ onChange, record }) => {
-  const translate = useTranslate()
+  const translate = useClubTranslate()
 
   if (record.plans.length === 0) {
     return <p className='club-note'>{translate('club.hall.empty')}</p>

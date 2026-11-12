@@ -17,12 +17,12 @@ import {
 import { byRecentThenName, familyFirst } from '@/features/club/directory-search'
 import { type Pick, PickField } from '@/features/club/pick-field'
 import { useClub } from '@/features/club/use-club'
+import { useClubTranslate } from '@/features/club/use-club-translate'
 import {
   newDirectoryClubId,
   newPlayerId,
   newTeamId
 } from '@/infrastructure/ids'
-import { useTranslate } from '@/presentation/i18n/i18n-context'
 
 import { ChoiceField } from './choice-field'
 import { ConfirmButton } from './confirm-button'
@@ -129,7 +129,7 @@ export const PlayersEditor: React.FC<PlayersEditorProps> = ({
   onSave,
   setup
 }) => {
-  const translate = useTranslate()
+  const translate = useClubTranslate()
   const club = useClub()
   const record = club.state.status === 'ready' ? club.state.record : null
   const [teamId, setTeamId] = useState<string>(NO_TEAM)

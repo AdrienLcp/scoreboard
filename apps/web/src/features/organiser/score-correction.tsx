@@ -7,11 +7,11 @@ import type { MatchId } from '@scoreboard/protocol/identifiers'
 import type { ScoringEvent } from '@scoreboard/protocol/scoring-event'
 import { type Score, type Side, sides } from '@scoreboard/protocol/side'
 
+import { useClubTranslate } from '@/features/club/use-club-translate'
 import { sideName } from '@/features/event/participant-names'
 import { newScoringEventId } from '@/infrastructure/ids'
 import { Button } from '@/presentation/components/button'
 import { Icon } from '@/presentation/components/icon'
-import { useTranslate } from '@/presentation/i18n/i18n-context'
 
 import { ConfirmButton } from './confirm-button'
 import { type DraftGame, draftGamesOf, isDraftAccepted } from './score-draft'
@@ -56,7 +56,7 @@ const PointStepper: React.FC<PointStepperProps> = ({
   points,
   side
 }) => {
-  const translate = useTranslate()
+  const translate = useClubTranslate()
 
   return (
     <fieldset className='point-stepper' data-side={side}>
@@ -88,7 +88,7 @@ const GameStatus: React.FC<{
   draft: DraftGame
   nameOf: (side: Side) => string
 }> = ({ draft, nameOf }) => {
-  const translate = useTranslate()
+  const translate = useClubTranslate()
 
   switch (draft.kind) {
     case 'won':
@@ -126,7 +126,7 @@ export const ScoreCorrection: React.FC<ScoreCorrectionProps> = ({
   onRecord,
   players
 }) => {
-  const translate = useTranslate()
+  const translate = useClubTranslate()
   const { state } = match
   const shownPeriods = shownPeriodsOf(match)
   const [draft, setDraft] = useState<Score[]>(

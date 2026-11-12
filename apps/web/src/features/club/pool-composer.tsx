@@ -14,6 +14,7 @@ import type {
 
 import { resizedPool } from '@scoreboard/core/championship/championship-calendar'
 
+import { useClubTranslate } from '@/features/club/use-club-translate'
 import { ChoiceField } from '@/features/organiser/choice-field'
 import { ConfirmButton } from '@/features/organiser/confirm-button'
 import { newDirectoryClubId, newTeamId } from '@/infrastructure/ids'
@@ -24,7 +25,6 @@ import {
 } from '@/presentation/components/disclosure'
 import { Icon } from '@/presentation/components/icon'
 import { Input, Label, TextField } from '@/presentation/components/text-field'
-import { useTranslate } from '@/presentation/i18n/i18n-context'
 
 import {
   datedRound,
@@ -74,7 +74,7 @@ export const PoolComposer: React.FC<PoolComposerProps> = ({
   pool,
   record
 }) => {
-  const translate = useTranslate()
+  const translate = useClubTranslate()
   const save = (next: ChampionshipPool) => onChange(updatePool(record, next))
   const numberLabel = (number: number) =>
     translate('club.championship.composer.teamNumber', {

@@ -22,6 +22,7 @@ import {
 import { byRecentThenName } from '@/features/club/directory-search'
 import { PickField } from '@/features/club/pick-field'
 import { useClub } from '@/features/club/use-club'
+import { useClubTranslate } from '@/features/club/use-club-translate'
 import { nowMs } from '@/infrastructure/clock'
 import { toLocalDay } from '@/infrastructure/dates'
 import {
@@ -41,7 +42,6 @@ import { Form } from '@/presentation/components/form'
 import { Icon } from '@/presentation/components/icon'
 import { ButtonLink } from '@/presentation/components/link'
 import { Switch } from '@/presentation/components/switch'
-import { useTranslate } from '@/presentation/i18n/i18n-context'
 
 import { ChoiceField } from './choice-field'
 import {
@@ -138,7 +138,7 @@ export const ClubEncounterForm: React.FC<ClubEncounterFormProps> = ({
   onSave,
   setup
 }) => {
-  const translate = useTranslate()
+  const translate = useClubTranslate()
   const clubPath = useClubPath()
   const club = useClub()
   const { state } = club

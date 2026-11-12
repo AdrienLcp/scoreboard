@@ -13,8 +13,8 @@ import {
 } from '@scoreboard/core/tournament/pool-standings'
 
 import { paintOf } from '@/features/event/team-paint'
+import { useSpectatorTranslate } from '@/features/spectator/use-spectator-translate'
 import { Icon } from '@/presentation/components/icon'
-import { useTranslate } from '@/presentation/i18n/i18n-context'
 
 import { MatchCard } from './match-card'
 
@@ -70,7 +70,7 @@ const PoolTableCard: React.FC<PoolTableCardProps> = ({
   table,
   teams
 }) => {
-  const translate = useTranslate()
+  const translate = useSpectatorTranslate()
   const isDrawn = table.standings.some((standing) => standing.isDrawn)
 
   return (
@@ -172,7 +172,7 @@ export const TournamentPanel: React.FC<TournamentPanelProps> = ({
   teams,
   tournament
 }) => {
-  const translate = useTranslate()
+  const translate = useSpectatorTranslate()
   const tables = poolTablesFor({ matches, tournament })
   const [firstPool, secondPool] = tournament.pools
   const bracket = matches

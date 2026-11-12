@@ -8,12 +8,12 @@ import type { TableNumber } from '@scoreboard/protocol/identifiers'
 
 import { isDoublesLabel } from '@scoreboard/core/encounter/encounter-sheet'
 
+import { useClubTranslate } from '@/features/club/use-club-translate'
 import { sideName } from '@/features/event/participant-names'
 import { scoreText } from '@/features/event/score-text'
 import { wallCallOf } from '@/features/event/sheet-call'
 import { PlainButton } from '@/presentation/components/button'
 import { Icon } from '@/presentation/components/icon'
-import { useTranslate } from '@/presentation/i18n/i18n-context'
 
 import { LivePill } from './live-pill'
 import { liveTableStateOf, matchesWithoutTableOf } from './live-state'
@@ -50,7 +50,7 @@ export const LiveRows: React.FC<LiveRowsProps> = ({
   selected,
   tables
 }) => {
-  const translate = useTranslate()
+  const translate = useClubTranslate()
   const callOf = (match: MatchView): string =>
     isDoublesLabel(match.label)
       ? translate('display.wall.doubles')

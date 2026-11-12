@@ -4,7 +4,7 @@ import type { TableNumber } from '@scoreboard/protocol/identifiers'
 
 import { DEFAULT_OPPONENT_COLOUR } from '@scoreboard/core/club/team-colours'
 
-import { useTranslate } from '@/presentation/i18n/i18n-context'
+import { useClubTranslate } from '@/features/club/use-club-translate'
 
 import { type ChoosableEncounter, useTablesLabel } from './block-chooser'
 import { Chooser, ChooserOption, HereMark } from './chooser'
@@ -45,7 +45,7 @@ export const TablesChooser: React.FC<TablesChooserProps> = ({
   onPreview,
   trigger
 }) => {
-  const translate = useTranslate()
+  const translate = useClubTranslate()
   const tablesLabel = useTablesLabel()
 
   return (

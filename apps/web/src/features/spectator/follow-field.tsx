@@ -4,6 +4,7 @@ import { useState } from 'react'
 import type { Player } from '@scoreboard/protocol/event-setup'
 import type { PlayerId } from '@scoreboard/protocol/identifiers'
 
+import { useSpectatorTranslate } from '@/features/spectator/use-spectator-translate'
 import { PlainButton } from '@/presentation/components/button'
 import {
   ComboBox,
@@ -15,7 +16,6 @@ import {
 } from '@/presentation/components/combo-box'
 import { Icon } from '@/presentation/components/icon'
 import { compareFrench } from '@/presentation/i18n/compare-french'
-import { useTranslate } from '@/presentation/i18n/i18n-context'
 
 import './follow-field.sass'
 
@@ -44,7 +44,7 @@ export const FollowField: React.FC<FollowFieldProps> = ({
   players,
   whereIs
 }) => {
-  const translate = useTranslate()
+  const translate = useSpectatorTranslate()
   const [typed, setTyped] = useState('')
   const unfollowed = players
     .filter((player) => !followed.includes(player.id))

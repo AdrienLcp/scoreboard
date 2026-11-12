@@ -2,9 +2,9 @@ import type React from 'react'
 
 import type { ClubRecord } from '@scoreboard/protocol/club-record'
 
+import { useClubTranslate } from '@/features/club/use-club-translate'
 import { paths } from '@/infrastructure/router/navigation'
 import { TextLink } from '@/presentation/components/link'
-import { useTranslate } from '@/presentation/i18n/i18n-context'
 import { RichText } from '@/presentation/i18n/rich-text'
 
 import { NewEventForm } from './new-event-form'
@@ -17,7 +17,7 @@ const clubLink = (children: string): React.ReactNode => (
 export const FreeDaySection: React.FC<{ record: ClubRecord }> = ({
   record
 }) => {
-  const translate = useTranslate()
+  const translate = useClubTranslate()
 
   return (
     <section aria-labelledby='free-day-title' className='free-day'>

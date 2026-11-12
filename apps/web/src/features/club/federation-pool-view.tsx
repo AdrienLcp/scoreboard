@@ -13,6 +13,7 @@ import type {
   FederationSheetPlayer
 } from '@scoreboard/protocol/federation'
 
+import { useClubTranslate } from '@/features/club/use-club-translate'
 import { scoreText } from '@/features/event/score-text'
 import { dayAsDate } from '@/infrastructure/dates'
 import { Button } from '@/presentation/components/button'
@@ -21,7 +22,6 @@ import {
   DisclosurePanel
 } from '@/presentation/components/disclosure'
 import { Icon } from '@/presentation/components/icon'
-import { useTranslate } from '@/presentation/i18n/i18n-context'
 
 import { useFederationEncounter } from './federation-queries'
 import {
@@ -60,7 +60,7 @@ export const FederationPoolView: React.FC<FederationPoolViewProps> = ({
   record,
   self
 }) => {
-  const translate = useTranslate()
+  const translate = useClubTranslate()
 
   return (
     <>
@@ -100,7 +100,7 @@ const FederationStandings: React.FC<{
   ownTeam: DirectoryTeam | undefined
   self: FederationSelf
 }> = ({ federationPool, ownNumber, ownTeam, self }) => {
-  const translate = useTranslate()
+  const translate = useClubTranslate()
 
   return (
     <div className='pool-standings'>
@@ -162,7 +162,7 @@ const FederationRoundLine: React.FC<{
   round: FederationRound
   self: FederationSelf
 }> = ({ pool, record, round, self }) => {
-  const translate = useTranslate()
+  const translate = useClubTranslate()
   const own = selfFixtureOf(self, round)
   const head = (
     <>
@@ -241,7 +241,7 @@ const OwnLine: React.FC<{
   score: OwnScore | null
   side: 'away' | 'home'
 }> = ({ isFromSheet, opponent, score, side }) => {
-  const translate = useTranslate()
+  const translate = useClubTranslate()
 
   return (
     <span
@@ -289,7 +289,7 @@ const pointsOf = (
 const FederationSheet: React.FC<{
   reference: FederationEncounterReference
 }> = ({ reference }) => {
-  const translate = useTranslate()
+  const translate = useClubTranslate()
   const state = useFederationEncounter(reference)
 
   if (state === null || state.status === 'loading') {

@@ -1,36 +1,37 @@
 import type React from 'react'
-import { useState } from 'react'
+import { lazy, Suspense, useState } from 'react'
 
 import type { DirectoryClub } from '@scoreboard/protocol/club-record'
 
 import { useClub } from '@/features/club/use-club'
-import { useCurrentFederationPools } from '@/features/club/use-federation-pools'
-import { nowMs } from '@/infrastructure/clock'
-import { toLocalDay } from '@/infrastructure/dates'
 import { paths } from '@/infrastructure/router/navigation'
 import {
   type OrganisedEvent,
   readOrganisedEvents
 } from '@/infrastructure/storage/organised-events-storage'
 import { BrandMark } from '@/presentation/components/brand-mark'
-import { Button } from '@/presentation/components/button'
 import { Icon } from '@/presentation/components/icon'
 import { ButtonLink } from '@/presentation/components/link'
 import { Main } from '@/presentation/components/main'
 import { DocumentTitle } from '@/presentation/head/document-title'
 import { useTranslate } from '@/presentation/i18n/i18n-context'
 
-import { clubRoundOf } from './club-day'
-import { ClubRoundSection } from './club-round'
-import { ClubSeason } from './club-season'
 import { FirstRun } from './first-run'
-import { FreeDaySection } from './free-day'
 import { HallScreenSection } from './hall-screen-section'
 import { homeDocumentTitle } from './home-document-title'
 import { JoinEventForm } from './join-event-form'
-import { OrganisedEvents } from './organised-events'
 
 import './home-page.sass'
+
+/** A first visit downloads nothing of a club it does not have yet. */
+const ClubHome = lazy(async () => ({
+  default: (await import('./club-home')).ClubHome
+}))
+
+/** A device that organised an event before it had a club still lists it. */
+const OrganisedEvents = lazy(async () => ({
+  default: (await import('./organised-events')).OrganisedEvents
+}))
 
 const organisedEventsOrNone = (): OrganisedEvent[] => {
   const stored = readOrganisedEvents()
@@ -90,88 +91,60 @@ const HomeBar: React.FC<{
 }
 
 /**
- * Home is the club: its next championship round ready to prepare or pick up
- * again, the events this device organises, and the season's teams, pools
- * and directory; a device with no club starts by naming one. Anyone can
- * still join an event by its code.
+ * Home is the club, see `ClubHome`; a device with no club sees the hall's TV
+ * on a fictional day and starts by naming one. Anyone can still join an event
+ * by its code.
  */
 export const HomePage: React.FC = () => {
   const translate = useTranslate()
   const club = useClub()
   const { state } = club
   const [organisedEvents] = useState(organisedEventsOrNone)
-  const record = state.status === 'ready' ? state.record : null
-  const federationPools = useCurrentFederationPools(record)
-  const round =
-    record === null
-      ? null
-      : clubRoundOf(record, toLocalDay(nowMs()), federationPools)
   const isFirstVisit = state.status === 'none'
 
   return (
     <Main className='home-page'>
       <DocumentTitle>{homeDocumentTitle(translate)}</DocumentTitle>
-      <HomeBar club={record?.own ?? null} hasScreenLink={!isFirstVisit} />
-      <div className='home-layout'>
-        <div className='home-lead'>
-          {isFirstVisit ? (
+      <HomeBar
+        club={state.status === 'ready' ? state.record.own : null}
+        hasScreenLink={!isFirstVisit}
+      />
+      {state.status === 'none' ? (
+        <div className='home-layout'>
+          <div className='home-lead'>
             <FirstRun onCreate={club.create} onJoin={club.join} />
-          ) : null}
-          {state.status === 'loading' ? (
-            <p className='home-summary'>{translate('club.loading')}</p>
-          ) : null}
-          {state.status === 'missing' || state.status === 'offline' ? (
-            <div className='home-unreachable'>
-              <p className='home-alert' role='alert'>
-                <Icon name={state.status === 'offline' ? 'wifiOff' : 'alert'} />
-                {translate(
-                  state.status === 'offline' ? 'club.offline' : 'club.missing'
-                )}
-              </p>
-              <div className='home-unreachable-actions'>
-                <Button onPress={() => club.join(state.code)}>
-                  <Icon name='sync' />
-                  {translate('club.retry')}
-                </Button>
-                <ButtonLink href={paths.club} variant='quiet'>
-                  <Icon name='club' />
-                  {translate('club.title')}
-                </ButtonLink>
+          </div>
+          <div className='home-side'>
+            {organisedEvents.length > 0 ? (
+              <Suspense fallback={null}>
+                <OrganisedEvents
+                  canCreate
+                  events={organisedEvents}
+                  record={null}
+                />
+              </Suspense>
+            ) : null}
+            <JoinEventForm />
+            <HallScreenSection />
+          </div>
+        </div>
+      ) : (
+        <Suspense
+          fallback={
+            <div className='home-layout'>
+              <div className='home-lead'>
+                <p className='home-summary'>{translate('club.loading')}</p>
               </div>
             </div>
-          ) : null}
-          {state.status === 'ready' && round !== null ? (
-            <ClubRoundSection
-              organisedEventIds={organisedEvents.map((event) => event.eventId)}
-              record={state.record}
-              round={round}
-            />
-          ) : null}
-          {state.status === 'ready' && round === null ? (
-            <FreeDaySection record={state.record} />
-          ) : null}
-        </div>
-        <div className='home-side'>
-          <OrganisedEvents
-            canCreate={
-              isFirstVisit
-                ? organisedEvents.length > 0
-                : !(state.status === 'ready' && round === null)
-            }
-            events={organisedEvents}
-            record={record}
+          }
+        >
+          <ClubHome
+            onJoin={club.join}
+            organisedEvents={organisedEvents}
+            state={state}
           />
-          {state.status === 'ready' ? (
-            <ClubSeason
-              code={state.code}
-              federationPools={federationPools}
-              record={state.record}
-            />
-          ) : null}
-          <JoinEventForm />
-          {isFirstVisit ? <HallScreenSection /> : null}
-        </div>
-      </div>
+        </Suspense>
+      )}
     </Main>
   )
 }

@@ -3,6 +3,7 @@ import { useEffect, useState } from 'react'
 
 import type { EventId, OrganiserCode } from '@scoreboard/protocol/identifiers'
 
+import { useClubTranslate } from '@/features/club/use-club-translate'
 import { isEventGone } from '@/features/event/event-gone'
 import { FeedMessage } from '@/features/event/feed-message'
 import { useCurrentSnapshot } from '@/features/event/use-current-snapshot'
@@ -23,7 +24,6 @@ import { Icon } from '@/presentation/components/icon'
 import { ButtonLink } from '@/presentation/components/link'
 import { Main } from '@/presentation/components/main'
 import { DocumentTitle } from '@/presentation/head/document-title'
-import { useTranslate } from '@/presentation/i18n/i18n-context'
 import {
   recordRefusalKey,
   setupRefusalKey,
@@ -50,7 +50,7 @@ export const OrganiserConsole: React.FC<{
   code: OrganiserCode
   eventId: EventId
 }> = ({ code, eventId }) => {
-  const translate = useTranslate()
+  const translate = useClubTranslate()
   const organiser = useOrganiserConsole({ code, eventId })
   const { snapshot } = organiser
   const { snapshot: event } = useCurrentSnapshot(snapshot?.event ?? null)

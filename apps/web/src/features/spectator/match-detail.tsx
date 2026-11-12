@@ -10,8 +10,8 @@ import { gamesToWinMatch } from '@scoreboard/core/table-tennis/table-tennis-game
 import { formatDuration } from '@/features/event/durations'
 import { shortName, sideName } from '@/features/event/participant-names'
 import { numberedPeriods } from '@/features/event/periods'
-import { toDate } from '@/infrastructure/dates'
-import { useTranslate } from '@/presentation/i18n/i18n-context'
+import { useSpectatorTranslate } from '@/features/spectator/use-spectator-translate'
+import { toDate } from '@/infrastructure/clock'
 
 import { FollowButton } from './follow-button'
 import { CardMark, StopwatchMark } from './side-marks'
@@ -35,7 +35,7 @@ export const MatchDetail: React.FC<MatchDetailProps> = ({
   players,
   umpireName
 }) => {
-  const translate = useTranslate()
+  const translate = useSpectatorTranslate()
   const { state, timing } = match
   const isLive = state.status === 'live'
   const nameOf = (side: Side): string =>

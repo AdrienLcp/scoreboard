@@ -3,7 +3,7 @@ import { useId } from 'react'
 
 import { EVENT_RETENTION_DAYS } from '@scoreboard/protocol/event-retention'
 
-import { useTranslate } from '@/presentation/i18n/i18n-context'
+import { useClubTranslate } from '@/features/club/use-club-translate'
 
 import { ConfirmButton } from './confirm-button'
 
@@ -13,7 +13,7 @@ type EventDeletionProps = {
 
 /** Erases the event ahead of its retention, behind a second press. */
 export const EventDeletion: React.FC<EventDeletionProps> = ({ onDelete }) => {
-  const translate = useTranslate()
+  const translate = useClubTranslate()
   const titleId = useId()
 
   return (

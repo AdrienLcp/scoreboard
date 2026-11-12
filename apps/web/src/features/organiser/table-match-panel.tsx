@@ -12,6 +12,7 @@ import type { Side } from '@scoreboard/protocol/side'
 
 import { isDoublesLabel } from '@scoreboard/core/encounter/encounter-sheet'
 
+import { useClubTranslate } from '@/features/club/use-club-translate'
 import { sideName } from '@/features/event/participant-names'
 import { scoreText, versusText } from '@/features/event/score-text'
 import { wallCallOf } from '@/features/event/sheet-call'
@@ -19,7 +20,6 @@ import { currentMatchOn } from '@/features/event/table-match'
 import { newScoringEventId } from '@/infrastructure/ids'
 import { Button } from '@/presentation/components/button'
 import { Icon } from '@/presentation/components/icon'
-import { useTranslate } from '@/presentation/i18n/i18n-context'
 
 import { ScoreCorrection } from './score-correction'
 import { UmpireField } from './umpire-field'
@@ -57,7 +57,7 @@ export const TableMatchPanel: React.FC<TableMatchPanelProps> = ({
   setup,
   table
 }) => {
-  const translate = useTranslate()
+  const translate = useClubTranslate()
   const [correctingId, setCorrectingId] = useState<MatchId | null>(null)
   const [correctedId, setCorrectedId] = useState<MatchId | null>(null)
   const match = currentMatchOn(event, table)
