@@ -19,7 +19,7 @@ import {
   walkover
 } from '@scoreboard/protocol/testing/scoring-events'
 
-import { describeMatch, recordScoringEvent } from './match-log'
+import { describeMatch, recordScoringEvent, replayMatch } from './match-log'
 
 /** `'hha'` is two points for home then one for away. */
 const rally = (sequence: string): ScoringEvent[] =>
@@ -480,5 +480,45 @@ describe('recordScoringEvent', () => {
       error: 'invalid_score',
       status: 'failure'
     })
+  })
+})
+
+describe('replayMatch', () => {
+  it('[match-log] reaches, one event at a time, the state the whole log describes', () => {
+    const log = [
+      started(),
+      ...gameTo('home', 9),
+      ...rally('hha'),
+      undo(),
+      ...rally('aa')
+    ]
+    const replay = log.reduce(
+      (replayed, event) => replayed.with(event),
+      replayMatch(BEST_OF_5)
+    )
+
+    expect(replay.state).toEqual(stateOf(log))
+  })
+
+  it('[match-log] skips a resent event and one the rules refuse, as a stored log does', () => {
+    const opening = started()
+    const scored = point('home')
+    const replay = replayMatch(BEST_OF_5)
+      .with(confirmed())
+      .with(opening)
+      .with(scored)
+      .with(scored)
+      .with(opening)
+
+    expect(replay.state).toEqual(stateOf([opening, scored]))
+  })
+
+  it('[match-log] picks up after a stored log', () => {
+    const log = [started(), point('home'), point('away')]
+    const next = point('away')
+
+    expect(replayMatch(BEST_OF_5, log).with(next).state).toEqual(
+      stateOf([...log, next])
+    )
   })
 })

@@ -1,5 +1,7 @@
 import { describe, expect, it } from 'vitest'
 
+import { scheduledMatchState } from '@scoreboard/protocol/match-state'
+
 import { describeMatch } from '@scoreboard/core/match/match-log'
 
 import {
@@ -70,6 +72,20 @@ describe('the demo day', () => {
         (state) => state.periodsWon.home <= 3 && state.periodsWon.away <= 3
       )
     ).toBe(true)
+  })
+
+  it('keeps every match replayed to the last event of its log', () => {
+    let day = createDemoDay(NOW_MS, seeded(4))
+
+    for (let step = 1; step <= 30; step++) {
+      day = advanceDemoDay(day, NOW_MS + step * 1_000, seeded(step))
+    }
+
+    expect(
+      day.setup.matches.map(
+        (match) => day.replays.get(match.id)?.state ?? scheduledMatchState
+      )
+    ).toEqual(statesOf(day))
   })
 
   it('runs out once a table has played its whole sheet', () => {

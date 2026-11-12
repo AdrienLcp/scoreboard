@@ -36,14 +36,21 @@ const freshStanding = <TProgress>(
 })
 
 /**
- * The match folded so far. `undoStack` holds the standing before each event an
- * undo may cancel, most recent last: undoing is popping.
+ * Where the match stands after the events so far. `undoStack` holds the
+ * standing before each event an undo may cancel, most recent last: undoing is
+ * popping.
  */
-type Folded<TProgress> = {
-  seenIds: ReadonlySet<string>
+type Position<TProgress> = {
   standing: Standing<TProgress> | null
   undoStack: readonly (Standing<TProgress> | null)[]
 }
+
+/** The match folded so far, with the ids it accepted: a resent event is one of them. */
+type Folded<TProgress> = Position<TProgress> & {
+  seenIds: ReadonlySet<string>
+}
+
+const NOT_STARTED: Position<never> = { standing: null, undoStack: [] }
 
 type ProgressingEvent = Exclude<
   ScoringEvent,
@@ -190,11 +197,10 @@ const advance = <TFormat extends MatchFormat, TProgress>(
 const step = <TFormat extends MatchFormat, TProgress>(
   ruleset: Ruleset<TFormat, TProgress>,
   format: TFormat,
-  folded: Folded<TProgress>,
+  position: Position<TProgress>,
   event: ScoringEvent
-): Result<Folded<TProgress>, RecordRefusal> => {
-  const seenIds = new Set([...folded.seenIds, event.id])
-  const { standing } = folded
+): Result<Position<TProgress>, RecordRefusal> => {
+  const { standing } = position
 
   if (event.type === 'match.started') {
     if (standing !== null) {
@@ -202,7 +208,6 @@ const step = <TFormat extends MatchFormat, TProgress>(
     }
 
     return Result.success({
-      seenIds,
       standing: freshStanding(
         ruleset.begin({ firstServer: event.firstServer, format })
       ),
@@ -214,7 +219,6 @@ const step = <TFormat extends MatchFormat, TProgress>(
   // is moot: the match is over the moment it is recorded.
   if (standing === null && event.type === 'match.conceded') {
     return Result.success({
-      seenIds,
       standing: {
         ...freshStanding(
           ruleset.walkover(
@@ -233,16 +237,15 @@ const step = <TFormat extends MatchFormat, TProgress>(
   }
 
   if (event.type === 'score.undone') {
-    const previous = folded.undoStack.at(-1)
+    const previous = position.undoStack.at(-1)
 
     if (previous === undefined) {
       return Result.failure('nothing_to_undo')
     }
 
     return Result.success({
-      seenIds,
       standing: previous,
-      undoStack: folded.undoStack.slice(0, -1)
+      undoStack: position.undoStack.slice(0, -1)
     })
   }
 
@@ -253,30 +256,40 @@ const step = <TFormat extends MatchFormat, TProgress>(
   }
 
   return Result.success({
-    seenIds,
     standing: next.data,
-    undoStack: [...folded.undoStack, standing]
+    undoStack: [...position.undoStack, standing]
   })
 }
 
-/** Replays a stored log. An event the rules refuse is skipped: the log only ever holds accepted ones. */
+/**
+ * Replays a stored log. An event the rules refuse is skipped: the log only
+ * ever holds accepted ones. One set of ids grows through the whole replay,
+ * where a copy per event made every replay quadratic in the log's length.
+ */
 const fold = <TFormat extends MatchFormat, TProgress>(
   ruleset: Ruleset<TFormat, TProgress>,
   format: TFormat,
   log: readonly ScoringEvent[]
-): Folded<TProgress> =>
-  log.reduce<Folded<TProgress>>(
-    (folded, event) => {
-      if (folded.seenIds.has(event.id)) {
-        return folded
-      }
+): Folded<TProgress> => {
+  const seenIds = new Set<string>()
+  const position = log.reduce<Position<TProgress>>((reached, event) => {
+    if (seenIds.has(event.id)) {
+      return reached
+    }
 
-      const stepped = step(ruleset, format, folded, event)
+    const stepped = step(ruleset, format, reached, event)
 
-      return stepped.status === 'success' ? stepped.data : folded
-    },
-    { seenIds: new Set(), standing: null, undoStack: [] }
-  )
+    if (stepped.status === 'failure') {
+      return reached
+    }
+
+    seenIds.add(event.id)
+
+    return stepped.data
+  }, NOT_STARTED)
+
+  return { ...position, seenIds }
+}
 
 const stateOf = <TFormat extends MatchFormat, TProgress>(
   ruleset: Ruleset<TFormat, TProgress>,
@@ -325,9 +338,21 @@ const stateOf = <TFormat extends MatchFormat, TProgress>(
   }
 }
 
+/**
+ * A match folded one event at a time, for a caller that appends to a log it
+ * keeps: each event costs one step, never a replay of the log so far.
+ */
+export type MatchReplay = {
+  /** The state every screen shows after the events so far. */
+  state: MatchState
+  /** The replay one event on; an event the rules refuse is skipped, as in a stored log. */
+  with: (event: ScoringEvent) => MatchReplay
+}
+
 type MatchRules = {
   typicalDurationMs: () => number
   describe: (log: readonly ScoringEvent[]) => MatchState
+  replay: (log: readonly ScoringEvent[]) => MatchReplay
   record: (
     log: readonly ScoringEvent[],
     event: ScoringEvent
@@ -337,23 +362,48 @@ type MatchRules = {
 const rulesWith = <TFormat extends MatchFormat, TProgress>(
   ruleset: Ruleset<TFormat, TProgress>,
   format: TFormat
-): MatchRules => ({
-  describe: (log) => stateOf(ruleset, fold(ruleset, format, log)),
-  record: (log, event) => {
-    const folded = fold(ruleset, format, log)
+): MatchRules => {
+  const replayFrom = (folded: Folded<TProgress>): MatchReplay => {
+    const replay: MatchReplay = {
+      state: stateOf(ruleset, folded),
+      with: (event) => {
+        if (folded.seenIds.has(event.id)) {
+          return replay
+        }
 
-    if (folded.seenIds.has(event.id)) {
-      return Result.failure('duplicate')
+        const stepped = step(ruleset, format, folded, event)
+
+        return stepped.status === 'failure'
+          ? replay
+          : replayFrom({
+              ...stepped.data,
+              seenIds: new Set([...folded.seenIds, event.id])
+            })
+      }
     }
 
-    const stepped = step(ruleset, format, folded, event)
+    return replay
+  }
 
-    return stepped.status === 'failure'
-      ? stepped
-      : Result.success([...log, event])
-  },
-  typicalDurationMs: () => ruleset.typicalDurationMs(format)
-})
+  return {
+    describe: (log) => stateOf(ruleset, fold(ruleset, format, log)),
+    record: (log, event) => {
+      const folded = fold(ruleset, format, log)
+
+      if (folded.seenIds.has(event.id)) {
+        return Result.failure('duplicate')
+      }
+
+      const stepped = step(ruleset, format, folded, event)
+
+      return stepped.status === 'failure'
+        ? stepped
+        : Result.success([...log, event])
+    },
+    replay: (log) => replayFrom(fold(ruleset, format, log)),
+    typicalDurationMs: () => ruleset.typicalDurationMs(format)
+  }
+}
 
 /** The one place a format meets its sport's ruleset. */
 const rulesFor = (format: MatchFormat): MatchRules => {
@@ -368,6 +418,12 @@ export const describeMatch = (
   format: MatchFormat,
   log: readonly ScoringEvent[]
 ): MatchState => rulesFor(format).describe(log)
+
+/** The match after `log`, ready to take its next events one at a time. */
+export const replayMatch = (
+  format: MatchFormat,
+  log: readonly ScoringEvent[] = []
+): MatchReplay => rulesFor(format).replay(log)
 
 /**
  * Appends `event` to the log when the rules accept it. `duplicate` is an event

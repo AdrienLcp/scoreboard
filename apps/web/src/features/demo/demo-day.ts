@@ -12,14 +12,19 @@ import type {
   StampedEvent
 } from '@scoreboard/protocol/scoring-event'
 
-import { describeMatch } from '@scoreboard/core/match/match-log'
+import { type MatchReplay, replayMatch } from '@scoreboard/core/match/match-log'
 
 /** A number in [0, 1), so a test can play the day the same way twice. */
 export type Random = () => number
 
-/** A fictional team day: what was prepared, and what each match has logged so far. */
+/**
+ * A fictional team day: what was prepared, what each match has logged so far,
+ * and each match replayed to its last event, so a step costs one event and
+ * never a replay of the day.
+ */
 export type DemoDay = {
   logs: ReadonlyMap<MatchId, readonly StampedEvent[]>
+  replays: ReadonlyMap<MatchId, MatchReplay>
   setup: EventSetup
 }
 
@@ -238,11 +243,8 @@ const nextEventOn = ({
   }
 }
 
-const stateOf = (match: MatchSetup, log: readonly StampedEvent[]): MatchState =>
-  describeMatch(
-    match.format,
-    log.map((stamped) => stamped.event)
-  )
+const stateOf = (day: DemoDay, match: MatchSetup): MatchState =>
+  (day.replays.get(match.id) ?? replayMatch(match.format)).state
 
 /**
  * One step of the day at `nowMs`: each table's match in play scores or
@@ -254,12 +256,13 @@ export const advanceDemoDay = (
   random: Random
 ): DemoDay => {
   const logs = new Map(day.logs)
+  const replays = new Map(day.replays)
   const tables = new Set(day.setup.matches.map((match) => match.table))
 
   for (const table of tables) {
     const queue = day.setup.matches.filter((match) => match.table === table)
     const finished = queue.filter(
-      (match) => stateOf(match, logs.get(match.id) ?? []).status === 'finished'
+      (match) => stateOf(day, match).status === 'finished'
     )
     const match = queue.find((candidate) => !finished.includes(candidate))
 
@@ -279,15 +282,19 @@ export const advanceDemoDay = (
       log,
       nowMs,
       random,
-      state: stateOf(match, log)
+      state: stateOf(day, match)
     })
 
     if (event !== null) {
       logs.set(match.id, [...log, { event, recordedAtMs: nowMs }])
+      replays.set(
+        match.id,
+        (replays.get(match.id) ?? replayMatch(match.format)).with(event)
+      )
     }
   }
 
-  return { logs, setup: day.setup }
+  return { logs, replays, setup: day.setup }
 }
 
 /**
@@ -300,10 +307,7 @@ export const hasDemoDayRunOut = (day: DemoDay): boolean => {
   return [...tables].some((table) =>
     day.setup.matches
       .filter((match) => match.table === table)
-      .every(
-        (match) =>
-          stateOf(match, day.logs.get(match.id) ?? []).status === 'finished'
-      )
+      .every((match) => stateOf(day, match).status === 'finished')
   )
 }
 
@@ -312,7 +316,11 @@ export const hasDemoDayRunOut = (day: DemoDay): boolean => {
  * on eight tables, each table some matches into its sheet.
  */
 export const createDemoDay = (nowMs: number, random: Random): DemoDay => {
-  let day: DemoDay = { logs: new Map(), setup: setupFor(random) }
+  let day: DemoDay = {
+    logs: new Map(),
+    replays: new Map(),
+    setup: setupFor(random)
+  }
   const startMs = nowMs - HISTORY_STEPS * HISTORY_STEP_MS
 
   for (let step = 0; step < HISTORY_STEPS; step++) {
