@@ -54,31 +54,13 @@ pnpm lint       # Biome, fixing what it can
 pnpm test:watch
 ```
 
-## Deploy
+## Operations
 
-Every push to `main` that passes CI is built and deployed to Cloudflare by the
-`deploy` job in `.github/workflows/ci.yml`. It needs two repository secrets:
-`CLOUDFLARE_ACCOUNT_ID` and `CLOUDFLARE_API_TOKEN`, a token allowed to edit
-Workers scripts. The account id is not secret
-(`431a529079f2d76802b95056e39950f0`); the token is the item
-`Cloudflare Pages token` of Adrien's personal Bitwarden:
-
-```powershell
-$env:BITWARDENCLI_APPDATA_DIR = "$HOME\bitwarden-personal"
-bw get password "Cloudflare Pages token" | gh secret set CLOUDFLARE_API_TOKEN -R AdrienLcp/scoreboard
-```
-
-The worker's three Smartping secrets, `SMARTPING_APP_ID`,
-`SMARTPING_PASSWORD` and `SMARTPING_SERIAL`, are in no vault: they exist only
-as secrets of the deployed worker, which Cloudflare never shows again. To get
-them back:
-
-- `SMARTPING_APP_ID` and `SMARTPING_PASSWORD` are issued by the FFTT with the
-  Smartping key, the password by mail; ask the FFTT again.
-- `SMARTPING_SERIAL` is drawn and registered with the FFTT by
-  `pnpm --filter @scoreboard/worker smartping:init`, which reads the other two
-  from `apps/worker/.dev.vars` (copied from `.dev.vars.example`) and prints
-  the serial with the `wrangler secret put` commands that set all three.
+Every push to `main` that passes CI is deployed to the Cloudflare Worker
+`scoreboard` at https://scoreboard.adrienlcp.com. Shipping, the hosting, the
+secrets (the CI's Cloudflare token and the worker's Smartping secrets),
+updating the dependencies and what to do when a step breaks:
+[`docs/operations/`](docs/operations/README.md).
 
 ## Licence
 
